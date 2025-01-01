@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0013; ARCH_SW_DIA_0188; ARCH_SW_DIA_0189; ARCH_SW_DIA_0190; ARCH_SW_DIA_0014; ARCH_SW_DIA_0191
+ARCH_SW_DIA_0013: Service 0x31 01 will be implemented for RID F703
+ARCH_SW_DIA_0188: Service shall be available in Development session
+ARCH_SW_DIA_0189: The RoutineControlOptionRecord shall reflect the selected cycle
+ARCH_SW_DIA_0190: RoutineInfo can have the following values: 0x00, 0x01, 0x02 and 0xFF
+ARCH_SW_DIA_0014: Service 0x31 02 will be implemented for RID F703
+ARCH_SW_DIA_0191: Service shall be available in Development session
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runRidF703_CycleExecutionStop*.
+
+Action: ARCH_SW_DIA_0013; ARCH_SW_DIA_0188; ARCH_SW_DIA_0189; ARCH_SW_DIA_0190; ARCH_SW_DIA_0014; ARCH_SW_DIA_0191
+
+	Step 4: Send diag request for RID F7 03 Start 
+		Expected result:  Request Sent.
+
+	Step 5: Send diag request for RID F7 03 stop and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 6: Check if breakpoint from function DIA_runRidF703_CycleExecutionStop was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 7: Return ECU to default values

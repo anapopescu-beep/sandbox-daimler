@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0018; ARCH_SW_DIA_0201
+ARCH_SW_DIA_0018: Service 0x31 01 will be implemented for RID 0330.
+ARCH_SW_DIA_0201: Service shall be available in Extended and Development session.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set BCKL_ON.
+
+	Step 4: Clear fault memory
+
+	Step 5: Set breakpoint in function *DIA_runRid0330_TriggerTensioningCycleStop*.
+
+	Step 6: Send diag request for RID 03 30 Start 
+		Expected result:  Request Sent.
+
+	Step 7: Send diag request for RID 03 30 Stop 
+		Expected result:  Timeout error.
+
+Action: ARCH_SW_DIA_0018; ARCH_SW_DIA_0201
+
+	Step 8: Check if breakpoint from function DIA_runRid0330_TriggerTensioningCycleStop was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 9: Return ECU to default values

@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0260, ARCH_SW_CIL_0237, ARCH_SW_CIL_0240
+ARCH_SW_CIL_0260: If value for BltSlckDec_Md_XX_Stat_ST3 is not 1 (is 0,3) then BSR1 CYCLE by Algo shall be inhibitted.
+ARCH_SW_CIL_0237: Signal BltSlckDec_Md_Rq_HU_ST3 shall be send though application when it�s needed (0,1,3).
+ARCH_SW_CIL_0240: BSR1 profile (request on algorithm) shall be inhibitted if BltSlckDec_Md_XX_Stat_ST3 is OFF.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BltSlckDec_Md_Rq_HU_ST3 to I_C02_OFF_ON_OFF.
+
+	Step 3: Evaluate if signal BltSlckDec_Md_FL_Stat_ST3 is I_C02_OFF_ON_OFF.
+
+	Step 4: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 5: Step in function cil_ManageInputSignals(). 
+		Expected result:  Stepped in function cil_ManageInputSignals
+
+	Step 6: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();' and run.
+
+	Step 7: Check if CPU stopped at line 'cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_DTCInhibitionOfBSR);'.
+
+Action: ARCH_SW_CIL_0260, ARCH_SW_CIL_0237, ARCH_SW_CIL_0240
+
+	Step 9: Check if CPU stopped in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_DTCInhibitionOfBSR);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 10: Return ECU to default values

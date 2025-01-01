@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0236
+ARCH_SW_CIL_0236: If BSR3(cycle 28) is executed (and his next cycle) then RBTM _FL/FR Actv_Lvl_ST35 should be 0x15 = �BSR3� no matter the source of the request: API interface, diagnostic.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_TriggerProfile() at line 'if( (KU8_TRUE == u8CycleValidityStatus)'.
+
+	Step 3: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE21.
+
+	Step 4: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 6: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function cil_ManageActiveLevelSignal() at line 'CIL_u8Actv_Lvl = I_C06_RBTM_LVL_RQ_PROFILE21;' under 'case KU8_PRECRASH_SEVERITY_LEVEL_BSR_3:'.
+
+Action: ARCH_SW_CIL_0236
+
+	Step 8: Check if CPU stopped  at line 'CIL_u8Actv_Lvl = I_C06_RBTM_LVL_RQ_PROFILE21;' under 'case KU8_PRECRASH_SEVERITY_LEVEL_BSR_3:'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0236
+
+	Step 9: Evaluate if signal RBTMFL_Actv_Lvl_ST35 is equal with I_C06_RBTM_LVL_RQ_PROFILE21. 
+		Expected result:  I_C06_RBTM_LVL_RQ_PROFILE21
+
+Postcondition
+
+	Step 10: Return ECU to default values

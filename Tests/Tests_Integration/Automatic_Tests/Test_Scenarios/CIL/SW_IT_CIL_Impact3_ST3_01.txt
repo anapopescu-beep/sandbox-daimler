@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0030, ARCH_SW_CIL_0035
+ARCH_SW_CIL_0030: Frame Impact3_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0035: Signal Impact_X_ST3 shall be send though application when it�s needed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Impact_X_ST3 from frame Impact3_ST3 to 0x1.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 4: Step in function cil_ManageInputSignals(). 
+		Expected result:  Stepped in function cil_ManageInputSignals()
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_stInputSignalsPresfRec.bImpactXType= cil_stImpactSignalsStatus3.Impact_X_ST3;'.
+
+	Step 6: Check if CPU stopped at line 'cil_stInputSignalsPresfRec.bImpactXType= cil_stImpactSignalsStatus3.Impact_X_ST3;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0030, ARCH_SW_CIL_0035
+
+	Step 7: Read variable cil_stInputSignalsPresfRec.bImpactXType 
+		Expected result:  0x1.
+
+Postcondition
+
+	Step 8: Return ECU to default values

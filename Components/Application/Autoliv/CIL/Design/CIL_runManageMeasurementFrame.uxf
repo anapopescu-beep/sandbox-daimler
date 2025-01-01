@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>174</x>
+      <y>132</y>
+      <w>1338</w>
+      <h>687</h>
+    </coordinates>
+    <panel_attributes>title:CIL_runManageMeasurementFrame
+Start
+
+Check if NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData.NVP_u8MeasFrameTiming is not ZERO
+If
+	[TRUE]
+	Check if cil_u8MFPeriodCounter is ZERO
+	If
+		[TRUE]
+		bInfoUpdated will equal the return of cil_Update_07Cx_InfosToSend function
+		Check if bInfoUpdated is TRUE
+		If
+			[TRUE]
+			Check ECU location
+			If
+				[LEFT]
+				Call Rte_Write_P_Meas_RBTM_FL_ST3_Meas8_RBTM_FL_ST3
+				
+				[RIGHT]
+				Call Rte_Write_P_Meas_RBTM_FR_ST3_Meas8_RBTM_FR_ST3
+				
+				[No valid location]
+				Call Rte_Write_P_Meas_RBTM_FL_ST3_Meas8_RBTM_FL_ST3
+			EndIf
+			
+			[FALSE]
+			QAC
+		EndIf
+		cil_u8MFPeriodCounter = NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData.NVP_u8MeasFrameTiming
+
+		[FALSE]
+		QAC
+	EndIf
+	Decrement cil_u8MFPeriodCounter
+		
+	[FALSE]
+	QAC
+EndIf
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

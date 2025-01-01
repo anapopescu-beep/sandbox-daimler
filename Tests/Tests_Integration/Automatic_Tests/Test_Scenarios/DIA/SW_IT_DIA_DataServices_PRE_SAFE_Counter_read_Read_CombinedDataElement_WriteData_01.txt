@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0396; ARCH_SW_DIA_0397; ARCH_SW_DIA_0488; ARCH_SW_DIA_0489; ARCH_SW_DIA_0490; ARCH_SW_DIA_0491;
+ARCH_SW_DIA_0396: Request data shall be 1 byte long.
+ARCH_SW_DIA_0397: Byte 0 shall be defined as the Pre-Safe Request Counter Reset command and shall always have value 0x01.
+ARCH_SW_DIA_0488: DataIdentifier shall be 0x0244
+ARCH_SW_DIA_0489: Using this service shall lead to the Pre-Safe Counter to be set to default value (i.e. 0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x00)
+ARCH_SW_DIA_0490: The DID shall be available in the following sessions: â¦Extended session â¦Update Session â¦Development Session
+ARCH_SW_DIA_0491: This service shall be available under the following forms of Authentication: â¦Supplier â¦Development ENHANCED â¦Productionn
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_PRE_SAFE_Counter_read_Read_CombinedDataElement_WriteData*.
+
+	Step 3: Enter development session.
+
+Action: ARCH_SW_DIA_0396; ARCH_SW_DIA_0397; ARCH_SW_DIA_0488; ARCH_SW_DIA_0489; ARCH_SW_DIA_0490; ARCH_SW_DIA_0491;
+
+	Step 4: Send diag request for 2E 0244 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_PRE_SAFE_Counter_read_Read_CombinedDataElement_WriteData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

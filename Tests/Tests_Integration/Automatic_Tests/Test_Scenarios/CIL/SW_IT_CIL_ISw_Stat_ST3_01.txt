@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0006
+ARCH_SW_CIL_0006: Signal ISw_Stat_ST3 shall be send though application when it�s needed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal ISw_Stat_ST3 to I_C03_ISW_STAT_IGN_ON (0x4).
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals at line 'cil_u8IgnitionSignal = cil_stIgnStatFrame.ISw_Stat_ST3;'.
+
+	Step 6: Check if CPU stopped at line 'cil_u8IgnitionSignal = cil_stIgnStatFrame.ISw_Stat_ST3;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0006
+
+	Step 7: Evaluate if variable cil_u8IgnitionSignal is equal to I_C03_ISW_STAT_IGN_ON 
+		Expected result:  I_C03_ISW_STAT_IGN_ON (0x4).
+
+Postcondition
+
+	Step 8: Return ECU to default values

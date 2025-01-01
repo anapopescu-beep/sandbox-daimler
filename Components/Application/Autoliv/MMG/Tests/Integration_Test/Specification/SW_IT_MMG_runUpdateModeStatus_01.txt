@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0004
+ARCH_SW_MMG_0004: Context should be periodically updated in order to inhibit/abort cycles.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runUpdateModeStatus() at function mmg_UpdateModeStatus_CriticalAutotestsNok() and step in.
+
+	Step 3: Set a breakpoint in mmg_UpdateModeStatus_CriticalAutotestsNok() at line: if (KU8_ATM_TEST_OK == u8StatusOfLastCriticalAutoTest).
+
+	Step 4: Set a breakpoint at M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK).
+
+	Step 5: Set variable u8StatusOfLastCriticalAutoTest value to KU8_ATM_TEST_OK.
+
+	Step 6: Set a breakpoint at M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK).
+
+	Step 7: Change variable MMG_u32ModesStatus value to 0x8.
+
+Action: ARCH_SW_MMG_0300, ARCH_SW_MMG_0004
+
+	Step 8: Step in to stop at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK). 
+		Expected result:  Stepped in mmg_UpdateModeStatus_CriticalAutotestsNok
+
+Postcondition
+
+	Step 9: Return ECU to default values

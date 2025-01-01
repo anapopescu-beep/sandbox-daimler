@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0023, ARCH_SW_PMP_0022
+ARCH_SW_PMP_0023: This function shall get ADC value of the Positive Motor Voltage.
+ARCH_SW_PMP_0024: The AdcIf_runGetMotor_Vp_(Ext)* function shall be called to get the sampled value.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_0023
+
+	Step 2: Enter Development Session 
+		Expected result:  Development Start.
+
+	Step 3: Activate Measurement frame Block 3 
+		Expected result:  MF Active.
+
+	Step 4: Set a breakpoint in function PMP_runGetMotorVp at the RTE Call for AdcIf_runGetMotor_Vp function 
+		Expected result:  BP reached.
+
+	Step 5: Read local variable pu16SampledSignal 
+		Expected result:  Variable read from ADC channel.
+
+	Step 6: Set a breakpoint in function PMP_runGetMotorVp at the pu16Voltage assignment
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0024
+
+	Step 7: Evaluate local variable u16InternalAnalogSignal 
+		Expected result:  Variable read is the same from *(pu16SampledSignal) data pointer.
+
+Postcondition
+
+	Step 8: Return ECU to default values

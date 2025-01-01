@@ -1,0 +1,410 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  // ZenZefi version read
+  char cNodeName[30] = "ZenZefi Backend Node";
+  char apiVersion[20];
+  char serverVersion[20];
+  long ret;
+  char strnBuff[150];
+  char InstallMessage[200] = "ZenZefi client is not available/started on this PC.";
+  char buffer[100];
+  
+  // VINDataIdentifier_Read
+  byte vinRespData[32];
+  byte vinRespSize;
+  byte ECU_VIN[17];
+  diagRequest "VINDataIdentifier_Read" Req_VINDataIdentifier_Read;
+  diagResponse "VINDataIdentifier_Read" Resp_VINDataIdentifier_Read;
+  
+  // BackendID_Read
+  diagRequest "Backend_CA_Certificate_Identification_Read" Req_Backend_CA_Certificate_Identification_Read;
+  diagResponse "Backend_CA_Certificate_Identification_Read" Resp_Backend_CA_Certificate_Identification_Read;
+  byte backendSubjectKeyIdentifier[20];
+  dword sizeOfBackendSubjectKeyIdentifer = 20;
+  
+  // DiagTargets
+  char diagTargetList[200]; // available targets, one per cdd
+  
+  //
+  byte data[1];
+  char targetECU[100];
+  char targetVIN[18];
+  long copiedBytes;
+  int processID = -1;
+  int ReadNextCert = -1;
+}
+
+on start
+{
+  @sysvar::Backend::LED_BackendAvailaible = -1;
+  @sysvar::Backend::LED_ECUData = -1;
+  @sysvar::Backend::LED_BackendAvailaible = -1;
+  processID = -1;
+  ReadNextCert = -1;
+  ResetPanelData();
+  
+  ReadDiagQualifier();
+ 
+  // init targetECU value
+  sysGetVariableString("Backend","DiagTarget",targetECU,elCount(targetECU));
+ }
+
+// updates TargetECU value
+on sysvar_update sysvar::Backend::DiagTarget
+{
+  int ret;
+  ret = sysGetVariableString("Backend","DiagTarget",targetECU,elCount(targetECU));
+  write("%i=on sysvar_update sysvar::Backend::DiagTarget targetECU=%s",ret,targetECU);
+
+}
+
+// reads ZenZefi version info
+on sysvar_update sysvar::Backend::Button_ZenZefi_ReadVersion
+{
+  long major;
+  long minor;
+  long patch;
+  
+  if(@this == 1)
+  {
+    GetZenZefiNodeLayerVersion(major,minor,patch);
+    snprintf(buffer,elcount(buffer),"ZenZefi Nodelayer Version: %i.%i.%i",major,minor,patch);
+    ret = GetVersionAsync(); // trigger read version 
+    @sysvar::Backend::LED_BackendAvailaible = 2;
+  }
+}
+
+// callback for ZenZefi version request
+long GetVersionCompleted(long statusCode, char apiVersion[],  char serverVersion[]) 
+{
+  if( statusCode == 200 )
+  {
+    snprintf(strnBuff,elCount(strnBuff),"API Version:\t%s\nServer Version:\t%s\n",apiVersion,serverVersion);
+    strncat(strnBuff, buffer, elcount(buffer));
+    @sysvar::Backend::LED_BackendAvailaible = 1;
+    putValueToControl("Backend","ZenZefiNLVersion",strnBuff);
+  }
+  else if( statusCode == 12029 )
+  {
+    snprintf(strnBuff,elCount(strnBuff),"%s (statusCode = %i)",InstallMessage,statusCode);
+    putValueToControl("Backend","ZenZefi_OutputView",strnBuff);
+    putValueToControl("Backend","ZenZefi_OutputView","\n");
+    @sysvar::Backend::LED_BackendAvailaible = 0;
+  }
+  else
+  {
+    snprintf(strnBuff,elCount(strnBuff),"statusCode = %i for GetVersionAsync.", statusCode);
+    putValueToControl("Backend","ZenZefi_OutputView",strnBuff);
+    putValueToControl("Backend","ZenZefi_OutputView","\n");
+    @sysvar::Backend::LED_BackendAvailaible = 0;
+  }
+  write("%s: %s",cNodeName, strnBuff);
+  return statusCode;
+}
+
+// Button handler, reads ECU VIN
+on sysvar_update sysvar::Backend::Button_ECU_ReadAuthKeyAndVIN
+{
+  if(@this == 1)
+  {
+    ReadVINandAuthKey();
+  }
+}
+
+// Triggers VIN and AuthKey read
+void ReadVINandAuthKey()
+{
+  long ret;
+  
+  @sysvar::Backend::LED_ECUData = 2;
+  processID = 1;
+    
+  ret = diagSetTarget(targetECU);
+  if( ret != 0)
+  {
+    @sysvar::Backend::LED_ECUData = 0;
+    return;
+  }
+  
+  ret = Req_VINDataIdentifier_Read.SendRequest();
+  if( ret != 0 )
+  {
+    @sysvar::Backend::LED_ECUData = 0;
+  }
+}
+
+// diag Response of ECU for VIN read
+on diagResponse VINDataIdentifier_Read
+{
+  int VINLength = 17;
+  byte VIN_Default[17] = {0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F};
+  
+  if( CheckCurrentDiagTarget() == 1 && processID == 1)
+  {
+    if( diagGetResponseCode (this) == -1 ) //pos
+    {
+      vinRespSize = diagGetPrimitiveData(this, vinRespData, elcount(vinRespData));
+      memcpy_off(ECU_VIN, 0, vinRespData, 3, VINLength);
+      sysSetVariableData("Backend","ECU_VIN",ECU_VIN,VINLength);
+    }
+    else
+    {
+     sysSetVariableData("Backend","ECU_VIN",VIN_Default,elcount(VIN_Default));
+    }
+    
+    // trigger read of Authority Key
+    processID = 2;
+    ret = Req_Backend_CA_Certificate_Identification_Read.SendRequest();
+    if( ret != 0 )
+    {
+      @sysvar::Backend::LED_ECUData = 0;
+    }
+  }
+}
+
+// response to read of Backend ID of ECU
+on diagResponse Backend_CA_Certificate_Identification_Read
+{
+  byte ECU_Backend_Cert_KeyID[20];
+  byte BACertReadRespData[30];
+  byte BACertReadRespSize;
+  
+  if( CheckCurrentDiagTarget() == 1 && processID == 2 )
+  {
+    if( diagGetResponseCode (this) == -1 ) //pos
+    {
+      BACertReadRespSize = diagGetPrimitiveData(this, BACertReadRespData, elcount(BACertReadRespData));
+      memcpy_off(ECU_Backend_Cert_KeyID, 0, BACertReadRespData, 3, 20);
+      sysSetVariableData("Backend","ECU_AuthorityKeyID",ECU_Backend_Cert_KeyID,20);
+      @sysvar::Backend::LED_ECUData = 1;
+    }
+    processID = -1;
+  }
+}
+
+// reads certficates from ZenZefi
+on sysvar_update sysvar::Backend::Button_ZenZefi_ReadCertificates
+{  
+  if(@this==1)
+  {
+    // read panel data for ZenZefi request
+    sysGetVariableData("Backend","ECU_AuthorityKeyID",backendSubjectKeyIdentifier,copiedBytes);
+    sysGetVariableData("Backend","ECU_VIN",ECU_VIN,copiedBytes);
+    VIN_Byte2Char(targetVIN,ECU_VIN);
+    
+    // reset panel LEDs
+    @sysvar::Backend::LED_VarCodSerial_Available = -1;
+    @sysvar::Backend::LED_DiagCert_Available = -1;
+    
+    // start reading certs
+    ReadNextCert(0); 
+  }
+}
+
+long GetVariantCodingUserCertificateCompleted(long statusCode,  byte serialNumber[],  byte signature[], 
+                                              byte varCodingCertificate[], int64 expirationDate[], char msg[])
+{
+  if( statusCode == 200 )
+  {
+    @sysvar::Backend::LED_VarCodSerial_Available = 1;
+    sysSetVariableData("Backend","Value_VarCodSerial",serialNumber,elcount(serialNumber));
+  }
+  else
+  {
+    @sysvar::Backend::LED_VarCodSerial_Available = 0;
+    write("%s",msg);
+    putValueToControl("Backend","ZenZefi_OutputView",msg);
+    putValueToControl("Backend","ZenZefi_OutputView","\n");
+  }
+  ReadNextCert(1); // trigger next cert read
+  return statusCode;
+}
+
+
+long GetDiagnosticCertificateCompleted(long statusCode, char errorMessage[],  byte certificate[],  byte serialNumber[]) 
+{
+  long bytesCopied;
+  
+  if( statusCode == 200 )
+  {
+    @sysvar::Backend::LED_DiagCert_Available = 1;
+    sysSetVariableData("Backend","Value_DiagCertSerial",serialNumber,elcount(serialNumber));
+  }
+  else
+  {
+    @sysvar::Backend::LED_DiagCert_Available = 0;
+    write("%s %i",errorMessage,statusCode);
+    putValueToControl("Backend","ZenZefi_OutputView",errorMessage);
+    putValueToControl("Backend","ZenZefi_OutputView","\n");
+  }
+  ReadNextCert(2); // trigger next cert read
+  return statusCode;
+}
+
+long GetCertificateCompleted(long statusCode, char errorMessage[], byte certificate[]) 
+{
+  
+  if( statusCode == 200 )
+  {
+    @sysvar::Backend::LED_CertBySerial = 1;
+    write("%i=GetCertificateCompleted(long statusCode, char errorMessage[], byte certificate[] sizeOfCertficate=%i byte",statusCode,elcount(certificate));
+  }
+  else
+  {
+    @sysvar::Backend::LED_CertBySerial = 0;
+    write("%s %i",errorMessage,statusCode);
+    putValueToControl("Backend","ZenZefi_OutputView",errorMessage);
+    putValueToControl("Backend","ZenZefi_OutputView","\n");
+  }
+  //ReadNextCert(); // trigger next cert read
+  return statusCode;
+}
+
+// manages cert requests for ZenZefi
+void ReadNextCert(int nextCertRead)
+{
+  byte serial[16];
+  long sizeOfSerial;
+  long ret;
+  
+  ReadNextCert = nextCertRead;
+  if(ReadNextCert == 0)
+  {
+    if(@sysvar::Backend::CheckBox_SearchVarCodingCert == 1)
+    {
+      @sysvar::Backend::LED_VarCodSerial_Available = 2;
+      write("GetVariantCodingUserCertificateAsync targetVIN=%s,targetECU=%s",targetVIN,targetECU);
+      GetVariantCodingUserCertificateAsync(backendSubjectKeyIdentifier,sizeOfBackendSubjectKeyIdentifer,data,elcount(data),targetECU,targetVIN);
+    }
+    else
+      ReadNextCert = 1;
+  }
+    
+  if(ReadNextCert == 1)
+  {
+    if( @sysvar::Backend::CheckBox_SearchDiagCert == 1 )
+    {
+      @sysvar::Backend::LED_DiagCert_Available = 2;
+      write("GetDiagnosticCertificateAsync targetVIN=%s,targetECU=%s role=%i",targetVIN,targetECU,@sysvar::Backend::DiagnosticsRole);
+      GetDiagnosticCertificateAsync(backendSubjectKeyIdentifier,sizeOfBackendSubjectKeyIdentifer,targetVIN,targetECU,@sysvar::Backend::DiagnosticsRole);
+    }
+    else
+    {
+      ReadNextCert = 2;
+    }
+  }
+  
+  if(ReadNextCert == 2)
+  {
+    if( @sysvar::Backend::CheckBox_GetCertificateBySerial == 1 )
+    {
+      @sysvar::Backend::LED_CertBySerial = 2;
+      sysGetVariableData("Backend","Input_Cert_Serial",serial,sizeOfSerial);
+      write("GetCertificateAsync sizeOfSerial=%i",sizeOfSerial);
+      ret = GetCertificateAsync(backendSubjectKeyIdentifier,sizeOfBackendSubjectKeyIdentifer,serial,sizeOfSerial);
+      write("%i = GetCertificateAsync(backendSubjectKeyIdentifier,sizeOfBackendSubjectKeyIdentifer,serial,sizeOfSerial);",ret);
+    }
+    else{}
+  }
+}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Convert VIN to char
+void VIN_Byte2Char(char outVIN[], byte inVIN[])
+{
+  memcpy(outVIN,inVIN,elcount(outVIN)-1);
+  outVIN[elcount(outVIN)-1] = 0;
+}
+
+// verifies that diagtarget is correctly set
+int CheckCurrentDiagTarget()
+{
+  char qualifier[100]; 
+  dword bufferLen = 100;
+  char targetName[100];
+  
+  diagGetCurrentEcu ( qualifier,  bufferLen);
+  sysGetVariableString("LocalAuthentication","DiagTarget",targetName,elCount(targetName));
+  
+  if( strncmp(qualifier, "DDS" ,strlen(qualifier) )== 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+// clears all data fields in the panel
+void ResetPanelData()
+{
+  byte buffer[10];
+ 
+  sysSetVariableData("Backend","ECU_VIN",buffer,0);
+  sysSetVariableData("Backend","ECU_AuthorityKeyID",buffer,0);
+  sysSetVariableData("Backend","Value_VarCodSerial",buffer,0);
+ 
+}
+
+// maps role ID to role string
+void RoleToDiagJob(int role, char jobQualifier[] )
+{
+  switch(role)
+  {
+    case 0:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Anybody");
+      break;
+    case 1:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Supplier");
+      break;
+    case 2:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Development_Enhanced");
+      break;
+    case 3:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Production");
+      break;
+    case 4:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_After_Sales_Enhanced");
+      break;
+    case 5:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_After_Sales_Standard");
+      break;
+    case 6:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_After_Sales_Basic");
+      break;
+    case 7:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Internal_Diagnostic_Test_Tool");
+      break;
+    case 8:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_ePTI_Test_Tool");
+      break;
+    default:
+      break;
+  }
+}
+
+// utility function to collect all available diag targets
+void ReadDiagQualifier()
+{
+  int i;
+  char ecuQual[100];
+
+  i = diagGetTargetCount();
+  while( i-- > 0)
+  {
+    diagGetTargetQualifier( i, ecuQual, elcount(ecuQual));
+    strncat(diagTargetList,ecuQual,elcount(diagTargetList));
+    if(i!=0)
+    {
+      strncat(diagTargetList,",",elcount(diagTargetList));  
+    }
+  }
+  sysSetVariableString("Backend","DiagTargetList",diagTargetList);
+}

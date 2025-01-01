@@ -1,0 +1,57 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0717, ARCH_SW_CIL_0767
+ARCH_SW_CIL_0717: If selected, the content of the measurement frame - block #7 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0767: PMP_runGetFilteredTemperature_deg shall be called to get the filtered value in �C of the temperature
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 7.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block07_InfosToSend at line Rte_Call_pclECU_T_GetFiltered_deg(&s16Temperature_Deg);.
+
+Action: ARCH_SW_CIL_0767
+
+	Step 4: Check if CPU stopped at line Rte_Call_pclECU_T_GetFiltered_deg(&s16Temperature_Deg);. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Set a breakpoint at the last line of function cil_Update_07Cx_Block07_InfosToSend.
+
+Action: ARCH_SW_CIL_0717
+
+	Step 6: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0717
+
+	Step 7: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 and signal Meas_RBTM_FL_04_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0717
+
+	Step 8: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 and signal Meas_RBTM_FL_05_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0717
+
+	Step 9: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0717
+
+	Step 10: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Postcondition
+
+	Step 11: Return ECU to default values

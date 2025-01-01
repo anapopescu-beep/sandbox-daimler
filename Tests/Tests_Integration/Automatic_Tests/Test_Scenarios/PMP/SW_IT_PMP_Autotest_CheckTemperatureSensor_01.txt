@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_1081, ARCH_SW_PMP_1082
+ARCH_SW_PMP_1081: NVP parameters shall be used by this auto-tests.
+ARCH_SW_PMP_1082: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_1081, ARCH_SW_PMP_1082
+
+	Step 2: Set a breakpoint in function PMP_cbk_CheckTemperatureSensor at the RTE Call for PMP_cbk_CheckTemperatureSensor autotest 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PMP_Autotest_CheckTemperatureSensor at the RTE call for GetTestResult 
+		Expected result:  BP reached
+
+	Step 4: Write autotest result with 0x1 
+		Expected result:  Variable overwritten with value 0x1
+
+	Step 5: Set a breakpoint in function PMP_Autotest_CheckTemperatureSensor after the return of the autotest result 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_1082
+
+	Step 6: Evaluate u8PreviousADCTestResult 
+		Expected result:  Variable is equal to 0x1.
+
+	Step 7: Set a breakpoint in function PMP_cbk_CheckTemperatureSensor at the return of autotest and Evaluate result 
+		Expected result:  BP reached.
+
+	Step 8: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 9: Return ECU to default values

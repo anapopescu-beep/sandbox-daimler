@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0370
+ARCH_SW_CIL_0370: ERH_GetAecStatus shall be called to get the TIMEOUT ERROR ON API frame or U188A08- Implausible data on API frame that will abort/inhibit all profiles requested on API.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C04_PRESF_LVL_V2_NOLVL.
+
+	Step 3: Set a breakpoint in the function CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli().
+
+	Step 5: Set a breakpoint in the function CIL_Autotest_CheckImplausibleData_API at line 'cil_u8ResultOfAutoTest = KU8_ATM_TEST_OK;'.
+
+Action: ARCH_SW_CIL_0370
+
+	Step 6: Check if CPU stopped in function CIL_Autotest_CheckImplausibleData_API() at line 'cil_u8ResultOfAutoTest = KU8_ATM_TEST_OK;'.
+
+	Step 7: Set a breakpoint in function cil_ManageInhibitConditions at line 'Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);'.
+
+Action: ARCH_SW_CIL_0370
+
+	Step 8: Check if CPU stopped in function cil_ManageInhibitConditions at line 'Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);'.
+
+Postcondition
+
+	Step 9: Return ECU to default values

@@ -1,0 +1,49 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0417, ARCH_SW_CIL_0414
+ARCH_SW_CIL_0417: CIL shall check if implausible data error is present for API frame.
+ARCH_SW_CIL_0414: CIL shall check if implausible data error is present for Powertrain frame.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_SNA.
+
+	Step 3: Set a breakpoint in function CIL_Autotest_CheckImplausibleData_API() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0417
+
+	Step 4: Check if CPU stopped at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0417
+
+	Step 5: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_NOK
+
+	Step 6: Set signal PT4_PTCoor_PT_Rdy_ST3 to I_C02_PT_RDY_V2_PT_RDY.
+
+	Step 7: Set a breakpoint in function CIL_Autotest_CheckImplausibleData_PowertrainDrv() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0414
+
+	Step 8: Check if CPU stopped at line *pu8TestResult = cil_u8ResultOfAutoTest;. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0414
+
+	Step 9: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_OK
+
+Postcondition
+
+	Step 10: Return ECU to default values

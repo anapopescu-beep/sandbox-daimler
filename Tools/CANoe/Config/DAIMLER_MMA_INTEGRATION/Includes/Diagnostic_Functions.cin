@@ -1,0 +1,206 @@
+/*@!Encoding:1252*/
+variables
+{
+  // Timeouts
+  int tRequestSentMaxTimeout = 400;
+  int tResponseGetMaxTimeout = 400;
+  // Data Bytes
+  byte gHWArray[255];
+  byte gSWArray[255];
+  byte gSWSArray[255];
+
+  // Authentication
+  diagRequest RBTMFL174.Authenticate_Diagnostic_User_or_Tester_Start dAuthenticationResponse;
+  // Session Control
+  diagRequest RBTMFL174.Development_Start dDevelopmentSessionRequest;
+  diagResponse RBTMFL174.Development_Start dDevelopmentSessionResponse;
+  diagRequest RBTMFL174.Extended_Start dExtendedSessionRequest;
+  diagRequest RBTMFL174.Default_Start dDefaultSessionRequest;
+  diagRequest RBTMFL174.ProgrammingStart dProgrammingSessionRequest;
+  diagRequest RBTMFL174.Update_Start dUpdateSessionRequest;
+  // Security Access
+  diagRequest RBTMFL174.Request_Seed_Reprogramming dSecurityRequestSeed;
+  diagRequest RBTMFL174.Send_Key_Reprogramming dSecuritySendKey;
+  // HW and SW Check
+  diagRequest RBTMFL174.HardwareVersion_Read dHW_VersionRequest;
+  diagResponse RBTMFL174.HardwareVersion_Read dHW_VersionResponse;
+  diagRequest RBTMFL174.SoftwareVersion_Read dSW_VersionRequest;
+  diagResponse RBTMFL174.SoftwareVersion_Read dSW_VersionResponse;
+  diagRequest RBTMFL174.SoftwareSupplier_Read dSW_SupplierRequest;
+  diagResponse RBTMFL174.SoftwareSupplier_Read dSW_SupplierResponse;
+  // Cycle_Configuration
+  diagRequest RBTMFL174.Cycle_configuration_Read dReadCycleConfigRequest;
+  diagRequest RBTMFL174.Cycle_configuration_Write dWriteCycleConfigRequest;
+  // Steps Library
+  diagRequest RBTMFL174.Steps_library_Read dReadStepsLibraryRequest;
+  diagRequest RBTMFL174.Steps_library_Write dWriteStepsLibraryRequest;
+  // ECU Location
+  diagRequest RBTMFL174.ECU_Location_Read dReadEcuLocationRequest;
+  diagRequest RBTMFL174.ECU_Location_Write dWriteEcuLocationRequest;
+  // ECU Serial Number
+  diagRequest RBTMFL174.ECUSerialNumberDataIdentifier_Read dReadEcuSerialRequest;
+  // Presafe Counter
+  diagRequest RBTMFL174.PRE_SAFE_Counter_read_Read dReadPresafeCounterRequest;
+  // Unique Serial
+  diagRequest RBTMFL174.Seatbelt_Serial_Number_Read dReadSeatBeltSerialRequest;
+  diagRequest RBTMFL174.Seatbelt_Serial_Number_Write dWriteSeatBeltSerialRequest;
+  // BSR Counter
+  diagRequest RBTMFL174.BSR_Counter_read_Read dReadBSRCounterRequest;
+  // Presafe Cycles
+  diagRequest RBTMFL174.PreSafe_Cycles_Level_1_8_Read dReadPresafeCyclesRequest;
+  diagRequest RBTMFL174.PreSafe_Cycles_Level_1_8_Write dWritePresafeCyclesRequest;
+  // Release Cycles
+  diagRequest RBTMFL174.Release_Cycles_BSR_and_PreSafe_Read dReadReleaseCyclesRequest;
+  diagRequest RBTMFL174.Release_Cycles_BSR_and_PreSafe_Write dWriteReleaseCyclesRequest;
+  // Tensioning Cycle BSR
+  diagRequest RBTMFL174.Tensioning_Cycle_BSR_Read dReadTensioningCyclesRequest;
+  diagRequest RBTMFL174.Tensioning_Cycle_BSR_Write dWriteTensioningCyclesRequest;
+  // Vehicle Equipment
+  diagRequest RBTMFL174.Vehicle_Equipment_Read dReadVehicleEquipemntRequest;
+  diagRequest RBTMFL174.Vehicle_Equipment_Write dWriteVehicleEquipmentRequest;
+  
+  // ZZZ Vehicle Equipment
+  diagRequest RBTMFL174.ZZZ_Vehicle_Equipment_Development_Read dReadZZZVehicleEquipmentRequest;
+  // Reset Cause
+  diagRequest RBTMFL174.Reset_Cause_Management_Read dReadResetCauseRequest;
+  // Last Warm Reset Cause
+  diagRequest RBTMFL174.Last_Warm_Reset_Parameters_Read dReadLastResetCauseRequest;
+  // HB Calibration Write
+  diagRequest RBTMFL174.HB_Calibration_Read dReadHbCalibrationRequest;
+  // AEC Status
+  diagRequest RBTMFL174.AEC_Status_Read dReadAecStatusRequest;
+  // Measurement Frame
+  diagRequest RBTMFL174.Measurement_Frames_Configuration_Read dReadMeasurementFrameRequest;
+  diagRequest RBTMFL174.Measurement_Frames_Configuration_Write dWriteMeasurementFrameRequest;
+  // Measurement Frame 12
+  diagRequest RBTMFL174.Measurement_Frame_Block_12_Config_Read dReadMeasurementFrame12Request;
+  diagRequest RBTMFL174.Measurement_Frame_Block_12_Config_Write dWriteMeasurementFrame12Request;
+  // AEETracebility
+  diagRequest RBTMFL174.ECU_serial_number_Write dWriteEcuSerialNumberRequest;
+  // Read DTC
+  diagRequest RBTMFL174.FaultMem_ReportDTCByStatusMask dFMReportDTCbyStatusMask;
+  // Trigger Presafe Display
+  diagRequest RBTMFL174.Trigger_Presafe_Display_Request_Start dRStartTriggerPresafeDisplayRequest;
+  diagRequest RBTMFL174.Trigger_Presafe_Display_Request_Stop dRStopTriggerPresafeDisplayRequest;
+  diagRequest RBTMFL174.Trigger_Presafe_Display_Request_RequestResults dRResultsTriggerPresafeDisplayRequest;
+  // Availability Data Read
+  diagRequest RBTMFL174.Availability_Data_Read dReadAvailabilityDataReadRequest;
+  // Presafe Recorder
+  diagRequest RBTMFL174.PRE_SAFE_Recorder_1_read_Read dReadPreSafeRecorder1Request;
+  // Presafe Recorder 2
+  diagRequest RBTMFL174.PRE_SAFE_Recorder_2_read_Read dReadPreSafeRecorder2Request;
+  // SetOC Local TickCount Read
+  diagRequest RBTMFL174.SecOC_Local_TickCount_Read dReadSetOClocalTickCountRequest;
+  
+  // Reset request
+  diagRequest RBTMFL174.SoftReset dSoftResetRequest;
+  diagRequest RBTMFL174.HardReset dHardResetRequest;
+
+}
+/*------------------------------------------------------------------------------
+                                UDS FUNCTIONS
+ ------------------------------------------------------------------------------*/
+
+/* This function waits for a single response
+
+PARAMETERS:
+req - Diagnostic request
+posResponseExpected - TRUE if we expect a positive response from the request.
+
+RETURN VALUES:
+0 - error occured
+1 - everything OK */
+word diagFctWaitForResponse(diagRequest *req, enum bool posResponseExpected, int tRequestTimeout)
+{
+  long ret;
+  
+  // Wait until the complete response has been received.
+  if (1!= (ret=testWaitForDiagResponse(req, tRequestTimeout))) {          
+    snprintf(gResultString, elcount(gResultString), "Valid response missing or received too late (Return code=%d)!", ret);
+    CreateActualExpectedTable ("Response received successfully.", gResultString);
+    testStepFail(0, "", table);
+    return 0;
+  }
+  snprintf(gResultString, elcount(gResultString), "Response received successfully.");
+  CreateActualExpectedTable ("Response received successfully.", gResultString);
+  testStepPass(0, "", table);
+  TestReportWriteDiagResponse (req);
+
+  // Check whether the response was a positive response, and validate if we actually wanted a positive response
+  if (-1 == (ret=diagGetLastResponseCode(req))) {
+    if (!posResponseExpected) {
+      snprintf(gResultString, elcount(gResultString), "Positive response received although negative response was expected!");
+      CreateActualExpectedTable ("Negative Response received as expected.", gResultString);
+      testStepFail(0, "", table);
+      return 0;
+    }
+    snprintf(gResultString, elcount(gResultString), "Positive Response received as expected.");
+    CreateActualExpectedTable ("Positive Response received as expected.", gResultString);
+    testStepPass(0, "", table);
+  }
+  else if (ret > 0) {
+    if (posResponseExpected) {
+      snprintf(gResultString, elcount(gResultString), "Negative response received (NRC=0x%02x) although positive response was expected!", ret);
+      CreateActualExpectedTable ("Positive Response received as expected.", gResultString);
+      testStepFail(0, "", table);
+      return 0;
+    }
+    snprintf(gResultString, elcount(gResultString), "Negative Response received as expected. (NRC=%d).", ret);
+    CreateActualExpectedTable ("Negative Response received as expected. ", gResultString);
+    testStepPass(0, "", table);
+  }
+  return 1;
+}
+
+
+/* This function is used for sending a request and receiving the corresponding response
+
+PARAMETERS:
+req - Diagnostic request
+posResponseExpected - TRUE if we expect a positive response from the request.
+sendFunctional - TRUE if we want to send the request only to a group of signals.
+
+RETURN VALUES:
+0 - error occured
+1 - everything OK */
+word diagFctSendRequestAndWaitForFirstResponse(diagRequest *req, enum bool posResponseExpected, enum bool sendFunctional, int tRequestTimeout)
+{
+  long ret;
+
+  // Trigger sending the request
+  if (sendFunctional) {
+    ret = req.SendFunctional();
+  }
+  else {
+    ret = req.SendRequest();
+  }
+  
+  if (ret < 0) { 
+    snprintf(gResultString, elcount(gResultString), "Trigger to send the request failed (Return code=%d)!", ret);
+    CreateActualExpectedTable ("Trigger to send the request succeded.", gResultString);
+    testStepFail("", gResultString);
+    return 0;
+  }
+  snprintf(gResultString, elcount(gResultString),"Trigger to send the request succeded.");
+  CreateActualExpectedTable ("Trigger to send the request succeded.", gResultString);
+  teststepPass(0,"",table);
+  
+  // Wait until the complete request has been sent, e.g. in case of long requests which spread over several messages (segmented message)
+  if (1 != (ret=testWaitForDiagRequestSent(req, tRequestTimeout))) { 
+    snprintf(gResultString, elcount(gResultString), "Failed to finish sending the request (Return code=%d)!", ret);
+    CreateActualExpectedTable ("Request was sent successfully.", gResultString);
+    testStepFail(0, "", table);
+    return 0;
+  }
+  snprintf(gResultString, elcount(gResultString), "Request was sent successfully.");
+  CreateActualExpectedTable ("Request was sent successfully.", gResultString);
+  testStepPass(0,"",table);
+  
+  if (!diagFctWaitForResponse(req, posResponseExpected, tRequestTimeout)) 
+    return 0;
+  
+  return 1;
+}
+
+ 
+  

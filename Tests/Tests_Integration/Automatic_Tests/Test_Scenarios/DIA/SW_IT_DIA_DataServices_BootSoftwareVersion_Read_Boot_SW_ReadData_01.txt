@@ -1,0 +1,61 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0380; ARCH_SW_DIA_0381; ARCH_SW_DIA_0382; ARCH_SW_DIA_0383; ARCH_SW_DIA_0477; ARCH_SW_DIA_0478; ARCH_SW_DIA_0479;
+ARCH_SW_DIA_0477: DataIdentifier shall be 0xF153
+ARCH_SW_DIA_0478: The DID shall be available in the following sessions: â¦Default Session â¦Programming â¦Extended session â¦Update Session â¦Development Session
+ARCH_SW_DIA_0479: This service shall be available under the following forms of Authentication: â¦Supplier â¦Development ENHANCED â¦Production â¦After-Sales ENHANCED â¦After-Sales â¦After-Sales BASIC â¦Internal Diagnostic Test Tool â¦ePTI Test Tool
+ARCH_SW_DIA_0381: Response data shall be 3 bytes long
+ARCH_SW_DIA_0382: Byte 0 of the positive response shall represent the year when the Boot SW was designed.
+ARCH_SW_DIA_0383: Byte 1 of the positive response shall represent the week when the Boot SW was designed.
+ARCH_SW_DIA_0384: Byte 2 of the positive response shall represent the current patch level of the Boot SW.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_BootSoftwareVersion_Read_Boot_SW_patch_level_ReadData*.
+
+Action: ARCH_SW_DIA_0380; ARCH_SW_DIA_0381; ARCH_SW_DIA_0382; ARCH_SW_DIA_0383; ARCH_SW_DIA_0477; ARCH_SW_DIA_0478; ARCH_SW_DIA_0479;
+
+	Step 3: Send diag request for 22 F1 53 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_BootSoftwareVersion_Read_Boot_SW_patch_level_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0380; ARCH_SW_DIA_0381; ARCH_SW_DIA_0382; ARCH_SW_DIA_0383
+
+	Step 6: Send diag request for 22 F1 53 
+		Expected result:  Timeout received.
+
+	Step 7: Check if breakpoint from function DataServices_BootSoftwareVersion_Read_Boot_SW_patch_level_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 8: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0380; ARCH_SW_DIA_0381; ARCH_SW_DIA_0382; ARCH_SW_DIA_0383; ARCH_SW_DIA_0477; ARCH_SW_DIA_0478; ARCH_SW_DIA_0479
+
+	Step 9: Send diag request for 22 F1 53 
+		Expected result:  Timeout received.
+
+	Step 10: Check if breakpoint from function DataServices_BootSoftwareVersion_Read_Boot_SW_year_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 11: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 12: Return ECU to default values

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_OS_00200, ARCH_SW_OS_00201, ARCH_SW_OS_00202
+ARCH_SW_OS_00200: The vHsmResponseIsr shall have the highest priority.
+ARCH_SW_OS_00201: The CounterIsr_SystemTimer shall have the lowest priority.
+ARCH_SW_OS_00202: The CanIsr_1  interrupt function shall be defined at OS configuration level.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_OS_00200
+
+	Step 2: Check 'vHsmResponseIsr' priority. is 1 
+		Expected result:  True
+
+Action: ARCH_SW_OS_00201
+
+	Step 3: Check 'CounterIsr_SystemTimer '  priority. is 50 
+		Expected result:  True
+
+Action: ARCH_SW_OS_00202
+
+	Step 4: Check 'CanIsr_1  interrupt ' priority. is 60 
+		Expected result:  True
+
+Postcondition
+
+	Step 5: Return ECU to default values

@@ -1,0 +1,1548 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script><script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script><script>
+					$(function() {    $( "#tabs" ).tabs();  });
+
+				</script>
+        <style type="text/css">
+					body {font-family: Verdana,Arial,sans-serif;font-size:8pt;}
+					table { width:100%; font-family: Verdana,Arial,sans-serif;font-size:8pt; empty-cells="show"}
+					td { vertical-align:top; overflow:hidden }
+					th {border:1px; background-color:#EFF8FB}
+					tr {border:1px; solid #000}
+					trd {background-color:#EFF8FB }
+					
+				</style>
+    </head>
+    <body>
+        <div id="accordion">
+            <h3 style="font-size:200%">Session_Handling_InvalidApplication_Flashable</h3>
+            <div>
+                <p>
+                    <table>
+                        <tr>
+                            <td style="width:50%;border:solid 0.1mm grey">
+                                <table style="border-spacing:5px">
+                                    <tr>
+                                        <td style="width:25%"></td><td></td>
+                                    </tr>
+                                    <tr style="background-color:#E8E8E8">
+                                        <td>Test date: </td><td>2024/04/05 09:26:22</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tester Type: </td><td>DTS9 Monaco</td>
+                                    </tr>
+                                    <tr style="background-color:#E8E8E8">
+                                        <td>User ID: </td><td>g-rbe.electronics</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Version: </td><td>DRTS_V1_04_002</td>
+                                    </tr>
+                                    <tr style="background-color:#E8E8E8">
+                                        <td>Environment: </td><td>standAloneECU (UDS_CAN_INT_RBTMFL174)</td>
+                                    </tr>
+                                    <tr>
+                                        <td>SMR-d Version: </td><td>RBTMFL174_06.09.05_SMR-D.smr-d</td>
+                                    </tr>
+                                    <tr style="background-color:#E8E8E8">
+                                        <td>Zenzefi Version: </td><td>1.121.1.0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Test Tool: </td><td>OTX-Diagnostic</td>
+                                    </tr>
+                                    <tr style="background-color:#E8E8E8">
+                                        <td>Globals Version: </td><td>21.46.05</td>
+                                    </tr>
+                                    <tr>
+                                        <td>PDU-API: </td><td>   VCI: VN1611 000014045, Version: EDIC_D_PDU_API_11_30_058</td>
+                                    </tr>
+                                    <tr style="background-color:#E8E8E8">
+                                        <td>DTS Version: </td><td>9.03.023</td>
+                                    </tr>
+                                </table>
+                            </td><td style="width:10%"></td><td style="width:50%">
+                                <table border="1" style="width:25%">
+                                    <tr>
+                                        <th>TestStep Colors</th>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color:#E8E8E8">testStep for all ECUs</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color:#FFFFFF">testStep for single ECU</td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </p>
+            </div>
+            <div>
+                <p></p>
+            </div>
+        </div>
+        <div id="Summary">
+            <h2 style="text-align:center">Summary</h2>
+            <table>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#Execute Preconditions">Execute Preconditions</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#TestCase_Prepare_Sequence">TestCase_Prepare_Sequence</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#TC_Set_ECU_to_Invalid_App.stx">TC_Set_ECU_to_Invalid_App.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC01_Reset_Invalid_App_from_Rep_SW_to_Default_session.stx">SHIV_TC01_Reset_Invalid_App_from_Rep_SW_to_Default_session.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC02_Reset_Invalid_App_from_Rep_SW_to_ECU_Reset.stx">SHIV_TC02_Reset_Invalid_App_from_Rep_SW_to_ECU_Reset.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC03_Reset_Invalid_App_from_Rep_SW_to_Ext_Diag_session.stx">SHIV_TC03_Reset_Invalid_App_from_Rep_SW_to_Ext_Diag_session.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC04_Reset_Invalid_App_from_Rep_SW_to_Prog_session.stx">SHIV_TC04_Reset_Invalid_App_from_Rep_SW_to_Prog_session.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC05_Test_for_S3_Timeout_in_Reprogramming_software.stx">SHIV_TC05_Test_for_S3_Timeout_in_Reprogramming_software.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC06_StartUp_App_Invalid.stx">SHIV_TC06_StartUp_App_Invalid.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC07_StartUp_App_Invalid_Default_Session.stx">SHIV_TC07_StartUp_App_Invalid_Default_Session.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC08_StartUp_App_Invalid_Non_Default_Session.stx">SHIV_TC08_StartUp_App_Invalid_Non_Default_Session.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC09_StartUp_App_Invalid_Prog_Session.stx">SHIV_TC09_StartUp_App_Invalid_Prog_Session.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#SHIV_TC10_StartUp_App_Invalid_Reprog_ECU_Reset.stx">SHIV_TC10_StartUp_App_Invalid_Reprog_ECU_Reset.stx</a></td>
+                </tr>
+                <tr style="background-color:#AAFFAA">
+                    <td><a href="#TC_Flash_Valid_App.stx">TC_Flash_Valid_App.stx</a></td>
+                </tr>
+            </table>
+        </div>
+        <div id="Initialisation">
+            <br>
+            <br>
+            <br>
+        </div>
+        <div id="tabs" style="border:thin dashed grey" width="100%">
+            <h2 style="text-align:center"> ECUs </h2>
+            <ul>
+                <li>
+                    <a href="#UDS_CAN_INT_RBTMFL174">RBTMFL174 [CAN]</a>
+                </li>
+            </ul>
+            <div id="UDS_CAN_INT_RBTMFL174">
+                <h3 id="Execute Preconditions">Execute Preconditions</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td>Check if ECU fulfill  preconditions (e.g. is flashable or not).</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px"></p>
+                <h3 id="TestCase_Prepare_Sequence">TestCase_Prepare_Sequence</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td>Preparing the sequence before test execution. Checking ECU in valid application for testing.</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Open ComChannel without security job</td><td>1712298405126</td><td>ComChannel should be successfully opened</td><td></td><td>ComChannel successfully opened</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Start communication</td><td>1712298405522</td><td>Communication successfully started</td><td></td><td>Variant: RBTMFL174_Bootloader</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>Get all flashwares(smr-f) of ECU</td><td>1712298405867</td><td>Minimum one flashware(smr-f) found</td><td></td><td>1749025702_001_234900,1749041800_001_241500,1749025500_001_241500,</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="TC_Set_ECU_to_Invalid_App.stx">TC_Set_ECU_to_Invalid_App.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td>Checking ECU for invalid application for testing. If not ECU shall be interrupted during flash. If interrupt is not working, ECU shall be flashed with Wrong Signature [Flashware(smr-f) required for ECU flashing]. User provided Regex will be used for interruption incase SDG contains the value. SDG Used: Test_Meta_Data</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Check for invalid application in ECU [if not ECU shall be interrupted during flash] </td><td>1712298416456</td><td>$62 F1 00 01 xx xx  xx and check response Byte 4 =0x01. This step is performed to check if the ECU is in invalid application.</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td><td></td><td>ECU state: invalid application</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC01_Reset_Invalid_App_from_Rep_SW_to_Default_session.stx">SHIV_TC01_Reset_Invalid_App_from_Rep_SW_to_Default_session.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-47, DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td><td>DRECU-I-TS-520</td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298427050</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Switch to Reprogramming Extended Diagnostic Session</td><td>1712298427513</td><td>ECU responds positively to the session change request $50 03 xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298427536</td><td>$62 F1 00 01 xx xx  03 and check response Byte 4 =0x01 and Byte7 = 0x03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Switch to Default Session</td><td>1712298427576</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Default Session</td><td>1712298427653</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in the Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC02_Reset_Invalid_App_from_Rep_SW_to_ECU_Reset.stx">SHIV_TC02_Reset_Invalid_App_from_Rep_SW_to_ECU_Reset.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td><td>DRECU-I-TS-516</td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Execute service Hard_Reset</td><td>1712298438293</td><td>Execute a Hard reset on ECU</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>2</td><td></td><td>1712298444815</td><td>Nothing expected</td><td></td><td>6000 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298444824</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Switch to Reprogramming Extended Diagnostic Session</td><td>1712298445279</td><td>Response $50 03 xx xx xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298445301</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298445323</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>7</td><td>Execute service Hard_Reset</td><td>1712298445335</td><td>Execute a Hard reset on ECU</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>8</td><td>ECU in Default Session</td><td>1712298445857</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in the Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>9</td><td>Switch to Default Session</td><td>1712298445897</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>10</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298445980</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC03_Reset_Invalid_App_from_Rep_SW_to_Ext_Diag_session.stx">SHIV_TC03_Reset_Invalid_App_from_Rep_SW_to_Ext_Diag_session.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-47, DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td><td>DRECU-I-TS-524</td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298456659</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Switch to Reprogramming Extended Diagnostic Session</td><td>1712298457110</td><td>Response $50 03 xx xx xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298457122</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>ECU in Reprogramming Programming Session</td><td>1712298457570</td><td>Positive Response from ECU indicating that the ECU is executed the Reprogramming Software in Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Reprogramming Programming Session</td><td>1712298457594</td><td>Positive Response from ECU indicating that the ECU is executed the Reprogramming Software in Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>Switch to Reprogramming Extended Diagnostic Session</td><td>1712298457634</td><td>Response $50 03 xx xx xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>7</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298457656</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>8</td><td>Switch to Default Session</td><td>1712298457694</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>9</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298457772</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC04_Reset_Invalid_App_from_Rep_SW_to_Prog_session.stx">SHIV_TC04_Reset_Invalid_App_from_Rep_SW_to_Prog_session.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-46, DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td><td>DRECU-I-TS-528</td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Execute service Hard_Reset</td><td>1712298468548</td><td>Execute a Hard Reset on ECU</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>2</td><td></td><td>1712298475174</td><td>Nothing expected</td><td></td><td>6000 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298475183</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Switch to Reprogramming Extended Diagnostic Session</td><td>1712298475642</td><td>Response $50 03 xx xx xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298475665</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298475688</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>7</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298475701</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>8</td><td>ECU in Reprogramming Programming Session</td><td>1712298476153</td><td>Positive Response from ECU indicating that the ECU is executed the Reprogramming Software in Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>9</td><td>Switch to Default Session</td><td>1712298476191</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>10</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298476270</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC05_Test_for_S3_Timeout_in_Reprogramming_software.stx">SHIV_TC05_Test_for_S3_Timeout_in_Reprogramming_software.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td>SDG Used: Diagnostic_Bus_Interface</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td><td>Tw/oDR-TS-89</td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298487036</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>SET [COMPARAM] : CP_TesterPresentHandling of physical link to 'Disabled'</td><td>1712298487066</td><td></td><td>CP_TesterPresentHandling: Disabled</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298487075</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>ECU in Reprogramming Programming Session</td><td>1712298487514</td><td>Positive Response from ECU indicating that the ECU is executed the Reprogramming Software in Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>5</td><td>Wait for 4.5 seconds without sending request.</td><td>1712298492015</td><td>No expectation</td><td></td><td>4500 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>ECU in Reprogramming Programming Session</td><td>1712298492033</td><td>Positive Response from ECU indicating that the ECU is executed the Reprogramming Software in Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>7</td><td>Wait for S3 Timeout</td><td>1712298497236</td><td>No expectation</td><td></td><td>5200 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>8</td><td>ECU in Reprogramming Default Session</td><td>1712298497256</td><td>Positive Response from ECU indicating that the ECU is currently in the Reprogramming Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>9</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298497269</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>10</td><td>Switch to Extended Diagnostic Session</td><td>1712298497737</td><td>ECU responds positively to the session change request $50 03 xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>11</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298497761</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>12</td><td>Following steps are performed to send functional tester present - 3E 80</td><td>1712298497775</td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>13</td><td>SET [COMPARAM] : CP_TesterPresentaddrMode of physical logical link to 'Functional'</td><td>1712298497793</td><td></td><td>CP_TesterPresentAddrMode: Functional</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>14</td><td>Set CP_TesterPresentMessage to 0x3E80</td><td>1712298497812</td><td>Successfully set CP_TesterPresentMessage of physical logical link to 0x3E80</td><td>Parametername: CP_TesterPresentMessage</td><td>Parametervalue: 0x3E80</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>15</td><td>SET [COMPARAM] : CP_TesterPresentReqResp of physical logical link to 'No response'</td><td>1712298497830</td><td></td><td>CP_TesterPresentReqRsp: No response</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>16</td><td>SET [COMPARAM] : CP_TesterPresentSendType of physical logical link to 'Periodic'</td><td>1712298497848</td><td></td><td>CP_TesterPresentSendType: Periodic</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>17</td><td>SET [COMPARAM] : CP_TesterPresentHandling of physical link to 'Enabled'</td><td>1712298497864</td><td></td><td>CP_TesterPresentHandling: Enabled</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>18</td><td>Periodically send a "Functional Tester Present" Request to the ECU before the expiry of S3 Timeout</td><td>1712298504774</td><td>No expectation</td><td></td><td>7000 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>19</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298504793</td><td>Positive Response from ECU indicating that the ECU is currently in the Reprogramming Software Non Default Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>20</td><td>Following steps are perfomed to revert the changed ComPrimitive values of physical logical link</td><td>1712298504806</td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>21</td><td>SET [COMPARAM] : CP_TesterPresentaddrMode of physical logical link to 'Functional'</td><td>1712298504824</td><td></td><td>CP_TesterPresentAddrMode: Functional</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>22</td><td>Set CP_TesterPresentMessage to 0x3E80</td><td>1712298504843</td><td>Successfully set CP_TesterPresentMessage of physical logical link to 3E80</td><td>Parametername: CP_TesterPresentMessage</td><td>Parametervalue: 0x3E80</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>23</td><td>SET [COMPARAM] : CP_TesterPresentReqResp of physical logical link to 'No response'</td><td>1712298504862</td><td></td><td>CP_TesterPresentReqRsp: No response</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>24</td><td>SET [COMPARAM] : CP_TesterPresentSendType of physical logical link to 'Periodic'</td><td>1712298504880</td><td></td><td>CP_TesterPresentSendType: Periodic</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>25</td><td>SET [COMPARAM] : CP_TesterPresentHandling of physical link to 'Disabled'</td><td>1712298504896</td><td></td><td>CP_TesterPresentHandling: Disabled</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>26</td><td>Switch to Extended Diagnostic Session</td><td>1712298504930</td><td>ECU responds positively to the session change request $50 03 xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>27</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298504952</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>28</td><td>Wait for 4.5 seconds without sending request.</td><td>1712298509455</td><td>No expectation</td><td></td><td>4500 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>29</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298509474</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>30</td><td>Wait for S3 Timeout</td><td>1712298514679</td><td>No expectation</td><td></td><td>5200 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>31</td><td>ECU in Reprogramming Default Session</td><td>1712298514698</td><td>Positive Response from ECU indicating that the ECU is currently in the Reprogramming Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>32</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298514711</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>33</td><td>Switch to Extended Diagnostic Session</td><td>1712298515186</td><td>ECU responds positively to the session change request $50 03 xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>34</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298515208</td><td>Positive Response from ECU indicating that the ECU is executing the Reprogramming Software in Extended Diagnostic Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>35</td><td>Following steps are performed to send functional tester present - 3E 80</td><td>1712298515222</td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>36</td><td>SET [COMPARAM] : CP_TesterPresentaddrMode of physical logical link to 'Functional'</td><td>1712298515240</td><td></td><td>CP_TesterPresentAddrMode: Functional</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>37</td><td>Set CP_TesterPresentMessage to 0x3E80</td><td>1712298515259</td><td>Successfully set CP_TesterPresentMessage of physical logical link to 0x3E80</td><td>Parametername: CP_TesterPresentMessage</td><td>Parametervalue: 0x3E80</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>38</td><td>SET [COMPARAM] : CP_TesterPresentReqResp of physical logical link to 'No response'</td><td>1712298515277</td><td></td><td>CP_TesterPresentReqRsp: No response</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>39</td><td>SET [COMPARAM] : CP_TesterPresentSendType of physical logical link to 'Periodic'</td><td>1712298515295</td><td></td><td>CP_TesterPresentSendType: Periodic</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>40</td><td>SET [COMPARAM] : CP_TesterPresentHandling of physical link to 'Enabled'</td><td>1712298515311</td><td></td><td>CP_TesterPresentHandling: Enabled</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="#E8E8E8">
+                            <td>41</td><td>Periodically send a "Functional Tester Present" Request to the ECU before the expiry of S3 Timeout</td><td>1712298522221</td><td>No expectation</td><td></td><td>7000 ms</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>42</td><td>ECU in Reprogramming Extended Diagnostic Session</td><td>1712298522241</td><td>Positive Response from ECU indicating that the ECU is currently in the Reprogramming Software Non Default Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>43</td><td>Following steps are perfomed to revert the changed ComPrimitive values of physical logical link</td><td>1712298522256</td><td></td><td></td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>44</td><td>SET [COMPARAM] : CP_TesterPresentaddrMode of physical logical link to 'Functional'</td><td>1712298522274</td><td></td><td>CP_TesterPresentAddrMode: Functional</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>45</td><td>Set CP_TesterPresentMessage to 0x3E80</td><td>1712298522293</td><td>Successfully set CP_TesterPresentMessage of physical logical link to 3E80</td><td>Parametername: CP_TesterPresentMessage</td><td>Parametervalue: 0x3E80</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>46</td><td>SET [COMPARAM] : CP_TesterPresentReqResp of physical logical link to 'No response'</td><td>1712298522312</td><td></td><td>CP_TesterPresentReqRsp: No response</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>47</td><td>SET [COMPARAM] : CP_TesterPresentSendType of physical logical link to 'Periodic'</td><td>1712298522331</td><td></td><td>CP_TesterPresentSendType: Periodic</td><td></td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>48</td><td>Switch to Default Session</td><td>1712298522367</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>49</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298522443</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC06_StartUp_App_Invalid.stx">SHIV_TC06_StartUp_App_Invalid.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Switch to Default Session</td><td>1712298533404</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298533481</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>ECU in BootLoader Default Session</td><td>1712298533505</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Switch to Default Session</td><td>1712298533545</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298533622</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC07_StartUp_App_Invalid_Default_Session.stx">SHIV_TC07_StartUp_App_Invalid_Default_Session.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Switch to Default Session</td><td>1712298544599</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298544678</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>ECU in Bootloader Default Session</td><td>1712298544702</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Switch to Default Session</td><td>1712298544741</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Bootloader Default Session</td><td>1712298544819</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC08_StartUp_App_Invalid_Non_Default_Session.stx">SHIV_TC08_StartUp_App_Invalid_Non_Default_Session.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Switch to Default Session</td><td>1712298555801</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298555877</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>ECU in Bootloader Default Session</td><td>1712298555899</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Switch to Extended Diagnostic Session</td><td>1712298555939</td><td>ECU responds positively to the session change request $50 03 xx xx</td><td>0x10 03</td><td>0x50 03 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Bootloader Extended Diagnostic Session</td><td>1712298555961</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Extended Diagnostics Session $62 F1 00 01 xx xx 03</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 03</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298555974</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>7</td><td>ECU in Bootloader Programming Session</td><td>1712298556434</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>8</td><td>Switch to Default Session</td><td>1712298556472</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>9</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298556548</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC09_StartUp_App_Invalid_Prog_Session.stx">SHIV_TC09_StartUp_App_Invalid_Prog_Session.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Switch to Default Session</td><td>1712298567652</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298567729</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>ECU in Bootloader Default Session</td><td>1712298567752</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>DIAGSERVICE [Programming_Start]</td><td>1712298567765</td><td>ECU responds positively to the session change request $50 02 xx xx</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Bootloader Programming Session</td><td>1712298568206</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Programming Session $62 F1 00 01 xx xx 02</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 02</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>Switch to Default Session</td><td>1712298568245</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>7</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298568322</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="SHIV_TC10_StartUp_App_Invalid_Reprog_ECU_Reset.stx">SHIV_TC10_StartUp_App_Invalid_Reprog_ECU_Reset.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td>DDS2016: DRECU-I-445 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2018: DRECU-I-564, DRECU-I-565 </td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td></td><td>DDS2020: DRECU-I-564, DRECU-I-565</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td><td>DRECU-I-TS-426</td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Switch to Default Session</td><td>1712298579362</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298579449</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>ECU in Bootloader Default Session</td><td>1712298579472</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Execute service Hard_Reset</td><td>1712298579484</td><td>Execute a Hard reset on ECU</td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td>outParameter</td><td>Name: Status</td><td>Value: success</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>ECU in Bootloader Default Session</td><td>1712298581032</td><td>Positive Response from ECU indicating that the ECU is currently in the Bootloader Default Session $62 F1 00 01 xx xx 01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>Switch to Default Session</td><td>1712298581071</td><td>ECU responds positively to the session change request $50 01 xx xx</td><td>0x10 01</td><td>0x50 01 00 14 00 C8</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>7</td><td>Checking if ECU is running in Reprogramming SW Default Session</td><td>1712298581148</td><td>$62 F1 00 01 xx xx  01 and check response Byte 4 =0x01 and Byte7 = 0x01</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3 id="TC_Flash_Valid_App.stx">TC_Flash_Valid_App.stx</h3>
+                <table style="border-spacing:5px ; border:solid 0.1mm grey">
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Result: </td><td>passed</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Description: </td><td>Checking and updating ECU back to valid application (Flashsession required for ECU Flashing)</td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Specification Reference: </td><td></td>
+                    </tr>
+                    <tr style="background-color:#E8E8E8">
+                        <td width="10%">Doors ID: </td>
+                    </tr>
+                </table>
+                <div>
+                    <p></p>
+                </div>
+                <div></div>
+                <p style="text-align:left; margin-left:0px; margin-top:30px">
+                    <table border="1">
+                        <tr>
+                            <th>Step</th><th>TestStepID</th><th>Time</th><th width="30%">TestStep description/ Parameter type</th><th>Input/Name</th><th>Output/Value/Errors</th>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td><td>Check for Active Diagnostic Session in order to flash back the ECU</td><td>1712298592228</td><td>$62 F1 00 00 xx xx xx and check response Byte 4 = 0x00. This step is performed to check if the ECU is in valid application, if not ECU will be flashed back</td><td>0x22 F1 00</td><td>0x62 F1 00 01 02 05 01</td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td><td></td><td>ECU state: invalid application</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td><td>Flash [1749025702_001_234900]In normal mode</td><td>1712298633888</td><td>The ECU should be in valid application at the end of this test case</td><td>Session:1749025702_001_234900</td><td>Successful</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>3</td><td>Flash [1749041800_001_241500]In normal mode</td><td>1712298667352</td><td>The ECU should be in valid application at the end of this test case</td><td>Session:1749041800_001_241500</td><td>Successful</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>4</td><td>Flash [1749025500_001_241500]In normal mode</td><td>1712298718004</td><td>The ECU should be in valid application at the end of this test case</td><td>Session:1749025500_001_241500</td><td>Successful</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>5</td><td>Check for Active Diagnostic Session after the flash back of ECU</td><td>1712298718644</td><td>$62 F1 00 00 xx xx xx and check response Byte 4 = 0x00. This step is performed to check if the ECU is in valid application after flashback.</td><td>0x22 F1 00</td><td>0x62 F1 00 00 02 0A 03</td>
+                        </tr>
+                        <tr>
+                            <td></td><td></td><td></td><td></td><td></td><td>ECU state: valid application</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                        <tr>
+                            <td>6</td><td>Verifying flashback of ECU</td><td>1712298718657</td><td>ECU should be in valid application after successful flashback</td><td></td><td>ECU flashback verification successful</td>
+                        </tr>
+                        <tr bgcolor="grey">
+                            <td></td><td></td><td></td><td></td><td></td><td></td>
+                        </tr>
+                    </table>
+                </p>
+                <h3>ECU Identification</h3>
+                <table border="1">
+                    <tr>
+                        <th>Parameter</th><th>Value</th>
+                    </tr>
+                    <tr bgcolor="grey">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1" style="background-color:#E8E8E8">
+                        <td>hardware</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>partnumber</td><td>0000000000</td>
+                    </tr>
+                    <tr border="1">
+                        <td>version</td><td>23/17.01</td>
+                    </tr>
+                    <tr border="1">
+                        <td>variantName</td><td>RBTMFL174_Bootloader</td>
+                    </tr>
+                    <tr border="1">
+                        <td>supplierID</td><td>0x0077</td>
+                    </tr>
+                    <tr border="1">
+                        <td>supplierName</td><td>Autoliv</td>
+                    </tr>
+                    <tr bgcolor="grey">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1" style="background-color:#E8E8E8">
+                        <td>software</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>typ</td><td>Application</td>
+                    </tr>
+                    <tr border="1">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>diagVersion</td><td>0x010205</td>
+                    </tr>
+                    <tr bgcolor="grey">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1" style="background-color:#E8E8E8">
+                        <td>software</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>typ</td><td>bootloader</td>
+                    </tr>
+                    <tr border="1">
+                        <td>version</td><td>24/15.00</td>
+                    </tr>
+                    <tr bgcolor="grey">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1" style="background-color:#E8E8E8">
+                        <td>software</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>typ</td><td>Boot</td>
+                    </tr>
+                    <tr border="1">
+                        <td>SupplierID</td><td>0x008B</td>
+                    </tr>
+                    <tr border="1">
+                        <td>SupplierName</td><td>Vector</td>
+                    </tr>
+                    <tr border="1">
+                        <td>partnumber</td><td>1749041800</td>
+                    </tr>
+                    <tr border="1">
+                        <td>version</td><td>24/15.00</td>
+                    </tr>
+                    <tr border="1">
+                        <td>DiagnosticVersion</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>ECUOrigin</td><td></td>
+                    </tr>
+                    <tr bgcolor="grey">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1" style="background-color:#E8E8E8">
+                        <td>software</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>typ</td><td>Code</td>
+                    </tr>
+                    <tr border="1">
+                        <td>SupplierID</td><td>0x0077</td>
+                    </tr>
+                    <tr border="1">
+                        <td>SupplierName</td><td>Autoliv</td>
+                    </tr>
+                    <tr border="1">
+                        <td>partnumber</td><td>1749025500</td>
+                    </tr>
+                    <tr border="1">
+                        <td>version</td><td>00/00.00</td>
+                    </tr>
+                    <tr border="1">
+                        <td>DiagnosticVersion</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>ECUOrigin</td><td></td>
+                    </tr>
+                    <tr bgcolor="grey">
+                        <td></td><td></td>
+                    </tr>
+                    <tr border="1" style="background-color:#E8E8E8">
+                        <td>software</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>typ</td><td>Code</td>
+                    </tr>
+                    <tr border="1">
+                        <td>SupplierID</td><td>0x008B</td>
+                    </tr>
+                    <tr border="1">
+                        <td>SupplierName</td><td>Vector</td>
+                    </tr>
+                    <tr border="1">
+                        <td>partnumber</td><td>1749025702</td>
+                    </tr>
+                    <tr border="1">
+                        <td>version</td><td>23/49.00</td>
+                    </tr>
+                    <tr border="1">
+                        <td>DiagnosticVersion</td><td></td>
+                    </tr>
+                    <tr border="1">
+                        <td>ECUOrigin</td><td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

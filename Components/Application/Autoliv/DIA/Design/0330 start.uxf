@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>30</y>
+      <w>1221</w>
+      <h>793</h>
+    </coordinates>
+    <panel_attributes>title:0330 Start
+Start
+If
+	[(ZERO != typeOfTensioningCycle) &amp;&amp; \ (KU8_TWENTYFIVE &gt;= typeOfTensioningCycle)]
+	Filter LUT for finding cycle to execute \  accoring to typeOfTensioningCycle
+	If
+		[KU8_START_CYCLE_MAXIMUM_TRY &gt; \pendingCounter]
+		Get currently executed cycle
+		If
+			[(requestedCycle == currentlyExecCycle) &amp;&amp; \(requestedCycle != NO_CYCLE)]
+			routineInfo = KU8_ROUTINE_IN_PROGRESS
+			ret = OK
+			pendingCounter = 0
+			*Result = ROUTINE_STILL_RUNNING
+			       Write routine status, \  time to run and requested \cycle on RTE for debouncing
+	
+			If
+				[0 == pendingCounter]
+				If
+					[requestedCycle not supported]
+					*ErrorCode = DCM_E_CONDITIONSNOTCORRECT
+					ret = NOT_OK
+					pendingCounter = 0 
+					*Result = ROUTINE_STOPPED_WITHOUT_RESULT;
+	
+					Set requested cycle to \ROUTINE_TRIGGER_BSR_CYCLE
+					OpStatus = PENDING
+					Incerement pendingCounter
+					ret = PENDING
+				EndIf
+					
+				OpStatus = PENDING
+				Incerement pendingCounter
+				ret = PENDING
+			EndIf
+		EndIf
+		
+		pendingCounter = 0 
+		Set requested cycle to NO_CYCLE
+		ErrorCode = DCM_E_CONDITIONSNOTCORRECT
+		ret = NOT_OK
+		*Result = ROUTINE_STOPPED_WITHOUT_RESULT;
+		
+	EndIf
+
+	*ErrorCode = DCM_E_REQUESTOUTOFRANGE
+	ret = NOT_OK
+	*Result = ROUTINE_STOPPED_WITHOUT_RESULT
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

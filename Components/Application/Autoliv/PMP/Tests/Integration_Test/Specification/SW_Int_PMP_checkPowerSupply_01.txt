@@ -1,0 +1,66 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_1000, ARCH_SW_PMP_1001, ARCH_SW_PMP_1005, ARCH_SW_PMP_1007, ARCH_SW_PMP_1008
+ARCH_SW_PMP_1000: PMP shall check if an overvoltage is detected on the power stage of the battery voltage.
+ARCH_SW_PMP_1001: NVP parameters shall be used by this auto-tests .
+ARCH_SW_PMP_1005: PMP_runGetBatteryVoltage_100ms shall be called to get the measured value on the power supply.
+ARCH_SW_PMP_1007: ATM_runGetTestResult shall be called to get the status oft specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PMP_1008: ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+	Step 4: Set breakpoint in function atm_executeAutoTest().
+
+	Step 5: Set variable cau32InhibitingModes[0] to 0.
+
+	Step 6: Set variable cau32InhibitingModes[1] to 0.
+
+	Step 7: Set variable cau32InhibitingModes[2] to 0.
+
+	Step 8: Set variable cau32InhibitingModes[3] to 0.
+
+Action: ARCH_SW_PMP_1001, ARCH_SW_PMP_1008
+
+	Step 9: Check if varibale u8InhibModesIndex from function atm_executeAutoTest() is 0. 
+		Expected result:  0
+
+Action: ARCH_SW_PMP_1007
+
+	Step 10: Step in Rte_Call_pclModeManagement_CheckModeStatus(cau32InhibitingModes[u8InhibModesIndex], &u8InhibitingContextStatus);. 
+		Expected result:  True
+
+	Step 11: Set breakpoint in function MMG_runCheckModeStatus() at line 38.
+
+	Step 12: Run the debugger
+
+Action: ARCH_SW_PMP_1001
+
+	Step 13: Check if CPU stoppped at the breakpoint in the function PMP_Autotest_CheckPowerSupplyOV() at function line 0. 
+		Expected result:  True
+
+Action: ARCH_SW_PMP_1000
+
+	Step 14: Check if CPU stoppped at the breakpoint in the function PMP_Autotest_CheckPowerSupplyOV() at line u8AecStatusType pmp_u8AECBatteryOVStatus = ERH_KU8_AEC_QUALIFIED_STATUS_MASK;.
+
+Action: ARCH_SW_PMP_1005
+
+	Step 15: Check if CPU stoppped at the breakpoint in the function PMP_Autotest_CheckPowerSupplyOV() at line PMP_runGetBatteryVoltage_100ms(&pmp_u16FilteredVbatPowerVoltage);. 
+		Expected result:  True
+
+Postcondition
+
+	Step 16: Return ECU to default values

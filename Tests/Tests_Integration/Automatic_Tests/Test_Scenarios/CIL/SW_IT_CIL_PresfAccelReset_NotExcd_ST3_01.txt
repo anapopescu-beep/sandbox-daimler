@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0004, ARCH_SW_CIL_0026
+ARCH_SW_CIL_0004: Signal PresfAccelReset_NotExcd_ST3 shall be send though application when it�s needed.
+ARCH_SW_CIL_0026: If value for PresfAccelReset_NotExcd_ST3 is not 2 (is 0 or ,1) the the release cycle will not be executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PresfAccelReset_NotExcd_ST3 to KU8_ONE.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInhibitConditions at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_AccLowInhibition);'.
+
+Action: ARCH_SW_CIL_0026
+
+	Step 6: Check if CPU stopped in function cil_ManageInhibitConditions at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_AccLowInhibition);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0004
+
+	Step 7: Read variable cil_stPresfActAdjFrame.PresfAccelReset_NotExcd_ST3 
+		Expected result:  KU8_ONE.
+
+Postcondition
+
+	Step 8: Return ECU to default values

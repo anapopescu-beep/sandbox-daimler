@@ -1,0 +1,45 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0002, ARCH_SW_ATM_0003
+ARCH_SW_ATM_0002: Each autotest shall return a result and report it to the rest of the application.
+ARCH_SW_ATM_0003: The Main entry for execution of Autotest is ATM_runMainFunction.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in ATM_runMainFunction() function at line atm_PlayOneShotTests();.
+
+Action:ARCH_SW_ATM_0003
+
+	Step 3: Check if CPU is stopped at the breakpoint in ATM_runMainFunction() function at line 'atm_PlayOneShotTests();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Stept in atm_PlayOneShotTests() function. 
+		Expected result:  Stepped in function atm_PlayCyclicTests
+
+	Step 5: Set a breakpoint in atm_PlayOneShotTests() function at line 'switch (atm_au8AtStatuses[u8AutotestID])'.
+
+Action: ARCH_SW_ATM_0003
+
+	Step 6: Check if CPU is stopped at the breakpoint in atm_PlayOneShotTests() function at line switch (atm_au8AtStatuses[u8AutotestID]). 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in PAL_Autotest_CheckMotorConnection() at line Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult);.
+
+Action: ARCH_SW_ATM_0002
+
+	Step 8: Check if CPU is stopped at PAL_Autotest_CheckMotorConnection() at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

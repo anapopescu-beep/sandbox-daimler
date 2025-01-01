@@ -1,0 +1,76 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0382, ARCH_SW_PAL_0381, ARCH_SW_PAL_0390, ARCH_SW_PAL_0391, ARCH_SW_PAL_0392, ARCH_SW_PAL_0393
+ARCH_SW_PAL_0382: The component shall check if a high PWM duty cycle will not be applied for a too long time.
+ARCH_SW_PAL_0381: The current executed data from BFE shall be an input.
+ARCH_SW_PAL_0390: The ERH_runGetAecStatus function shall be called to get the motor Order AEC status.
+ARCH_SW_PAL_0391: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).S
+ARCH_SW_PAL_0392: MMG_runCheckModeStatus shall be called to get the context status.
+ARCH_SW_PAL_0393: Rte_Read_prrExecutedCycle_u8CycleNumber shall be called to check if no PRO cycle is running.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0382, ARCH_SW_PAL_0381, ARCH_SW_PAL_0393
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckMotorPowerOrder at the RTE Call for CheckMotorPowerOrder autotest 
+		Expected result:  BP reached.
+
+	Step 4: Step in.
+
+	Step 5: Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the RTE call for ERH_runGetAecStatus 
+		Expected result:  BP reached.
+
+	Step 6: Read *AecStatus 
+		Expected result:  Local variable read.
+
+	Step 7: Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the RTE call for GetTestResult 
+		Expected result:  BP reached.
+
+	Step 8: Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the RTE call for MMG_runCheckModeStatus 
+		Expected result:  BP reached.
+
+	Step 9: Read *ModeStatus 
+		Expected result:  Local variable read.
+
+	Step 10: Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 11: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0391
+
+	Step 12: Evaluate MotorOrderEventStatus 
+		Expected result:  Variable equal to *pu8AecStatus data pointer.
+
+Action: ARCH_SW_PAL_0390
+
+	Step 13: Evaluate PreviousADCTestResult 
+		Expected result:  Variable equal to 0x1.
+
+Action: ARCH_SW_PAL_0392
+
+	Step 14: Evaluate TensioningModeStatus 
+		Expected result:  Variable equal to *ModeStatus data pointer.
+
+	Step 15: Set a breakpoint in function PAL_cbk_CheckMotorPowerOrder after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 16: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 17: Return ECU to default values

@@ -1,0 +1,52 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0010, ARCH_SW_EOL_0011
+ARCH_SW_EOL_0010: The EOL_runMainFunction function shall update the max force cycle counter when tensioning cycles 5 6 and 7 are executed.
+ARCH_SW_EOL_0011: The EOL_runMainFunction function shall update the request counter when HWA profile or tensioning cycles 0-6 are executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_TriggerProfiles.
+
+	Step 3: Set variable u8CycleRequest to 0x7.
+
+	Step 4: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle5_b8CycleValidity(&u8CycleValidityStatus);.
+
+	Step 5: Check if CPU is stopped in cil_TriggerProfiles.
+
+	Step 6: Set a breakpoint in function EOL_runMainFunction.
+
+	Step 7: Check if CPU is stopped in EOL_runMainFunction function at line eol_ManageCycleCounters();.
+
+	Step 8: Step in eol_ManageCycleCounters function.
+
+	Step 9: Set a breakpoint in eol_ManageCycleCounters at the end of the function.
+
+Action: ARCH_SW_EOL_0010
+
+	Step 10: Check if CPU is stopped in eol_ManageCycleCounters at the end of the function. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_EOL_0010
+
+	Step 11: Evaluate if NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData.NVP_au32ExecutedCycleCounters[KU8_EOL_MAX_FORCE_LEVEL] variable is not 0 
+		Expected result:  0x1
+
+Action: ARCH_SW_EOL_0011
+
+	Step 12: Evaluate if NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData.NVP_au32ExecutedCycleCounters[KU8_EOL_REQUEST_COUNTER_LEVEL] variable is not 0 
+		Expected result:  0x7
+
+Postcondition
+
+	Step 13: Return ECU to default values

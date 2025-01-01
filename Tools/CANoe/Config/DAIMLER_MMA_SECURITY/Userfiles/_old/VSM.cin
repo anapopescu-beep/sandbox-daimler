@@ -1,0 +1,363 @@
+/*@!Encoding:1252*/
+
+
+/*
+VSM.cin
+Distributed with package 1.2.0
+Include Version 1.0.0
+
+This include must be assigned once and only in the Tx node of the Secured tick count sender.
+
+*/
+includes
+{
+  #include "Encoding.cin"
+}
+
+variables
+{
+  // local secTickClock
+  mstimer secLocalTickCountTimer; 
+  qword   secLocalTickCount; 
+  qword localtick_left;
+  qword localtick_right;
+  byte timeout_counter_l=0;
+  byte timeout_counter_r=0;
+  
+  // VSM Tx Timer for Sec Tic Count
+  mstimer secVSMTimer;
+  int   tickCountTransmits; // counter for startup behaviour
+  mstimer secVINTimer;
+  mstimer AuthBCTimer;
+  diagRequest RBTMFL223.SecOC_Local_TickCount_Read Local_TC_Req_FL;
+  diagRequest RBTMFR223.SecOC_Local_TickCount_Read Local_TC_Req_FR;
+  
+}
+
+on start
+{
+  SetTimerCyclic( secLocalTickCountTimer, 10, 10); // internal secTickCount
+  SetTimerCyclic( secVSMTimer, 50, 100); // VSM Tx 
+  SetTimerCyclic(secVINTimer,1000,1000);
+  SetTimerCyclic(AuthBCTimer,1000,1000);
+}
+
+// internal secTickcount
+on timer secLocalTickCountTimer
+{
+  ++secLocalTickCount;
+}
+
+qword GetLocalTickCount()
+{
+  return secLocalTickCount;
+}
+
+void SetLocalTickCount(qword newSecTickCount)
+{
+  write("Set Tickcount to: %llx", newSecTickCount);
+  secLocalTickCount = newSecTickCount;
+}
+
+// VSM sec Tick Count transmission 
+on timer secVSMTimer
+{  
+  SendSECUREDTICKCOUNT();
+  
+  if ( tickCountTransmits < 10)
+  {
+    ++tickCountTransmits;
+    
+    if ( 10 == tickCountTransmits)
+    {
+      SetTimerCyclic( secVSMTimer, 1000, 1000);
+    }
+  }
+}
+
+on timer AuthBCTimer
+{
+  if (sysGetVariableInt(sysvar::BroadCast::TriggerAuthenticationBroadcast)>0)
+  {
+    SendAutenthicationBroadcast();
+  }
+}
+
+on timer secVINTimer
+{
+  SendSECUREDVIN();
+
+}
+
+on sysvar SecurityBroadcast::Button_RTOffset
+{
+  if (sysGetVariableInt(sysvar::SecurityBroadcast::Button_RTOffset)>0)
+  {
+    SendRTOFFSET();
+  }
+}
+
+on sysvar SecurityBroadcast::Button_NewTickcount
+{
+  if (sysGetVariableInt(sysvar::SecurityBroadcast::Button_NewTickcount)>0)
+  {
+    SetLocalTickCount(sysGetVariableLongLong(sysvar::SecurityBroadcast::Set_SecuredTickcount));
+  }
+}
+
+on sysvar sysvar::SecurityBroadcast::Button_SyncTickcount
+{
+  if (sysGetVariableInt(sysvar::SecurityBroadcast::Button_SyncTickcount)>0)
+  {
+  //diagSetTarget("RBTMFL223");
+    timeout_counter_l=0;
+    timeout_counter_r=0;
+    diagSetTimeoutHandler(Local_TC_Req_FL,"Timeout_Handler_TC_Left");
+  diagSendRequest(Local_TC_Req_FL);
+  }
+}
+
+on diagResponse RBTMFL223.SecOC_Local_TickCount_Read
+{
+  byte buffer[6];
+  qword tickcount;
+  tickcount=0x00LL;
+  diagGetParameterRaw(this, "SecOC_Local_TickCount",buffer,6);
+  tickcount+=buffer[5];
+  tickcount+=(buffer[4]*0x100LL);
+  tickcount+=(buffer[3]*0x10000LL);
+  tickcount+=(buffer[2]*0x1000000LL);
+  tickcount+=(buffer[1]*0x100000000LL);
+  tickcount+=(buffer[0]*0x10000000000LL);
+  
+  write("Tickcount Left: %llx", tickcount);
+  localtick_left=tickcount;
+      diagSetTimeoutHandler(Local_TC_Req_FR,"Timeout_Handler_TC_Right");
+    diagSendRequest(Local_TC_Req_FR);
+  
+}
+
+void Timeout_Handler_TC_Left()
+{
+  if(timeout_counter_l==0)
+  {
+    timeout_counter_l+=1;
+  write("no Response from Left");
+  localtick_left=0;
+  diagSetTimeoutHandler(Local_TC_Req_FR,"Timeout_Handler_TC_Right");
+  diagSendRequest(Local_TC_Req_FR);
+    
+  }
+}
+
+
+void Timeout_Handler_TC_Right()
+{
+  if(timeout_counter_r==0)
+  {
+    timeout_counter_r+=1;
+  write("no Response from Right");
+  localtick_right=0;
+  sync_local_tickcount();
+  }
+}
+
+on diagResponse RBTMFR223.SecOC_Local_TickCount_Read
+{
+  byte buffer[6];
+  qword tickcount;
+  tickcount=0x00LL;
+  diagGetParameterRaw(this, "SecOC_Local_TickCount",buffer,6);
+  tickcount+=buffer[5];
+  tickcount+=(buffer[4]*0x100LL);
+  tickcount+=(buffer[3]*0x10000LL);
+  tickcount+=(buffer[2]*0x1000000LL);
+  tickcount+=(buffer[1]*0x100000000LL);
+  tickcount+=(buffer[0]*0x10000000000LL);
+  
+  write("Tickcount Right: %llx", tickcount);
+  localtick_right=tickcount;
+  
+  sync_local_tickcount();
+}
+
+void sync_local_tickcount()
+{
+  if(localtick_left>localtick_right)
+  {
+    SetLocalTickCount(localtick_left+0x1000);
+  }
+  else
+  {
+     SetLocalTickCount(localtick_right+0x1000);
+  }
+}
+
+void SendSECUREDTICKCOUNT() // Secured Tick Count Broadcast
+{
+  char apId[50] = "SECUREDTICKCOUNT";
+  byte payload[6];
+  dword returnValue = 0;
+  byte tempFreshness[5];
+  int ret;
+  
+  ret = ConvertFreshnessToArray(tempFreshness,GetLocalTickCount());
+  if( ret != 0 )
+  {
+    write("Error during Secured Tick Count Transmission in CAPL function ConvertFreshnessToArray.,  Return value=%i",ret);
+  }
+  payload[0] = /*reserved*/0x00;
+  payload[1]=/*data*/tempFreshness[0];
+  payload[2]=/*data*/tempFreshness[1];
+  payload[3]=/*data*/tempFreshness[2];
+  payload[4]=/*data*/tempFreshness[3];
+  payload[5]=/*data*/tempFreshness[4];
+   
+  //write("%7.5f %NODE_NAME%: %s Freshness: %x %x %x %x %x",TimeNowNS() / 1000000000.0, apId,tempFreshness[0],tempFreshness[1],tempFreshness[2],tempFreshness[3],tempFreshness[4]);
+  
+  sysSetVariableLongLong(sysvar::SecurityBroadcast::Tickcount,GetLocalTickCount());
+  returnValue = LocalSecurityTransmitApplicationProtocol(apId, payload, 6);
+}
+
+void SendSECUREDVIN() // Secured VIN Broadcast
+{
+  char apId[50] = "SECUREDVIN";
+  byte payload[18];
+  char string[18];
+  long ret;
+  long returnValue;
+  
+  sysGetVariableString(sysvar::SecurityBroadcast::SecureVIN,string,18); 
+  EncodeString(payload, ret,17,string,CP_UTF8);
+  returnValue = LocalSecurityTransmitApplicationProtocol(apId, payload, 17);
+}
+
+void SendRTOFFSET() // Secured VIN Broadcast
+{
+  char apId[50] = "REALTIMEOFFSET";
+  byte payload[12];
+  long ret;
+  long returnValue;
+  byte temp[6];
+  byte tempFreshness[5];
+  qword temp_tickcount;
+    
+    
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Year,temp,ret);
+  payload[0]=temp[0];
+  payload[1]=temp[1];
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Month,temp,ret);
+  payload[2]=temp[0];
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Day,temp,ret);
+  payload[3]=temp[0];  
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Hour,temp,ret);
+  payload[4]=temp[0];  
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Minute,temp,ret);
+  payload[5]=temp[0];
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Second,temp,ret);
+  payload[6]=temp[0];
+  sysGetVariableData(sysvar::SecurityBroadcast::RTOffset_Offset,temp,ret);
+ payload[7]=temp[0];
+  payload[8]=temp[1];
+  payload[9]=temp[2];
+  payload[10]=temp[3];
+  payload[11]=temp[4];
+  
+  
+/*
+  temp_tickcount=0x00LL;
+  temp_tickcount+=temp[5];
+  temp_tickcount+=(temp[4]*0x100LL);
+  temp_tickcount+=(temp[3]*0x10000LL);
+  temp_tickcount+=(temp[2]*0x1000000LL);
+  temp_tickcount+=(temp[1]*0x100000000LL);
+  temp_tickcount+=(temp[0]*0x10000000000LL);
+  */
+  
+  /*ret = ConvertFreshnessToArray(tempFreshness,GetLocalTickCount());
+  payload[7]=tempFreshness[0];
+  payload[8]=tempFreshness[1];
+  payload[9]=tempFreshness[2];
+  payload[10]=tempFreshness[3];
+  payload[11]=tempFreshness[4];
+*/
+  // SetLocalTickCount(temp_tickcount);
+  returnValue = LocalSecurityTransmitApplicationProtocol(apId, payload, 12);
+   write("%5.3f %NODE_NAME%: %s, returnValue:%d",TimeNowNS() / 1000000000.0, apId, returnValue);
+}
+
+//void SendCARSecret()
+//{
+//  int toggel = 1;
+//  byte defaultSecret[32] = {0x55,0x77,0x65,0x4d,0x61,0x72,0x74,0x69,0x6e,0x4a,0x75,0x6c,0x69,0x61,0x6e,0x41,0x6e,0x64,0x72,0x65,0x61,0x73,0x4d,0x61,0x72,0x6b,0x75,0x73,0x32,0x30,0x31,0x36};
+//  byte testSecret[32] = {0x56,0x78,0x66,0x4e,0x62,0x73,0x74,0x69,0x6e,0x4a,0x75,0x6c,0x69,0x61,0x6e,0x41,0x6e,0x64,0x72,0x65,0x61,0x73,0x4d,0x61,0x72,0x6b,0x75,0x73,0x32,0x30,0x31,0x36};
+//  byte testPayload[8] = {0,1,2,3,4,5,6,7};
+//  
+//  char apId[50] = "CARSECRET";
+//  dword returnValue = 0;
+//   
+//  toggel = 1- toggel;
+//  if( toggel )
+//  {
+//    returnValue = SecRuntime_TransmitApplicationProtocol(apId, defaultSecret, 32);
+//  }
+//  else
+//  {
+//    returnValue = SecRuntime_TransmitApplicationProtocol(apId, testSecret, 32);
+//  }
+//  write("%5.3f %NODE_NAME%:Change CarSecret request, returnValue:%d",TimeNowNS() / 1000000000.0, returnValue);
+//}
+
+void SendAutenthicationBroadcast()
+{
+  char apId[50] = "AUTHENTIFICATION";
+  byte payload[20];
+  dword returnValue = 0;
+  byte serialNumberDiagCert[16]; 
+  byte serialNumberBackend[2];
+  int i;
+  long copiedBytes = 0;
+  long ret;
+  
+  ret = sysGetVariableData("BroadCast","Auth_SerialBackend", serialNumberBackend, copiedBytes); // get value from Panel
+  ret = sysGetVariableData("BroadCast","Auth_SerialDiagCert", serialNumberDiagCert, copiedBytes); // get value from Panel
+  
+  payload[0] = @sysvar::BroadCast::Auth_DiagChannel;  /* diagchannel */
+  payload[1] = @sysvar::BroadCast::Auth_UserRole;     /* user role */
+  for(i=2; i<18;i++)  /* Serial Number of Diagnostic Authentication Certificate , 16 byte */
+    payload[i] = serialNumberDiagCert[i-2];
+  payload[18]= serialNumberBackend[0]; /*Serial Number of Backend CA Certificate, 2 byte */
+  payload[19]= serialNumberBackend[1];
+    
+  write("%7.5f %NODE_NAME%: %s Broadcast: User Role=%x",TimeNowNS() / 1000000000.0, apId,payload[1]);
+  
+  returnValue = LocalSecurityTransmitApplicationProtocol(apId, payload, 20);   
+}
+
+int ConvertFreshnessToArray(byte array[], qword freshness)
+{
+  if( elCount(array) < 5 )
+    return -1; 
+
+  array[0] = (freshness >> 32) & 0xFF;
+  array[1] = (freshness >> 24) & 0xFF;
+  array[2] = (freshness >> 16) & 0xFF;
+  array[3] = (freshness >> 8) & 0xFF;
+  array[4] = freshness & 0xFF;  
+  
+  return 0;
+}
+
+int ConvertFreshnessArrayToQword(byte array[], qword& freshness)
+{
+  if( elCount(array) < 5 )
+    return -1;
+  
+  freshness = array[4] + 
+              ((qword)array[3] << 8) + 
+              ((qword)array[2] << 16) + 
+              ((qword)array[1] << 24) + 
+              ((qword)array[0] << 32);
+  
+  return 0;
+}

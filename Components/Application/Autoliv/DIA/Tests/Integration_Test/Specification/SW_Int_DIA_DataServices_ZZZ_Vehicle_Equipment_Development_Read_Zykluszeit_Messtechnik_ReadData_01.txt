@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0029; ARCH_SW_DIA_0150; ARCH_SW_DIA_0151
+ARCH_SW_DIA_0029: Service 0x22 will be implemented for DID 0311.
+ARCH_SW_DIA_0150: Response data shall be 1 byte long.
+ARCH_SW_DIA_0151: Data returned shall represent Zykluszeit Messtechnikstored in Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development. Zykluszeit_Messtechnik.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_ReadData*.
+
+Action: ARCH_SW_DIA_0029; ARCH_SW_DIA_0150; ARCH_SW_DIA_0151
+
+	Step 3: Send diag request for 22 0311 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read last byte of Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

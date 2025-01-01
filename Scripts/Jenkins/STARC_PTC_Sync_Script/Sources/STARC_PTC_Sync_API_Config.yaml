@@ -1,0 +1,109 @@
+# =========================================================================
+#                     CONFIG FILE FOR STARC PTC SYNC API
+#   Written by: Ardeleanu Lucian
+#   Date: 11 Jan. 2022
+#   Copyright Autoliv, RBE, 2022
+#   Status: Released
+# ==========================================================================
+
+# DO NOT DELETE NOWHERE ' ' CHARACHTERS!
+
+# ---------------------------- PTC CONFIGURATION ---------------------------
+# Define here USERNAME and PASSWORD for PTC Account ( Windows account )
+PTC Username: 'Jenkins01'
+PTC Password: 'jnk01'
+
+# Write here Global path to si.exe ( if is not exist in bench )
+# This paths are paths to PTC Engines
+Path to si.exe: '"C:/Program Files (x86)/Integrity/ILMClient11/bin/si.exe" '
+Path to im.exe: '"C:/Program Files (x86)/Integrity/ILMClient11/bin/im.exe" '
+
+# Define here PTC Querry where to work
+# PTC Querry: 'Daimler MMA Issues'
+PTC Querry: 'Daimler MMA Issues'
+
+# Define here string that should be in issue title in order to sync it with STARC issues
+PTC Issues Title String: '[CST]'
+
+# PTC Project Name where issues will be created
+# PLEASE MAKE SURE THAT THIS PROJECT IS SET ALSO IN YOUR PTC QUERRY
+PTC Project Name: '/SBE/PP/DAIMLER_MMA'
+# ----------------------------------------------------------------------------
+
+# -------------------------- STARC CONFIGURATION -----------------------------
+# Define here base URL to STARC Servers
+
+# PRODUCTION ENVOIMENT:
+STARC Base URL: 'https://session-manager-prod.starc.i.mercedes-benz.com'
+
+# Define here ID and Token to connect to STARC Database
+STARC Application ID: '79a4b67b-5dff-4764-a085-160bb5b9f9e2'
+STARC Application Token: 'NjBkNTJkMWUtMzVkNy00Y2NkLTkyNTYtNzQ2ZmU3NTA1Yjdj'
+
+# Set here STARC Tracker Number for creating issues
+# After new release of STARC ( April, 2022 ), tracker number has changed from 10332 to 14566687
+# Also, ID of fields has been changed and updated in script
+STARC Tracker Number: "14566687"
+
+# ---- OBSOLETE, DO NOT USE ANYMORE FOR TESTING ----INTEGRATION ENVOIMENT ----
+
+# STARC Base URL: 'https://api.starc-int.mercedes-benz.com'
+
+# Define here ID and Token to connect to STARC Database
+# STARC Application ID: 'cd42c491-fc14-4cde-b40f-f5019667d034'
+# STARC Application Token: 'MDgwNWY0MTAtZjEzYi00MjRhLWEzYzItNjcwODczY2FiNDYz'
+# -----------------------------------------------------------------------------
+
+#==============================================================================
+#               QUERY EXAMPLES GIVEN BY STARC TEAM:
+#==============================================================================
+# NEW RELEASE:
+# project.name = 'Central Inbox' AND tracker.name = 'Defects'
+
+# OLD RELEASE:
+# FOR PROD ENV:
+# project.id IN (18) AND tracker.id IN (10402) AND '10402.groupList[20]' IN (10459507) AND '18.10402.status' IN ('In Progress')
+# project.id IN (18) AND tracker.id IN (10402)
+# project.id IN (18) AND tracker.id IN (10402) AND '10402.groupList[20]' IN (10459507)
+
+# '10332.groupList[24]' IN (10459507) or '10402.groupList[20]' IN (10459507)
+
+# FOR INT ENV:
+# project.id IN (18)
+#==============================================================================
+
+# Set here query string in cbQL Language
+STARC cbQL Querry: "project.name = 'Central Inbox' AND tracker.name = 'Defects'"
+
+# Set this status to True if you want to sync only items with Sync Allowed set to Yes in STARC Items
+Sync Allowed Status: True
+
+# -------------------------- GENERAL CONFIGURATION ---------------------------
+
+# Define here path to csv file that contains hisory of issues
+# Path must contain also filename and extension
+Path to csv history file: 'STARC_PTC_Sync_History.csv'
+
+# Define here path to attachements folder
+Path to attachements folder: 'Attachements_from_STARC'
+
+# Define here path to notification file
+Path to notification file: 'STARC_PTC_Sync_Email_Notificator.txt'
+
+# Define here list of people who needs to receive this notification mail
+List of people: 'lucian.ardeleanu@autoliv.com Mihai.Ianos@autoliv.com '
+
+# ----------------------------------------------------------------------------
+
+# Other useful information:
+
+# ISSUE FIELDS FROM CSV ARE:
+# issue[0] -> STARC Issue Number,
+# issue[1] -> PTC Issue Number,
+# issue[2] -> Last STARC Issue State,
+# issue[3] -> Last PTC Issue State,
+# issue[4] -> Current STARC Issue State,
+# issue[5] -> Current PTC Issue State,
+# issue[6] -> STARC New Issue number assigned to PTC issue,
+# issue[7] -> STARC_Issue_Title,
+# issue[8] -> PTC_Issue_Title

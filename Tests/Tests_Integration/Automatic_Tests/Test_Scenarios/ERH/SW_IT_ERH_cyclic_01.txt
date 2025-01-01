@@ -1,0 +1,107 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0111, ARCH_SW_ERH_0112, ARCH_SW_ERH_0113, ARCH_SW_ERH_0114, ARCH_SW_ERH_0115, ARCH_SW_ERH_0116, ARCH_SW_ERH_0117, ARCH_SW_ERH_0118, ARCH_SW_ERH_0119, ARCH_SW_ERH_0120, ARCH_SW_ERH_0121
+ARCH_SW_ERH_0111: Read Rte_Read_isrSupBatStatus_b8SupBatStatus to get status in order to manage storage conditions.
+ARCH_SW_ERH_0112: Read Rte_Call_pcsGetComMStatus_GetCurrentComMode to get status in order to manage storage conditions.
+ARCH_SW_ERH_0113: Read Rte_Read_prrEngStartStatus_b8EngStartStatus to get status in order to manage storage conditions.
+ARCH_SW_ERH_0114: Read Rte_Read_prrProdModeStatus_b8TriggerProdModeStatus to get status in order to manage storage conditions.
+ARCH_SW_ERH_0115: Read Rte_Read_prrTransportationModeStatus_b8TransportationModeStatus to get status in order to manage storage conditions.
+ARCH_SW_ERH_0116: Read Rte_Call_pcsAutotestServices_GetTestResult to get status in order to manage storage conditions.
+ARCH_SW_ERH_0117: Read Rte_Read_prrIgnitionStatus_b8TriggerIgnitionStatusEnableStorageConditionto get status in order to manage storage conditions.
+ARCH_SW_ERH_0118: Read Rte_Read_prrIgnitionStatus_b8TriggerIgnitionStatusto get status in order to manage ignition power cycle.
+ARCH_SW_ERH_0119: Dem_SetStorageCondition is called to send information to DEM to manage storage conditions for DTCs
+ARCH_SW_ERH_0120: Dem_GetEventUdsStatus is called in order to check DTC status for DIA external tester present.
+ARCH_SW_ERH_0121: Write Rte_Write_ERH_AC_ErrorHandler_psrDTCConfirmed_b8DTCConfirmed  for DIA external tester present.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Read_isrSupBatStatus_b8SupBatStatus(&u8SupBatStatus);'.
+
+Action: ARCH_SW_ERH_0111
+
+	Step 3: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Read_isrSupBatStatus_b8SupBatStatus(&u8SupBatStatus);'.
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Call_pcsGetComMStatus_GetCurrentComMode(&ComM_Status);'.
+
+Action: ARCH_SW_ERH_0112
+
+	Step 5: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Call_pcsGetComMStatus_GetCurrentComMode(&ComM_Status);'.
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Read_prrEngStartStatus_b8EngStartStatus(&u8EngStartStatus);'.
+
+Action: ARCH_SW_ERH_0113
+
+	Step 7: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Read_prrEngStartStatus_b8EngStartStatus(&u8EngStartStatus);'.
+		Expected result:  CPU stopped at BP
+
+	Step 8: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Read_prrProdModeStatus_b8TriggerProdModeStatus(&u8ProductionMode);'.
+
+Action: ARCH_SW_ERH_0114
+
+	Step 9: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Read_prrProdModeStatus_b8TriggerProdModeStatus(&u8ProductionMode);'.
+		Expected result:  CPU stopped at BP
+
+	Step 10: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Read_prrTransportationModeStatus_b8TransportationModeStatus(&u8TransportationMode);'.
+
+Action: ARCH_SW_ERH_0115
+
+	Step 11: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Read_prrTransportationModeStatus_b8TransportationModeStatus(&u8TransportationMode);'.
+		Expected result:  CPU stopped at BP
+
+	Step 12: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Call_pcsAutotestServices_GetTestResult(ATM_KU8_ID_SYSTEM_OV, &u8AutotestResultSOV);'.
+
+Action: ARCH_SW_ERH_0116
+
+	Step 13: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Call_pcsAutotestServices_GetTestResult(ATM_KU8_ID_SYSTEM_OV, &u8AutotestResultSOV);'.
+		Expected result:  CPU stopped at BP
+
+	Step 14: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Read_prrIgnitionStatus_b8TriggerIgnitionStatusEnableStorageCondition(&u8IgnitionStatusStorage);'.
+
+Action: ARCH_SW_ERH_0117
+
+	Step 15: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Read_prrIgnitionStatus_b8TriggerIgnitionStatusEnableStorageCondition(&u8IgnitionStatusStorage);'.
+		Expected result:  CPU stopped at BP
+
+	Step 16: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Read_prrIgnitionStatus_b8TriggerIgnitionStatus(&u8IgnitionStatus);'.
+
+Action: ARCH_SW_ERH_0118
+
+	Step 17: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Read_prrIgnitionStatus_b8TriggerIgnitionStatus(&u8IgnitionStatus);'.
+		Expected result:  CPU stopped at BP
+
+	Step 18: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Call_pclStorageConditionSC1_SetStorageCondition(BOOL_ERH_SET_STORAGE_CONDITION);'.
+
+Action: ARCH_SW_ERH_0119
+
+	Step 19: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Call_pclStorageConditionSC1_SetStorageCondition(BOOL_ERH_SET_STORAGE_CONDITION);'.
+		Expected result:  CPU stopped at BP
+
+	Step 20: Set a breakpoint in function ERH_cyclic() at line '(void)Dem_GetEventUdsStatus(EventId, &EventStatusByte);'.
+
+Action: ARCH_SW_ERH_0120
+
+	Step 21: Check if CPU stopped in function ERH_cyclic() at line '(void)Dem_GetEventUdsStatus(EventId, &EventStatusByte);;'.
+		Expected result:  CPU stopped at BP
+
+	Step 22: Set a breakpoint in function ERH_cyclic() at line '(void)Rte_Write_ERH_AC_ErrorHandler_psrDTCConfirmed_b8DTCConfirmed(B_FALSE);'.
+
+Action: ARCH_SW_ERH_0121
+
+	Step 23: Check if CPU stopped in function ERH_cyclic() at line '(void)Rte_Write_ERH_AC_ErrorHandler_psrDTCConfirmed_b8DTCConfirmed(B_FALSE);'.
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 24: Return ECU to default values

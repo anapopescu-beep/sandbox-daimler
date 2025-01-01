@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_1080
+ARCH_SW_BMM_1080: This function shall activate the interrupt linked to the HES pulses signal.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function mmg_UpdateModeStatus_NoHallEffectSensor at line 'if (KU8_TRUE == MMG_u8PrevHESModeStatus)'.
+
+	Step 3: Check if CPU stopped at line 'if (KU8_TRUE == MMG_u8PrevHESModeStatus)'. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a variable MMG_u8PrevHESModeStatus to KU8_TRUE.
+
+	Step 5: Set a breakpoint at line 'Rte_Call_pcl_HBSControl_EnableHBSMonitoring()' and run the debugger.
+
+	Step 6: Check if CPU stopped at line 'Rte_Call_pcl_HBSControl_EnableHBSMonitoring()'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_1080
+
+	Step 7: Step in function Rte_Call_pcl_HBSControl_EnableHBSMonitoring. 
+		Expected result:  BMM_runEnableHBSMonitoring,,app.elf
+
+Postcondition
+
+	Step 8: Return ECU to default values

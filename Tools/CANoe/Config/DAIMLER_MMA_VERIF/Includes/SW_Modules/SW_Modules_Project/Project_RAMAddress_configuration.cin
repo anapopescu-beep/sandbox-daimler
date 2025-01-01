@@ -1,0 +1,159 @@
+/*@!Encoding:1252*/
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  
+  /* Tags description: 
+[default value] -> a tag used for variables that will not be updated
+NVP_tag[variable name in NVP file, sheet name, column from excel where to search the variable, column from excel to take the value from] -> a tag used for NVP variables
+app.map_tag[variable name in app.map file, next row flag: 0(the value is on the same row) / 1(the value is on the next row), offset, size flag: TRUE/FALSE] -> a tag used for app.map variables
+*/
+ 
+ 
+// EEPROM
+//byte _au32StartOfCountersBlocks[4] = {0x14, 0x00, 0x00, 0xA0}; // NVP_TAG[u8CycleCounter_0_CKS_COPY,Dynamic EEPROM,B,A]
+//const _au32LengthOfCountersBlocks = 56; // length for NVP_BLOCK_ID_EXECUTION_COUNTERS  (NVP - Dynamic EEPROM) - UPDATED_R0.1E
+byte u8PhysicalBlockId_counters[4] = {0x70, 0x01, 0x75, 0x54}; // NVP_TAG[NVP_au32ExecutedCycleCounters,Dynamic EEPROM,J,A]
+byte NVP_BLOCK_ID_EXECUTION_COUNTERS[4] = {0x80, 0x0F, 0xF0, 0x78}; // NVP_TAG[NVP_BLOCK_ID_EXECUTION_COUNTERS,Dynamic EEPROM,J,U]
+//byte NVP_BLOCK_ID_EXECUTION_COUNTERS_1[4] = {0xEE, 0x21, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_EXECUTION_COUNTERS_1,Dynamic EEPROM,J,U]
+
+//const _iStartOfUsefulEEPROM = 0x14000008; // NVP_TAG[NVP_BLOCK_ID_BELT_ASSEMBLY_MANUF_DATE_AND_SN,Dynamic EEPROM,J,A]
+//const _iEndOfUsefulEEPROM = 0x14000988; // Step_byte7 - last addrress from Dynamic EEPROM - TBC with CBU (NVP - Dynamic EEPROM) - UPDATED_R0.1E
+//const _iStartOfSystemContext = 0x1400007C; // NVP_TAG[NVP_au8SystemContext0,Dynamic EEPROM,J,A]
+//const _iEndOfSystemContext = 0x140000A0; // NVP_TAG[NVP_BLOCK_ID_EXECUTION_COUNTERS,Dynamic EEPROM,J,A]
+//const _iStartOfFullEEPROM = 0x14000000; // NVP_TAG[NVP_BLOCK_ID_ECU_LOCATION,Dynamic EEPROM,J,A]
+//const _iStartOfBackUpEEPROM = 0x0007F000; // NVP_TAG[NVP_BLOCK_ID_ECU_LOCATION,Dynamic EEPROM,J,L]
+//const _iStartOfFactoryUnlock = 0x14000040; // NVP_TAG[NVP_BLOCK_ID_ECU_UNLOCK,Dynamic EEPROM,J,A]
+//const _iEndOfFactoryUnlock = 0x14000048; // NVP_TAG[NVP_au8HWPartNumber,Dynamic EEPROM,J,A]
+//const _u8MeasFrameTiming = "0xEE220000"; // NVP_TAG[NVP_u8MeasFrameTiming,Dynamic EEPROM,J,U]
+//const NVP_BLOCK_ID_HB_CALIBRATION = "14000018"; // NVP_TAG[NVP_BLOCK_ID_HB_CALIBRATION,Dynamic EEPROM,J,A]
+
+// counters threshold
+//const u32LowForceEOLThrs = 1000; // NVP_TAG[u32LowForceEOLThrs,Calibration (FLASH),J,E]
+//const u32ComfortForceEOLThrs = 100000; // NVP_TAG[u32ComfortForceEOLThrs,Calibration (FLASH),J,E]
+//const u32HighForceEOLThrs = 10; // NVP_TAG[u32HighForceEOLThrs,Calibration (FLASH),J,E]
+//const u32HapticWarningEOLThrs = 200; // NVP_TAG[u32HapticWarningEOLThrs,Calibration (FLASH),J,E]
+	
+//// PP4G
+//const _b8IsPyroActivated = "0x1FFFC2C5"; // app.map_tag[b8IsPyroActivated,0,0,FALSE]
+//byte _erh_au8AecStatus[4] = {0x1f, 0xff, 0xb0, 0x37}; // app.map_tag[erh_au8AecStatus,0,-1,FALSE]
+//const _au8AtStatuses = 0x1fff9268; // app.map_tag[au8AtStatuses,0,0,FALSE]
+//const _stCurrentSystemContextContent = "0x1fffc1e0"; // app.map_tag[SCM_stCurrentSystemContextContent,1,0,FALSE]
+//const _u8BatteryVoltageSurveyState = 0x1fffc1bd; // app.map_tag[pmp_stBatterySurveyParam,1,+9,FALSE]
+
+//
+//// global critical autotest status
+//byte M_u32_ModesStatus[4] = {0x1F, 0xFF, 0xC0, 0x98}; // app.map_tag[M_u32_ModesStatus,0,0,FALSE]
+//
+//byte CurrentDeficiencylevel[4] = {0x1F, 0xFF, 0xC1, 0xD4}; // app.map_tag[Rte_Irv_PMP_AC_PhysicalMeasuresProvider_u32DeficiencyLevel,1,0,FALSE]
+//byte bCurrentDeficiencylevelSize = 0x04; // app.map_tag[Rte_Irv_PMP_AC_PhysicalMeasuresProvider_u32DeficiencyLevel,1,0,TRUE]
+//
+//byte NVP_BLOCK_ID_CYCLE_0[4] = {0xEE, 0x9F, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_0,Dynamic EEPROM,J,U]Pre-Safe level 0 (NGU Profile Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_1[4] = {0xEE, 0xA0, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_1,Dynamic EEPROM,J,U]Pre-Safe level 1 (NGU Profile Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_2[4] = {0xEE, 0xA1, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_2,Dynamic EEPROM,J,U]Pre-Safe level 2 (NGU Profile Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_3[4] = {0xEE, 0xA2, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_3,Dynamic EEPROM,J,U]Pre-Safe level 3 (NGU Profile Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_4[4] = {0xEE, 0xA3, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_4,Dynamic EEPROM,J,U]Pre-Safe level 4 (same as Full Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_5[4] = {0xEE, 0xA4, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_5,Dynamic EEPROM,J,U]Pre-Safe level 5 (same as Full Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_6[4] = {0xEE, 0xA5, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_6,Dynamic EEPROM,J,U]Pre-Safe level 6 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_7[4] = {0xEE, 0xA6, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_7,Dynamic EEPROM,J,U]Pre-Safe level 7 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_8[4] = {0xEE, 0xA7, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_8,Dynamic EEPROM,J,U]Pre-Safe level 8 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_9[4] = {0xEE, 0xA8, 0x00, 0x00}; // NVP_TAG[	NVP_BLOCK_ID_CYCLE_9,Dynamic EEPROM,J,U]Pre-Safe level 9 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_10[4] = {0xEE, 0xA9, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_10,Dynamic EEPROM,J,U]Pre-Safe level 10 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_11[4] = {0xEE, 0xAA, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_11,Dynamic EEPROM,J,U]Pre-Safe level 11 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_12[4] = {0xEE, 0xAB, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_12,Dynamic EEPROM,J,U]Pre-Safe level 12 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_13[4] = {0xEE, 0xAC, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_13,Dynamic EEPROM,J,U]Pre-Safe level 13 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_14[4] = {0xEE, 0xAD, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_14,Dynamic EEPROM,J,U]Pre-Safe level 14 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_15[4] = {0xEE, 0xAE, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_15,Dynamic EEPROM,J,U]Pre-Safe level 15 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_16[4] = {0xEE, 0xAF, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_16,Dynamic EEPROM,J,U]Pre-Safe level 16 (same as Partial Tensioning)
+//byte NVP_BLOCK_ID_CYCLE_17[4] = {0xEE, 0xB0, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_17,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_18[4] = {0xEE, 0xB1, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_18,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_19[4] = {0xEE, 0xB2, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_19,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_20[4] = {0xEE, 0xB3, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_20,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_21[4] = {0xEE, 0xB4, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_21,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_22[4] = {0xEE, 0xB5, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_22,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_23[4] = {0xEE, 0xB6, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_23,Dynamic EEPROM,J,U]not used
+//byte NVP_BLOCK_ID_CYCLE_24[4] = {0xEE, 0xB7, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_24,Dynamic EEPROM,J,U]BSR (BSR Profile Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_25[4] = {0xEE, 0xB8, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_25,Dynamic EEPROM,J,U]Not used BSR 1
+//byte NVP_BLOCK_ID_CYCLE_26[4] = {0xEE, 0xB9, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_26,Dynamic EEPROM,J,U]Belt Parking OPS (not used Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_27[4] = {0xEE, 0xBA, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_27,Dynamic EEPROM,J,U]Belt Parking BPDO (BPDO Audi Tr6 - GURTPARKEN_2)
+//byte NVP_BLOCK_ID_CYCLE_28[4] = {0xEE, 0xBB, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_28,Dynamic EEPROM,J,U]Belt Parking BPDC (BPDC Audi Tr6 - GURTPARKEN_1)
+//byte NVP_BLOCK_ID_CYCLE_29[4] = {0xEE, 0xBC, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_29,Dynamic EEPROM,J,U]Haptic Warning Phase 0 - Audi Tr6
+//byte NVP_BLOCK_ID_CYCLE_30[4] = {0xEE, 0xBD, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_30,Dynamic EEPROM,J,U]Haptic Warning Phase 1 - Repetition Phase Audi Tr6
+//byte NVP_BLOCK_ID_CYCLE_31[4] = {0xEE, 0xBE, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_31,Dynamic EEPROM,J,U]Start up (Start-Up Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_32[4] = {0xEE, 0xBF, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_32,Dynamic EEPROM,J,U]Hard Release (LOESEKURVE_2 Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_33[4] = {0xEE, 0xC0, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_33,Dynamic EEPROM,J,U]Smooth Release (LOESEKURVE_1 Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_34[4] = {0xEE, 0xC1, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_34,Dynamic EEPROM,J,U]Release Backup (used Audi Tr6 P010)
+//byte NVP_BLOCK_ID_CYCLE_35[4] = {0xEE, 0xC2, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_35,Dynamic EEPROM,J,U]ANG Prod 1 (ANG cycle Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_36[4] = {0xEE, 0xC3, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_36,Dynamic EEPROM,J,U]AEE Prod 2 (AEE cycle Audi Tr6)
+//byte NVP_BLOCK_ID_CYCLE_37[4] = {0xEE, 0xC4, 0x00, 0x00}; // NVP_TAG[NVP_BLOCK_ID_CYCLE_37,Dynamic EEPROM,J,U]Not used Prod 3
+
+
+//**********************************************************************************
+ 
+////NVP_au8AECStatus err.map
+//var _sRAM_ERR_ADC_OUT_OF_ORDER="0x00"; //[default value]
+//var _sRAM_ERR_MOSFET_HIGH_SC="0x00"; //[default value]
+//var _sRAM_ERR_MOSFET_LOW_SC="0x00"; //[default value]
+//var _sRAM_ERR_MOSFET_OC="0x00"; //[default value]
+//var _sRAM_ERR_HALL_SENSOR="0x00"; //[default value]
+//var _sRAM_ERR_ENABLE_OUT_OF_ORDER="0x00"; //[default value]
+//var _sRAM_ERR_HW_SELF_PROTECTION="0x00"; //[default value]
+//var _sRAM_ERR_HIGH_SIDE_SWITCH="0x00"; //[default value]
+//var _sRAM_ERR_PRELIMINARY_BOOSTER = "0x00"; //[default value]
+//var _sRAM_ERR_POWER_BOOSTER = "0x00"; //[default value]
+//var _sRAM_ERR_WARM_RESET="0x00"; //[default value]
+//var _sRAM_ERR_TEMPERATURE_SENSOR_FAILURE="0x00"; //[default value]
+//var _sRAM_ERR_EXT_WDG_OUT_OF_ORDER="0x00"; //[default value]
+//var _sRAM_ERR_MOTOR_BLOCKED="0x00"; //[default value]
+//var _sRAM_ERR_MOTOR_IN_SC="0x00"; //[default value]
+//var _sRAM_ERR_MOTOR_CURRENT="0x00"; //[default value]
+//var _sRAM_ERR_MOTOR_DISCONNECTED="0x00"; //[default value]
+//var _sRAM_ERR_PWM_ORDER="0x00"; //[default value]
+//var _sRAM_ERR_SW_SELF_PROTECTION="0x00"; //[default value]
+//var _sRAM_ERR_NVM_INTEGRITY="0x00" //[default value]
+//var _sRAM_ERR_RAM_INTEGRITY="0x00" //[default value]
+//var _sRAM_ERR_P_FLASH_INTEGRITY="0x00" //[default value]
+//var _sRAM_ERR_FLS_E_COMPARE="0x00"; //[default value]
+//var _sRAM_ERR_ERR_FLS_E_ERASE="0x00"; //[default value]
+//var _sRAM_ERR_ERR_FLS_E_READ="0x00"; //[default value]
+//var _sRAM_ERR_FLS_E_WRITE="0x00"; //[default value]
+//var _sRAM_ERR_ERR_FLS_ECC="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_INTEGRITY="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_REQ_FAILED="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_WRONG_BLOCK_ID="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_VERIFY_FAILED="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_LOSS_OF_REDUNDANCY="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_QUEUE_OVERFLOW="0x00"; //[default value]
+//var _sRAM_ERR_NVM_E_WRITE_PROTECTED="0x00"; //[default value]
+//var _sRAM_ERR_NVM_NOT_PRG="0x00"; //[default value]
+//var _sRAM_ERR_NVM_ECC="0x00"; //[default value]
+//var _sRAM_ERR_ECUM_E_RAM_CHECK_FAILED="0x00"; //[default value]
+//var _sRAM_ERR_STACK_FULL_USAGE="0x00"; //[default value]
+//var _sRAM_ERR_RAM_ECC="0x00"; //[default value]
+//var _sRAM_ERR_ECUM_E_CFG_DATA_INCONSISTENT="0x00"; //[default value]
+//var _sRAM_ERR_MCU_E_CLOCK_FAILURE="0x00"; //[default value]
+//var _sRAM_ERR_INT_WDG="0x00"; //[default value]
+//var _sRAM_ERR_SPI_E_HW_ERROR="0x00"; //[default value]
+//var _sRAM_ERR_ADC_CALIBRATION_FAILED="0x00"; //[default value]
+//var _sRAM_ERR_SBC_MUX_CONFIGURATION_LOST="0x00"; //[default value]
+//var _sRAM_ERR_BAT_PWR_OVER_VOLTAGE = "0x00"; //[default value]
+//var _sRAM_ERR_BAT_PWR_UNDER_VOLTAGE = "0x00"; //[default value]
+//var _sRAM_ERR_BAT_PWR_UNDER_VOLTAGE_TENSIONING = "0x00"; //[default value]
+//var _sRAM_ERR_BAT_LOG_OVER_VOLTAGE = "0x00"; //[default value]
+//var _sRAM_ERR_BAT_LOG_UNDER_VOLTAGE = "0x00"; //[default value]
+//var _sRAM_ERR_BAT_LOG_IMPLAUSIBLE = "0x00"; //[default value]
+//var _sRAM_ERR_BATTERY_SURVEY="0x00"; //[default value]
+//var _sRAM_ERR_CAN_BUS_OFF="0x00"; //[default value]
+//var _sRAM_ERR_HIGH_FORCE_END_OF_LIFE ="0x00"; //[default value]
+//var _sRAM_ERR_LOW_FORCE_END_OF_LIFE ="0x00"; //[default value]
+//var _sRAM_ERR_COMFORT_END_OF_LIFE ="0x00"; //[default value]
+//var _sRAM_ERR_HAPTIC_WARNING_END_OF_LIFE ="0x00"; //[default value]
+//var _sRAM_ERR_NVM_CHECKSUM="0x00"; //[default value]
+//var _sRAM_ERR_BATTERY_SURVEY="0x00"; //[default value]
+}
+  

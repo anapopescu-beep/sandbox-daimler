@@ -1,0 +1,1173 @@
+/*@!Encoding:1252*/
+
+variables
+{
+  //                            <TestBench 1>          <TestBench 2>          <TestBench 3>         <TestBench 4>         <TestBench 5>         <TestBench 6>
+  enum TestBencheIdentifier   { AGR,                    MTE,                   VUR,                  SMA,                  DOL,                  EFL};
+  char cTesterName[6][4]     = {"AGR",                 "MTE",                 "VUR",                "SMA",                "DOL",                "EFL"};
+  char cPCId[6][20]          = {"ART-OF-WD3149",       "ART-OF-WD31**",       "ART-OF-WD3123",      "ART-OF-WD3121",      "ART-OF-WD3124",      "ART-OF-WD3214"};
+  char cCAN_CaseId[6][11]    = {"RBE-COM-25",          "RBE-COM-02",          "RBE-COM-03",         "RBE-COM-04",         "RBE-COM-05",         "RBE-COM-06"};
+  char cSBC_BOARD[6][50]     = {"-",                   "19M2**",              "-",                  "19****",             "-",                  "-"};
+  char cPowerSupplyId[6][12] = {"RBE-PWR-030",         "RBE-PWR-032",         "RBE-PWR-033",        "RBE-PWR-034",        "RBE-PWR-07",         "RBE-PWR-08"};
+  char cMOTHER_BOARD[6][50]  = {"-",                   "AEEC17_002**",        "-",                  "AEEC17_0025R",       "-",                  "-"};
+  char cMCU[6][50]           = {"-",                   "19M0**",              "-",                  "19****",             "-",                  "-"};
+  char cDUT[6][50]           = {"DAIMLER_MMA",         "DAIMLER_MMA",         "DAIMLER_MMA",        "DAIMLER_MMA",        "DAIMLER_MMA",        "DAIMLER_MMA"};
+  char cHWVersion[6][50]     = {"22/04.00",            "22/04.00",            "22/04.00",           "22/04.00",           "22/04.00",           "22/04.00"};
+  char cSwVersion[500]       = "0x18 0x0F 0x00 0x18 0x0F 0x00 0x17 0x31 0x00"; //boot / SW / HSM :: IDs                                
+  char cHWV_Read[500]        = "0x17 0x11 0x01";
+  char cSWV_Read_FD01[500]   = "ER01860H.P91";
+  int iTestBenchUsed = AGR; // This value is changed through ConfigureTestModuleInformation in  <<< InitTestModule >>> testcase.
+  
+  //*********************************AEC configuration parameters********************************
+  const int iNoOfAECs = 56; // Number of AECs.
+  
+  // AEC IDs.
+  const  FREE_MOTOR = 0x99;
+  // AEC IDs.
+  const bERR_ADC_OUT_OF_ORDER                  = 0x01;
+  const bERR_HIGH_SIDE_SWITCH                  = 0x02;
+  const bERR_ENABLE_OUT_OF_ORDER               = 0x03;
+  const bERR_MOSFET_HIGH_SC                    = 0x04;
+  const bERR_MOSFET_LOW_SC                     = 0x05;
+  const bERR_MOTOR_DISCONNECTED                = 0x06;
+  const bERR_HW_SELF_PROTECTION                = 0x07;
+  const bERR_MOSFET_OC                         = 0x08;
+  const bERR_SPI_E_HW_ERROR                    = 0x09;
+  const bERR_HALL_SENSOR                       = 0x0A;
+  const bERR_MOTOR_CURRENT                     = 0x0B;
+  const bERR_MOTOR_BLOCKED                     = 0x0C;
+  const bERR_SW_SELF_PROTECTION                = 0x0D;
+  const bERR_TEMPERATURE_SENSOR_FAILURE        = 0x0E;
+  const bERR_MOTOR_IN_SC                       = 0x0F;
+  const bERR_MOTOR_ORDER                       = 0x10;
+  const bERR_BAT_PWR_UNDER_VOLTAGE             = 0x11;
+  const bERR_BAT_PWR_OVER_VOLTAGE              = 0x12;
+  const bERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS = 0x13;
+  const bERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS  = 0x14;
+  const bERR_EXT_WDG_OUT_OF_ORDER              = 0x15;
+//  const bERR_FLS_E_READ                        = 0x16;
+  const bERR_NVM_NOT_PROG                      = 0x17;
+  const bERR_NVM_ECC                           = 0x18;
+  const bERR_RAM_ECC                           = 0x19;
+//  const bERR_NVM_E_REQ_FAILED                  = 0x1A;
+  const bERR_WARM_RESET                        = 0x1B;
+  const bERR_COMFORT_END_OF_LIFE               = 0x1C;
+  const bERR_LOW_FORCE_END_OF_LIFE             = 0x1D;
+  const bERR_HIGH_FORCE_END_OF_LIFE            = 0x1E;
+  const bERR_MAX_FORCE_END_OF_LIFE             = 0x1F;
+  const bERR_P_FLASH_ECC                       = 0x20;
+  const bERR_TIMEOUT_PRESAFE                   = 0x21;
+  const bERR_TIMEOUT_BUCKLE                    = 0x22;
+  const bERR_IMPLAUSIBLE_DATA_PRESAFE          = 0x23;
+  const bERR_IMPLAUSIBLE_DATA_IGNITION         = 0x24;
+  const bERR_IMPLAUSIBLE_DATA_BUCKLE           = 0x25;
+  const bERR_TIMEOUT_IGNITION                  = 0x26;
+  const bERR_TIMEOUT_POWERTRAIN                = 0x27;
+  const bERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY   = 0x28;
+  const bERR_IMPLAUSIBLE_DATA_ORC              = 0x29;
+  const bERR_TIMEOUT_BELT_HANDOVER_LEFT        = 0x2A;
+  const bERR_TIMEOUT_BELT_HANDOVER_RIGHT       = 0x2B;
+  const bERR_BAT_PWR_OVER_VOLTAGE_SYSTEM       = 0x2C;
+  const bERR_BAT_PWR_UNDER_VOLTAGE_SYSTEM      = 0x2D;
+  const bERR_STEERING_CONFIGURATION            = 0x2E;
+  const bERR_TIMEOUT_API_INTERFACE             = 0x2F;
+  const bERR_CANSM_E_BUS_OFF                   = 0x98; // BUS OFF has no AEC id. This variable is used for easier use of functions.
+  
+  const bERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV   = 0x30;
+  const bERR_TIMEOUT_ODOSPEEDOMETER            = 0x31; // Instrument Cluster
+  const bERR_IMPLAUSIBLE_DATA_API              = 0x32;
+  const bERR_TIMEOUT_VSS_SECTICKCOUNT          = 0x97; // No AEC id. This variable is used for easier use of functions.
+  const bERR_VARIANT_CODING                    = 0x33; // Initial startup
+  const bERR_TIMEOUT_BELT_ADJ                  = 0x34;
+  const bERR_INCOMPATIBLE_CONFIGURATION_VIN    = 0x96; // No AEC id. This variable is used for easier use of functions.
+  
+  const bERR_IMPLAUSIBLE_SEC_TICK_COUNT        = 0xED; // No AEC id. Security DTC. This variable is used for easier use of functions.
+  const bERR_SEC_OC_VALIDATION_FAILED          = 0xEE; // No AEC id. Security DTC. This variable is used for easier use of functions.
+  const bERR_ACL_CHECK_FAILED                  = 0xEF; // No AEC id. Security DTC. This variable is used for easier use of functions.
+  
+  // <<< AEC status definition >>>
+  const byte bAEC_Qualified 						       = 0x17;
+  const byte bAEC_ReQualifingInProgress			   = 0x1E;
+  const byte bAEC_QualifingInProgress				   = 0x1C;
+  const byte bAEC_DeskillingInProgress		     = 0x1F;
+  const byte bAEC_DeskilledFailed					     = 0x16;
+  const byte bAEC_AbsentFailed					       = 0x14;
+  const byte bAEC_DeskilledNotFailed				   = 0x06;
+  const byte bAEC_EverQualified					       = 0x02;
+  const byte bAEC_EverQualifiedStartup			   = 0x03;
+  const byte bAEC_NotEverDeskilled 				     = 0x07;
+  const byte bAEC_TestedNotPresent				     = 0x04;
+  const byte bAEC_NotEverQualified				     = 0x00;
+  const byte bAEC_NotCompletedSincePowerOffOn  = bAEC_NotEverQualified;
+  const byte bAEC_NotFailedDeskilledInProgress = 0x0F;
+  
+  // Functions configured for the following PR Structure: PR & LID; 3 bytes  + (AEC ID; 2 bytes + AEC Status; 1 byte) * Total nr. of AECs.
+  // <<< All RDBLI AEC functions >>>
+  // Ignored AECs. Not displayed in the report. 
+  // Example use case: disabled autotests with incorrect status.
+  // Set to '0xFF' for no ignored autotest.
+  byte bIgnoredAECS[8] = {0x16, 0x1A, 0x1B, 0x35, 0x36, 0x37, 0x38, 0xFF};
+//  byte bIgnoredAECS[12] = {0x16, 0x1A, 0x17, 0x35, 0x36, 0x37, 0x38, 0x15, 0x16, 0x18, 0x19, 0x20};
+  
+  // Structure: {AEC_ID, AEC_status}
+  // <<< CheckAECPresence >>> and <<< CheckAECStatus >>>
+  byte bAcceptedAECStatus[2]                       = {bAEC_TestedNotPresent, bAEC_NotEverQualified}; // If an AEC does NOT match at least one defined status, a testStepFail will be reported.
+  byte bSpecificAECExpectedStatus[14][2]            = {{bERR_IMPLAUSIBLE_DATA_IGNITION, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_PRESAFE, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_BUCKLE, bAEC_AbsentFailed}, 
+                                                      {bERR_BAT_PWR_OVER_VOLTAGE_SYSTEM, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_ORC, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_PRESAFE, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_BUCKLE, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_API_INTERFACE, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_IGNITION, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_BELT_HANDOVER_LEFT, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_POWERTRAIN, bAEC_AbsentFailed},
+                                                      {bERR_IMPLAUSIBLE_DATA_API, bAEC_AbsentFailed}
+                                                      };
+                                                   // If AEC_ID does not have any of the accepted statuses or the specified AEC_status, a testStepFail will be reported.
+                                                   // Set the first AEC_ID to 0xFF for no special status consideration.
+  // <<< CheckAECPresenceInBenchInit >>>
+  byte bAcceptedAECStatus_BenchInit[1]              = {bAEC_TestedNotPresent}; // If an AEC does NOT match at least one defined status, a testStepFail will be reported. 
+  byte bSpecificAECExpectedStatus_BenchInit[17][2]  = {{bERR_IMPLAUSIBLE_DATA_IGNITION, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_PRESAFE, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_BUCKLE, bAEC_AbsentFailed}, 
+                                                      {bERR_BAT_PWR_OVER_VOLTAGE_SYSTEM, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_ORC, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_BUCKLE, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_PRESAFE, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_API_INTERFACE, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_IGNITION, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_BELT_HANDOVER_LEFT, bAEC_NotCompletedSincePowerOffOn}, // if Veh equip is default, autotest is not executed
+                                                      {bERR_TIMEOUT_BELT_HANDOVER_RIGHT, bAEC_NotCompletedSincePowerOffOn}, // if Veh equip is default, autotest is not executed
+                                                      {bERR_TIMEOUT_POWERTRAIN, bAEC_AbsentFailed},
+                                                      {bERR_IMPLAUSIBLE_DATA_API, bAEC_AbsentFailed},
+                                                      {bERR_ADC_OUT_OF_ORDER, bAEC_NotCompletedSincePowerOffOn},    // not implemented on R8.1
+                                                      {bERR_EXT_WDG_OUT_OF_ORDER, bAEC_NotCompletedSincePowerOffOn} // not implemented on R8.1
+                                                      };
+                                                    // Specific AEC status does NOT take precedence over accepted status.
+                                                    // Set the first AEC_ID to 0xFF for no special status consideration.
+  // <<< CheckDTCPresenceAfterClear >>>
+  byte bAcceptedAECStatus_AfterClear[1]             = {bAEC_TestedNotPresent}; // If an AEC does NOT match at least one defined status, a testStepFail will be reported. 
+  byte bSpecificAECExpectedStatus_AfterClear[17][2] = {{bERR_IMPLAUSIBLE_DATA_IGNITION, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_PRESAFE, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_BUCKLE, bAEC_AbsentFailed}, 
+                                                      {bERR_BAT_PWR_OVER_VOLTAGE_SYSTEM, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV, bAEC_AbsentFailed}, 
+                                                      {bERR_IMPLAUSIBLE_DATA_ORC, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_BUCKLE, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_PRESAFE, bAEC_AbsentFailed}, 
+                                                      {bERR_TIMEOUT_API_INTERFACE, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_IGNITION, bAEC_AbsentFailed},
+                                                      {bERR_TIMEOUT_BELT_HANDOVER_LEFT, bAEC_NotCompletedSincePowerOffOn}, // if Veh equip is default, autotest is not executed
+                                                      {bERR_TIMEOUT_BELT_HANDOVER_RIGHT, bAEC_NotCompletedSincePowerOffOn}, // if Veh equip is default, autotest is not executed
+                                                      {bERR_TIMEOUT_POWERTRAIN, bAEC_AbsentFailed},
+                                                      {bERR_IMPLAUSIBLE_DATA_API, bAEC_AbsentFailed},
+                                                      {bERR_ADC_OUT_OF_ORDER, bAEC_NotCompletedSincePowerOffOn},    // not implemented on R8.1
+                                                      {bERR_EXT_WDG_OUT_OF_ORDER, bAEC_NotCompletedSincePowerOffOn} // not implemented on R8.1
+                                                      };
+                                                    // Specific AEC status does NOT take precedence over accepted status.
+                                                    // Set the first AEC_ID to 0xFF for no special status consideration.;
+  
+  //*********************************DTC configuration parameters********************************
+  // DTC status definition
+  const byte bDTC_TestedNotPresent            = 0x00;
+  const byte bDTC_QualifyingInProgress        = 0x00;
+  const byte bDTC_NotCompletedSincleLastClear = 0x10;
+  const byte bDTC_Qualified                   = 0x29;
+  const byte bDTC_QualifiedNotConfirmed       = 0x21;
+  const byte bDTC_DeskilledFailed             = 0x28;
+  const byte bDTC_DeskilledNotConfirmed       = 0x20;
+  
+  const dword DTC_HARDWARE                          = 0xA28B49;
+  const dword DTC_TEMPERATURE_SELF_PROTECTION       = 0xA28B4B;
+  const dword DTC_MOTOR                             = 0xA28B71;
+  const dword DTC_BAT_PWR_UNDER_VOLTAGE             = 0xA10D00;
+  const dword DTC_BAT_PWR_OVER_VOLTAGE              = 0xA10E00;
+  const dword DTC_BAT_PWR_UNDER_VOLTAGE_DURING_TENS = 0xA28B16;
+  const dword DTC_BAT_PWR_OVER_VOLTAGE_DURING_TENS  = 0xA28B17;
+  const dword DTC_TENSIONING_END_OF_LIFE            = 0xA28B96;
+  const dword DTC_COMFORT_END_OF_LIFE               = 0xA28B97;
+  const dword DTC_TIMEOUT_PRESAFE                   = 0xC12287;
+  const dword DTC_TIMEOUT_BUCKLE                    = 0xC15187;
+  const dword DTC_IMPLAUSIBLE_DATA_PRESAFE          = 0xC41608;
+  const dword DTC_IMPLAUSIBLE_DATA_IGNITION         = 0xC42708;
+  const dword DTC_IMPLAUSIBLE_DATA_BUCKLE           = 0xC45208;
+  const dword DTC_BAT_PWR_OVER_VOLTAGE_SYSTEM       = 0xA10B00;
+  const dword DTC_BAT_PWR_UNDER_VOLTAGE_SYSTEM      = 0xA10A00;
+  const dword DTC_CANSM_E_BUS_OFF                   = 0xD22488;
+  const dword DTC_TIMEOUT_IGNITION                  = 0xC16887;
+  const dword DTC_TIMEOUT_POWERTRAIN                = 0xC11587;
+  const dword DTC_IMPLAUSIBLE_DATA_POWERTRAIN       = 0xC44286;
+  const dword DTC_IMPLAUSIBLE_DATA_ORC              = 0xC45208;
+  const dword DTC_TIMEOUT_BELT_HANDOVER_LEFT        = 0xC20187;
+  const dword DTC_TIMEOUT_BELT_HANDOVER_RIGHT       = 0xC20287;
+  const dword DTC_MAX_FORCE_END_OF_LIFE             = 0xA28BFA;
+  const dword DTC_STEERING_CONFIGURATION            = 0xA20400;
+  
+  const dword DTC_PROGRAM_MEMORY_ERROR              = 0xA28B45;
+  const dword DTC_RUNTIME_ERROR                     = 0xA28B47;
+  const dword DTC_TIMEOUT_CENTRAL_GATEWAY           = 0xD88987; // Central Gateway: API and beltAdj
+  const dword DTC_IMPLAUSIBLE_DATA_API              = 0xD88A08; // Central Gateway
+  const dword DTC_TIMEOUT_SECURITY_MODULE           = 0xD12087; // VSS_TP_SecTickCount
+  const dword DTC_TIMEOUT_INSTRUMENT_CLUSTER        = 0xC15587; // ODOSPEEDOMETER
+  const dword DTC_INCOMPATIBLE_CONFIGURATION_VIN    = 0x164456;
+  const dword DTC_INITIAL_STARTUP                   = 0x1CA000;
+  const dword DTC_INCORRECT_SW_MODULES              = 0xAA6857;
+  
+  const dword DTC_IMPLAUSIBLE_SEC_TICK_COUNT        = 0xD12081; // Security DTCs
+  const dword DTC_SEC_OC_VALIDATION_FAILED          = 0xD12083;
+  const dword DTC_ACL_CHECK_FAILED                  = 0x9A6857;
+  
+  // <<< All 0x19 0x02 RDTCBST functions >>> Use AEC IDs for this.
+  // Set to '0xFF' for no ignored autotest.
+  byte bIgnoredDTCS[2] = {bERR_IMPLAUSIBLE_SEC_TICK_COUNT, 0xFF};
+  
+  byte bAcceptedDTCStatus[3][2] = {{bERR_SEC_OC_VALIDATION_FAILED, 0x10}, {bERR_ACL_CHECK_FAILED, 0x10}, {bERR_TIMEOUT_BELT_HANDOVER_RIGHT, 0x10}};
+  
+//*********************************************************************************************
+//                                                                                            *
+//                                                                                            *
+//                                                                                            *
+//                                                                                            *
+//       Everything below this marker is configured in the CORE_* functions.                  *
+//                                                                                            *
+//                                                                                            *
+//                                                                                            *
+//                                                                                            *
+//*********************************************************************************************
+  
+  enum BOOL {FALSE, TRUE};
+  
+  // <<< Reset ECU function >>>
+  byte bEnterSessionEnabled_ResetECU;
+  char cSession_ResetECU[30];
+  
+  // <<< AEC functions >>>
+  byte _erh_au8AecStatus[4];
+  byte MMG_u32ModesStatus[4];
+  
+  char cSession_ReadAECs[30];
+  byte bEnterSessionEnabled_CheckAECStatus; 
+  byte bEnterSessionEnabled_ReturnAECStatusChangeTime;
+  byte bEnterSessionEnabled_CheckAECStatusFromRAM;
+  byte bEnterSessionEnabled_CheckAECPresence;
+  byte bEnterSessionEnabled_CheckCriticalStatus;
+  byte bGetSecurityAccess_ReadAECs;
+  byte bGetSecurityAccess_CheckAECStatusFromRAM;
+  byte bGetSecurityAccess_ReturnAECStatusChangeTime;
+  byte bGetSecurityAccess_CheckAECPresence;
+  byte bGetSecurityAccess_CheckCriticalStatus;
+  
+  int iAECBytePosition;
+  
+  byte bReadAllAECsStatusRequest[3];
+  const int iReadAECsResponseSize = iNoOfAECs * 3 + 3; // Total response size.
+  char[50] cAECName[double, iNoOfAECs]; // AEC names: CORE_AEC_Names()
+  char[50] cAEC_NotExecutedAfterReset[double, iNoOfAECs];
+  
+  // <<< DTC functions >>>
+  byte bRDTCBST_StatusMask;
+  byte bRDTCBST_StatusMask_Init;
+  byte bRDTCBST_StatusMask_AfterClear;
+  byte bDTC_AvailableStatusMask;
+  
+  char[500] cDTCName[double, iNoOfAECs];
+  dword     bDTCID[double, iNoOfAECs];
+  dword     DTCPriority[double, iNoOfAECs];
+  
+  // .CDD variables.
+  char PR_DTCAndStatusRecord[100];
+  char PR_DTCRecord[100];
+  char PR_StatusOfDTC[100];
+  char PR_StatusOfDTC_WarningIndicatorRequested[100];
+  char PR_StatusOfDTC_TestNotCompletedThisOperationCycle[100];
+  char PR_StatusOfDTC_TestFailedSinceLastClear[100];
+  char PR_StatusOfDTC_TestNotCompletedSinceLastClear[100];
+  char PR_StatusOfDTC_ConfirmedDTC[100];
+  char PR_StatusOfDTC_PendingDTC[100];
+  char PR_StatusOfDTC_TestFailedThisOperationCycle[100];
+  char PR_StatusOfDTC_TestFailed[100];
+  
+  char RQ_DTCRecordSnapshot[100];
+  char RQ_DTCSnapshotRecordNumber[100];
+  
+  char PR_DTCRecordSnapshot[100];
+  char PR_ListOfSnapshotDataRecords[100];
+  char PR_DTCStatusOfDTCSnapshot[100];
+  
+  char PR_DTCShapshotData_RecordNumber[100];
+  char PR_DTCShapshotData_RecordNumberOfIdentifiers[100];
+  char PR_DTCShapshotData_CurrentOperatingTime[100];
+  char PR_DTCShapshotData_CurrentOperatingTime_ID[100];
+  char PR_DTCShapshotData_Odometer[100];
+  char PR_DTCShapshotData_Odometer_ID[100];
+  char PR_DTCShapshotData_RootCause[100];
+  char PR_DTCShapshotData_RootCause_ID[100];
+  
+  char RQ_DTCRecordExtended[100];
+  char RQ_DTCExtendedRecordNumber[100];
+  
+  char PR_DTCRecordExtended[100];
+  char PR_ListOfExtendedDataRecords[100];
+  char PR_DTCExtendedData_RecordNumber[100];
+  char PR_DTCExtendedData_ExternalTesterPresentFlag[100];
+  char PR_DTCExtendedData_FrequencyCounter[100];
+  char PR_DTCExtendedData_OccurenceFlag[100];
+  char PR_DTCExtendedData_OperationCycleCounter[100];
+  char PR_StatusOfDTCExtended[100];
+  char PR_StatusOfDTCExtended_WarningIndicatorRequested[100];
+  char PR_StatusOfDTCExtended_TestNotCompletedThisOperationCycle[100];
+  char PR_StatusOfDTCExtended_TestFailedSinceLastClear[100];
+  char PR_StatusOfDTCExtended_TestNotCompletedSinceLastClear[100];
+  char PR_StatusOfDTCExtended_ConfirmedDTC[100];
+  char PR_StatusOfDTCExtended_PendingDTC[100];
+  char PR_StatusOfDTCExtended_TestFailedThisOperationCycle[100];
+  char PR_StatusOfDTCExtended_TestFailed[100];
+  
+  char PR_DTCAvailabilityMask[100];
+  char PR_DTCAvailabilityMask_WarningIndicatorRequested[100];
+  char PR_DTCAvailabilityMask_TestNotCompletedThisOperationCycle[100];
+  char PR_DTCAvailabilityMask_TestFailedSinceLastClear[100];
+  char PR_DTCAvailabilityMask_TestNotCompletedSinceLastClear[100];
+  char PR_DTCAvailabilityMask_ConfirmedDTC[100];
+  char PR_DTCAvailabilityMask_PendingDTC[100];
+  char PR_DTCAvailabilityMask_TestFailedThisOperationCycle[100];
+  char PR_DTCAvailabilityMask_TestFailed[100];
+  
+  char REQ_DTCStatusMask[100];
+  char REQ_DTCStatusMask_WarningIndicatorRequested[100];
+  char REQ_DTCStatusMask_TestNotCompletedThisOperationCycle[100];
+  char REQ_DTCStatusMask_TestFailedSinceLastClear[100];
+  char REQ_DTCStatusMask_TestNotCompletedSinceLastClear[100];
+  char REQ_DTCStatusMask_ConfirmedDTC[100];
+  char REQ_DTCStatusMask_PendingDTC[100];
+  char REQ_DTCStatusMask_TestFailedThisOperationCycle[100];
+  char REQ_DTCStatusMask_TestFailed[100];
+  
+  char PR_DTCCount[100];
+  
+  // <<< ClearAll >>>
+  byte bClearAllRequest[4]; 
+  
+  // <<< CheckDTCPresence >>>
+  byte bCheckDTCPresenceRequest[3];
+  byte bReportDTCExtendedDataByDTCNbrRequest[6];
+  byte bReportDTCSnapshotRecordByDTCNbrRequest[6];
+  byte bReportSupportedDTCsRequest[2];
+  byte bReportNbrOfDTCByStatusMaskRequest[3];
+  
+  // << Read Memory By Address >>
+  byte bRMBARequest[8];
+  
+  // <<< Basic diagnostic functions >>>
+  char cDiagnosticTarget[200];
+  char cDiagnosticTarget_RH[200];
+  dword dDiagRequestSentTimeout;
+  dword dDiagResponseReceiveTimeout;
+  dword dSessionTimeout;
+  
+  // <<< EnterDiagnosticSession >>>
+  int iSessionControlVerbosity = 0;
+  char cAvailableDiagSessions[6][12];
+  byte bSessionControlRequests[6][2];
+  
+  // <<< ResetECU >>>
+  byte bHardResetRequest[2];
+  byte bSoftResetRequest[2];
+  
+  // <<< CheckSWVersion >>> and <<< GetSWVersion >>>
+  byte bReadSWVersionRequest[3];
+  byte bHardwareVersionInformationRequest[3];
+  char cSession_CheckSWVersion[20];
+  char cKeepHexFormat[6];
+  
+  // <<< Logging functions >>>
+  char cLogPath[500];
+  char TestLoggingBlock[100];
+  char TestCaseLogASC[100];
+  char TestCaseLogBLF[100];
+  
+  // <<< SetECUMode >>>
+  char cSession_SetECUMode[20];
+  byte bLockECU[4];
+  byte bGetECULockState[4];
+  byte bUnlockECU[4];
+  char cUnlock[10];
+  char cLock[10];
+  byte bGetSecurityAccess_SetECUMode;
+  byte securityAlgoDataBuffer[8];
+  
+  byte bProcessModeStartRequest[4];
+  byte bProcessModeStopRequest[4];
+  byte bProcessModeRequestResRequest[4];
+  
+  byte bSecurityProgrammingRequest[2];
+  byte bSendKeyReprogrammingRequest[2];
+  
+  byte bExternalWDGStartRequest[4];
+  
+  // <<< Diag objects >>>
+  // Dignostic session control
+  diagRequest  * dDefaultSessionRequest;
+  diagResponse * dDefaultSessionResponse;
+  
+  diagRequest  * dExtendedSessionRequest;
+  diagResponse * dExtendedSessionResponse;
+  
+  diagRequest  * dProgrammingSessionRequest;
+  diagResponse * dProgrammingSessionResponse;
+  
+  diagRequest  * dDevelopmentSessionRequest;
+  diagResponse * dDevelopmentSessionResponse;
+  
+  diagRequest  * dSupplierSessionRequest;
+  diagResponse * dSupplierSessionResponse;
+  
+  diagRequest  * dUpdateSessionRequest;
+  diagResponse * dUpdateSessionResponse;
+  
+  // ECU reset
+  diagRequest  * dHardResetRequest;
+  diagResponse * dHardResetResponse;
+  
+  diagRequest  * dSoftResetRequest;
+  diagResponse * dSoftResetResponse;
+  
+  // Software version
+  diagRequest  * dReadSWVersionRequest;
+  diagResponse * dReadSWVersionResponse;
+  
+  // RMBA
+  diagRequest  * dReadMemoryByAddressRequest;
+  diagResponse * dReadMemoryByAddressResponse;
+  
+  // WMBA
+  diagRequest  * dWriteMemoryByAddressRequest;
+  diagResponse * dWriteMemoryByAddressResponse;
+  
+  // Clear All DTCs
+  diagRequest  * dClearAllDTCsRequest;
+  diagResponse * dClearAllDTCsResponse;
+  
+  // Read All AEC
+  diagRequest  * dReadAllAECsStatusRequest;
+  diagResponse * dReadAllAECsStatusResponse;
+  
+  // Read DTCs.
+  diagRequest  * dReportDTCByStatusMaskRequest;
+  diagResponse * dReportDTCByStatusMaskResponse;
+  
+  diagRequest  * dReportDTCSnapshotRecordByDTCNbrRequest;
+  diagResponse * dReportDTCSnapshotRecordByDTCNbrResponse;
+  
+  diagRequest  * dReportDTCExtendedDataByDTCNbrRequest;
+  diagResponse * dReportDTCExtendedDataByDTCNbrResponse;
+  
+  diagRequest  * dReportNbrOfDTCByStatusMaskRequest;
+  diagResponse * dReportNbrOfDTCByStatusMaskResponse;
+  
+  diagRequest  * dReportSupportedDTCsRequest;
+  diagResponse * dReportSupportedDTCsResponse;
+  
+  diagRequest FaultMem_ReportFaultDetectionCounter dFaultMemReportFaultDetectionCounterRequest;
+  diagResponse FaultMem_ReportFaultDetectionCounter dFaultMemReportFaultDetectionCounterResponse;
+  
+  // Lock / Unlock ECU.
+  diagRequest  * dUnlockECURequest;
+  diagResponse * dUnlockECUResponse;
+  
+  diagRequest  * dLockECURequest;
+  diagResponse * dLockECUResponse;
+  
+  diagRequest  * dGetECULockStateRequest;
+  diagResponse * dGetECULockStateResponse;
+  
+  //  Process mode.
+  diagRequest  * dProcessModeStartRequest;
+  diagResponse * dProcessModeStartResponse;
+  
+  diagRequest  * dProcessModeStopRequest;
+  diagResponse * dProcessModeStopResponse;
+  
+  diagRequest  * dProcessModeRequestResRequest;
+  diagResponse * dProcessModeRequestResResponse;
+  
+  diagRequest  * dRequestSeedReprogrammingRequest;
+  diagResponse * dRequestSeedReprogrammingResponse;
+  
+  diagRequest  * dSendKeyReprogrammingRequest;
+  diagResponse * dSendKeyReprogrammingResponse;
+  
+  // WDG
+  diagRequest  * dForceExternalWDGStartRequest;
+  diagResponse * dForceExternalWDGStartResponse;
+}
+
+// Initializes all the configured parameters.
+// Do not modify the execution order.
+void InitParameters()
+{
+  CORE_Basic_Diagonstics();
+  
+  SetDiagTarget(cDiagnosticTarget);
+  
+  CORE_ECU_State();
+  
+  CORE_Logging();
+  
+  CORE_AEC_Names();
+  
+  CORE_AEC_Not_Executed_After_Reset();
+  
+  CORE_DTC_Names();
+  
+  CORE_DTC_AEC_Association();
+  
+  CORE_ChronoStack_Primary_Memory_Configuration();
+  
+  CORE_Fault_Management_AECs();
+  
+  CORE_Fault_Management_DTCs();
+  
+  CORE_Test_Traceability();
+  
+  CORE_Init_DiagObjects();
+}
+
+/// <CORE_Basic_Diagnostics>
+void CORE_Basic_Diagonstics()
+{
+  strncpy(cDiagnosticTarget, "RBTMFL174", elcount(cDiagnosticTarget)); // Set ECU name.
+  strncpy(cDiagnosticTarget_RH, "RBTMFR174", elcount(cDiagnosticTarget));
+  
+  dDiagRequestSentTimeout     = 2500; // (ms) Timeout for diagnostic request sent .
+  dDiagResponseReceiveTimeout = 5000; // (ms) Timeout for diagnostic response.
+}
+
+/// <CORE_ECU_State>
+void CORE_ECU_State()
+{
+  dSessionTimeout = 5000; // (ms) Timeout for diagnostic session.
+  
+  // <<< EnterDiagnosticSession >>>
+  iSessionControlVerbosity = 2;  // Controls what is written in the report:
+                                 // 0 - Only negative response.
+                                 // 1 - Comment or negative response.
+                                 // 2 - A testStepPass result or negative response.
+  
+  strncpy(cAvailableDiagSessions[0], "default", elcount(cAvailableDiagSessions[0]));
+  bSessionControlRequests[0][0] = 0x10;
+  bSessionControlRequests[0][1] = 0x01;
+  
+  strncpy(cAvailableDiagSessions[1], "extended", elcount(cAvailableDiagSessions[1]));
+  bSessionControlRequests[1][0] = 0x10;
+  bSessionControlRequests[1][1] = 0x03;
+  
+  strncpy(cAvailableDiagSessions[2], "programming", elcount(cAvailableDiagSessions[2]));
+  bSessionControlRequests[2][0] = 0x10;
+  bSessionControlRequests[2][1] = 0x02;
+  
+  strncpy(cAvailableDiagSessions[3], "development", elcount(cAvailableDiagSessions[3]));
+  bSessionControlRequests[3][0] = 0x10;
+  bSessionControlRequests[3][1] = 0x7E;
+  
+  strncpy(cAvailableDiagSessions[4], "supplier", elcount(cAvailableDiagSessions[4]));
+  bSessionControlRequests[4][0] = 0x10;
+  bSessionControlRequests[4][1] = 0x7E;
+  
+  strncpy(cAvailableDiagSessions[5], "update", elcount(cAvailableDiagSessions[4]));
+  bSessionControlRequests[5][0] = 0x10;
+  bSessionControlRequests[5][1] = 0x42;
+  
+  // <<< ResetECU >>>
+  bHardResetRequest[0] = 0x11;
+  bHardResetRequest[1] = 0x01;
+  
+  bSoftResetRequest[0] = 0x11;
+  bSoftResetRequest[1] = 0x03;
+  
+  // <<< SetECUMode >>>
+  strncpy(cSession_SetECUMode, "supplier", elcount(cSession_SetECUMode));
+  strncpy(cLock, "lock", elcount(cLock));
+  strncpy(cUnlock, "unlock", elcount(cUnlock));
+  // 1 - Obtains 'cSession_SetECUMode' security access before unlocking ECU.
+  // 0 - Security access is not obtained.
+  bGetSecurityAccess_SetECUMode = 0;
+
+  bLockECU[0] = 0x31;
+  bLockECU[1] = 0x02;
+  bLockECU[2] = 0xf7;
+  bLockECU[3] = 0x81;
+
+  bUnlockECU[0] = 0x31;
+  bUnlockECU[1] = 0x01;
+  bUnlockECU[2] = 0xf7;
+  bUnlockECU[3] = 0x81;
+  
+  bGetECULockState[0] = 0x31;
+  bGetECULockState[1] = 0x03;
+  bGetECULockState[2] = 0xf7;
+  bGetECULockState[3] = 0x81;
+  
+  // Process mode.
+  bProcessModeStartRequest[0] = 0x31;
+  bProcessModeStartRequest[1] = 0x01;
+  bProcessModeStartRequest[2] = 0xF7;
+  bProcessModeStartRequest[3] = 0x93;
+  
+  bProcessModeStopRequest[0] = 0x31;
+  bProcessModeStopRequest[1] = 0x02;
+  bProcessModeStopRequest[2] = 0xF7;
+  bProcessModeStopRequest[3] = 0x93;
+  
+  bProcessModeRequestResRequest[0] = 0x31;
+  bProcessModeRequestResRequest[1] = 0x03;
+  bProcessModeRequestResRequest[2] = 0xF7;
+  bProcessModeRequestResRequest[3] = 0x93;
+  
+  // Security access.
+  bSecurityProgrammingRequest[0] = 0x27;
+  bSecurityProgrammingRequest[1] = 0x11;
+  
+  bSendKeyReprogrammingRequest[0] = 0x27;
+  bSendKeyReprogrammingRequest[1] = 0x12;
+  
+  // WDG reset
+  bExternalWDGStartRequest[0] = 0x31;
+  bExternalWDGStartRequest[0] = 0x01;
+  bExternalWDGStartRequest[0] = 0xF7;
+  bExternalWDGStartRequest[0] = 0x91;
+  
+  // 1 - enters 'cSession_ResetECU' diagnostic session before sending ECU reset diagnostic request.
+  // 0 - Session is not entered.
+  bEnterSessionEnabled_ResetECU = 1;
+  
+  strncpy(cSession_ResetECU, "supplier", elcount(cSession_ResetECU));  // Needed Session: Set to "none" if no special session is needed.
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+void CORE_Fault_Management_AECs()
+{
+  iAECBytePosition = 0; // AEC ID byte position; 0 or 1 e.g. for DAI MMA = 0; for TR6 = 1;
+  
+  // 1 - enters 'cSession_ReadAECs' diagnostic session before reading AECs.
+  // 0 - Session is not entered.
+  bEnterSessionEnabled_CheckAECStatus            = 1;
+  bEnterSessionEnabled_ReturnAECStatusChangeTime = 0;
+  bEnterSessionEnabled_CheckAECStatusFromRAM     = 0;
+  bEnterSessionEnabled_CheckAECPresence          = 1;
+  bEnterSessionEnabled_CheckCriticalStatus       = 0;
+  
+  // 1 - Obtains 'cSession_ReadAECs' security access before reading AECs.
+  // 0 - Security access is not obtained.
+  bGetSecurityAccess_ReadAECs                  = 0;
+  bGetSecurityAccess_CheckAECStatusFromRAM     = 0;
+  bGetSecurityAccess_ReturnAECStatusChangeTime = 0;
+  bGetSecurityAccess_CheckAECPresence          = 0;
+  bGetSecurityAccess_CheckCriticalStatus       = 0;
+  
+  strncpy(cSession_ReadAECs, "development", elcount(cSession_ReadAECs));    // Needed Session: Set to "none" if no special session is needed.
+  
+  // <<< ClearAll >>>
+  bClearAllRequest[0] = 0x14;
+  bClearAllRequest[1] = 0xFF;
+  bClearAllRequest[2] = 0xFF;
+  bClearAllRequest[3] = 0xFF;
+  
+  // << Read Memory By Address >>
+  bRMBARequest[0] = 0x23;
+  bRMBARequest[1] = 0x24;
+  bRMBARequest[2] = 0x00;
+  bRMBARequest[3] = 0x00;
+  bRMBARequest[4] = 0x00;
+  bRMBARequest[5] = 0x00;
+  bRMBARequest[6] = 0x00;
+  bRMBARequest[7] = 0x00;
+
+  // <<< ReturnAECStatusChangeTime >>>
+  _erh_au8AecStatus[0] = 0x70; // RAM address for Autotest Status.
+  _erh_au8AecStatus[1] = 0x00;
+  _erh_au8AecStatus[2] = 0xDA;
+  _erh_au8AecStatus[3] = 0x91;
+  
+  MMG_u32ModesStatus[0] = 0x70; // Critical autotests status.
+  MMG_u32ModesStatus[1] = 0x00;
+  MMG_u32ModesStatus[2] = 0x7F;
+  MMG_u32ModesStatus[3] = 0xE8;
+  
+  // <<< AEC functions >>>
+  bReadAllAECsStatusRequest[0] = 0x22;
+  bReadAllAECsStatusRequest[1] = 0xFE;
+  bReadAllAECsStatusRequest[2] = 0x00;
+}
+
+/// <CORE_Logging>
+// Each of the following test logging block name variables must have their corresponding block defined and configured.
+// e.g. an .ASC logging block called "TestLoggingBlock" must be defined in the measurement setup and set to "Test trigger" mode.
+void CORE_Logging()
+{
+   strncpy(cLogPath, "c:\\\\Temp\\\\", elcount(cLogPath)); // Default location for logs if no other path is provided before any test starts.
+                                        // As a recommendation this value should be declared with the desired path at 
+                                        // the start of each test module.
+  
+  // Each of the following test logging block name variables must have their corresponding block defined and configured.
+  // e.g. an .ASC logging block called "TestLoggingBlock" must be defined in the measurement setup and set to "Test trigger" mode.
+  strncpy(TestLoggingBlock, "TestLoggingBlock", elcount(TestLoggingBlock)); // Logging block used for .ASC logging.
+  strncpy(TestCaseLogASC,   "TestCaseLogASC",   elcount(TestCaseLogASC));   // Logging block used for .ASC logging of the whole test case (Starts in PreTS, ends in PostTS).
+  strncpy(TestCaseLogBLF,   "TestCaseLogBLF",   elcount(TestCaseLogBLF));   // Logging block used for .BLF logging of the whole test case (Starts in PreTS, ends in PostTS).
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+void CORE_AEC_Names()
+{
+  // AEC names.
+  strncpy(cAECName[bERR_ADC_OUT_OF_ORDER                  ], "ERR_ADC_OUT_OF_ORDER"           			   , 50);
+  strncpy(cAECName[bERR_MOSFET_HIGH_SC                    ], "ERR_MOSFET_HIGH_SC"             			   , 50);
+  strncpy(cAECName[bERR_MOSFET_LOW_SC                     ], "ERR_MOSFET_LOW_SC"              			   , 50);
+  strncpy(cAECName[bERR_MOSFET_OC                         ], "ERR_MOSFET_OC"                  		     , 50);
+  strncpy(cAECName[bERR_HALL_SENSOR                       ], "ERR_HALL_SENSOR"               			     , 50);
+  strncpy(cAECName[bERR_ENABLE_OUT_OF_ORDER               ], "ERR_ENABLE_OUT_OF_ORDER"       			     , 50);
+  strncpy(cAECName[bERR_HW_SELF_PROTECTION                ], "ERR_HW_SELF_PROTECTION"         			   , 50);
+  strncpy(cAECName[bERR_HIGH_SIDE_SWITCH                  ], "ERR_HIGH_SIDE_SWITCH"           			   , 50);
+  strncpy(cAECName[bERR_WARM_RESET                        ], "ERR_WARM_RESET"                 			   , 50);
+  strncpy(cAECName[bERR_TEMPERATURE_SENSOR_FAILURE        ], "ERR_TEMPERATURE_SENSOR_FAILURE" 			   , 50);
+  strncpy(cAECName[bERR_MOTOR_BLOCKED                     ], "ERR_MOTOR_BLOCKED"              			   , 50);
+  strncpy(cAECName[bERR_MOTOR_IN_SC                       ], "ERR_MOTOR_IN_SC"                		     , 50);
+  strncpy(cAECName[bERR_MOTOR_CURRENT                     ], "ERR_MOTOR_CURRENT"               			   , 50);
+  strncpy(cAECName[bERR_MOTOR_DISCONNECTED                ], "ERR_MOTOR_DISCONNECTED"             	   , 50);
+  strncpy(cAECName[bERR_MOTOR_ORDER                       ], "ERR_MOTOR_ORDER"                         , 50);
+  strncpy(cAECName[bERR_SW_SELF_PROTECTION                ], "ERR_SW_SELF_PROTECTION"           	 	   , 50);
+  strncpy(cAECName[bERR_TIMEOUT_PRESAFE                   ], "ERR_TIMEOUT_PRESAFE"                     , 50);
+  strncpy(cAECName[bERR_TIMEOUT_BUCKLE                    ], "ERR_TIMEOUT_BUCKLE"                      , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_PRESAFE          ], "ERR_IMPLAUSIBLE_DATA_PRESAFE"            , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_IGNITION         ], "ERR_IMPLAUSIBLE_DATA_IGNITION"           , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_BUCKLE           ], "ERR_IMPLAUSIBLE_DATA_BUCKLE"             , 50);
+  strncpy(cAECName[bERR_BAT_PWR_OVER_VOLTAGE              ], "ERR_BAT_PWR_OVER_VOLTAGE"                , 50);
+  strncpy(cAECName[bERR_BAT_PWR_UNDER_VOLTAGE             ], "ERR_BAT_PWR_UNDER_VOLTAGE"               , 50);
+  strncpy(cAECName[bERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS ], "ERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS"   , 50);
+  strncpy(cAECName[bERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS  ], "ERR_ERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS", 50);
+  strncpy(cAECName[bERR_TIMEOUT_IGNITION                  ], "ERR_TIMEOUT_IGNITION"                    , 50);
+  strncpy(cAECName[bERR_TIMEOUT_POWERTRAIN                ], "ERR_TIMEOUT_POWERTRAIN"                  , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY   ], "ERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY"     , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV   ], "ERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV"     , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_ORC              ], "ERR_IMPLAUSIBLE_DATA_ORC"                , 50);
+  strncpy(cAECName[bERR_TIMEOUT_BELT_HANDOVER_LEFT        ], "ERR_TIMEOUT_BELT_HANDOVER_LEFT"          , 50);
+  strncpy(cAECName[bERR_TIMEOUT_BELT_HANDOVER_RIGHT       ], "ERR_TIMEOUT_BELT_HANDOVER_RIGHT"         , 50);
+  strncpy(cAECName[bERR_TIMEOUT_API_INTERFACE             ], "ERR_TIMEOUT_API_INTERFACE"               , 50);
+  strncpy(cAECName[bERR_LOW_FORCE_END_OF_LIFE             ], "ERR_LOW_FORCE_END_OF_LIFE"               , 50);
+  strncpy(cAECName[bERR_COMFORT_END_OF_LIFE               ], "ERR_COMFORT_END_OF_LIFE"                 , 50);
+  strncpy(cAECName[bERR_HIGH_FORCE_END_OF_LIFE            ], "ERR_HIGH_FORCE_END_OF_LIFE"              , 50);
+  strncpy(cAECName[bERR_MAX_FORCE_END_OF_LIFE             ], "ERR_MAX_FORCE_END_OF_LIFE"               , 50);
+  strncpy(cAECName[bERR_BAT_PWR_OVER_VOLTAGE_SYSTEM       ], "ERR_BAT_PWR_OVER_VOLTAGE_SYSTEM"         , 50);
+  strncpy(cAECName[bERR_BAT_PWR_UNDER_VOLTAGE_SYSTEM      ], "ERR_BAT_PWR_UNDER_VOLTAGE_SYSTEM"        , 50);
+  strncpy(cAECName[bERR_STEERING_CONFIGURATION            ], "ERR_STEERING_CONFIGURATION"              , 50);
+  strncpy(cAECName[bERR_VARIANT_CODING                    ], "ERR_VARIANT_CODING"                      , 50);
+  strncpy(cAECName[bERR_TIMEOUT_ODOSPEEDOMETER            ], "ERR_TIMEOUT_ODOSPEEDOMETER"              , 50);
+  strncpy(cAECName[bERR_IMPLAUSIBLE_DATA_API              ], "ERR_IMPLAUSIBLE_DATA_API"                , 50);
+  strncpy(cAECName[bERR_TIMEOUT_VSS_SECTICKCOUNT          ], "ERR_TIMEOUT_VSS_SECTICKCOUNT"            , 50);
+  strncpy(cAECName[bERR_INCOMPATIBLE_CONFIGURATION_VIN    ], "ERR_INCOMPATIBLE_CONFIGURATION_VIN"      , 50);
+  strncpy(cAECName[bERR_TIMEOUT_BELT_ADJ                  ], "ERR_TIMEOUT_BELT_ADJ"                    , 50);
+  strncpy(cAECName[bERR_EXT_WDG_OUT_OF_ORDER              ], "ERR_EXT_WDG_OUT_OF_ORDER"                , 50);
+  strncpy(cAECName[bERR_NVM_NOT_PROG                      ], "ERR_NVM_NOT_PROG"                        , 50);
+  strncpy(cAECName[bERR_SPI_E_HW_ERROR                    ], "ERR_SPI_E_HW_ERROR"                      , 50);
+  strncpy(cAECName[bERR_NVM_ECC                           ], "ERR_NVM_ECC"                             , 50);
+  strncpy(cAECName[bERR_RAM_ECC                           ], "ERR_RAM_ECC"                             , 50);
+  strncpy(cAECName[bERR_P_FLASH_ECC                       ], "ERR_P_FLASH_ECC"                         , 50);
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+void CORE_AEC_Not_Executed_After_Reset()
+{
+   strncpy(cAEC_NotExecutedAfterReset[bERR_MOTOR_BLOCKED                    ], "ERR_MOTOR_BLOCKED"                         , 50);
+   strncpy(cAEC_NotExecutedAfterReset[bERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS ], "ERR_ERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS"  , 50);
+   strncpy(cAEC_NotExecutedAfterReset[bERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS], "ERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS"     , 50);
+   strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_NOT_PROG                     ], "ERR_NVM_NOT_PROG"                          , 50);
+   strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_ECC                          ], "ERR_NVM_ECC"                               , 50);
+   strncpy(cAEC_NotExecutedAfterReset[bERR_RAM_ECC                          ], "ERR_RAM_ECC"                               , 50);
+   strncpy(cAEC_NotExecutedAfterReset[bERR_P_FLASH_ECC                      ], "ERR_P_FLASH_ECC"                           , 50);
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+void CORE_DTC_Names()
+{
+  strncpy(cDTCName[DTC_HARDWARE                         ], "ERR_HARDWARE"                         , 50);
+  strncpy(cDTCName[DTC_TEMPERATURE_SELF_PROTECTION      ], "ERR_TEMPERATURE_SELF_PROTECTION"      , 50);
+  strncpy(cDTCName[DTC_MOTOR                            ], "ERR_MOTOR"                            , 50);
+  strncpy(cDTCName[DTC_BAT_PWR_UNDER_VOLTAGE            ], "ERR_BAT_PWR_UNDER_VOLTAGE"            , 50);
+  strncpy(cDTCName[DTC_BAT_PWR_OVER_VOLTAGE             ], "ERR_BAT_PWR_OVER_VOLTAGE"             , 50);
+  strncpy(cDTCName[DTC_BAT_PWR_UNDER_VOLTAGE_DURING_TENS], "ERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS", 50);
+  strncpy(cDTCName[DTC_BAT_PWR_OVER_VOLTAGE_DURING_TENS ], "ERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS" , 50);
+  strncpy(cDTCName[DTC_TENSIONING_END_OF_LIFE           ], "ERR_TENSIONING_END_OF_LIFE"           , 50);
+  strncpy(cDTCName[DTC_COMFORT_END_OF_LIFE              ], "ERR_COMFORT_END_OF_LIFE"              , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_PRESAFE                  ], "ERR_TIMEOUT_PRESAFE"                  , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_BUCKLE                   ], "ERR_TIMEOUT_BUCKLE"                   , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_DATA_PRESAFE         ], "ERR_IMPLAUSIBLE_DATA_PRESAFE"         , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_DATA_IGNITION        ], "ERR_IMPLAUSIBLE_DATA_IGNITION"        , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_DATA_BUCKLE          ], "ERR_IMPLAUSIBLE_DATA_BUCKLE"          , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_SEC_TICK_COUNT       ], "ERR_IMPLAUSIBLE_SEC_TICK_COUNT."      , 50);
+  strncpy(cDTCName[DTC_SEC_OC_VALIDATION_FAILED         ], "ERR_SEC_OC_VALIDATION_FAILED."        , 50);
+  strncpy(cDTCName[DTC_ACL_CHECK_FAILED                 ], "ERR_ACL_CHECK_FAILED."                , 50);
+  strncpy(cDTCName[DTC_BAT_PWR_OVER_VOLTAGE_SYSTEM      ], "ERR_BAT_PWR_OVER_VOLTAGE_SYSTEM"      , 50);
+  strncpy(cDTCName[DTC_BAT_PWR_UNDER_VOLTAGE_SYSTEM     ], "ERR_BAT_PWR_UNDER_VOLTAGE_SYSTEM"     , 50);
+  strncpy(cDTCName[DTC_CANSM_E_BUS_OFF                  ], "ERR_CANSM_E_BUS_OFF"                  , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_IGNITION                 ], "ERR_TIMEOUT_IGNITION"                 , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_POWERTRAIN               ], "ERR_TIMEOUT_POWERTRAIN "              , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_DATA_POWERTRAIN      ], "ERR_IMPLAUSIBLE_DATA_POWERTRAIN"      , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_DATA_ORC             ], "ERR_IMPLAUSIBLE_DATA_ORC"             , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_BELT_HANDOVER_LEFT       ], "ERR_TIMEOUT_BELT_HANDOVER_LEFT"       , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_BELT_HANDOVER_RIGHT      ], "ERR_TIMEOUT_BELT_HANDOVER_RIGHT"      , 50);
+  strncpy(cDTCName[DTC_MAX_FORCE_END_OF_LIFE            ], "ERR_MAX_FORCE_END_OF_LIFE"            , 50);
+  strncpy(cDTCName[DTC_STEERING_CONFIGURATION           ], "ERR_STEERING_CONFIGURATION"           , 50);
+  strncpy(cDTCName[DTC_PROGRAM_MEMORY_ERROR             ], "ERR_PROGRAM_MEMORY_ERROR"             , 50);
+  strncpy(cDTCName[DTC_RUNTIME_ERROR                    ], "ERR_RUNTIME_ERROR"                    , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_CENTRAL_GATEWAY          ], "ERR_TIMEOUT_CENTRAL_GATEWAY"          , 50);
+  strncpy(cDTCName[DTC_IMPLAUSIBLE_DATA_API             ], "ERR_IMPLAUSIBLE_DATA_API"             , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_SECURITY_MODULE          ], "ERR_TIMEOUT_SECURITY_MODULE"          , 50);
+  strncpy(cDTCName[DTC_TIMEOUT_INSTRUMENT_CLUSTER       ], "ERR_TIMEOUT_INSTRUMENT_CLUSTER"       , 50); // Odospeedometer and Belt Adj
+  strncpy(cDTCName[DTC_INCOMPATIBLE_CONFIGURATION_VIN   ], "ERR_INCOMPATIBLE_CONFIGURATION_VIN"   , 50);
+  strncpy(cDTCName[DTC_INITIAL_STARTUP                  ], "ERR_INITIAL_STARTUP"                  , 50);
+  strncpy(cDTCName[DTC_INCORRECT_SW_MODULES             ], "ERR_INCORRECT_SW_MODULES"             , 50);
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+void CORE_DTC_AEC_Association()
+{
+  bDTCID[bERR_HIGH_SIDE_SWITCH                 ] = DTC_HARDWARE;
+  bDTCID[bERR_ENABLE_OUT_OF_ORDER              ] = DTC_HARDWARE;
+  bDTCID[bERR_MOSFET_HIGH_SC                   ] = DTC_HARDWARE;
+  bDTCID[bERR_MOSFET_LOW_SC                    ] = DTC_HARDWARE;
+  bDTCID[bERR_MOTOR_DISCONNECTED               ] = DTC_HARDWARE;
+  bDTCID[bERR_MOSFET_OC                        ] = DTC_HARDWARE;
+  bDTCID[bERR_HALL_SENSOR                      ] = DTC_HARDWARE;
+  bDTCID[bERR_MOTOR_IN_SC                      ] = DTC_HARDWARE;
+  bDTCID[bERR_SPI_E_HW_ERROR                   ] = DTC_HARDWARE;
+  
+  bDTCID[bERR_HW_SELF_PROTECTION               ] = DTC_TEMPERATURE_SELF_PROTECTION;
+  bDTCID[bERR_SW_SELF_PROTECTION               ] = DTC_TEMPERATURE_SELF_PROTECTION;
+
+  bDTCID[bERR_MOTOR_CURRENT                    ] = DTC_MOTOR;
+  bDTCID[bERR_MOTOR_BLOCKED                    ] = DTC_MOTOR;
+  bDTCID[bERR_MOTOR_ORDER                      ] = DTC_MOTOR;
+  
+  bDTCID[bERR_BAT_PWR_UNDER_VOLTAGE            ] = DTC_BAT_PWR_UNDER_VOLTAGE;
+  bDTCID[bERR_BAT_PWR_OVER_VOLTAGE             ] = DTC_BAT_PWR_OVER_VOLTAGE;
+  bDTCID[bERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS] = DTC_BAT_PWR_UNDER_VOLTAGE_DURING_TENS;
+  bDTCID[bERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS ] = DTC_BAT_PWR_OVER_VOLTAGE_DURING_TENS;
+  
+  bDTCID[bERR_WARM_RESET                       ] = DTC_RUNTIME_ERROR;
+  bDTCID[bERR_EXT_WDG_OUT_OF_ORDER             ] = DTC_RUNTIME_ERROR;
+
+  bDTCID[bERR_HIGH_FORCE_END_OF_LIFE           ] = DTC_TENSIONING_END_OF_LIFE;
+  bDTCID[bERR_LOW_FORCE_END_OF_LIFE            ] = DTC_TENSIONING_END_OF_LIFE;
+  bDTCID[bERR_COMFORT_END_OF_LIFE              ] = DTC_COMFORT_END_OF_LIFE;
+  
+  bDTCID[bERR_TIMEOUT_PRESAFE                  ] = DTC_TIMEOUT_PRESAFE;
+  bDTCID[bERR_TIMEOUT_BUCKLE                   ] = DTC_TIMEOUT_BUCKLE;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_PRESAFE         ] = DTC_IMPLAUSIBLE_DATA_PRESAFE;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_IGNITION        ] = DTC_IMPLAUSIBLE_DATA_IGNITION;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_BUCKLE          ] = DTC_IMPLAUSIBLE_DATA_BUCKLE;
+  
+  bDTCID[bERR_IMPLAUSIBLE_SEC_TICK_COUNT       ] = DTC_IMPLAUSIBLE_SEC_TICK_COUNT;
+  bDTCID[bERR_SEC_OC_VALIDATION_FAILED         ] = DTC_SEC_OC_VALIDATION_FAILED;
+  bDTCID[bERR_ACL_CHECK_FAILED                 ] = DTC_ACL_CHECK_FAILED;
+  
+  bDTCID[bERR_BAT_PWR_OVER_VOLTAGE_SYSTEM      ] = DTC_BAT_PWR_OVER_VOLTAGE_SYSTEM;
+  bDTCID[bERR_BAT_PWR_UNDER_VOLTAGE_SYSTEM     ] = DTC_BAT_PWR_UNDER_VOLTAGE_SYSTEM;
+  
+  bDTCID[bERR_CANSM_E_BUS_OFF                  ] = DTC_CANSM_E_BUS_OFF; // BUS OFF has not AEC id. This variable is used for easier use of functions.
+  bDTCID[bERR_TIMEOUT_IGNITION                 ] = DTC_TIMEOUT_IGNITION;
+  bDTCID[bERR_TIMEOUT_POWERTRAIN               ] = DTC_TIMEOUT_POWERTRAIN;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_POWERTRAIN_RDY  ] = DTC_IMPLAUSIBLE_DATA_POWERTRAIN;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_POWERTRAIN_DRV  ] = DTC_IMPLAUSIBLE_DATA_POWERTRAIN;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_ORC             ] = DTC_IMPLAUSIBLE_DATA_ORC;
+  bDTCID[bERR_TIMEOUT_BELT_HANDOVER_LEFT       ] = DTC_TIMEOUT_BELT_HANDOVER_LEFT;
+  bDTCID[bERR_TIMEOUT_BELT_HANDOVER_RIGHT      ] = DTC_TIMEOUT_BELT_HANDOVER_RIGHT;
+  bDTCID[bERR_MAX_FORCE_END_OF_LIFE            ] = DTC_MAX_FORCE_END_OF_LIFE;
+  bDTCID[bERR_STEERING_CONFIGURATION           ] = DTC_STEERING_CONFIGURATION;
+  
+  bDTCID[bERR_VARIANT_CODING                   ] = DTC_INITIAL_STARTUP;
+  bDTCID[bERR_TIMEOUT_ODOSPEEDOMETER           ] = DTC_TIMEOUT_INSTRUMENT_CLUSTER;
+  bDTCID[bERR_TIMEOUT_API_INTERFACE            ] = DTC_TIMEOUT_CENTRAL_GATEWAY;
+  bDTCID[bERR_IMPLAUSIBLE_DATA_API             ] = DTC_IMPLAUSIBLE_DATA_API;
+  bDTCID[bERR_TIMEOUT_VSS_SECTICKCOUNT         ] = DTC_TIMEOUT_SECURITY_MODULE;
+  bDTCID[bERR_INCOMPATIBLE_CONFIGURATION_VIN   ] = DTC_INCOMPATIBLE_CONFIGURATION_VIN;
+  bDTCID[bERR_TIMEOUT_BELT_ADJ                 ] = DTC_TIMEOUT_CENTRAL_GATEWAY;
+  
+  bDTCID[bERR_NVM_NOT_PROG                     ] = DTC_PROGRAM_MEMORY_ERROR;
+  bDTCID[bERR_NVM_ECC                          ] = DTC_PROGRAM_MEMORY_ERROR;
+  bDTCID[bERR_P_FLASH_ECC                      ] = DTC_PROGRAM_MEMORY_ERROR;
+  bDTCID[bERR_RAM_ECC                          ] = DTC_PROGRAM_MEMORY_ERROR;
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+void CORE_Fault_Management_DTCs()
+{
+  // Status mask used to read DTCs.
+  bRDTCBST_StatusMask            = 0x21; // CheckDTCStatus().
+  
+  bRDTCBST_StatusMask_Init       = 0x21; // CheckDTCPresenceInBenchInit().
+  
+  bRDTCBST_StatusMask_AfterClear = 0x21; // CheckDTCPresenceAfterClear().
+  
+  bDTC_AvailableStatusMask       = 0x39; // CheckDTCStatus(char cDescription[], dword dDTC, byte bMask, char cPresence[]);
+  
+  // .CDD qualifiers:
+  // 0x19 0x02
+  strncpy(PR_DTCAndStatusRecord                             , "DTCAndStatusRecord"                            , elcount(PR_DTCAndStatusRecord));
+  strncpy(PR_DTCRecord                                      , "DTCRecord"                                     , elcount(PR_DTCRecord));
+  strncpy(PR_StatusOfDTC                                    , "StatusOfDTC"                                   , elcount(PR_StatusOfDTC));
+  strncpy(PR_StatusOfDTC_WarningIndicatorRequested          , "StatusOfDTC.WarningIndicatorRequested"         , elcount(PR_StatusOfDTC_WarningIndicatorRequested));
+  strncpy(PR_StatusOfDTC_TestNotCompletedThisOperationCycle , "StatusOfDTC.TestNotCompletedThisOperationCycle", elcount(PR_StatusOfDTC_TestNotCompletedThisOperationCycle));
+  strncpy(PR_StatusOfDTC_TestFailedSinceLastClear           , "StatusOfDTC.TestFailedSinceLastClear"          , elcount(PR_StatusOfDTC_TestFailedSinceLastClear));
+  strncpy(PR_StatusOfDTC_TestNotCompletedSinceLastClear     , "StatusOfDTC.TestNotCompletedSinceLastClear"    , elcount(PR_StatusOfDTC_TestNotCompletedSinceLastClear));
+  strncpy(PR_StatusOfDTC_ConfirmedDTC                       , "StatusOfDTC.ConfirmedDTC"                      , elcount(PR_StatusOfDTC_ConfirmedDTC));
+  strncpy(PR_StatusOfDTC_PendingDTC                         , "StatusOfDTC.PendingDTC"                        , elcount(PR_StatusOfDTC_PendingDTC));
+  strncpy(PR_StatusOfDTC_TestFailedThisOperationCycle       , "StatusOfDTC.TestFailedThisOperationCycle"      , elcount(PR_StatusOfDTC_TestFailedThisOperationCycle));
+  strncpy(PR_StatusOfDTC_TestFailed                         , "StatusOfDTC.TestFailed"                        , elcount(PR_StatusOfDTC_TestFailed));
+  
+  // 0x19 0x04
+  FirstOccurenceSnapshot = 0x10;
+  LastOccurenceSnapshot  = 0x20;
+  AllSnapshotRecords     = 0xFF;
+  
+  strncpy(RQ_DTCSnapshotRecordNumber                   , "DTCSnapshotRecordNumber"                                              , elcount(RQ_DTCSnapshotRecordNumber));
+  strncpy(RQ_DTCRecordSnapshot                         , "DTCRecord"                                                            , elcount(RQ_DTCRecordSnapshot));
+  strncpy(PR_DTCRecordSnapshot                         , "DTCRecord"                                                            , elcount(PR_DTCRecordSnapshot));
+  strncpy(PR_ListOfSnapshotDataRecords                 , "Parameter"                                                            , elcount(PR_ListOfSnapshotDataRecords));
+  strncpy(PR_DTCStatusOfDTCSnapshot                    , "StatusOfDtc"                                                          , elcount(PR_DTCStatusOfDTCSnapshot));
+  strncpy(PR_DTCShapshotData_RecordNumber              , "DTCSnapshotRecordNumber"                                              , elcount(PR_DTCShapshotData_RecordNumber));
+  strncpy(PR_DTCShapshotData_RecordNumberOfIdentifiers , "DTCSnapshotRecordNumberOfIdentifiers"                                 , elcount(PR_DTCShapshotData_RecordNumberOfIdentifiers));
+  strncpy(PR_DTCShapshotData_CurrentOperatingTime      , "Current_Operating_Time.Current_Operating_Time"                        , elcount(PR_DTCShapshotData_CurrentOperatingTime));
+  strncpy(PR_DTCShapshotData_CurrentOperatingTime_ID   , "OperationTime_ID"                                                     , elcount(PR_DTCShapshotData_CurrentOperatingTime_ID));
+  strncpy(PR_DTCShapshotData_Odometer                  , "Vehicle_Odometer_in_Low_Resolution.Vehicle_Odometer_in_Low_Resolution", elcount(PR_DTCShapshotData_Odometer));
+  strncpy(PR_DTCShapshotData_Odometer_ID               , "Odometer_ID"                                                          , elcount(PR_DTCShapshotData_Odometer_ID));
+  strncpy(PR_DTCShapshotData_RootCause                 , "Root_Causes.Root_Causes"                                              , elcount(PR_DTCShapshotData_RootCause));
+  strncpy(PR_DTCShapshotData_RootCause_ID              , "Root_Causes_ID"                                                       , elcount(PR_DTCShapshotData_RootCause_ID));
+  
+  // 0x19 0x06
+  strncpy(RQ_DTCExtendedRecordNumber                                , "DTCExtendedDataRecordNumber"                   , elcount(PR_DTCRecordExtended));
+  strncpy(RQ_DTCRecordExtended                                      , "DTCRecord"                                     , elcount(PR_DTCRecordExtended));
+  
+  strncpy(PR_DTCRecordExtended                                      , "DTCRecord"                                     , elcount(PR_DTCRecordExtended));
+  strncpy(PR_ListOfExtendedDataRecords                              , "ListOfExtendedDataRecords"                     , elcount(PR_ListOfExtendedDataRecords));
+  strncpy(PR_DTCExtendedData_RecordNumber                           , "ExtendedDataRecordNumber"                      , elcount(PR_DTCExtendedData_RecordNumber));
+  strncpy(PR_DTCExtendedData_ExternalTesterPresentFlag              , "External_Tester_Present_Flag"                  , elcount(PR_DTCExtendedData_ExternalTesterPresentFlag));
+  strncpy(PR_DTCExtendedData_FrequencyCounter                       , "Frequency_Counter"                             , elcount(PR_DTCExtendedData_FrequencyCounter));
+  strncpy(PR_DTCExtendedData_OccurenceFlag                          , "Occurrence_Flag"                               , elcount(PR_DTCExtendedData_OccurenceFlag));
+  strncpy(PR_DTCExtendedData_OperationCycleCounter                  , "Operation_Cycle_Counter"                       , elcount(PR_DTCExtendedData_OperationCycleCounter));
+  strncpy(PR_StatusOfDTCExtended                                    , "StatusOfDtc"                                   , elcount(PR_StatusOfDTCExtended));
+  strncpy(PR_StatusOfDTCExtended_WarningIndicatorRequested          , "StatusOfDTC.WarningIndicatorRequested"         , elcount(PR_StatusOfDTCExtended_WarningIndicatorRequested));
+  strncpy(PR_StatusOfDTCExtended_TestNotCompletedThisOperationCycle , "StatusOfDTC.TestNotCompletedThisOperationCycle", elcount(PR_StatusOfDTCExtended_TestNotCompletedThisOperationCycle));
+  strncpy(PR_StatusOfDTCExtended_TestFailedSinceLastClear           , "StatusOfDTC.TestFailedSinceLastClear"          , elcount(PR_StatusOfDTCExtended_TestFailedSinceLastClear));
+  strncpy(PR_StatusOfDTCExtended_TestNotCompletedSinceLastClear     , "StatusOfDTC.TestNotCompletedSinceLastClear"    , elcount(PR_StatusOfDTCExtended_TestNotCompletedSinceLastClear));
+  strncpy(PR_StatusOfDTCExtended_ConfirmedDTC                       , "StatusOfDTC.ConfirmedDTC"                      , elcount(PR_StatusOfDTCExtended_ConfirmedDTC));
+  strncpy(PR_StatusOfDTCExtended_PendingDTC                         , "StatusOfDTC.PendingDTC"                        , elcount(PR_StatusOfDTCExtended_PendingDTC));
+  strncpy(PR_StatusOfDTCExtended_TestFailedThisOperationCycle       , "StatusOfDTC.TestFailedThisOperationCycle"      , elcount(PR_StatusOfDTCExtended_TestFailedThisOperationCycle));
+  strncpy(PR_StatusOfDTCExtended_TestFailed                         , "StatusOfDTC.TestFailed"                        , elcount(PR_StatusOfDTCExtended_TestFailed));
+  
+  strncpy(PR_DTCAvailabilityMask_WarningIndicatorRequested          , "DTCAvailabilityMask.WarningIndicatorRequested"         , elcount(PR_DTCAvailabilityMask_WarningIndicatorRequested));
+  strncpy(PR_DTCAvailabilityMask_TestNotCompletedThisOperationCycle , "DTCAvailabilityMask.TestNotCompletedThisOperationCycle", elcount(PR_DTCAvailabilityMask_TestNotCompletedThisOperationCycle));
+  strncpy(PR_DTCAvailabilityMask_TestFailedSinceLastClear           , "DTCAvailabilityMask.TestFailedSinceLastClear"          , elcount(PR_DTCAvailabilityMask_TestFailedSinceLastClear));
+  strncpy(PR_DTCAvailabilityMask_TestNotCompletedSinceLastClear     , "DTCAvailabilityMask.TestNotCompletedSinceLastClear"    , elcount(PR_DTCAvailabilityMask_TestNotCompletedSinceLastClear));
+  strncpy(PR_DTCAvailabilityMask_ConfirmedDTC                       , "DTCAvailabilityMask.ConfirmedDTC"                      , elcount(PR_DTCAvailabilityMask_ConfirmedDTC));
+  strncpy(PR_DTCAvailabilityMask_PendingDTC                         , "DTCAvailabilityMask.PendingDTC"                        , elcount(PR_DTCAvailabilityMask_PendingDTC));
+  strncpy(PR_DTCAvailabilityMask_TestFailedThisOperationCycle       , "DTCAvailabilityMask.TestFailedThisOperationCycle"      , elcount(PR_DTCAvailabilityMask_TestFailedThisOperationCycle));
+  strncpy(PR_DTCAvailabilityMask_TestFailed                         , "DTCAvailabilityMask.TestFailed_1Bit"                   , elcount(PR_DTCAvailabilityMask_TestFailed));
+  
+  strncpy(REQ_DTCStatusMask                                    , "DTCStatusMask"                                   , elcount(REQ_DTCStatusMask));
+  strncpy(REQ_DTCStatusMask_WarningIndicatorRequested          , "DTCStatusMask.WarningIndicatorRequested"         , elcount(REQ_DTCStatusMask_WarningIndicatorRequested));
+  strncpy(REQ_DTCStatusMask_TestNotCompletedThisOperationCycle , "DTCStatusMask.TestNotCompletedThisOperationCycle", elcount(REQ_DTCStatusMask_TestNotCompletedThisOperationCycle));
+  strncpy(REQ_DTCStatusMask_TestFailedSinceLastClear           , "DTCStatusMask.TestFailedSinceLastClear"          , elcount(REQ_DTCStatusMask_TestFailedSinceLastClear));
+  strncpy(REQ_DTCStatusMask_TestNotCompletedSinceLastClear     , "DTCStatusMask.TestNotCompletedSinceLastClear"    , elcount(REQ_DTCStatusMask_TestNotCompletedSinceLastClear));
+  strncpy(REQ_DTCStatusMask_ConfirmedDTC                       , "DTCStatusMask.ConfirmedDTC"                      , elcount(REQ_DTCStatusMask_ConfirmedDTC));
+  strncpy(REQ_DTCStatusMask_PendingDTC                         , "DTCStatusMask.PendingDTC"                        , elcount(REQ_DTCStatusMask_PendingDTC));
+  strncpy(REQ_DTCStatusMask_TestFailedThisOperationCycle       , "DTCStatusMask.TestFailedThisOperationCycle"      , elcount(REQ_DTCStatusMask_TestFailedThisOperationCycle));
+  strncpy(REQ_DTCStatusMask_TestFailed                         , "DTCStatusMask.TestFailed"                        , elcount(REQ_DTCStatusMask_TestFailed));
+  
+  strncpy(PR_DTCCount, "DTCCount" , elcount(PR_DTCCount));
+  
+  // <<< CheckDTCPresence >>>
+  bCheckDTCPresenceRequest[0] = 0x19;
+  bCheckDTCPresenceRequest[1] = 0x02;
+  bCheckDTCPresenceRequest[2] = 0x00;
+  
+  // <<< Report DTC Snapshot record(s) >>>
+  bReportDTCSnapshotRecordByDTCNbrRequest[0] = 0x19;
+  bReportDTCSnapshotRecordByDTCNbrRequest[1] = 0x04;
+  
+  // <<< Report DTC by extended data >>>
+  bReportDTCExtendedDataByDTCNbrRequest[0] = 0x19;
+  bReportDTCExtendedDataByDTCNbrRequest[1] = 0x06;
+  
+  // <<< Report supported DTCs >>>
+  bReportSupportedDTCsRequest[0] = 0x19;
+  bReportSupportedDTCsRequest[1] = 0x0A;
+  
+  // <<< Report number of DTCs by status mask request >>>
+  bReportNbrOfDTCByStatusMaskRequest[0] = 0x19;
+  bReportNbrOfDTCByStatusMaskRequest[1] = 0x01;
+  bReportNbrOfDTCByStatusMaskRequest[2] = 0x00;
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+void CORE_ChronoStack_Primary_Memory_Configuration()
+{
+  // Configure DTC priority.
+  DTCPriority[DTC_HARDWARE                         ] = 1;
+  DTCPriority[DTC_TEMPERATURE_SELF_PROTECTION      ] = 2;
+  DTCPriority[DTC_MOTOR                            ] = 1;
+  DTCPriority[DTC_BAT_PWR_UNDER_VOLTAGE            ] = 2;
+  DTCPriority[DTC_BAT_PWR_OVER_VOLTAGE             ] = 2;
+  DTCPriority[DTC_BAT_PWR_UNDER_VOLTAGE_DURING_TENS] = 2;
+  DTCPriority[DTC_BAT_PWR_OVER_VOLTAGE_DURING_TENS ] = 2;
+  DTCPriority[DTC_TENSIONING_END_OF_LIFE           ] = 1;
+  DTCPriority[DTC_COMFORT_END_OF_LIFE              ] = 1;
+  DTCPriority[DTC_TIMEOUT_PRESAFE                  ] = 2;
+  DTCPriority[DTC_TIMEOUT_BUCKLE                   ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_DATA_PRESAFE         ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_DATA_IGNITION        ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_DATA_BUCKLE          ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_SEC_TICK_COUNT       ] = -1;
+  DTCPriority[DTC_SEC_OC_VALIDATION_FAILED         ] = -1;
+  DTCPriority[DTC_ACL_CHECK_FAILED                 ] = -1;
+  DTCPriority[DTC_BAT_PWR_OVER_VOLTAGE_SYSTEM      ] = 2;
+  DTCPriority[DTC_BAT_PWR_UNDER_VOLTAGE_SYSTEM     ] = 2;
+  DTCPriority[DTC_CANSM_E_BUS_OFF                  ] = 2;
+  DTCPriority[DTC_TIMEOUT_IGNITION                 ] = 2;
+  DTCPriority[DTC_TIMEOUT_POWERTRAIN               ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_DATA_POWERTRAIN      ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_DATA_ORC             ] = 2;
+  DTCPriority[DTC_TIMEOUT_BELT_HANDOVER_LEFT       ] = 2;
+  DTCPriority[DTC_TIMEOUT_BELT_HANDOVER_RIGHT      ] = 2;
+  DTCPriority[DTC_MAX_FORCE_END_OF_LIFE            ] = 1;
+  DTCPriority[DTC_STEERING_CONFIGURATION           ] = 1;
+  DTCPriority[DTC_PROGRAM_MEMORY_ERROR             ] = 1;
+  DTCPriority[DTC_RUNTIME_ERROR                    ] = 1;
+  DTCPriority[DTC_TIMEOUT_CENTRAL_GATEWAY          ] = 2;
+  DTCPriority[DTC_IMPLAUSIBLE_DATA_API             ] = 2;
+  DTCPriority[DTC_TIMEOUT_SECURITY_MODULE          ] = 2;
+  DTCPriority[DTC_TIMEOUT_INSTRUMENT_CLUSTER       ] = 2;
+  DTCPriority[DTC_INCOMPATIBLE_CONFIGURATION_VIN   ] = 2;
+  DTCPriority[DTC_INITIAL_STARTUP                  ] = 2;
+  DTCPriority[DTC_INCORRECT_SW_MODULES             ] = 2;
+}
+
+/// <CORE_Test_Traceability>
+void CORE_Test_Traceability()
+{
+  // <<< Read SW version >>>
+  bReadSWVersionRequest[0] = 0x22;
+  bReadSWVersionRequest[1] = 0xF1;
+  bReadSWVersionRequest[2] = 0x51;
+  
+  // <<< Read HW version >>>
+  bHardwareVersionInformationRequest[0] = 0x22;
+  bHardwareVersionInformationRequest[1] = 0xF1;
+  bHardwareVersionInformationRequest[2] = 0x50;
+  
+  // <<< CheckSWVersion >>> and <<< GetSWVersion >>>
+  strncpy(cSession_CheckSWVersion, "supplier"      , elcount(cSession_CheckSWVersion)); // Needed Session: Set to "none" if no special session is needed.
+  strncpy(cKeepHexFormat         , "true"          , elcount(cKeepHexFormat)); // If "cSwVersion" is in HEX format (e.g "0x16 0x0B 0x00"), set to "true", otherwise set to "false".
+}
+
+// These objects are not used in the CORE functions.
+// Their purpose is to avoid declaring diagnostic objects for specific test cases.
+void CORE_Init_DiagObjects()
+{
+  // EnterDiagnosticSession
+  dDefaultSessionRequest.Resize(elcount(bSessionControlRequests[0]));
+  dDefaultSessionRequest.SetPrimitiveData(bSessionControlRequests[0], elcount(bSessionControlRequests[0]));
+  
+  dExtendedSessionRequest.Resize(elcount(bSessionControlRequests[1]));
+  dExtendedSessionRequest.SetPrimitiveData(bSessionControlRequests[1], elcount(bSessionControlRequests[1]));
+  
+  dProgrammingSessionRequest.Resize(elcount(bSessionControlRequests[2]));
+  dProgrammingSessionRequest.SetPrimitiveData(bSessionControlRequests[2], elcount(bSessionControlRequests[2]));
+  
+  dDevelopmentSessionRequest.Resize(elcount(bSessionControlRequests[3]));
+  dDevelopmentSessionRequest.SetPrimitiveData(bSessionControlRequests[3], elcount(bSessionControlRequests[3]));
+  
+  dSupplierSessionRequest.Resize(elcount(bSessionControlRequests[4]));
+  dSupplierSessionRequest.SetPrimitiveData(bSessionControlRequests[4], elcount(bSessionControlRequests[4]));
+  
+  // ResetECU
+  dHardResetRequest.Resize(elcount(bHardResetRequest));
+  dHardResetRequest.SetPrimitiveData(bHardResetRequest, elcount(bHardResetRequest));
+  
+  dSoftResetRequest.Resize(elcount(bSoftResetRequest));
+  dSoftResetRequest.SetPrimitiveData(bSoftResetRequest, elcount(bSoftResetRequest));
+  
+  // Read SW version
+  dReadSWVersionRequest.Resize(elcount(bReadSWVersionRequest));
+  dReadSWVersionRequest.SetPrimitiveData(bReadSWVersionRequest, elcount(bReadSWVersionRequest));
+  
+  // Read HW version
+  dHardwareVersionInformationRequest.Resize(elcount(bHardwareVersionInformationRequest));
+  dHardwareVersionInformationRequest.SetPrimitiveData(bHardwareVersionInformationRequest, elcount(bHardwareVersionInformationRequest));
+  
+  // RMBA
+  dReadMemoryByAddressRequest.Resize(elcount(bRMBARequest));
+  dReadMemoryByAddressRequest.SetPrimitiveData(bRMBARequest, elcount(bRMBARequest));
+  
+  // WMBA
+  dWriteMemoryByAddressRequest.Resize(elcount(bRMBARequest));
+  dWriteMemoryByAddressRequest.SetPrimitiveData(bRMBARequest, elcount(bRMBARequest));
+
+  // Clear All DTCs
+  dClearAllDTCsRequest.Resize(elcount(bClearAllRequest));
+  dClearAllDTCsRequest.SetPrimitiveData(bClearAllRequest, elcount(bClearAllRequest));
+  
+  // Read All AECs
+  dReadAllAECsStatusRequest.Resize(elcount(bReadAllAECsStatusRequest));
+  dReadAllAECsStatusRequest.SetPrimitiveData(bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest));
+  
+  // Read DTCs
+  dReportDTCByStatusMaskRequest.Resize(elcount(bCheckDTCPresenceRequest));
+  dReportDTCByStatusMaskRequest.SetPrimitiveData(bCheckDTCPresenceRequest, elcount(bCheckDTCPresenceRequest));
+  
+  dReportDTCExtendedDataByDTCNbrRequest.Resize(elcount(bReportDTCExtendedDataByDTCNbrRequest));
+  dReportDTCExtendedDataByDTCNbrResponse.SetPrimitiveData(bReportDTCExtendedDataByDTCNbrRequest, elcount(bReportDTCExtendedDataByDTCNbrRequest));
+  
+  dReportDTCSnapshotRecordByDTCNbrRequest.Resize(elcount(bReportDTCSnapshotRecordByDTCNbrRequest));
+  dReportDTCSnapshotRecordByDTCNbrRequest.SetPrimitiveData(bReportDTCSnapshotRecordByDTCNbrRequest, elcount(bReportDTCSnapshotRecordByDTCNbrRequest));
+  
+  dReportNbrOfDTCByStatusMaskRequest.Resize(elcount(bReportNbrOfDTCByStatusMaskRequest));
+  dReportNbrOfDTCByStatusMaskRequest.SetPrimitiveData(bReportNbrOfDTCByStatusMaskRequest, elcount(bReportNbrOfDTCByStatusMaskRequest));
+  
+  dReportSupportedDTCsRequest.Resize(elcount(bReportSupportedDTCsRequest));
+  dReportSupportedDTCsRequest.SetPrimitiveData(bReportNbrOfDTCByStatusMaskRequest, elcount(bReportSupportedDTCsRequest));
+  
+  // Lock / Unlock ECU.
+  dUnlockECURequest.Resize(elcount(bUnlockECU));
+  dUnlockECURequest.SetPrimitiveData(bUnlockECU, elcount(bUnlockECU));
+  
+  dGetECULockStateRequest.Resize(elcount(bGetECULockState));
+  dGetECULockStateRequest.SetPrimitiveData(bGetECULockState, elcount(bGetECULockState));
+  
+  // Process mode.
+  dProcessModeStartRequest.Resize(elcount(bProcessModeStartRequest));
+  dProcessModeStartRequest.SetPrimitiveData(bProcessModeStartRequest, elcount(bProcessModeStartRequest));
+  
+  dProcessModeStopRequest.Resize(elcount(bProcessModeStopRequest));
+  dProcessModeStopRequest.SetPrimitiveData(bProcessModeStopRequest, elcount(bProcessModeStopRequest));
+  
+  dProcessModeRequestResRequest.Resize(elcount(bProcessModeRequestResRequest));
+  dProcessModeRequestResRequest.SetPrimitiveData(bProcessModeRequestResRequest, elcount(bProcessModeRequestResRequest));
+  
+  // Security access.
+  dRequestSeedReprogrammingRequest.Resize(elcount(bSecurityProgrammingRequest));
+  dRequestSeedReprogrammingRequest.SetPrimitiveData(bSecurityProgrammingRequest, elcount(bSecurityProgrammingRequest));
+  
+  dSendKeyReprogrammingRequest.Resize(elcount(bSendKeyReprogrammingRequest));
+  dSendKeyReprogrammingRequest.SetPrimitiveData(bSendKeyReprogrammingRequest, elcount(bSendKeyReprogrammingRequest));
+  
+  // WDG
+  dForceExternalWDGStartRequest.Resize(elcount(bExternalWDGStartRequest));
+  dForceExternalWDGStartRequest.SetPrimitiveData(bExternalWDGStartRequest, elcount(bExternalWDGStartRequest));
+}

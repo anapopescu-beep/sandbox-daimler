@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0201, ARCH_SW_CIL_0202, ARCH_SW_CIL_0203, ARCH_SW_CIL_0204, ARCH_SW_CIL_0160
+ARCH_SW_CIL_0201: CIL shall check if timeout is present for Belthandover_L frame.
+ARCH_SW_CIL_0202: CIL shall check if BeldHandOver_Availability is enabled or not.
+ARCH_SW_CIL_0203: CIL shall check if timeout is present for Belthandover Right frame.
+ARCH_SW_CIL_0204: CIL shall check if BeldHandOver_Availability is enabled or not.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BeltHdOvr_FL_Stat_ST3 to I_C02_BELTHDOVL_STAT_SNA (0x3).
+
+	Step 3: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_BelthandoverL at line 'if(NVP_stVehicleEquipmentData.BltHandOverAvailabiliy != BLTHANDOVER_AVAILABILITY_DISABLED)'.
+
+Action: ARCH_SW_CIL_0202, ARCH_SW_CIL_0203
+
+	Step 4: Check if CPU stopped at line 'if(NVP_stVehicleEquipmentData.BltHandOverAvailabiliy != BLTHANDOVER_AVAILABILITY_DISABLED)'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_BelthandoverL at line *pu8TestResult = cil_u8ResultOfAutoTest;.
+
+Action: ARCH_SW_CIL_0201, ARCH_SW_CIL_0160
+
+	Step 6: Check if CPU stopped at line *pu8TestResult = cil_u8ResultOfAutoTest;. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0201, ARCH_SW_CIL_0204
+
+	Step 7: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_NOK
+
+Postcondition
+
+	Step 8: Return ECU to default values

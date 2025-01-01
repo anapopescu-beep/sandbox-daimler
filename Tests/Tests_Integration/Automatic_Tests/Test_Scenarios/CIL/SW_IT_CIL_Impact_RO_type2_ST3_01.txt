@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0034
+ARCH_SW_CIL_0034: If value for Impact_RO_type2_ST3 is 1 then ORC PRE-SAFE 8 (cycle 6) should be executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 3: Set signal Impact_RO_type2_ST3 to KU8_CIL_TRUE_ImpactRoTrigger.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfile at line '(void)Rte_Read_prrEnableCycle6_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL8, and press run.
+
+Action: ARCH_SW_CIL_0034
+
+	Step 6: Check if CPU stopped in function cil_TriggerProfile at line '(void)Rte_Read_prrEnableCycle6_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL8. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 7: Return ECU to default values

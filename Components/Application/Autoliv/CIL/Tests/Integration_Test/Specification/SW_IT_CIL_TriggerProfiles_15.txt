@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0132, ARCH_SW_CIL_0145
+ARCH_SW_CIL_0132: If signal is received with value 14, then tensioning cycle 12 shall be requested.
+ARCH_SW_CIL_0145: If signal is received with value 14, then tensioning cycle 12 shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE14.
+
+	Step 4: Set a breakpoint in function CIL_runCANToAppli at line cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);.
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE14:.
+
+	Step 6: Set a breakpoint at the end of the function cil_RequestTensioning.
+
+Action: ARCH_SW_CIL_0132
+
+	Step 7: Check if CPU stopped in function cil_RequestTensioning. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_CIL_0132, ARCH_SW_CIL_0145
+
+	Step 8: Check if variable Rte_CIL_prrCrashSeverityLevel_u8PreCrashSeverityLevel is KU8_PRECRASH_SEVERITY_LEVEL_13 
+		Expected result:  KU8_PRECRASH_SEVERITY_LEVEL_13.
+
+Postcondition
+
+	Step 9: Return ECU to default values

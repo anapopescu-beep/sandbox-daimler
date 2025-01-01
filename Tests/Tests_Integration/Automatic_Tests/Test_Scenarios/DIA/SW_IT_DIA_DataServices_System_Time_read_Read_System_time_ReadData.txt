@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0645; ARCH_SW_DIA_0646; ARCH_SW_DIA_0647; ARCH_SW_DIA_0648; ARCH_SW_DIA_0649; ARCH_SW_DIA_0650
+ARCH_SW_DIA_0645: Service 0x22 (Read Data By Identifier) will be implemented for DID 02EA (System Time)
+ARCH_SW_DIA_0646: The Read System Time service shall be available in the following sessions: ?Default Session (0x01) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0647: The Read System Time service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0648: DataIdentifier of the Read System Time shall be: 0x02EA
+ARCH_SW_DIA_0649: Response data length shall be 4 bytes long Note: Full Response length = 3 bytes + Response data length)
+ARCH_SW_DIA_0650: Bytes #4 to #7 ? bits 0-7: System Time [BCD coded] 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_System_Time_read_Read_System_time_ReadData*.
+
+Action: ARCH_SW_DIA_0645; ARCH_SW_DIA_0646; ARCH_SW_DIA_0647; ARCH_SW_DIA_0648; ARCH_SW_DIA_0649; ARCH_SW_DIA_0650
+
+	Step 3: Send diag request for 22 01E0 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_System_Time_read_Read_System_time_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

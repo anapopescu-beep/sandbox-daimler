@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0010
+ARCH_SW_PMP_0010: PMP shall be providing raw battery voltage value.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_0010
+
+	Step 2: Set a breakpoint in function MMG_runPreSafeRecorder at the RTE Call for PMP_runGetBatteryVoltage function 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PMP_runGetBatteryVoltage at the RTE Call for AdcIf_runGetKL30_V function 
+		Expected result:  BP reached.
+
+	Step 4: Read local variable pu16SampledSignal 
+		Expected result:  Variable read from ADC channel
+
+	Step 5: Set a breakpoint in function PMP_runGetBatteryVoltage at the pu16Voltage assignment
+		Expected result:  BP reached.
+
+	Step 6: Evaluate local variable pmp_u16InternalAnalogSignal 
+		Expected result:  Variable read is the same from *(pu16SampledSignal) data pointer
+
+	Step 7: Read local variable (pu16Voltage) 
+		Expected result:  Variable read
+
+	Step 8: Set a breakpoint in function MMG_runPreSafeRecorder after the RTE Call for PMP_runGetBatteryVoltage function 
+		Expected result:  BP reached.
+
+	Step 9: Evaluate local variable mmg_u16LocalVoltage 
+		Expected result:  Variable read is the same from *(pu16Voltage) data pointer
+
+Postcondition
+
+	Step 10: Return ECU to default values

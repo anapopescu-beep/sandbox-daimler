@@ -1,0 +1,53 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0210, ARCH_SW_CIL_0211
+ARCH_SW_CIL_0210: CIL component should ensure that if a profile is requested on PRE_SAFE or API and the execution is inhibitted, it will be postponed until all starting conditions will be fulfilled as long as the request is still active.
+ARCH_SW_CIL_0211: CIL component should ensure that if a profile is requested on PRE_SAFE or API and the execution is aborted, it will be restarted after the abortion conditions disappear as long as the request is still active.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal ISw_Stat_ST3 I_C03_ISW_STAT_SNA.
+
+	Step 3: Set signal Presf_Lvl_ST3 I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 4: Set a breakpoint in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 5: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function cil_TriggerProfiles() at line 'cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_1);'.
+
+Action: ARCH_SW_CIL_0210, ARCH_SW_CIL_0211
+
+	Step 7: Check if CPU stopped in function cil_TriggerProfiles() at line 'cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_1);'. 
+		Expected result:  CPU is Running
+
+	Step 8: Set a breakpoint in function cil_TriggerProfiles() after line 'cil_stInputSignalsPresfRec.u8TensioningStateType = KU8_TENSIONING_INHIBIT;'.
+
+Action: ARCH_SW_CIL_0210
+
+	Step 9: Evaluate if variable cil_stInputSignalsPresfRec.u8TensioningStateType is equal to KU8_TENSIONING_INHIBIT. 
+		Expected result:  KU8_TENSIONING_INHIBIT
+
+	Step 10: Set signal ISw_Stat_ST3 I_C03_ISW_STAT_SNA.
+
+	Step 11: Set a breakpoint in function cil_TriggerProfiles() at line 'cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_1);'.
+
+Action: ARCH_SW_CIL_0210, ARCH_SW_CIL_0211
+
+	Step 12: Check if CPU stopped in function cil_TriggerProfiles() at line 'cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_1);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 13: Return ECU to default values

@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0023; ARCH_SW_DIA_0090; ARCH_SW_DIA_0092;
+ARCH_SW_DIA_0023: Service 0x22 will be implemented for DID 0301
+ARCH_SW_DIA_0090: Service shall be available in Default, Extended and Development session
+ARCH_SW_DIA_0092: Data contained in NVP_BLOCK_ID_CYCLE_29 to NVP_BLOCK_ID_CYCLE_32 and NVP_BLOCK_ID_STEP_92 to NVP_BLOCK_ID_STEP_115 shall be returned
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Release_Cycles_BSR_and_PreSafe_CombinedSignal_ReadData*.
+
+Action: ARCH_SW_DIA_0023; ARCH_SW_DIA_0090; ARCH_SW_DIA_0091; ARCH_SW_DIA_0092;
+
+	Step 4: Send diag request for 22 0301 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Check if breakpoint from function DataServices_Release_Cycles_BSR_and_PreSafe_CombinedSignal_ReadData. 
+		Expected result:  BP was reached.
+
+	Step 6: Read 29th byte of NVP_BLOCK_ID_CYCLE_0_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 7: Read 32th byte of NVP_BLOCK_ID_CYCLE_0_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 8: Read 92nd byte of NVP_BLOCK_ID_STEP_0_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 9: Read 115th byte of NVP_BLOCK_ID_STEP_0_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 10: Return ECU to default values

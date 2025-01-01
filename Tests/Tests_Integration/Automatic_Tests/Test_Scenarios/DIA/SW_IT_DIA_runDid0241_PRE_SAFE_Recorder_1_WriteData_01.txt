@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0240; ARCH_SW_DIA_0248; ARCH_SW_DIA_0249; ARCH_SW_DIA_0385; ARCH_SW_DIA_0386; ARCH_SW_DIA_0387; ARCH_SW_DIA_0480; ARCH_SW_DIA_0481; ARCH_SW_DIA_0482; ARCH_SW_DIA_0483
+ARCH_SW_DIA_0240: Service 0x22 (Read Data By Identifier) & 0x2E (Write Data By Identifier) for DID 0x0241 will be implemented
+ARCH_SW_DIA_0248: Service shall be available in Default session, Extended session Update session and Development session
+ARCH_SW_DIA_0249: Service shall be available in the following forms of Authentication: Development ENHANCED, Production After-Sales ENHANCED, After-Sales After-Sales BASIC, Internal Diagnostic Test Tool, ePTI Test Tool
+ARCH_SW_DIA_0385: Service 0x2E (Write Data By Identifier) will be implemented for DID 0241 (Reset Pre-Safe Recorder 1)
+ARCH_SW_DIA_0386: Request data shall be 1 byte long.
+ARCH_SW_DIA_0387: Byte 0 shall be defined as the Erase Pre-Safe Memory command and shall always have value 0x01.
+ARCH_SW_DIA_0480: DataIdentifier shall be 0x0241
+ARCH_SW_DIA_0481: Using this service shall lead to the Pre-Safe Recorder 1 to be set to default value.
+ARCH_SW_DIA_0482: The DID shall be available in the following sessions: â¦Extended session â¦Update Session â¦Development Session
+ARCH_SW_DIA_0483: This service shall be available under the following forms of Authentication: â¦Supplier â¦Development ENHANCED â¦Production â¦After-Sales ENHANCED â¦After-Sales
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDid0241_PRE_SAFE_Recorder_1_WriteData*.
+
+Action: ARCH_SW_DIA_0240; ARCH_SW_DIA_0248; ARCH_SW_DIA_0249; ARCH_SW_DIA_0385; ARCH_SW_DIA_0386; ARCH_SW_DIA_0387; ARCH_SW_DIA_0480; ARCH_SW_DIA_0481; ARCH_SW_DIA_0482; ARCH_SW_DIA_0483
+
+	Step 4: Send diag request for 2E 0241 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDid0241_PRE_SAFE_Recorder_1_WriteData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

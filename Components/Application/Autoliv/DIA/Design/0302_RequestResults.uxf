@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>11</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>484</x>
+      <y>33</y>
+      <w>706</w>
+      <h>1319</h>
+    </coordinates>
+    <panel_attributes>title:0302 RequestResults
+Start
+Check if Presafe display is started
+If
+	[TRUE]
+	*routineInfo = KU8_ROUTINE_IN_PROGRESS;
+	*Result = ROUTINE_STILL_RUNNING;
+	ret = RTE_E_OK;
+	
+EndIf
+
+Check if Presafe display is stopped
+If
+	[TRUE]
+	*routineInfo = KU8_ROUTINE_SUCCESFULLY_COMPPLETED;
+	*Result = ROUTINE_TERMINATED_SUCCESSFULY;
+	ret = RTE_E_OK;
+	
+EndIf
+
+Check if Routine is not supported
+If
+	[TRUE]
+	*ErrorCode = DCM_E_REQUESTSEQUENCEERROR;
+	*Result = ROUTINE_STOPPED_WITHOUT_RESULT;
+	ret = RTE_E_RoutineServices_Routine_Trigger_Presafe_Display_Request_Start_E_NOT_OK;
+      
+EndIf		
+
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

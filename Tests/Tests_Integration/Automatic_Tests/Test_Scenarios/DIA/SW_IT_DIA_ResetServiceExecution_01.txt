@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0265; ARCH_SW_DIA_0266; ARCH_SW_DIA_0267; ARCH_SW_DIA_0268; ARCH_SW_DIA_0269; ARCH_SW_DIA_0270; ARCH_SW_DIA_0271
+ARCH_SW_DIA_0265: Service 0x11 (ECU Reset) will be implemented
+ARCH_SW_DIA_0266: The ECUReset service shall be available in the following sessions:
+ARCH_SW_DIA_0267: The ECUReset service shall be available under the following forms of Authentication: Supplier Development ENHANCED Production After-Sales ENHANCED After-Sales
+ARCH_SW_DIA_0268: ResetType of the Reset service shall be: 0x01  Hardware Reset
+ARCH_SW_DIA_0269: ResetType of the Reset service shall be: 0x03  Software Reset
+ARCH_SW_DIA_0270: Bytes #2:  Reset type should be an echo of the 'ResetType' parameter in the request message.
+ARCH_SW_DIA_0271: After a successful ECU Reset, ECU shall be in DefaultSession.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *ResetServiceExecution*.
+
+Action: ARCH_SW_DIA_0265; ARCH_SW_DIA_0266; ARCH_SW_DIA_0267; ARCH_SW_DIA_0268; ARCH_SW_DIA_0269; ARCH_SW_DIA_0270; ARCH_SW_DIA_0271
+
+	Step 3: Use the Soft Reset Service.
+
+	Step 4: Check if breakpoint from function ResetServiceExecution was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

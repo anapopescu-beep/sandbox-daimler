@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0031; ARCH_SW_DIA_0154; ARCH_SW_DIA_0155; ARCH_SW_DIA_0156
+ARCH_SW_DIA_0031: Service 0x22 will be implemented for DID FD08
+ARCH_SW_DIA_0154: Service shall be available in Development session
+ARCH_SW_DIA_0155: Response data shall be 1 byte long
+ARCH_SW_DIA_0156: Response shall return Last SW Reset Cause
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in the function *DIA_runDidFD08_ResetCauseManagementRead* where the local u32WarmResetCause is assigned the warm reset cause from NVP. 
+		Expected result:  BP was reached.
+
+Action: ARCH_SW_DIA_0031; ARCH_SW_DIA_0154; ARCH_SW_DIA_0155; ARCH_SW_DIA_0156
+
+	Step 3: Start Development Session.
+
+	Step 4: Use the Read service 0x22 for DID FD08 and wait for timeout. 
+		Expected result:  Timeout is occured because breakpoint was reached.
+
+	Step 5: Overwrite u32WarmResetCause with the mask mapped to the desired warm reset cause. 
+		Expected result:  Variable overwritten with KU32_OS_EXCEPTION_MASK.
+
+	Step 6: Use the Read service 0x22 for DID FD08. 
+		Expected result:  Response is received.
+
+Postcondition
+
+	Step 7: Return ECU to default values

@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0460; ARCH_SW_DIA_0461; ARCH_SW_DIA_0462; ARCH_SW_DIA_0463; ARCH_SW_DIA_0464; ARCH_SW_DIA_0465; ARCH_SW_DIA_0466
+ARCH_SW_DIA_0460: Service 0x22 (Read Data By Identifier) will be implemented for DID 0107 (Global Time Sync Measured Values).
+ARCH_SW_DIA_0461: DataIdentifier shall be 0x0107.
+ARCH_SW_DIA_0462: The DID shall be available in the following sessions:?Default Session?Programming?Extended session?Update Session?Development Session
+ARCH_SW_DIA_0463: This service shall be available with or without Any form of Authentication.
+ARCH_SW_DIA_0464: Byte 0 of the positive response shall represent the Source Domain Information for Interpretation.
+ARCH_SW_DIA_0465: Bytes 1-201 of the positive response shall represent the Global Time Sync Measured Values.
+ARCH_SW_DIA_0466: Response data shall be 201 bytes long.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Global_Time_Sync_Measured_Values_ReadData*.
+
+Action: ARCH_SW_DIA_0460; ARCH_SW_DIA_0461; ARCH_SW_DIA_0462; ARCH_SW_DIA_0463; ARCH_SW_DIA_0464; ARCH_SW_DIA_0465; ARCH_SW_DIA_0466;
+
+	Step 3: Send diag request for 22 0107 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Global_Time_Sync_Measured_Values_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data pointer value 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

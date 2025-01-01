@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>104</x>
+      <y>96</y>
+      <w>2137</w>
+      <h>838</h>
+    </coordinates>
+    <panel_attributes>title:ReadFingerprint_Read_Software_Fingerprint_s_ReadData
+Start
+Rte_Call_NvMService_FblMetaData_GetErrorStatus()
+If
+	[FALSE == DiagMetaDataFblReadStatus]
+	Rte_Call_NvMService_FblMetaData_GetErrorStatus
+	If
+		[NVM_REQ_PENDING != errorStatus]
+		Rte_Call_NvMService_FblMetaData_SetDataIndex()
+		Rte_Call_NvMService_FblMetaData_ReadBlock(MetaDataFbl)
+		Rte_Call_NvMService_FblMetaData_SetDataIndex()
+		Rte_Call_NvMService_FblMetaData_ReadBlock(MetaDataHsm)
+		DiagMetaDataFblReadStatus == TRUE
+	
+		Return RTE_E_DataServices_ReadFingerprint_Read_Software_Fingerprint_s_DCM_E_PENDING
+	EndIf
+
+	Rte_Call_NvMService_FblMetaData_GetErrorStatus()
+	If
+		[NVM_REQ_PENDING != errorStatus]
+		If
+			[NULL_PTR != Data]
+			Check DiagFblMetadataFbl for mismatch
+			Check DiagFblMetadataApp for mismatch
+			Check DiagFblMetadataHsm for mismatch
+	
+			Return RTE_E_DataServices_ReadFingerprint_Read_Software_Fingerprint_s_E_NOT_OK
+			
+		Copy 'DiagFblMetadataFbl.Fingeprint' into Data Buffer
+		Copy 'DiagFblMetadataApp.Fingeprint' into Data Buffer
+		Copy 'DiagFblMetadataApp.Fingeprint' into Data Buffer
+		Return OK
+		
+		Return RTE_E_DataServices_ReadFingerprint_Read_Software_Fingerprint_s_DCM_E_PENDING
+		
+	EndIf
+
+Return
+
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

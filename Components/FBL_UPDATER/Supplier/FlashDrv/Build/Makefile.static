@@ -1,0 +1,360 @@
+########################################################################################################################
+# File Name  : Makefile.static
+# Description: This makefile contains the platform/compiler specific static settings (will be included by Makefile)
+# Project    : Vector Basic Runtime System
+# Module     : BrsHw for platform Infineon Aurix/AurixPlus
+#              and Compiler Tasking,
+#              using Vector PES MakeSupport 4.1
+# Template   : This Makefile is reviewed according to Brs_Template@MakeSupport[1.00.00]
+#
+#-----------------------------------------------------------------------------------------------------------------------
+# COPYRIGHT
+#-----------------------------------------------------------------------------------------------------------------------
+# Copyright (c) 2020 by Vector Informatik GmbH.                                                  All rights reserved.
+#
+#-----------------------------------------------------------------------------------------------------------------------
+# AUTHOR IDENTITY
+#-----------------------------------------------------------------------------------------------------------------------
+# Name                          Initials      Company
+# ----------------------------  ------------  --------------------------------------------------------------------------
+# Benjamin Walter               visbwa        Vector Informatik GmbH
+# Torsten Schmidt               visto         Vector Informatik GmbH
+#-----------------------------------------------------------------------------------------------------------------------
+# REVISION HISTORY
+#-----------------------------------------------------------------------------------------------------------------------
+# Version   Date        Author  Description
+# --------  ----------  ------  ----------------------------------------------------------------------------------------
+# 01.00.00  2020-05-28  visto  Initial version based on Template for vBaseEnv 2.0
+########################################################################################################################
+
+########################################################################################################################
+#    EXAMPLE CODE ONLY
+#    -------------------------------------------------------------------------------------------------------------------
+#    This Example Code is only intended for illustrating an example of a possible BSW integration and BSW configuration.
+#    The Example Code has not passed any quality control measures and may be incomplete. The Example Code is neither
+#    intended nor qualified for use in series production. The Example Code as well as any of its modifications and/or
+#    implementations must be tested with diligent care and must comply with all quality requirements which are necessary
+#    according to the state of the art before their use.
+########################################################################################################################
+
+#------------------------------------------------------------------------------
+# Include the project specific settings
+#------------------------------------------------------------------------------
+include Makefile.config.generated
+include Makefile.project.part.defines
+
+#------------------------------------------------------------------------------
+# Version of MakeSupport used (current version is 4.1)
+#------------------------------------------------------------------------------
+VERSION     = 4
+SUB_VERSION = 1
+
+###############################################################################
+# Platform/compiler/derivative/emulator are relevant for the include of
+# linker and symbol preprocessor command file identified by name.
+# Vector standard names have to be used
+###############################################################################
+#------------------------------------------------------------------------------
+# Compiler Manufacturer used in this project
+# E.g.: ARM5, ARM6, DIABDATA, GHS, GNU, HIGHTEC, IAR, RENESAS, TASKING, TI
+#------------------------------------------------------------------------------
+COMPILER_MANUFACTURER = TASKING
+
+#------------------------------------------------------------------------------
+# Platform used for this project
+# E.g.: 78K0, AURIX, MPC, RH850, SH2, SPC58xx, TMS570, TRAVEO
+#------------------------------------------------------------------------------
+PLATFORM = AURIX
+
+#------------------------------------------------------------------------------
+# Emulator used for this project
+# E.g.: GHSPROBE, ISYSTEMS, LAUTERBACH, MULTI
+#   ALL is special for "all derivatives are supported in this file"
+#------------------------------------------------------------------------------
+EMULATOR = ALL
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Suffix of generated object files. Generated objects are then *.$(OBJ_SUFFIX)
+#------------------------------------------------------------------------------
+OBJ_SUFFIX = o
+
+#------------------------------------------------------------------------------
+# Suffix of assembler files.
+# The suffixes s, asm, 850 and arm are already considered by MakeSupport
+# and do not need to be added.
+#------------------------------------------------------------------------------
+ASM_SUFFIX = 
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Suffix of generated list files. Generated list files are then *.$(LST_SUFFIX)
+#------------------------------------------------------------------------------
+LST_SUFFIX = lst
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Suffix linker command file.
+#------------------------------------------------------------------------------
+LNK_SUFFIX = lsl
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Suffix binary output file.
+#------------------------------------------------------------------------------
+BINARY_SUFFIX = elf
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Suffix of generated library files. Generated objects are then *.$(LIB_SUFFIX)
+#------------------------------------------------------------------------------
+LIB_SUFFIX = a
+
+#------------------------------------------------------------------------------
+# Suffixes of generated error files which are placed in $(ERR_PATH)
+# (necessary for Visual Studio / Codewright project file generation)
+# Default (nothing entered) is err
+# E.g. ERR_SUFFIX_LIST = err
+#------------------------------------------------------------------------------
+ERR_SUFFIX_LIST = err
+ERR_SUFFIX      = err
+
+#------------------------------------------------------------------------------
+# Suffixes of generated asm/list files which are placed in $(LST_PATH)
+# (necessary for Visual Studio / Codewright project file generation)
+# Default (nothing entered) is lst
+# E.g. LST_SUFFIX_LIST = lst asm
+#------------------------------------------------------------------------------
+LST_SUFFIX_LIST = lst
+LST_SUFFIX      = lst
+
+#------------------------------------------------------------------------------
+#  Add compiler specific redirection flags here
+#
+#  Uncomment V=1 if compiler has redirection options like @E, @O
+#
+#  Example:
+#    --error-file=$(call obj2err,$@)
+#------------------------------------------------------------------------------
+ifneq ($(V),1)
+  ifeq ($(ERR_OUTPUT),FLAGS)
+    ASFLAGS_VECTOR_MAKESUPPORT += 
+  endif
+endif
+
+#------------------------------------------------------------------------------
+# $(AS_VECTOR_PREPROCESS) enables the preprocessing
+# just before assembler starts.
+#
+# In case of assembler does not support preprocessing by default, preprocessing
+# can be enabled by setting $(ASFLAGS_VECTOR_PREPROCESS) to 1
+#------------------------------------------------------------------------------
+#AS_VECTOR_PREPROCESS = 1
+
+#------------------------------------------------------------------------------
+#  Enable if cross compiler supports depend. Additional options
+#  have to be set.
+#  Attention:
+#  Some cross compilers depend file can have the problem
+#  of incompatible depend file for cygwin. They could contain
+#  "" around filepath or ':' when used absolute file spec.
+#------------------------------------------------------------------------------
+#COMPILER_SUPPORTS_DEPEND = 1
+
+#------------------------------------------------------------------------------
+#  Add compiler specific redirection flags here
+#
+#  Uncomment V=1 if compiler has redirection options like @E, @O
+#
+#  Example:
+#    --error-file=$(call obj2err,$@)
+#------------------------------------------------------------------------------
+ifneq ($(V),1)
+  ifeq ($(ERR_OUTPUT),FLAGS)
+    CFLAGS_VECTOR_MAKESUPPORT += --error-file=$(call obj2err,$@)
+  endif
+endif
+
+#------------------------------------------------------------------------------
+#  Add linker specific redirection flags here
+#
+#  Uncomment V=1 if compiler has redirection options like @E, @O
+#
+#  Example:
+#    --error-file=$(call obj2err,$@)
+#------------------------------------------------------------------------------
+ifneq ($(V),1)
+  ifeq ($(ERR_OUTPUT),FLAGS)
+    LDFLAGS_VECTOR_MAKESUPPORT += --error-file=$(call obj2err,$@)
+  endif
+endif
+
+#------------------------------------------------------------------------------
+# hex target might be added like the following template.
+# Variable TARGET can not be used here, because TARGET is set in 
+# Global.Makefile.target.$(VERSION).mk. VERSION is set in Makefile.static.
+# Add hex target to default:
+#------------------------------------------------------------------------------
+#.PHONY: hex
+#hex: $(PROJECT_NAME).hex
+#
+#$(PROJECT_NAME).hex: $(PROJECT_NAME).$(BINARY_SUFFIX)
+#	@$(ECHO) "HEX        $@"
+#	$(Q)$(HEX_ENV) $(HEX) $(HEXFLAGS)
+#
+#clean::
+#	@$(ECHO) "CLEAN      hex"
+#	$(Q)$(RM) $(PROJECT_NAME).hex
+
+#------------------------------------------------------------------------------
+# ASSEMBLE_RULE/COMPILE_RULE/LINK_RULE are obsolete now
+#
+# In previous deliveries *_RULES were overwritten to add or delete
+# options to compile/link.
+#
+# MakeSupport 4 has the general enhancement to add or delete options for a
+# specific file. Please add the following variables to your Makefile to control,
+# filter out or add specific:
+#
+# FILTER_<file_without_extension>=-any -option -to -filter -out
+# CFLAGS_<file_without_extension>=-any -option -to -add
+#
+# For another option to add a post compile command, please have a look
+# at MAKESUPPORT_POST_COMPILE_CMD in Global.Makefile.target.$(VERSION).mk.
+#
+# If all of these MakeSupport 4 enhancements do not work, please add
+# static pattern rule which is a make feature.
+#
+# Makefile documentation:
+#  https://www.gnu.org/software/make/manual/html_node/Static-Usage.html#Static-Usage
+#
+# Example:
+#  copy & paste from MakeSupport 4 and add your specific file in front with the second ':' :
+#  my_c_file.c: $(OBJ_PATH)/%.$(OBJ_SUFFIX): $(ROOT1_U)/%.c
+#    ... here are your specific rules...
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+# make builds the whole project by default
+# To make another target, you have to add it to the prerequisites of default.
+# E.g.: default: all $(PROJECT_NAME).opt
+# Here hex target might be added.
+#------------------------------------------------------------------------------
+.PHONY: default
+default: all
+
+#------------------------------------------------------------------------------
+# If platform specific rules exist, they can be described here to be shown
+# in the usage output of the help target
+#help::
+#	$(ECHO) "m mytarget ................ -- build mytarget"
+#	$(ECHO) "                               nextline"
+#------------------------------------------------------------------------------
+#help::
+
+###############################################################################
+# resource information generation
+###############################################################################
+
+#------------------------------------------------------------------------------
+# Select the source, which contains the memory information
+# E.g.: RESOURCE_FILE = LIST
+#       RESOURCE_FILE = MAP
+#       RESOURCE_FILE = NONE
+#------------------------------------------------------------------------------
+RESOURCE_FILE = MAP
+
+#------------------------------------------------------------------------------
+# The extension of the map or list file.
+# E.g.: RESOURCE_FILE_EXT = map
+#       RESOURCE_FILE_EXT = lst
+#------------------------------------------------------------------------------
+RESOURCE_FILE_EXT = map
+
+#------------------------------------------------------------------------------
+# This is the main resource script written in the language AWK.
+# For more information about AWK see the following resources:
+#   http://torvalds.cs.mtsu.edu/~neal/awkcard.pdf (recommendable)
+#   http://www.uni-magdeburg.de/urzs/awk/
+#   http://de.wikipedia.org/wiki/AWK
+# Note: The character '$' must be escaped with a second '$'. So write '$$'.
+#       Also the character '#' must be escaped using a backslash -> \#.
+# For a more detailed description about what is going on in this script look
+# at the file:  fetch-memory-info-template-documented.awk
+# In order to see what the ressource scanner is doing it is highly recommended
+# to set the environment variable GAWK_DEBUG=1. This option will generate a
+# further file ($(PROJECT_NAME)_resource_debug.txt) in your log directory.
+# Here is a short description about the instructions which has to be configured:
+# RS means Record Separator and is set to a char which is used to split the
+#   files into records. For each record the processing instructions are done.
+#   The record string is assigned to the variable $0 (remember to access via $$0).
+# FS means Field Separator and splits each record into fields. These fields
+#   are referenced from $1, $2... $NF, where NF is the number of fields.
+#   If FIELDWIDTHS is set, the value of FS is ignored.
+# FIELDWIDTHS is a space separated list, each field is expected to have a fixed
+#   width. The value of FS is ignored.
+# IGNORECASE is a bool variable. When set to 1 comparsions are made case-
+#   insensitive in comparsions with '==' and regular expressions.
+# memoryTable maps the second argument of addEntry() to the according section.
+# startProcessing() and stopProcessing() implements a little restriction
+#   to which section of the file the instructions are executed.
+# addEntry(module, memory, size, isHex) is the main API function you have to
+#   use. It adds an entry to the internal array. You specify with the param.
+#   how many bytes (param:size) to which module (param:module) and to which
+#   type of memory (param:memory) you want to add. If you set the param
+#   isHex to 1 the param size is treated as being hexadecimal.
+# Other API functions are: trim(str), getStringWithinParentheses(str),
+#   getStringWithinBrackets(str)
+#------------------------------------------------------------------------------
+RESOURCE_FETCH_SCRIPT = BEGIN {                                                 \
+  RS  = "\n";                                                                   \
+  FS  = " ";                                                                    \
+  IGNORECASE = 1;                                                               \
+  memoryTable["ram"]    = "BSS|stack";                                          \
+  memoryTable["iram"]   = "DATA";                                               \
+  memoryTable["const"]  = "CONSTANT";                                           \
+  memoryTable["code"]   = "PROGRAM";                                            \
+  memoryTable["ignore"] = "debug";                                              \
+  memoryTableOrder      = "const,code,ram,iram,ignore";                         \
+}                                                                               \
+                                                                                \
+$$0 == "******* SECTION SIZE INFORMATION *******" { startProcessing() }         \
+$$0 == "** ASSEMBLER/LINKAGE EDITOR LIMITS INFORMATION **" { stopProcessing() } \
+                { process() }                                                   \
+                                                                                \
+/^TOTAL/ {                                                                      \
+  addEntry(FILENAME, $$2, $$4, 1);                                              \
+}
+
+#------------------------------------------------------------------------------
+# Check if all necessary variables are set
+#------------------------------------------------------------------------------
+ifeq ($(MAKESUPPORT_DIR),)
+  $(error Variable MAKESUPPORT_DIR is not defined.)
+endif
+
+ifeq ($(PLATFORM),)
+  $(error Variable PLATFORM is not defined.)
+endif
+
+ifeq ($(COMPILER_MANUFACTURER),)
+  $(error Variable COMPILER_MANUFACTURER is not defined.)
+endif
+
+ifeq ($(EMULATOR),)
+  $(error Variable EMULATOR is not defined.)
+endif
+
+ifeq ($(VERSION),)
+  $(error Variable VERSION is not defined.)
+endif
+
+#------------------------------------------------------------------------------
+# List of variables which are required and must be set within
+# Makefile.config.generated. Check is performed by global makefile
+#------------------------------------------------------------------------------
+REQUIRED_MK_CONF_VARS = DERIVATIVE     \
+                        MAIN_OSC_CLK   \
+                        TIMEBASE_CLOCK
+
+# End of Makefile.static

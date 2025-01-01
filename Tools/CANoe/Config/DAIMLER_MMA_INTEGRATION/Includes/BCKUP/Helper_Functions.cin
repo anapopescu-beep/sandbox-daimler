@@ -1,0 +1,233 @@
+/*@!Encoding:1252*/
+variables
+{
+  char        gTestIdStr[10];             // Identifier generated for each test step shown in the test report
+  word        gTestStepIndex=0;
+  enum        bool {TRUE=1, FALSE=0};
+  const int   cApplicationTimeoutMs = 400;
+  char        gResultString[200];         // String for temporary test step result outputs
+  char        gDebuggerPath[200] = "S:\\Tools\\WinIDEA\\Workspace\\Daimler_MMA_debug_tc322.xjrf";
+  char        gManualScript[200] = "C:\\Temp\\GUI.exe";
+  char        dataArray[10][50];          // for split_string function
+  long        table = 0;
+  long stepret;
+}
+
+// Functions to increment test step ID in report //
+fctSetTestId(word tsIndex)
+{
+  gTestStepIndex=tsIndex;
+  fctUpdateTestIdStr();
+}
+
+fctIncrementTestStepId()
+{
+  gTestStepIndex++;
+  fctUpdateTestIdStr();
+}
+
+fctUpdateTestIdStr()
+{
+  snprintf(gTestIdStr, elcount(gTestIdStr), "%d", gTestStepIndex);
+}
+
+fctStartDebugger()
+{
+  sysExec(gDebuggerPath, "");
+}
+
+fctStartManual()
+{
+  sysExec(gManualScript, "");
+}
+
+// Test Report and external programs execution functions //
+
+void Check_KL15_ON()
+{
+  
+ @sysvar::ModelGlobal::ISw_Stat = @sysvar::ModelGlobal::ISw_Stat::I_C03_ISW_STAT_IGN_ON;
+ if (@sysvar::ModelGlobal::ISw_Stat == @sysvar::ModelGlobal::ISw_Stat::I_C03_ISW_STAT_IGN_ON) {
+    snprintf(gResultString, elcount(gResultString), "Ignition set to ON");
+    CreateActualExpectedTable ("Ignition set to ON", gResultString);
+    testStepPass(0, "", table);
+  }
+  else {
+    snprintf(gResultString, elcount(gResultString), "No answer from ECU!");
+    CreateActualExpectedTable ("Ignition set to ON", gResultString);
+    testStepFail(0, "", table);
+  }
+
+}
+
+void Check_ECU_ON()
+{
+  long ret;
+  ret = testWaitForSignalsAvailable (RBTM_FL, 2000);
+  if (1 == ret) {
+    snprintf(gResultString, elcount(gResultString), "ECU is responsive", ret);
+    CreateActualExpectedTable ("ECU is responsive", gResultString);
+    testStepPass(0, "", table);
+  }
+  else { 
+    snprintf(gResultString, elcount(gResultString), "ECU is NOT responsive (Return code=%d)!", ret);
+    CreateActualExpectedTable ("ECU is responsive", gResultString);
+    testStepFail(0, "", table);
+  }
+}
+
+
+void Check_Authentication_DevEnhanced()
+{
+ diagRequest RBTMFL174.Backend_CA_Certificate_Identification_Read auth_request;
+ @sysvar::LocalAuthentication::DiagnosticsRole = @sysvar::LocalAuthentication::DiagnosticsRole::Development_Enhanced;
+ @sysvar::LocalAuthentication::TargetMode = @sysvar::LocalAuthentication::TargetMode::AuthForSingleTarget;
+ @sysvar::LocalAuthentication::Button_Authenticate = 1;
+ diagSendRequest(auth_request);
+ switch (testWaitForDiagResponse(auth_request, 10000))
+  {
+  case 0: // Timeout: The ECU did not respond in 10s
+    snprintf(gResultString, elcount(gResultString),"No answer from ECU!");
+    CreateActualExpectedTable ("Positive response reached!", gResultString);
+    testStepFail(0, "", table);
+    break;
+  case 1: // Response received
+    testReportWriteDiagResponse (auth_request); // write response to report
+    if (diagGetLastResponseCode(auth_request) == -1)
+    {
+      // Positive response reached
+      snprintf(gResultString, elcount(gResultString), "Positive response reached!");
+      CreateActualExpectedTable ("Positive response reached!", gResultString);
+      testStepPass (0, "", table); // write response to report
+    }
+    else
+    {
+      //Negative response reached
+      snprintf(gResultString, elcount(gResultString), "Negative response reached! NRC:%X", (long)diagGetLastResponseCode(auth_request));
+      CreateActualExpectedTable ("Positive response reached!", gResultString);
+      teststepfail(0, "", table); // write response to report
+    }
+    break;
+      default:
+      snprintf(gResultString, elcount(gResultString), "Error, verdict unreliable.");
+      CreateActualExpectedTable ("Positive response reached!", gResultString);
+      teststepfail(0, "", table);
+  }
+}
+
+void ResetECU(char reset[])
+{
+  diagRequest RBTMFL174.SoftReset dSoftResetRequest;
+  diagRequest RBTMFL174.HardReset dHardResetRequest;
+  
+  toUpper(reset, reset, elcount(reset));
+  if(strncmp(reset, "SOFT", strlen(reset)) == 0)
+  {    
+    diagFctSendRequestAndWaitForFirstResponse(dSoftResetRequest, TRUE, FALSE);
+  }
+  else
+  {
+    if(strncmp(reset, "HARD", strlen(reset)) == 0)
+    {
+      diagFctSendRequestAndWaitForFirstResponse(dHardResetRequest, TRUE, FALSE);
+    }
+    else
+    {
+      testStepFail("Error", "Invalid parameter for ResetECU function: %s", reset);
+    }
+  }
+}
+
+void ReadFromFile(char response[], int line)
+{ 
+  char fin[255];
+  dword getFile;
+  int iterator;
+  getFile = openFileRead("isystem_response.INI", 0);
+  write("getFile: %d", getFile);
+  for (iterator = 0; iterator <= line; iterator++)
+  {
+    if (getFile != 0)
+    {
+      fileGetString(fin, elcount(fin), getFile);
+    } 
+    else
+    {
+      write("End of file");
+    }
+  }
+  
+  snprintf(response, elcount(response), "%s", fin);
+  write("Result: %s", response);
+  fileClose(getFile);
+}
+
+void CreateActualExpectedTable(char expected_result[], char actual_result[])
+{
+  table = testInfoTable("");
+  TestInfoHeadingBegin(table, 0);
+  TestInfoCell(table, "Expected Result");
+  TestInfoCell(table, "Actual Result");
+  TestInfoHeadingEnd(table);  
+  // info row
+  TestInfoRow(table, 0);
+  TestInfoCell(table, expected_result);
+  TestInfoCell(table, actual_result);
+}
+  
+
+word ExpectedTestResult(char stepNo[], char description[], char expected_result[], int line)
+{
+  char result[254];
+  
+  ReadFromFile(result, line);
+  testStep(stepNo, description);
+  
+  CreateActualExpectedTable(expected_result, result);
+  
+  if (strncmp(result, expected_result, elcount(result)) == 0)
+  {
+    testStepPass(0, "", table);
+  }
+  else
+  {
+    testStepFail(0, "", table);
+  }
+  
+  write("Response: %s Expected: %s", result, expected_result);
+  write("Response: %d", strncmp(result, expected_result, elcount(result)));
+  
+ 
+  return stepret;
+}
+
+// Splits a line into an array of strings
+int split_string(char string[], char delim[])
+{
+  int start_pos, end_pos;
+  int i, j;
+  int num_strings;
+  
+  start_pos = 0;
+  end_pos = 0;
+  num_strings = 0;
+  
+  while (start_pos < strlen(string))
+  {
+    j = 0;
+    end_pos = strstr_off(string, start_pos, delim);
+    if (end_pos == -1)
+    {
+      end_pos = strlen(string);
+    }
+    for (i=start_pos; i<end_pos; i++)
+    {
+      dataArray[num_strings][j++] = string[i];
+    }
+    dataArray[num_strings][j] = '\0';
+    num_strings++;
+    start_pos = end_pos+strlen(delim);
+  }
+  
+  return num_strings;
+}

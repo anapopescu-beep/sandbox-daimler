@@ -1,0 +1,263 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{ 
+//  char isystem_functions_path[1024] = "py S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\isystem_functions.py";
+//  char tempFile_path[1024] = "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION";
+  char isystem_functions_path[1024] = "py S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\isystem_functions.py && exit";
+  char tempFile_path[1024] = "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\";
+  char buffer_command[254];
+  dword tempFile;
+}
+
+
+void run_py_script()
+{
+	sysExecCmd(isystem_functions_path, "");
+}
+
+void SetFilePath()
+{
+  setFilePath(tempFile_path, 2);     // 2 = read & write
+//  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+}
+
+void EraseFile()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command, elcount(buffer_command),"%s\n","eraseFile");
+  filePutString(buffer_command, elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+}
+
+
+/* Example: debugger_run() */
+void debugger_run()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","run");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_step() */
+void debugger_step()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","step");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_stepOver() */
+void debugger_stepOver()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","stepOver");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_stop() */
+void debugger_stop()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","stop");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_reset() */
+void debugger_reset()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","reset");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_download() */
+void debugger_download()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","download");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_setRelativeFunctionBpAtLine(5, "ATM_Init") */
+void debugger_setRelativeFunctionBpAtLine(int lineOffset, char functionName[])
+{
+  char LfunctionName[254];
+  char LlineOffset[254];
+  snprintf(buffer_command,elcount(buffer_command),"%s","setRelativeFunctionBpAtLine");
+  snprintf(LfunctionName,elcount(LfunctionName)," %s",functionName);
+  snprintf(LlineOffset,elcount(LlineOffset)," %d\n",lineOffset);
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  filePutString(LfunctionName,elcount(LfunctionName),tempFile);
+  filePutString(LlineOffset,elcount(LlineOffset),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_deleteAllBreakpoints() */
+void debugger_deleteAllBreakpoints()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","deleteAllBreakpoints");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_setRelativeFunctionBpAtLine("ATM_Init") */
+void debugger_deleteFunctionBreakpoint(char functionName[])
+{
+  char LfunctionName[254];
+  snprintf(buffer_command,elcount(buffer_command),"%s","deleteFunctionBreakpoint");
+  snprintf(LfunctionName,elcount(LfunctionName)," %s\n",functionName);
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  filePutString(LfunctionName,elcount(LfunctionName),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+  
+/* Example: debugger_writeVariable("uint8", "au8AtStatuses,,app.elf", 15, 2) */
+void debugger_writeVariable(char variableType[], char variableName[], int value, int offset)
+{
+  char LvariableName[254];
+  char LvariableType[254];
+  char Lvalue[254];
+  char Loffset[254];
+  snprintf(buffer_command,elcount(buffer_command),"%s","writeVariable");
+  snprintf(LvariableType, elcount(LvariableType)," %s", variableType);
+  snprintf(LvariableName, elcount(LvariableName)," %s", variableName);
+  snprintf(Lvalue, elcount(Lvalue)," %d", value);
+  snprintf(Loffset, elcount(Lvalue)," %d\n", offset);
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  filePutString(LvariableType,elcount(LvariableType),tempFile);
+  filePutString(LvariableName,elcount(LvariableName),tempFile);
+  filePutString(Lvalue,elcount(Lvalue),tempFile);
+  filePutString(Loffset,elcount(Loffset),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+/* Example: debugger_readVariable("uint8", "au8AtStatuses,,app.elf", 2) */
+void debugger_readVariable(char variableType[], char variableName[], int offset)
+{
+  char LvariableName[254];
+  char LvariableType[254];
+  char  Loffset[254];
+  snprintf(buffer_command,elcount(buffer_command),"%s","readVariable");
+  snprintf(LvariableType, elcount(LvariableName)," %s", variableType);
+  snprintf(LvariableName, elcount(LvariableName)," %s", variableName);
+  snprintf(Loffset, elcount(Loffset)," %d\n", offset);
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file  
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  filePutString(LvariableType,elcount(LvariableType),tempFile);
+  filePutString(LvariableName,elcount(LvariableName),tempFile);
+  filePutString(Loffset,elcount(Loffset),tempFile);
+  fileClose(tempFile);  
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+void debugger_getCPUStatus()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","getCPUStatus");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+void debugger_isCPUStoppedAtBP()
+{
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  snprintf(buffer_command,elcount(buffer_command),"%s\n","isCPUStoppedAtBP");
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+void debugger_readLocalVariable(char variableName[])
+{
+  char LvariableName[254];
+//  snprintf(buffer_command,elcount(buffer_command),"%s","readLocalVariable");
+  snprintf(LvariableName,elcount(LvariableName),"readLocalVariable %s\n",variableName);
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+//  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  filePutString(LvariableName,elcount(LvariableName),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+void debugger_writeLocalVariable(char variableName[], int value)
+{
+  char LvariableName[254];
+  char Lvalue[254];
+  snprintf(buffer_command,elcount(buffer_command),"%s","writeLocalVariable");
+  snprintf(LvariableName,elcount(LvariableName)," %s\n",LvariableName);
+  snprintf(Lvalue,elcount(Lvalue)," %s\n",value);
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  filePutString(buffer_command,elcount(buffer_command),tempFile);
+  filePutString(LvariableName,elcount(LvariableName),tempFile);
+  filePutString(Lvalue,elcount(Lvalue),tempFile);
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}
+
+void debugger_runUntilReturn()
+{
+  char Ltimeout[254];
+  snprintf(Ltimeout,elcount(Ltimeout),"runUntilReturn\n");
+  tempFile = openFileWrite("isystem_commands.INI", 2); // 2 = append file
+  fileClose(tempFile);
+  run_py_script();
+  testWaitForTimeout(1000);
+  EraseFile();
+}

@@ -1,0 +1,854 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SW_IT_DIA_DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData_01_Fri_Feb_23_09_57_54_2024</title>
+    <script type="text/javascript">
+      function showTimestamp(timestamp){top.LogFile.showTimestamp(timestamp);}
+    </script>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="extendedNavigation.css">
+  </head>
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td class="UpCell">
+            <a href="i__-1577388976_1216tginfo.html">Go up</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <tr>
+        <td class="TestcaseHeadingPositiveResult">
+          <big class="Heading3">3.18 <a name="i__-1577388976_36713">SW_IT_DIA_DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData_01_Fri_Feb_23_09_57_54_2024</a>: Passed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_18">
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-02-23 09:57:54</td>
+            <td class="CellNoColor">(logging timestamp  635.359829)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-02-23 09:58:23</td>
+            <td class="CellNoColor" nowrap>(logging timestamp  664.032983)</td>
+          </tr>
+        </table>
+        <div class="Heading4">AUTOLIV ELECTRONICS document</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="DefaultCell">Nightly test: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Test type: </td>
+              <td class="DefaultCellBold">Requirement-Based test</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Regression Test: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Fault injection method used: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Resource usage evaluation: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Priority: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Safety relevant: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+          </table>
+        </div>
+        <div class="Heading4">Test equipment</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="DefaultCell">Tester Name: </td>
+              <td class="DefaultCellBold">CGA</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">CAN case ID: </td>
+              <td class="DefaultCellBold">RBE-COM-34</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">SBC Board: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Power supply ID: </td>
+              <td class="DefaultCellBold">RBE-PWR-018</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Motherboard: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">MCU: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">DUT: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">HW Info: </td>
+              <td class="DefaultCellBold">22/04.00</td>
+            </tr>
+          </table>
+        </div>
+        <p><table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0030; ARCH_SW_DIA_0152; ARCH_SW_DIA_0153; ARCH_SW_DIA_0394; ARCH_SW_DIA_0507</th></tr></table></p>
+        <p><table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0030</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Service 0x2E will be implemented for DID 0311</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0152</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Request data shall be 3 byte long</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0153</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Runnable shall write Zykluszeit Messtechnik stored in Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development. Zykluszeit_Messtechnik</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0394</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The new data written by Vehicle Equipment Configuration Data service (0x2E 0311) shall be stored in non-volatile memoy and shall be available only after reset.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0395</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Service 0x2E (Write Data By Identifier) will be implemented for DID 0244 (Reset Pre-Safe Counter)</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0394</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The new data written by Vehicle Equipment Configuration Data service (0x2E 0311) shall be stored in non-volatile memoy and shall be available only after reset.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0507</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Byte 0: Reserved (shall not be used) ----------------------------------------------- Byte1_bit0 - Activation/deactivation of PRE-SAFE function 0x00 - yes - PRE-SAFE function activated 0x01 - no - PRE-SAFE function not activated Byte1_bit1 - Activation/deactivation of Display message (signal RBTM_xy_Disp_Rq_ST3) 0x00 - yes - Display message activated 0x01 - no - Display message not activated Byte1_bit2 - Activation / deactivation of counter limit. 0x00 - yes - counter limit deactivated 0x01 - no - counter limit activated Byte1_bit3 - CRC Fault monitoring 0x00 - yes - deactivated 0x01 - no - Activated Byte1_bits4-7: Reserved ----------------------------------------------- Byte 2: Reserved (shall not be used)</td></tr></p>
+        <p></table></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\DIA\SW_IT_DIA_DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData_01_Fri_Feb_23_09_57_54_2024.asc'>Log file: SW_IT_DIA_DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData_01_Fri_Feb_23_09_57_54_2024.asc </A></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\DIA\SW_IT_DIA_DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData_01_Fri_Feb_23_09_57_54_2024.blf'>Log file: SW_IT_DIA_DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData_01_Fri_Feb_23_09_57_54_2024.blf </A></p>
+      </div>
+      <div class="Indentation">
+        <table class="ScreenOnly">
+          <tbody>
+            <tr>
+              <td>
+                <a class="Undecorated" href="javascript:showTable('18_')">[expand test steps]</a>
+              </td>
+              <td width="2px"></td>
+              <td>
+                <a class="Undecorated" href="javascript:hideTable('18_')">[collapse test steps]</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="TestGroupHeadingBackground">
+        <tr>
+          <td>
+            <big class="Heading3">Main Part of Test Case</big>
+          </td>
+        </tr>
+      </table>
+      <div class="Indentation">
+        <table class="ResultTable">
+          <tr>
+            <th class="TableHeadingCell" width="1px">Timestamp</th>
+            <th class="TableHeadingCell" width="1px">Test Step</th>
+            <th class="TableHeadingCell" width="auto">Description</th>
+            <th class="TableHeadingCell" width="1px">Result</th>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 635.359829</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Preconditions</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 635.359829</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 1</td>
+            <td class="DefaultCellTestStep">Bench Initialization</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">1. RunPreTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 635.383727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 636.043727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 636.126727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 638.247206</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_36930" href="javascript:switchTable('18_i__-1577388976_36930')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_36930">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 641.727098</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37041" href="javascript:switchTable('18_i__-1577388976_37041')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Steps_library_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_37041">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFD2A</td>
+                  <td class="DefaultCell">fd 2a </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 642.097099</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37152" href="javascript:switchTable('18_i__-1577388976_37152')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_37152">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 644.127035</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37232" href="javascript:switchTable('18_i__-1577388976_37232')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/SoftReset/ER_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_37232">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x51</td>
+                  <td class="DefaultCell">51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ResetType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 646.529876</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37435" href="javascript:switchTable('18_i__-1577388976_37435')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_37435">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 648.549886</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">Enter [supplier] session request: Positive response received.</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 648.561754</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37516" href="javascript:switchTable('18_i__-1577388976_37516')">[−]</a>
+                    </td>
+                    <td>Check Software Version.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_18_i__-1577388976_37516">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">0x17 0x1F 0x00 0x18 0x03 0x00 0x17 0x1F 0x00</td>
+                  <td class="DefaultCell">0x17 0x1F 0x00 0x18 0x03 0x00 0x17 0x1F 0x00</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 648.572009</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37568" href="javascript:switchTable('18_i__-1577388976_37568')">[−]</a>
+                    </td>
+                    <td>Check Software Version (0x22 0xFD 0x01).</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_18_i__-1577388976_37568">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ER01861H.P83</td>
+                  <td class="DefaultCell">ER01861H.P83</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.119875</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 2</td>
+            <td class="DefaultCellTestStep">Enter development session.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.129911</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">Enter [development] session request: Positive response received.</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.129911</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 3</td>
+            <td class="DefaultCellTestStep">Set breakpoint in function *DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.133727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData at line offset 11</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.133727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.133727</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_DIA_0030; ARCH_SW_DIA_0152; ARCH_SW_DIA_0153; ARCH_SW_DIA_0394; ARCH_SW_DIA_0507;</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 649.133727</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 4</td>
+            <td class="DefaultCellTestStep">Send diag request for 2E 0311 and wait for timeout error --&gt; Timeout reached.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 651.139878</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 5</td>
+            <td class="DefaultCellTestStep">Check if breakpoint from function DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData was reached. --&gt; BP was reached.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.195727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.195727</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 6</td>
+            <td class="DefaultCellTestStep">Overwrite Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development with 0x1</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.197727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">Global variable uint8 Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development,,app.elf [3] is overwritten to (0x01)</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.221864</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37808" href="javascript:switchTable('18_i__-1577388976_37808')">[−]</a>
+                    </td>
+                    <td>Byte was read</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_18_i__-1577388976_37808">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.221864</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 7</td>
+            <td class="DefaultCellTestStep">Send diag request for 2E 0311 --&gt; Response received.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.245727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.258727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.269623</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Postcondition</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 656.269623</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 8</td>
+            <td class="DefaultCellTestStep">Return ECU to default values</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">2. RunPostTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 656.292727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 656.955727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 657.040727</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 658.541427</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_37982" href="javascript:switchTable('18_i__-1577388976_37982')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_37982">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 658.670972</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_38083" href="javascript:switchTable('18_i__-1577388976_38083')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_38083">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 659.830925</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_38214" href="javascript:switchTable('18_i__-1577388976_38214')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_38214">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell"> 661.860866</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_18_i__-1577388976_38294" href="javascript:switchTable('18_i__-1577388976_38294')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/SoftReset/ER_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_18_i__-1577388976_38294">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x51</td>
+                  <td class="DefaultCell">51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ResetType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

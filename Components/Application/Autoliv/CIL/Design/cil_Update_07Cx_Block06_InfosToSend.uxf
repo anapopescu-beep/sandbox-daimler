@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>240</x>
+      <y>40</y>
+      <w>457</w>
+      <h>883</h>
+    </coordinates>
+    <panel_attributes>title:cil_Update_07Cx_Block06_InfosToSend
+Start
+
+Call Rte_Call_pclBelt_S_GetSpeed_deg_s function
+Set u8BobbinSpeedHMSB as high byte
+Set u8BobbinSpeedLMSB as high middle byte
+Set u8BobbinSpeedHLSB as low middle byte
+Set u8BobbinSpeedLLSB as low byte
+
+Call Rte_Call_pclAutotestServices_GetTestResult function
+
+
+Check if HES autotest is ok
+If
+	[TRUE]
+	Test succeeded
+		 
+	[FALSE]
+	Test failed 
+
+	[ELSE]
+	Test not performed yet
+EndIf
+
+Set u8BobbinPositionMSB as hygh byte
+Set u8BobbinPositionLSB as low byte
+
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_01 = CU8_BLOCK_ID_06;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_02 = u8BobbinSpeedHMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_03 = u8BobbinSpeedLMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_04 = u8BobbinSpeedHLSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_05 = u8BobbinSpeedLLSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_06 = u8HESTestResult;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_07 = u8BobbinPositionMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_08 = u8BobbinPositionLSB;
+
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

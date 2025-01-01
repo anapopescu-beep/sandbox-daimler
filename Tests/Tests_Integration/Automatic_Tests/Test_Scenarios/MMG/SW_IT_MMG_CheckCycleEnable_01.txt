@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0300
+ARCH_SW_MMG_0300: Write Rte_MMG_psrEnableCycleX_.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init() at line 'mmg_CheckCycleEnable();' and press run.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line 'mmg_CheckCycleEnable();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function mmg_CheckCycleEnable() at line '(void)Rte_Write_psrEnableCycle0_b8CycleValidity(B_TRUE);' and press run.
+
+Action: ARCH_SW_MMG_0300
+
+	Step 5: Check if CPU stopped in function mmg_CheckCycleEnable() at line '(void)Rte_Write_psrEnableCycle0_b8CycleValidity(B_TRUE)'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0300
+
+	Step 6: Evaluate if variable Rte_MMG_psrEnableCycle0_b8CycleValidity is equal to B_TRUE. 
+		Expected result:  B_TRUE
+
+Postcondition
+
+	Step 7: Return ECU to default values

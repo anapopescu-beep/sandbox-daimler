@@ -1,0 +1,784 @@
+/*@!Encoding:1252*/
+
+variables
+{
+
+}
+
+/// <Fault_Management/AECs>
+// Check all AEC status and report all that do not have the expected status.
+void CheckAECPresence()
+{  
+  diagRequest        * dReadAllAECsStatusRequest;
+  stack diagResponse * dReadAllAECsStatusResponse;
+  
+  stack int iIndex             = 1;
+  stack int iAECIndex          = 0;
+  stack int iAutotestErrorFlag = 0;
+  stack int iErrorFlag         = 0;
+  stack long EvalManStepTable  = 0;
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[10];
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+    
+  EnterDiagnosticSession(cSession_ReadAECs);
+  
+  dReadAllAECsStatusRequest.Resize(elcount(bReadAllAECsStatusRequest));
+  dReadAllAECsStatusRequest.SetPrimitiveData(bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest));
+   
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusRequest, dReadAllAECsStatusResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"CheckAECPresence: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResponse) == 0)
+  {
+    testStepFail(iLevelOfDetailFail, "", "CheckAECPresence: Negative response received for Read All AEC Status request: 0x%X", dReadAllAECsStatusResponse.GetResponseCode());
+    testReportWriteDiagResponse(dReadAllAECsStatusRequest);
+    return;
+  }
+
+  diagGetPrimitiveData(dReadAllAECsStatusResponse, bAllAec, elcount(bAllAec));
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  for(iIndex; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusRequest.GetPrimitiveSize())/3; iIndex++)
+  {
+    iAutotestErrorFlag = 0;
+    for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus) - 1); iAECIndex++)
+    {
+      if(bAllAec[iIndex*3+2] != bAcceptedAECStatus[iAECIndex])
+      {
+        iAutotestErrorFlag+= 1;
+      }
+    }
+    
+    if (iAutotestErrorFlag == elcount(bAcceptedAECStatus))
+    {
+      TestInfoRow(EvalManStepTable, 0);
+      snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+      TestInfoCell(EvalManStepTable, cAEC);
+      TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+      snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+      TestInfoCell(EvalManStepTable, cStatusByte);
+      TestInfoCell(EvalManStepTable, cExpectedStatuses);
+      
+      iErrorFlag = 1;
+    }
+    else // Check specific AEC status.
+    {
+      if(bSpecificAECExpectedStatus[0][0] == 0xFF) 
+      {
+        // No special AEC status is considered.
+      }
+      else
+      {
+        for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus) - 1); iAECIndex++)
+        {
+          if((bAllAec[iIndex*3+1] == bSpecificAECExpectedStatus[iAECIndex][0]) && (bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus[iAECIndex][1]))
+          {
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+            snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus[iAECIndex][1]);
+            TestInfoCell(EvalManStepTable, cExpectedStatus);
+            
+            iErrorFlag = 1;
+            break;
+          }
+        }
+      }    
+    }  
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(iLevelOfDetailPass, "AEC", "All autotests are passed.");
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <Fault_Management/AECs/Overloads>
+// Check that an AEC has the expected status.
+// Example: CheckAECStatus(bERR_MOSFET_OC, 0x2F);
+CheckAECStatus(byte bAutotestID, byte bExpectedStatus)
+{
+  stack byte bNoIgnoredAECs[1] = 0xFF;
+  CheckAECStatus(cAECName[bAutotestID], bExpectedStatus, bNoIgnoredAECs);
+}
+
+/// <Fault_Management/AECs/Overloads>
+// Check that an AEC has the expected status. Ignored autotests will not be considered in this evaluation.
+// Example: BAutotestID              = bERR_MOSFET_OC.
+//          bExpectedStatus          = 0x2F.
+//          byte bIgnoredAECs[2] = {bERR_HIGH_SIDE_SWITCH, bERR_BAT_PWR_UNDER_VOLTAGE};
+void CheckAECStatus(byte bAutotestID, byte bExpectedStatus, byte cAutotestNamesIgnored[])
+{
+  CheckAECStatus(cAECName[bAutotestID], bExpectedStatus, cAutotestNamesIgnored);
+}
+/// <Fault_Management/AECs>
+// Check that an AEC has the expected status. Ignored autotests will not be considered in this evaluation.
+// Example: cAutotestName            = "ERR_MOSFET_OC".
+//          bExpectedStatus          = 0x2F.
+//          char cIgnoredAECs[2][50] = {"ERR_HIGH_SIDE_SWITCH", "ERR_BAT_PWR_UNDER_VOLTAGE"}; 
+void CheckAECStatus(char cAutotestName[], byte bExpectedStatus, byte bAutotest_IDs_Ignored[])
+{
+  diagRequest        * dReadAllAECsStatusRequest;
+  stack diagResponse * dReadAllAECsStatusResponse;
+  
+  stack int iIndex                = 0;
+  stack int iIgnoredIndex         = 0;
+  stack int iFoundAsIgnored       = 0;
+  stack int iAutotestErrorFlag    = 0;
+  stack int iAECIndex             = 0;
+  stack long EvalManStepTable     = 0;
+  stack byte bTableEvaluation     = 1;
+  stack byte bAdditionalAECHeader = 1;
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+  stack char cExpectedStatus[10];
+  stack char cExpectedStatuses[300];
+  stack char cTableHeader[100];
+
+  EnterDiagnosticSession(cSession_ReadAECs);
+  
+  dReadAllAECsStatusRequest.Resize(elcount(bReadAllAECsStatusRequest));
+  dReadAllAECsStatusRequest.SetPrimitiveData(bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest));
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusRequest, dReadAllAECsStatusResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"CheckAECPresence: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResponse) == 0)
+  {
+    testStepFail(iLevelOfDetailFail, "", "CheckAECStatus: Negative response received for Read All AEC Status request: 0x%X", dReadAllAECsStatusResponse.GetResponseCode());
+    testReportWriteDiagResponse(dReadAllAECsStatusRequest);
+    return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResponse, bAllAec, elcount(bAllAec));
+  
+  // Begin table
+  snprintf(cTableHeader, elcount(cTableHeader), "Check %s AEC status.", cAutotestName);
+  EvalManStepTable = TestInfoTable(cTableHeader);
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoCell(EvalManStepTable, "Result");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+   // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus_AfterClear); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus_AfterClear) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusRequest.GetPrimitiveSize())/3; iIndex++)
+  {    
+    if (strncmp(cAutotestName, cAECName[bAllAec[iIndex*3+1]], elcount(cAECName[bAllAec[iIndex*3+1]])) == 0)
+    {
+      TestInfoRow(EvalManStepTable, 0);
+      snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+      TestInfoCell(EvalManStepTable, cAEC);
+      TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+      snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+      TestInfoCell(EvalManStepTable, cStatusByte);
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bExpectedStatus);
+      TestInfoCell(EvalManStepTable, cExpectedStatus);
+      
+      if (bAllAec[iIndex*3+2] == bExpectedStatus)
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        bTableEvaluation = 0;
+      }
+      
+      for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusRequest.GetPrimitiveSize())/3; iIndex++)
+      {
+        if (strncmp(cAutotestName, cAECName[bAllAec[iIndex*3+1]], elcount(cAECName[bAllAec[iIndex*3+1]])) != 0)
+        {
+          iAutotestErrorFlag = 0;
+          for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus) - 1); iAECIndex++)  // Check if any AEC status unexpected.
+          {
+            if(bAllAec[iIndex*3+2] != bAcceptedAECStatus[iAECIndex])
+            {
+              iAutotestErrorFlag+= 1;
+            }
+          }
+          
+          if (iAutotestErrorFlag == elcount(bAcceptedAECStatus))
+          {
+            iFoundAsIgnored = 0;
+            
+            if(bAdditionalAECHeader == 1) // Only add row once.
+            {
+              TestInfoRow(EvalManStepTable, 0);
+              TestInfoCell(EvalManStepTable, "Additional AECs found:", 5);
+              bAdditionalAECHeader = 0;
+            }
+                               
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+             
+            for(iIgnoredIndex = 0; iIgnoredIndex < elcount(bAutotest_IDs_Ignored); iIgnoredIndex++)
+            {
+              // Check if AEC status is ignored.
+              if (strncmp(cAECName[bAutotest_IDs_Ignored[iIgnoredIndex]], cAECName[bAllAec[iIndex*3+1]], elcount(cAECName[bAllAec[iIndex*3+1]])) == 0)  
+              {        
+                TestInfoCell(EvalManStepTable, "Any (Ignored).");
+                TestInfoCell(EvalManStepTable, "pass");
+                iFoundAsIgnored = 1;
+              }
+            }
+            
+            if (iFoundAsIgnored == 0) // If AEC status is not ignored.
+            {
+              TestInfoCell(EvalManStepTable, cExpectedStatuses);
+              TestInfoCell(EvalManStepTable, "fail");
+              bTableEvaluation = 0;
+            }
+          }
+        }
+      }
+      
+     if(bTableEvaluation == 0) // If any row has a failed result.
+      {
+        testStepFail(iLevelOfDetailFail, "", EvalManStepTable); 
+      }
+      else
+      {
+        testStepPass(iLevelOfDetailPass, "", EvalManStepTable); 
+      }
+      
+      return;
+    }
+ }
+  
+ testStepFail(iLevelOfDetailFail, "", "CheckAECPresence: INVALID AEC Name: %s -> Please check function input.", cAutotestName);
+}
+
+/// <Fault_Management/AECs/Overloads>
+// Check the duration in which the AEC status is changed.
+float ReturnAECStatusChangeTime(int iAutotestID, byte bExpectedStatus, int iCheckInterval, float iMaxTime)
+{
+  return ReturnAECStatusChangeTime(cAECName[iAutotestID], bExpectedStatus, iCheckInterval, iMaxTime);
+}
+/// <Fault_Management/AECs>
+// Check the duration in which the AEC status is changed.
+float ReturnAECStatusChangeTime(char cAutotestName[], byte bExpectedStatus, int iCheckInterval, float iMaxTime)
+{
+  stack diagRequest  * dReadMemoryByAddressRequest;
+  stack diagResponse * dReadMemoryByAddressResponse;
+  
+  stack int iIndex            = 0;
+  stack float fTimeSinceStart = 0;
+  stack float fStartTime      = timeNow()/100;
+  stack char cAutotestName_Buffer[100];
+  
+  if(iCheckInterval < 10 || iCheckInterval > iMaxTime)
+  {
+      testStepFail(iLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Incorrect Check time interval: %i. Must be greater or equal to 10 ms and smaller than iMaxTime.", iCheckInterval);
+      return -1;
+  }
+  
+  toUpper(cAutotestName_Buffer, cAutotestName, elcount(cAutotestName_Buffer));
+  
+  dReadMemoryByAddressRequest.Resize(elcount(bRMBARequest));
+  diagSetPrimitiveData(dReadMemoryByAddressRequest, bRMBARequest, elcount(bRMBARequest));
+  
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 2, _erh_au8AecStatus[0]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 3, _erh_au8AecStatus[1]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 4, _erh_au8AecStatus[2]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 5, _erh_au8AecStatus[3]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 6, 0x00);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 7, 0x01);
+  
+  for(iIndex = 0; iIndex < iNoOfAECs; iIndex++)
+  {  
+    if (strncmp(cAutotestName_Buffer, cAECName[iIndex], elcount(cAECName[iIndex])) == 0)
+    {      
+      DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 5, iIndex + _erh_au8AecStatus[3]);
+
+      fTimeSinceStart = timeNow() / 100;
+      
+      //GetSecurityAccess(cSecuritySession_RMBA);
+      
+      while ((fTimeSinceStart - fStartTime) <= iMaxTime)
+      {
+        // Diag Error Handling.
+        if(SendDiagnosticRequest(dReadMemoryByAddressRequest, dReadMemoryByAddressResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+        {
+          testStepFail(iLevelOfDetailFail, "" ,"ReturnAECStatusChangeTime: Diagnostic request send or receive error.");
+          return -1;
+        }
+  
+        // Diag Error Handling.
+        if (diagIsPositiveResponse(dReadMemoryByAddressResponse) == 0)
+        {
+          testStepFail(iLevelOfDetailFail, "", "ReturnAECStatusChangeTime: Negative response received for Read Memory By Address request: 0x%X", dReadMemoryByAddressResponse.GetResponseCode());
+          testReportWriteDiagResponse(dReadMemoryByAddressRequest);
+          return -1;
+        }
+        
+        if (DiagGetPrimitiveByte(dReadMemoryByAddressResponse, 1) == bExpectedStatus)
+        {
+          testStep(iLevelOfDetailStep, "", "The status of the AEC 0x%02X - %s was changed to 0x%02x in %.f ms.", iIndex, cAECName[iIndex] , DiagGetPrimitiveByte(dReadMemoryByAddressResponse, 1), (fTimeSinceStart - fStartTime));
+          return (fTimeSinceStart - fStartTime);
+        }
+        else
+        {
+          testWaitForTimeoutSilent(iCheckInterval);
+          fTimeSinceStart = timeNow() / 100;
+        }
+        
+        if(iCheckInterval > iSessionTimeout - 100) // Re-obtain security access.
+        {
+          //GetSecurityAccess(cSecuritySession_RMBA);
+        }
+      }
+      
+     fTimeSinceStart = timeNow()/100;
+    }
+    
+    if ((fTimeSinceStart - fStartTime) > iMaxTime)
+    {
+      testStepFail(iLevelOfDetailFail,"", "The status of the %s AEC status was NOT changed into 0x%02x after %.f ms.", cAECName[iIndex], bExpectedStatus, (fTimeSinceStart - fStartTime));
+      return (fTimeSinceStart - fStartTime);
+    }
+  }
+  
+  testStepFail(iLevelOfDetailStep, "", "ReturnAECStatusChangeTime: AEC name is not valid -> %s. Please input a valid AEC name.", cAutotestName);
+  return -1;
+}
+
+/// <Fault_Management/AECs/Overloads>
+// Check the duration in which the AEC status is changed.
+void CheckAECStatusFromRAM(int iAutotestID, byte bExpectedStatus)
+{
+  CheckAECStatusFromRAM(cAECName[iAutotestID], bExpectedStatus);
+}
+
+/// <Fault_Management/AECs>
+// Check that an AEC has the expected RAM status.
+void CheckAECStatusFromRAM(char cAutotestName[], byte bExpectedStatus)
+{
+  stack diagRequest  * dReadMemoryByAddressRequest;
+  stack diagResponse * dReadMemoryByAddressResponse;
+  
+  stack int iIndex            = 0;
+  stack long EvalManStepTable = 0;
+  
+  stack char cAutotestName_Buffer[100];
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+  stack char cExpectedStatus[10];
+  stack char cTableHeader[100];
+  
+  toUpper(cAutotestName_Buffer, cAutotestName, elcount(cAutotestName_Buffer));
+  
+  dReadMemoryByAddressRequest.Resize(elcount(bRMBARequest));
+  diagSetPrimitiveData(dReadMemoryByAddressRequest, bRMBARequest, elcount(bRMBARequest));
+  
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 2, _erh_au8AecStatus[0]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 3, _erh_au8AecStatus[1]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 4, _erh_au8AecStatus[2]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 5, _erh_au8AecStatus[3]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 6, 0x00);
+  DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 7, 0x01);
+  
+  for(iIndex = 0; iIndex < iNoOfAECs; iIndex++)
+  {  
+    if (strncmp(cAutotestName_Buffer, cAECName[iIndex], elcount(cAECName[iIndex])) == 0)
+    {
+      // Begin table
+      snprintf(cTableHeader, elcount(cTableHeader), "Check 0x%02X - %s AEC status from RAM.", iIndex, cAutotestName);
+      EvalManStepTable = TestInfoTable(cTableHeader);
+
+      // Header
+      TestInfoHeadingBegin(EvalManStepTable, 0);
+      TestInfoCell(EvalManStepTable, "AEC ID");
+      TestInfoCell(EvalManStepTable, "AEC name");
+      TestInfoCell(EvalManStepTable, "AEC status");
+      TestInfoCell(EvalManStepTable, "AEC expected status");
+      TestInfoHeadingEnd(EvalManStepTable);
+      
+      DiagSetPrimitiveByte(dReadMemoryByAddressRequest, 5, iIndex + _erh_au8AecStatus[3]);
+      
+     // GetSecurityAccess(cSecuritySession_RMBA);
+
+      // Diag Error Handling.
+      if(SendDiagnosticRequest(dReadMemoryByAddressRequest, dReadMemoryByAddressResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+      {
+        testStepFail(iLevelOfDetailFail, "" ,"CheckAECStatusFromRAM: Diagnostic request send or receive error.");
+        return;
+      }
+
+      // Diag Error Handling.
+      if (diagIsPositiveResponse(dReadMemoryByAddressResponse) == 0)
+      {
+        testStepFail(iLevelOfDetailFail, "", "CheckAECStatusFromRAM: Negative response received for Read Memory By Address request: 0x%X", dReadMemoryByAddressResponse.GetResponseCode());
+        testReportWriteDiagResponse(dReadMemoryByAddressRequest);
+        return;
+      }
+      
+      TestInfoRow(EvalManStepTable, 0);
+      snprintf(cAEC, elcount(cAEC), "0x%02X", iIndex);
+      TestInfoCell(EvalManStepTable, cAEC);
+      TestInfoCell(EvalManStepTable, cAECName[iIndex]);
+      snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", DiagGetPrimitiveByte(dReadMemoryByAddressResponse, 1));
+      TestInfoCell(EvalManStepTable, cStatusByte);
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bExpectedStatus);
+      TestInfoCell(EvalManStepTable, cExpectedStatus);
+      
+      if (DiagGetPrimitiveByte(dReadMemoryByAddressResponse, 1) == bExpectedStatus)
+      {
+        testStepPass(iLevelOfDetailPass, "", EvalManStepTable); 
+      }
+      else
+      {
+        testStepFail(iLevelOfDetailFail, "", EvalManStepTable); 
+      }
+      return;
+    }
+  }
+  
+ testStepFail(iLevelOfDetailStep, "", "CheckAECStatusFromRAM: AEC name is not valid -> %s. Please input a valid AEC name.", cAutotestName);
+}
+
+/// <Fault_Management/AECs>
+// Check all AEC status and report all that do not have the expected status during bench initialization.
+// Any accepted AEC status is preceeded by a specific AEC expected status.
+void CheckAECPresenceInBenchInit()
+{
+  diagRequest        * dReadAllAECsStatusRequest;
+  stack diagResponse * dReadAllAECsStatusResponse;
+  
+  stack int iErrorFlag = 0;  
+  stack int iIndex = 1;
+  stack int iAECIndex = 0;
+  stack int iFound_SpecificStatus  = 0; 
+  stack int iAutotestErrorFlag= 0;
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[10];
+  stack long EvalManStepTable = 0;
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus_BenchInit); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus_BenchInit) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus_BenchInit[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus_BenchInit[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence In Bench Init.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  EnterDiagnosticSession(cSession_ReadAECs);
+  
+  dReadAllAECsStatusRequest.Resize(elcount(bReadAllAECsStatusRequest));
+  dReadAllAECsStatusRequest.SetPrimitiveData(bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest));
+    
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusRequest, dReadAllAECsStatusResponse) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"CheckAECPresenceInBenchInit: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResponse) == 0)
+  {
+   testStepFail(iLevelOfDetailFail, "" ,"CheckAECPresenceInBenchInit: Negative response received for Read All AEC Status request: 0x%X.", dReadAllAECsStatusResponse.GetResponseCode());
+   testReportWriteDiagResponse(dReadAllAECsStatusRequest);
+   return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResponse, bAllAec, elcount(bAllAec));
+  
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusRequest.GetPrimitiveSize())/3; iIndex++) // Loop through all read AECs.
+  {   
+
+    if((strncmp(cAEC_NotExecutedAfterReset[bAllAec[iIndex*3+1]], cAECName[bAllAec[iIndex*3+1]], elcount(cAECName[bAllAec[iIndex*3+1]])) == 0) && (bAllAec[iIndex*3+2] == bAEC_NotCompletedSincePowerOffOn))
+    {
+      // If AEC should not and is not executed after reset, do nothing.
+    }
+    else
+    {  
+      iAutotestErrorFlag = 0;
+      for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus_BenchInit) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+2] != bAcceptedAECStatus_BenchInit[iAECIndex]) // Check if AEC status is accepted during bench initialization.
+        {
+           iAutotestErrorFlag+= 1;
+        }
+      }
+      
+      iFound_SpecificStatus = 0;
+    
+      // Check if the AEC has a specific expected status value.
+      for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus_BenchInit) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+1] == bSpecificAECExpectedStatus_BenchInit[iAECIndex][0])         
+        {
+          iFound_SpecificStatus = 1;
+          if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus_BenchInit[iAECIndex][1])
+          {
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+            snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus_BenchInit[iAECIndex][1]);
+            TestInfoCell(EvalManStepTable, cExpectedStatus);
+            
+            iErrorFlag = 1;
+          }
+          break;
+        }
+      }
+      
+      // If the AEC does not have a specific expected status value and it does not match any of the accepted status values.
+      if((iFound_SpecificStatus == 0) && (iAutotestErrorFlag == elcount(bAcceptedAECStatus_BenchInit)))
+      {
+        TestInfoRow(EvalManStepTable, 0);
+        snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+        TestInfoCell(EvalManStepTable, cAEC);
+        TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+        snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+        TestInfoCell(EvalManStepTable, cStatusByte);
+        TestInfoCell(EvalManStepTable, cExpectedStatuses);
+        
+        iErrorFlag = 1;
+      }
+    }  
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(iLevelOfDetailPass, "AEC", "CheckAECPresenceInBenchInit: All autotests are passed or have the expected status.");
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <Fault_Management/AECs>
+// Check all AEC status and report all that do not have the expected status after Clear All or Soft Reset.
+// Any accepted AEC status is preceeded by a specific AEC expected status.
+void CheckAECPresenceAfterClear()
+{
+  diagRequest        * dReadAllAECsStatusRequest;
+  stack diagResponse * dReadAllAECsStatusResponse;
+  
+  stack int iErrorFlag = 0;  
+  stack int iIndex = 1;
+  stack int iAECIndex = 0;
+  stack int iFound_SpecificStatus  = 0; 
+  stack int iAutotestErrorFlag= 0;
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[10];
+  stack long EvalManStepTable = 0;
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus_AfterClear); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus_AfterClear) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence After Clear.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  EnterDiagnosticSession(cSession_ReadAECs);
+  
+  dReadAllAECsStatusRequest.Resize(elcount(bReadAllAECsStatusRequest));
+  dReadAllAECsStatusRequest.SetPrimitiveData(bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest));
+    
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusRequest, dReadAllAECsStatusResponse) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"CheckAECPresenceAfterClear: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResponse) == 0)
+  {
+   testStepFail(iLevelOfDetailFail, "" ,"CheckAECPresenceAfterClear: Negative response received for Read All AEC Status request: 0x%X.", dReadAllAECsStatusResponse.GetResponseCode());
+   testReportWriteDiagResponse(dReadAllAECsStatusRequest);
+   return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResponse, bAllAec, elcount(bAllAec));
+  
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusRequest.GetPrimitiveSize())/3; iIndex++) // Loop through all read AECs.
+  {   
+
+    if((strncmp(cAEC_NotExecutedAfterReset[bAllAec[iIndex*3+1]], cAECName[bAllAec[iIndex*3+1]], elcount(cAECName[bAllAec[iIndex*3+1]])) == 0) && (bAllAec[iIndex*3+2] == bAEC_NotCompletedSincePowerOffOn))
+    {
+      // If AEC should not and is not executed after reset, do nothing.
+    }
+    else
+    {  
+      iAutotestErrorFlag = 0;
+      for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus_AfterClear) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+2] != bAcceptedAECStatus_AfterClear[iAECIndex]) // Check if AEC status is accepted during bench initialization.
+        {
+           iAutotestErrorFlag+= 1;
+        }
+      }
+      
+      iFound_SpecificStatus = 0;
+    
+      // Check if the AEC has a specific expected status value.
+      for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus_AfterClear) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+1] == bSpecificAECExpectedStatus_AfterClear[iAECIndex][0])         
+        {
+          iFound_SpecificStatus = 1;
+          if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus_AfterClear[iAECIndex][1])
+          {
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+            snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus_AfterClear[iAECIndex][1]);
+            TestInfoCell(EvalManStepTable, cExpectedStatus);
+            
+            iErrorFlag = 1;
+          }
+          break;
+        }
+      }
+      
+      // If the AEC does not have a specific expected status value and it does not match any of the accepted status values.
+      if((iFound_SpecificStatus == 0) && (iAutotestErrorFlag == elcount(bAcceptedAECStatus_AfterClear)))
+      {
+        TestInfoRow(EvalManStepTable, 0);
+        snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3+1]);
+        TestInfoCell(EvalManStepTable, cAEC);
+        TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3+1]]);
+        snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+        TestInfoCell(EvalManStepTable, cStatusByte);
+        TestInfoCell(EvalManStepTable, cExpectedStatuses);
+        
+        iErrorFlag = 1;
+      }
+    }  
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(iLevelOfDetailPass, "AEC", "CheckAECPresenceAfterClear: All autotests are passed or have the expected status.");
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+

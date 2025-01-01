@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0745; ARCH_SW_DIA_0749; ARCH_SW_DIA_0750
+ARCH_SW_DIA_0745: Service 0x2E (Write Data By Identifier) will be implemented for DID F804 (Calibration Identifications (CAL ID))
+ARCH_SW_DIA_0749: Request data shall be 17 bytes long.Note: Full Request length = 3 bytes + Response data length
+ARCH_SW_DIA_0750: Byte #4: ?bits 0-7: Number of data items Bytes #5-#21: ?bits 0-7: Calibration Identification 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Calibration_Identifications_CAL_ID_Write_Number_of_data_items*.
+
+ARCH_SW_DIA_0745; ARCH_SW_DIA_0749; ARCH_SW_DIA_0750
+
+	Step 4: Send diag request for 2E F804 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_Calibration_Identifications_CAL_ID_Write_Number_of_data_items was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

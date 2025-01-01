@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0595; ARCH_SW_DIA_0596; ARCH_SW_DIA_0597; ARCH_SW_DIA_0598
+ARCH_SW_DIA_0595: Service 0x22 (Read Data By Identifier) will be implemented for DID 0100 (Reprogramming Attempt Counter)
+ARCH_SW_DIA_0596: The Read Reprogramming Attempt Counter service shall be available in the following sessions: ?Default Session (0x01) ?Programming Session (0x02) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0597: The Read Reprogramming Attempt Counter service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0598: DataIdentifier of the Read Reprogramming Attempt Counter shall be: 0x0100
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_ReadData*.
+
+Action:ARCH_SW_DIA_0595; ARCH_SW_DIA_0596; ARCH_SW_DIA_0597; ARCH_SW_DIA_0598
+
+	Step 3: Send diag request for 22 0100 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_ReadData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

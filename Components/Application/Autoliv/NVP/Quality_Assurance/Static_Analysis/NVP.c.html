@@ -1,0 +1,734 @@
+<HTML><BODY>
+Licensed To : Autoliv AEA
+<br>
+(C) Programming Research Ltd 
+<br>
+
+<PRE STYLE="margin-top:0;margin-bottom:0">
+
+==== Source listing for file:  S:/Components/Application/Autoliv/NVP/Implementation/src/NVP.c ====
+
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+    1:	
+    2:	/******************************************************************************
+    3:	
+    4:	AUTOLIV ELECTRONIC document.
+    5:	
+    6:	-------------------------------------
+    7:	
+    8:	Copyright Autoliv Inc. All rights reserved.
+    9:	
+   10:	*******************************************************************************
+   11:	C-File Template Version:
+   12:	Template version: AEM_PROCESS_1.17.00
+   13:	Last template change: AEM_PROCESS_1.00.00
+   14:	Template release date: 2021-10
+   15:	******************************************************************************/
+   16:	/* PRQA S 0288 ++ */
+   17:	/*
+   18:	 * Explanation:
+   19:	 *    Disabled for MKS keywords
+   20:	 */
+   21:	/*
+</PRE>
+<A NAME="ERR_LINE_22"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+   22:	$Revision: 1.5 $
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0292.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (22) ++ ERROR ++: &lt;=6=(0292) [I] Source file 'S:/Components/Application/Autoliv/NVP/Implementation/src/NVP.c' has comments containing one of the characters '$', '@' or '`'. &nbsp;&nbsp;MISRA C:2012 Dir-1.1; REFERENCE - ISO:C90-5.2.1 Character Sets</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+   23:	$ProjectName: e:/MKSProjects/SBE/PP/DAIMLER_MMA/Phase_02/View_Development/Components/Application/Autoliv/NVP/Quality_Assurance/Static_Analysis/project.pj $
+   24:	*/
+   25:	/* PRQA S 0288 -- */
+   26:	
+   27:	/**
+   28:	 *  @defgroup TEMPLATE_FILES_Group_Example Group_Example_Name_In_Document
+   29:	 *  This is a new created group, this will create a new man3 file with
+   30:	 *  group members described in that file. Members description of a group
+   31:	 *  will contain only description from brief section in their original file.
+   32:	 */
+   33:	
+   34:	/******************************************************************************
+   35:	EXTERNAL DEPENDENCIES
+   36:	******************************************************************************/
+   37:	#include "NVP_Generated.h"
+   38:	#include "NVP_Stubs.h"
+   39:	#include "NVP_Cfg.h"
+   40:	#include "common.h"
+   41:	
+   42:	#include "NvM_PrivateCfg.h"
+   43:	#include "NvM_Cfg.h"
+   44:	#include "Fee.h"
+   45:	
+   46:	/******************************************************************************
+   47:	MODULE DEFINES
+   48:	******************************************************************************/
+   49:	/**
+   50:	 * \brief
+   51:	 *       Vehicle equipment ID
+   52:	 */
+   53:	#define KU8_NVP_READ_DATA_VEHICLE_EQUIPMENT ((uint8)0x0000)
+   54:	/**
+   55:	 * \brief
+   56:	 *       Vehicle development ID
+   57:	 */
+   58:	#define KU8_NVP_READ_DATA_DEVELOPMENT       ((uint8)0x0001)
+   59:	/**
+   60:	 * \brief
+   61:	 *       Undervoltage minim value
+   62:	 */
+   63:	#define KU16_NVP_UV_MIN_VALUE                ((uint16)1531)
+   64:	/**
+   65:	 * \brief
+   66:	 *       Undervoltage max value
+   67:	 */
+   68:	#define KU16_NVP_UV_MAX_VALUE                ((uint16)2041)
+   69:	/**
+   70:	 * \brief
+   71:	 *       Overvoltage minim value
+   72:	 */
+   73:	#define KU16_NVP_OV_MIN_VALUE                ((uint16)3266)
+   74:	/**
+   75:	 * \brief
+   76:	 *       Overvoltage max value
+   77:	 */
+   78:	#define KU16_NVP_OV_MAX_VALUE                ((uint16)3674)
+   79:	/**
+   80:	 * \brief
+   81:	 *       Voltage multiply factor
+   82:	 */
+   83:	#define KU32_NVP_VOLTAGE_MUL_FACTOR         ((uint32)49)
+   84:	/**
+   85:	 * \brief
+   86:	 *       Voltage divide factor
+   87:	 */
+   88:	#define KU32_NVP_VOLTAGE_DIV_FACTOR         ((uint32)10)
+   89:	/******************************************************************************
+   90:	MODULE TYPES
+   91:	******************************************************************************/
+   92:	
+   93:	/******************************************************************************
+   94:	DECLARATION OF LOCAL FUNCTIONS
+   95:	******************************************************************************/
+   96:	
+   97:	/******************************************************************************
+   98:	DEFINITION OF LOCAL VARIABLES
+   99:	******************************************************************************/
+  100:	
+  101:	/******************************************************************************
+  102:	DEFINITION OF EXPORTED VARIABLES
+  103:	******************************************************************************/
+  104:	/**
+  105:	 * \brief
+  106:	 *    Variable that holdes the vehicle equipment data
+  107:	 * \remarks
+  108:	 *    NA
+  109:	 */
+</PRE>
+<A NAME="ERR_LINE_110"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  110:	 nvp_stVehicleEquipmentData NVP_stVehicleEquipmentData;
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                            ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/2022.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (110) ++ WARNING ++: &lt;=2=(2022) A tentative definition is being used. Is it appropriate to include an explicit initializer ? </A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  111:	
+  112:	/******************************************************************************
+  113:	DEFINITION OF LOCAL CONSTANT DATA
+  114:	******************************************************************************/
+  115:	
+  116:	/******************************************************************************
+  117:	DEFINITION OF EXPORTED CONSTANT DATA
+  118:	******************************************************************************/
+  119:	
+  120:	/******************************************************************************
+  121:	MODULE FUNCTION-LIKE MACROS
+  122:	******************************************************************************/
+  123:	
+  124:	/******************************************************************************
+  125:	DEFINITION OF LOCAL FUNCTION
+  126:	******************************************************************************/
+  127:	/**
+  128:	 * \brief
+  129:	 *     Function that checks if a bit is set
+  130:	 * \param
+  131:	 *     value - value to be checked
+  132:	 *     bitNumber - bit number to be checked
+  133:	 * \exception
+  134:	 *     None
+  135:	 * \pre
+  136:	 *     None
+  137:	 * \post
+  138:	 *     None
+  139:	 * \return
+  140:	 *     ONE - if bit is set and ZERO - bit not set
+  141:	 **/
+  142:	/*[COVERS: DSG_NVP_0006] */
+</PRE>
+<A NAME="ERR_LINE_143"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  143:	LOCAL uint8 nvp_CheckIfBitSet(uint8 value, uint8 bitNumber)
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                    ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3227.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (143) ++ WARNING ++: &lt;=2=(3227) The parameter 'value' is never modified and so it could be declared with the 'const' qualifier. &nbsp;&nbsp;REFERENCE - ISO:C90-6.5.3 Type Qualifiers</A></B><A HREF="#ERR_LINE_143"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                 ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3227.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (143) ++ WARNING ++: &lt;=2=(3227) The parameter 'bitNumber' is never modified and so it could be declared with the 'const' qualifier. &nbsp;&nbsp;REFERENCE - ISO:C90-6.5.3 Type Qualifiers</A></B><A HREF="#ERR_LINE_174"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  144:	{
+  145:	   uint8 retVal = KU8_ZERO;
+  146:	
+</PRE>
+<A NAME="ERR_LINE_147"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  147:	   if (value &amp; (uint8)(KU8_ONE &lt;&lt; bitNumber))
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	             ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3344.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (147) ++ ERROR ++: &lt;=7=(3344) Controlling expression is not an 'essentially Boolean' expression. &nbsp;&nbsp;MISRA C:2012 Rule-14.4</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                               ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (147) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_207"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  148:	   {
+  149:	      retVal = KU8_ONE;
+  150:	   }
+  151:	   else
+  152:	   {
+  153:	      retVal = KU8_ZERO;
+  154:	   }
+  155:	
+  156:	   return retVal;
+  157:	}
+  158:	
+  159:	/**
+  160:	 * \brief
+  161:	 *     Function that computes the raw voltage values into physical values
+  162:	 * \param
+  163:	 *     u16VoltageValue - raw voltage value
+  164:	 * \exception
+  165:	 *     None
+  166:	 * \pre
+  167:	 *     None
+  168:	 * \post
+  169:	 *     None
+  170:	 * \return
+  171:	 *     Computed voltage value
+  172:	 **/
+  173:	/*[COVERS: DSG_NVP_0005] */
+</PRE>
+<A NAME="ERR_LINE_174"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  174:	LOCAL uint16 nvp_ComputeRawVoltageValues(uint16 u16VoltageValue)
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3227.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (174) ++ WARNING ++: &lt;=2=(3227) The parameter 'u16VoltageValue' is never modified and so it could be declared with the 'const' qualifier. &nbsp;&nbsp;REFERENCE - ISO:C90-6.5.3 Type Qualifiers</A></B><A HREF="#ERR_LINE_260"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  175:	{
+  176:	   uint16 u16computedVolage = u16VoltageValue;
+  177:	
+  178:	   u16computedVolage = (uint16)( (uint32)(u16computedVolage * KU32_NVP_VOLTAGE_MUL_FACTOR) / KU32_NVP_VOLTAGE_DIV_FACTOR );
+  179:	   
+  180:	   return u16computedVolage;
+  181:	}
+  182:	
+  183:	/**
+  184:	 * \brief
+  185:	 *     Function that checks if the SSA vehicle equipment block was written before
+  186:	 * \param
+  187:	 *     None
+  188:	 * \exception
+  189:	 *     None
+  190:	 * \pre
+  191:	 *     None
+  192:	 * \post
+  193:	 *     None
+  194:	 * \return
+  195:	 *     ONE - if block was written ZERO - block was not written
+  196:	 **/
+  197:	/*[COVERS: DSG_NVP_0004] */
+  198:	LOCAL uint8 nvp_CheckVehicleEquipmentStatus(void)
+  199:	{
+  200:	   uint8 u8retVal = KU8_ONE;
+  201:	   uint16 u16calculatedVoltageUV, u16calculatedVoltageUVAbort, u16calculatedVoltageOV, u16calculatedVoltageOVAbort  = KU16_ZERO;
+  202:	   VehicleEquipment_StorageType *VehicleEquipmentData;
+  203:	
+</PRE>
+<A NAME="ERR_LINE_204"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  204:	   VehicleEquipmentData = NvM_BlockDescriptorTable_at[NvMConf_NvMBlockDescriptor_Ct_MBBL_SsaAppl_CodingNvmCoding_CurrentVehicleEquipment].RamBlockDataAddr_t;
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                        ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0563.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (204) ++ ERROR ++: &lt;=7=(0563) [C] Right operand of assignment is not of compatible pointer type. &nbsp;&nbsp;MISRA C:2012 Rule-1.1; REFERENCE - ISO:C90-6.3.16.1 Simple Assignment - Constraints</A></B><A HREF="#ERR_LINE_319"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  205:	
+  206:	   u16calculatedVoltageUV = (uint16)(VehicleEquipmentData-&gt;Unterspannungsbereichsschwelle[KU8_ONE] +
+</PRE>
+<A NAME="ERR_LINE_207"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  207:	                                                     (uint16)(VehicleEquipmentData-&gt;Unterspannungsbereichsschwelle[KU8_ZERO] &lt;&lt; KU8_EIGHT));
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                     ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4391.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (207) ++ ERROR ++: &lt;=7=(4391) A composite expression of 'essentially unsigned' type (unsigned char) is being cast to a wider unsigned type, 'unsigned short'. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_214"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4399.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (207) ++ ERROR ++: &lt;=7=(4399) An expression which is the result of a ~ or &lt;&lt; operation has been cast to a wider type. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_214"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                             ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0499.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (207) ++ ERROR ++: &lt;=7=(0499) Right operand of shift operator is greater than or equal to the width of the essential type of the left operand. &nbsp;&nbsp;MISRA C:2012 Rule-12.2; REFERENCE - ISO:C90-6.3.7 Bitwise Shift Operators - Semantics</A></B><A HREF="#ERR_LINE_214"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (207) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_214"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+</PRE>
+<A NAME="ERR_LINE_208"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  208:	   if((u16calculatedVoltageUV &lt; KU16_NVP_UV_MIN_VALUE) || (u16calculatedVoltageUV &gt; KU16_NVP_UV_MAX_VALUE))
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	   ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/2000.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (208) ++ WARNING ++: &lt;=2=(2000) No 'else' clause exists for this 'if' statement. </A></B><A HREF="#ERR_LINE_215"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  209:	   {
+  210:	      u8retVal = KU8_ZERO;
+  211:	   }
+  212:	
+  213:	   u16calculatedVoltageUVAbort = (uint16)(VehicleEquipmentData-&gt;Unterspannungsabbruchschwelle[KU8_ONE] +
+</PRE>
+<A NAME="ERR_LINE_214"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  214:	                                                (uint16)(VehicleEquipmentData-&gt;Unterspannungsabbruchschwelle[KU8_ZERO] &lt;&lt; KU8_EIGHT));
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4391.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (214) ++ ERROR ++: &lt;=7=(4391) A composite expression of 'essentially unsigned' type (unsigned char) is being cast to a wider unsigned type, 'unsigned short'. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_228"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4399.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (214) ++ ERROR ++: &lt;=7=(4399) An expression which is the result of a ~ or &lt;&lt; operation has been cast to a wider type. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_228"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                       ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0499.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (214) ++ ERROR ++: &lt;=7=(0499) Right operand of shift operator is greater than or equal to the width of the essential type of the left operand. &nbsp;&nbsp;MISRA C:2012 Rule-12.2; REFERENCE - ISO:C90-6.3.7 Bitwise Shift Operators - Semantics</A></B><A HREF="#ERR_LINE_228"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (214) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_221"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+</PRE>
+<A NAME="ERR_LINE_215"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  215:	   if((u16calculatedVoltageUVAbort &lt; KU16_NVP_UV_MIN_VALUE) || (u16calculatedVoltageUVAbort &gt; KU16_NVP_UV_MAX_VALUE))
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	   ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/2000.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (215) ++ WARNING ++: &lt;=2=(2000) No 'else' clause exists for this 'if' statement. </A></B><A HREF="#ERR_LINE_222"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  216:	   {
+  217:	      u8retVal = KU8_ZERO;
+  218:	   }
+  219:	
+  220:	   u16calculatedVoltageOV = (uint16)(VehicleEquipmentData-&gt;Uberspannungsbereichsschwelle[KU8_ONE] +
+</PRE>
+<A NAME="ERR_LINE_221"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  221:	                                                    ((uint16)VehicleEquipmentData-&gt;Uberspannungsbereichsschwelle[KU8_ZERO] &lt;&lt; KU8_EIGHT));
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                     ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4397.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (221) ++ ERROR ++: &lt;=7=(4397) An expression which is the result of a ~ or &lt;&lt; operation has not been cast to its essential type. &nbsp;&nbsp;MISRA C:2012 Rule-10.7</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                           ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (221) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_228"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+</PRE>
+<A NAME="ERR_LINE_222"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  222:	   if((u16calculatedVoltageOV &lt; KU16_NVP_OV_MIN_VALUE) || (u16calculatedVoltageOV &gt; KU16_NVP_OV_MAX_VALUE))
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	   ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/2000.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (222) ++ WARNING ++: &lt;=2=(2000) No 'else' clause exists for this 'if' statement. </A></B><A HREF="#ERR_LINE_229"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  223:	   {
+  224:	      u8retVal = KU8_ZERO;
+  225:	   }
+  226:	
+  227:	   u16calculatedVoltageOVAbort = (uint16)(VehicleEquipmentData-&gt;Uberspannungsabbruchschwelle[KU8_ONE] +
+</PRE>
+<A NAME="ERR_LINE_228"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  228:	                                               (uint16)(VehicleEquipmentData-&gt;Uberspannungsabbruchschwelle[KU8_ZERO] &lt;&lt; KU8_EIGHT));
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                               ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4391.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (228) ++ ERROR ++: &lt;=7=(4391) A composite expression of 'essentially unsigned' type (unsigned char) is being cast to a wider unsigned type, 'unsigned short'. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_329"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4399.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (228) ++ ERROR ++: &lt;=7=(4399) An expression which is the result of a ~ or &lt;&lt; operation has been cast to a wider type. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_329"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                     ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0499.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (228) ++ ERROR ++: &lt;=7=(0499) Right operand of shift operator is greater than or equal to the width of the essential type of the left operand. &nbsp;&nbsp;MISRA C:2012 Rule-12.2; REFERENCE - ISO:C90-6.3.7 Bitwise Shift Operators - Semantics</A></B><A HREF="#ERR_LINE_329"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (228) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_329"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+</PRE>
+<A NAME="ERR_LINE_229"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  229:	   if((u16calculatedVoltageOVAbort &lt; KU16_NVP_OV_MIN_VALUE) || (u16calculatedVoltageOVAbort &gt; KU16_NVP_OV_MAX_VALUE))
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	   ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/2000.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (229) ++ WARNING ++: &lt;=2=(2000) No 'else' clause exists for this 'if' statement. </A></B><A HREF="#ERR_LINE_234"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  230:	   {
+  231:	      u8retVal = KU8_ZERO;
+  232:	   }
+  233:	
+</PRE>
+<A NAME="ERR_LINE_234"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  234:	   if(KU8_ZERO != u8retVal)
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	   ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/2000.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (234) ++ WARNING ++: &lt;=2=(2000) No 'else' clause exists for this 'if' statement. </A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  235:	   {
+  236:	      NVP_stVehicleEquipmentData.UndervoltageAbort = nvp_ComputeRawVoltageValues(u16calculatedVoltageUVAbort);
+  237:	      NVP_stVehicleEquipmentData.Undervoltage = nvp_ComputeRawVoltageValues(u16calculatedVoltageUV);
+  238:	      NVP_stVehicleEquipmentData.OvervoltageAbort = nvp_ComputeRawVoltageValues(u16calculatedVoltageOVAbort);
+  239:	      NVP_stVehicleEquipmentData.Overvoltage = nvp_ComputeRawVoltageValues(u16calculatedVoltageOV);
+  240:	   }
+  241:	
+  242:	   return u8retVal;
+  243:	}
+  244:	
+  245:	/**
+  246:	 * \brief
+  247:	 *     Function will handle the CALIB Vehicle equipment data to local structure
+  248:	 * \param
+  249:	 *     u8ReadDataTarget - target to read data from Vehicle equipment or Development
+  250:	 * \exception
+  251:	 *     None
+  252:	 * \pre
+  253:	 *     None
+  254:	 * \post
+  255:	 *     None
+  256:	 * \return
+  257:	 *     None
+  258:	 **/
+  259:	/*[COVERS: DSG_NVP_0001] */
+</PRE>
+<A NAME="ERR_LINE_260"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  260:	LOCAL void nvp_CopyVehicleEquipmentDefaultData(uint8 u8ReadDataTarget)
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                     ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3227.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (260) ++ WARNING ++: &lt;=2=(3227) The parameter 'u8ReadDataTarget' is never modified and so it could be declared with the 'const' qualifier. &nbsp;&nbsp;REFERENCE - ISO:C90-6.5.3 Type Qualifiers</A></B><A HREF="#ERR_LINE_310"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  261:	{
+  262:	   uint8 nvp_u8TransferData = KU8_ZERO;
+  263:	
+  264:	   switch (u8ReadDataTarget)
+  265:	   {
+  266:	   case KU8_NVP_READ_DATA_VEHICLE_EQUIPMENT:
+  267:	      nvp_u8TransferData = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u8VehEquipFirstByte;
+  268:	      NVP_stVehicleEquipmentData.VehicleSteeringConfig = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ZERO);
+  269:	      NVP_stVehicleEquipmentData.BSRActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ONE);
+  270:	      NVP_stVehicleEquipmentData.BltHandOverAvailabiliy = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_TWO);
+  271:	      NVP_stVehicleEquipmentData.HWALeftActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FOUR);
+  272:	      NVP_stVehicleEquipmentData.HWARightActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FIVE);
+  273:	      NVP_stVehicleEquipmentData.APIActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SIX);
+  274:	
+  275:	      NVP_stVehicleEquipmentData.PreSafeCycleActivation = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u32VehEquipPreSafeCycleAct;
+  276:	
+  277:	      nvp_u8TransferData = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u8VehEquipSecondByte;
+  278:	      NVP_stVehicleEquipmentData.ORCPreSafe8Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ZERO);
+  279:	      NVP_stVehicleEquipmentData.Reserved3 = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ONE);
+  280:	      NVP_stVehicleEquipmentData.ReleaseOutOfMemory = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FIVE);
+  281:	      NVP_stVehicleEquipmentData.BSROutOfMemory = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SIX);
+  282:	      NVP_stVehicleEquipmentData.PreSafeOutOfMemory = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SEVEN);
+  283:	
+  284:	      NVP_stVehicleEquipmentData.UndervoltageAbort = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u16VehEquipmentUVAbort;
+  285:	      NVP_stVehicleEquipmentData.Undervoltage = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u16VehEquipmentUV;
+  286:	      NVP_stVehicleEquipmentData.OvervoltageAbort = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u16VehEquipmentOVAbort;
+  287:	      NVP_stVehicleEquipmentData.Overvoltage = CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData.NVP_u16VehEquipmentOV;
+  288:	      break;
+  289:	
+  290:	   default:
+  291:	      break;
+</PRE>
+<A NAME="ERR_LINE_292"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  292:	   }
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	   ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3352.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (292) ++ WARNING ++: &lt;=3=(3352) This 'switch' statement contains only two execution paths. &nbsp;&nbsp;REFERENCE - ISO:C90-6.6.4.2 The switch Statement</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  293:	}
+  294:	
+  295:	/**
+  296:	 * \brief
+  297:	 *     Function will handle the Ssa Coding Vehicle equipment data to local structure
+  298:	 * \param
+  299:	 *     u8ReadDataTarget - target to read data from Vehicle equipment or Development
+  300:	 * \exception
+  301:	 *     None
+  302:	 * \pre
+  303:	 *     None
+  304:	 * \post
+  305:	 *     None
+  306:	 * \return
+  307:	 *     None
+  308:	 **/
+  309:	/*[COVERS: DSG_NVP_0003] */
+</PRE>
+<A NAME="ERR_LINE_310"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  310:	LOCAL void nvp_CopyVehicleEquipmentEOLData(uint8 u8ReadDataTarget)
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                 ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/3227.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (310) ++ WARNING ++: &lt;=2=(3227) The parameter 'u8ReadDataTarget' is never modified and so it could be declared with the 'const' qualifier. &nbsp;&nbsp;REFERENCE - ISO:C90-6.5.3 Type Qualifiers</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  311:	{
+  312:	   uint8 nvp_u8TransferData = KU8_ZERO;
+  313:	   VehicleEquipment_StorageType *VehicleEquipmentData;
+  314:	   ZZZ_VehicleEquipment_Development_StorageType *ZZZVehicleEquipmentData;
+  315:	
+  316:	   switch (u8ReadDataTarget)
+  317:	   {
+  318:	   case KU8_NVP_READ_DATA_VEHICLE_EQUIPMENT:
+</PRE>
+<A NAME="ERR_LINE_319"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  319:	      VehicleEquipmentData = NvM_BlockDescriptorTable_at[NvMConf_NvMBlockDescriptor_Ct_MBBL_SsaAppl_CodingNvmCoding_CurrentVehicleEquipment].RamBlockDataAddr_t;
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                           ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0563.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (319) ++ ERROR ++: &lt;=7=(0563) [C] Right operand of assignment is not of compatible pointer type. &nbsp;&nbsp;MISRA C:2012 Rule-1.1; REFERENCE - ISO:C90-6.3.16.1 Simple Assignment - Constraints</A></B><A HREF="#ERR_LINE_342"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  320:	
+  321:	      nvp_u8TransferData = VehicleEquipmentData-&gt;Equipment1[KU8_ZERO];
+  322:	      NVP_stVehicleEquipmentData.VehicleSteeringConfig = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ZERO);
+  323:	      NVP_stVehicleEquipmentData.BSRActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ONE);
+  324:	      NVP_stVehicleEquipmentData.BltHandOverAvailabiliy = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_TWO);
+  325:	      NVP_stVehicleEquipmentData.HWALeftActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FOUR);
+  326:	      NVP_stVehicleEquipmentData.HWARightActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FIVE);
+  327:	      NVP_stVehicleEquipmentData.APIActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SIX);
+  328:	
+</PRE>
+<A NAME="ERR_LINE_329"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  329:	      NVP_stVehicleEquipmentData.PreSafeCycleActivation = (uint32)(VehicleEquipmentData-&gt;Equipment2[KU8_ZERO] + (uint32)(VehicleEquipmentData-&gt;Equipment3[KU8_ZERO] &lt;&lt; KU8_EIGHT) +
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4391.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (329) ++ ERROR ++: &lt;=7=(4391) A composite expression of 'essentially unsigned' type (unsigned char) is being cast to a wider unsigned type, 'unsigned long'. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4399.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (329) ++ ERROR ++: &lt;=7=(4399) An expression which is the result of a ~ or &lt;&lt; operation has been cast to a wider type. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                                                                    ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0499.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (329) ++ ERROR ++: &lt;=7=(0499) Right operand of shift operator is greater than or equal to the width of the essential type of the left operand. &nbsp;&nbsp;MISRA C:2012 Rule-12.2; REFERENCE - ISO:C90-6.3.7 Bitwise Shift Operators - Semantics</A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (329) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+</PRE>
+<A NAME="ERR_LINE_330"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  330:	                                                          (uint32)(VehicleEquipmentData-&gt;Equipment4[KU8_ZERO] &lt;&lt; KU8_SIXTEEN) + (uint32)(VehicleEquipmentData-&gt;Equipment5[KU8_ZERO] &lt;&lt; KU8_TWENTY_FOUR));
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                          ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4391.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ ERROR ++: &lt;=7=(4391) A composite expression of 'essentially unsigned' type (unsigned char) is being cast to a wider unsigned type, 'unsigned long'. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4399.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ ERROR ++: &lt;=7=(4399) An expression which is the result of a ~ or &lt;&lt; operation has been cast to a wider type. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                              ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0499.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ ERROR ++: &lt;=7=(0499) Right operand of shift operator is greater than or equal to the width of the essential type of the left operand. &nbsp;&nbsp;MISRA C:2012 Rule-12.2; REFERENCE - ISO:C90-6.3.7 Bitwise Shift Operators - Semantics</A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B><A HREF="#ERR_LINE_330"> &lt;next&gt; </A>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                                ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4391.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ ERROR ++: &lt;=7=(4391) A composite expression of 'essentially unsigned' type (unsigned char) is being cast to a wider unsigned type, 'unsigned long'. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4399.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ ERROR ++: &lt;=7=(4399) An expression which is the result of a ~ or &lt;&lt; operation has been cast to a wider type. &nbsp;&nbsp;MISRA C:2012 Rule-10.8</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                                                                                                                                                                                    ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0499.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ ERROR ++: &lt;=7=(0499) Right operand of shift operator is greater than or equal to the width of the essential type of the left operand. &nbsp;&nbsp;MISRA C:2012 Rule-12.2; REFERENCE - ISO:C90-6.3.7 Bitwise Shift Operators - Semantics</A></B>
+<BR>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/4571.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (330) ++ WARNING ++: &lt;=2=(4571) The left-hand operand of this &lt;&lt; operator has an 'essential type' which is narrower than type 'int'. </A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  331:	
+  332:	      nvp_u8TransferData = VehicleEquipmentData-&gt;Equipment6[KU8_ZERO];
+  333:	      NVP_stVehicleEquipmentData.ORCPreSafe8Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ZERO);
+  334:	      NVP_stVehicleEquipmentData.Reserved3 = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ONE);
+  335:	      NVP_stVehicleEquipmentData.ReleaseOutOfMemory = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FIVE);
+  336:	      NVP_stVehicleEquipmentData.BSROutOfMemory = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SIX);
+  337:	      NVP_stVehicleEquipmentData.PreSafeOutOfMemory = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SEVEN);
+  338:	      break;
+  339:	
+  340:	  /*[COVERS: DSG_NVP_0002] */
+  341:	   case KU8_NVP_READ_DATA_DEVELOPMENT:
+</PRE>
+<A NAME="ERR_LINE_342"></A>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  342:	      ZZZVehicleEquipmentData = NvM_BlockDescriptorTable_at[NvMConf_NvMBlockDescriptor_Ct_MBBL_SsaAppl_CodingNvmCoding_ZZZVehicleEquipmentDevelopment].RamBlockDataAddr_t;
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+      	                              ^
+</PRE>
+<B><A HREF="file:///C:/PRQA/QAC-8.1.2-R/help/messages/0563.html">&nbsp;S:\Components\Application\Autoliv\NVP\Implementation\src\NVP.c (342) ++ ERROR ++: &lt;=7=(0563) [C] Right operand of assignment is not of compatible pointer type. &nbsp;&nbsp;MISRA C:2012 Rule-1.1; REFERENCE - ISO:C90-6.3.16.1 Simple Assignment - Constraints</A></B>
+<BR>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+  343:	
+  344:	      /* Byte 0*/
+  345:	      nvp_u8TransferData = ZZZVehicleEquipmentData-&gt;Bitfield[KU8_ZERO];
+  346:	      NVP_stVehicleEquipmentData.MeasFrame1Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ZERO);
+  347:	      NVP_stVehicleEquipmentData.MeasFrame2Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ONE);
+  348:	      NVP_stVehicleEquipmentData.MeasFrame3Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_TWO);
+  349:	      NVP_stVehicleEquipmentData.MeasFrame4Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_THREE);
+  350:	      NVP_stVehicleEquipmentData.MeasFrame5Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FOUR);
+  351:	      NVP_stVehicleEquipmentData.MeasFrame6Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_FIVE);
+  352:	      NVP_stVehicleEquipmentData.MeasFrame7Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SIX);
+  353:	      NVP_stVehicleEquipmentData.MeasFrame8Activation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_SEVEN);
+  354:	
+  355:	      /* Byte 1*/
+  356:	      nvp_u8TransferData = ZZZVehicleEquipmentData-&gt;Bitfield[KU8_ONE];
+  357:	      NVP_stVehicleEquipmentData.PreSafeFuncActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ZERO);
+  358:	      NVP_stVehicleEquipmentData.DisplayMsgActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_ONE);
+  359:	      NVP_stVehicleEquipmentData.CounterLimitActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_TWO);
+  360:	      NVP_stVehicleEquipmentData.CRCFaultActivation = nvp_CheckIfBitSet(nvp_u8TransferData, KU8_THREE);
+  361:	      break;
+  362:	   default:
+  363:	      break;
+  364:	   }
+  365:	}
+  366:	
+  367:	/******************************************************************************
+  368:	DEFINITION OF APIs
+  369:	******************************************************************************/
+  370:	
+  371:	/**
+  372:	 * \brief
+  373:	 *     NVP init function will be called periodicaly to check if vehicle equipment configuration data was written
+  374:	 * \param
+  375:	 *     None
+  376:	 * \exception
+  377:	 *     None
+  378:	 * \pre
+  379:	 *     None
+  380:	 * \post
+  381:	 *     None
+  382:	 * \return
+  383:	 *     None
+  384:	 **/
+  385:	void NVP_Init(void)
+  386:	{
+  387:	   /* Check if the block was written before by checking voltage thresholds */
+  388:	   if (KU8_ZERO != nvp_CheckVehicleEquipmentStatus())
+  389:	   {
+  390:	      nvp_CopyVehicleEquipmentEOLData(KU8_NVP_READ_DATA_VEHICLE_EQUIPMENT);
+  391:	   }
+  392:	   else
+  393:	   {
+  394:	      nvp_CopyVehicleEquipmentDefaultData(KU8_NVP_READ_DATA_VEHICLE_EQUIPMENT);
+  395:	   }
+  396:	
+  397:	   nvp_CopyVehicleEquipmentEOLData(KU8_NVP_READ_DATA_DEVELOPMENT);
+  398:	}
+  399:	
+  400:	/******************************************************************************
+  401:	End Of File
+  402:	*****************************************************************************/
+</PRE>
+<PRE STYLE="margin-top:0;margin-bottom:0">
+
+----------------------------------------------------
+                   Metrics Summary                    
+----------------------------------------------------
+
+Name of file:  S:/Components/Application/Autoliv/NVP/Implementation/src/NVP.c (402 Lines)
+
+Error Level     Density      No. of Errors 
+-----------      -------      -------------
+     9           0.0000              0
+     8           0.0000              0
+     7           0.0572             23
+     6           0.0025              1
+     5           0.0000              0
+     4           0.0000              0
+     3           0.0025              1
+     2           0.0473             19
+     1           0.0000              0
+     0           0.0000              0
+-----------      -------      -------------
+Totals           0.1095             44
+</PRE>
+
+</BODY></HTML>

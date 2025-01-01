@@ -1,0 +1,131 @@
+/*@!Encoding:1252*/
+//////////////////////////////////////////////////////////////
+// DAG_SecTickCountSynchronization.can
+//
+// Testcase to read SecTickCounts from ECUs
+// The following steps are necessary:
+// 1. Local Authentication
+// 2. SecOC_Local_TickCount_Read
+// Both steps are repeated for each ECU with an assigned cdd.
+// The maximum value of all read SecTickCounts is set to sysvar
+// SeckTickSynchronization::SyncedMaxSecTickCount 
+//
+//////////////////////////////////////////////////////////////
+
+includes
+{
+  
+  #include "..\Authentication\LocalAuthentication_Helper.cin"
+
+}
+
+variables
+{
+  
+}
+
+void MainTest ()
+{
+  ReadSecTickCountForAllTargets();
+}
+
+testcase ReadSecTickCountForAllTargets()
+{
+  char ecuQual[100]; 
+  int i;
+  diagRequest SecOC_Local_TickCount_Read Req_ReadSecTickCount;
+  diagResponse SecOC_Local_TickCount_Read Resp_ReadSecTickCount;
+  byte secTickCount[6];
+  qword secTickCountValue;
+  qword maxSecTickCountValue = 0;
+  long currP2Timeout;
+  long ret;
+  char msgBuff[100];
+  
+  DeleteControlContent("SecTickCountSynchronization","OV_SecTickCount");  // panel update page ECU SecTickCount
+  snprintf(msgBuff,100,"Sim Time: %5.3f s\n",TimeNowNS() / 1000000000.0); 
+  putValueToControl("SecTickCountSynchronization","OV_SecTickCount",msgBuff);  // panel update page ECU SecTickCount
+  
+  maxSecTickCountValue = 0; // reset value
+  TestStep("1","Authentication for all targets");
+  ReadDiagQualifier(); 
+  testStepPass("Result 1: ","Available targets: %s",DiagTargetList);
+     
+  i = DiagTargetCount;
+  while( i-- > 0) // for each target
+  {
+    diagGetTargetQualifier( i, ecuQual, elcount(ecuQual));
+    diagSetTarget(ecuQual);
+    currP2Timeout = diagGetP2Timeout();
+    //write("%s %i",ecuQual,currP2Timeout);
+    testStep("loop 1","Authenticate");
+    
+    Authenticate(ecuQual,1);
+    
+    //if( @sysvar::LocalAuthentication::AuthResult == 1 )
+    if(1)
+    {
+      testStep("loop 2","ReadSecTickCount");
+     
+      diagSendRequest(Req_ReadSecTickCount);
+      testWaitForDiagRequestSent(Req_ReadSecTickCount,1000);
+      ret = testWaitForDiagResponse(Req_ReadSecTickCount,currP2Timeout);
+      if( ret == 1) // response received
+      {
+        diagGetLastResponse(Req_ReadSecTickCount,Resp_ReadSecTickCount);
+        diagGetParameterRaw(Resp_ReadSecTickCount,"TickCount",secTickCount,elCount(secTickCount));
+        ConvertFreshnessArrayToQword(secTickCount,secTickCountValue);
+        //write("%i %i %i %i %i %i",secTickCount[0],secTickCount[1],secTickCount[2],secTickCount[3],secTickCount[4],secTickCount[5]);
+        testStep("","Target:%s LocalSecTickCount:0x%I64x",ecuQual,secTickCountValue);
+        snprintf(msgBuff,100,"%s:\t 0x%I64X \n",ecuQual,secTickCountValue);
+        putValueToControl("SecTickCountSynchronization","OV_SecTickCount",msgBuff); // panel update page ECU SecTickCount
+        
+        if( @sysvar::SeckTickSynchronization::ReadSeckTickCountOnly != 1 )
+        {
+          testStep("loop 3","Calculate max TickCount");
+          if( secTickCountValue > maxSecTickCountValue )
+            maxSecTickCountValue = secTickCountValue;
+          testStep("","MaxSecTickCount:0x%I64x LocalSecTickCount:0x%I64x",maxSecTickCountValue,secTickCountValue);
+          
+          if( maxSecTickCountValue > 0 )
+          {     
+            @sysvar::SeckTickSynchronization::SyncedMaxSecTickCount = maxSecTickCountValue;
+          }
+        }
+      }
+      else if( ret == 0) // p2 timeout occured
+      {
+        teststep("","No resposne within P2 timeout.");
+      }
+      else
+      {
+        teststepFail("","Error ocurred returncode=%i",ret);
+      }
+    }
+    else
+    {
+      testStepFail();
+    }
+  } //while
+
+  if( @sysvar::SeckTickSynchronization::SignTickCountOffset == 1 )
+    @sysvar::SeckTickSynchronization::CalculatedSecTickCountWithOffset = maxSecTickCountValue + @sysvar::SeckTickSynchronization::TickCountOffset;
+  else
+    @sysvar::SeckTickSynchronization::CalculatedSecTickCountWithOffset = maxSecTickCountValue - @sysvar::SeckTickSynchronization::TickCountOffset;
+}
+
+
+int ConvertFreshnessArrayToQword(byte array[], qword& freshness)
+{
+  int offset = 1;
+  if( elCount(array) < 5 + offset )
+    return -1;
+  
+  freshness = array[4 + offset] + 
+              ((qword)array[3+ offset] << 8) + 
+              ((qword)array[2+ offset] << 16) + 
+              ((qword)array[1+ offset] << 24) + 
+              ((qword)array[0+ offset] << 32);
+  
+  return 0;
+}

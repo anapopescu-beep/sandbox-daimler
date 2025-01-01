@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0221, ARCH_SW_CIL_0227
+ARCH_SW_CIL_0221: If signal is received with value 17, then cycle 22-23(HWA3) shall be requested.
+ARCH_SW_CIL_0227: If signal is received with value 17, then cycle 22-23(HWA3) shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE17.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+Action: ARCH_SW_CIL_0221, ARCH_SW_CIL_0227
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfile at line '(void)Rte_Read_prrEnableCycle22_b8CycleValidity(&u8CycleValidityStatus);' and press run.
+
+Action: ARCH_SW_CIL_0221, ARCH_SW_CIL_0227
+
+	Step 6: Check if CPU stopped at line '(void)Rte_Read_prrEnableCycle22_b8CycleValidity(&u8CycleValidityStatus);' and delete breakpoint. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 7: Return ECU to default values

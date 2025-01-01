@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0363, ARCH_SW_CIL_0371, ARCH_SW_CIL_0361, ARCH_SW_CIL_0362
+ARCH_SW_CIL_0359: MMG_runCheckModeStatus shall be called to get the inhibition conditions for all cycles.
+ARCH_SW_CIL_0360: MMG_runCheckModeStatus shall be called to get the inhibition conditions for tensioning cycles.
+ARCH_SW_CIL_0363: MMG_runCheckModeStatus shall be called to get the abortion conditions for tensioning cycles (and haptic cycle and BSR).
+ARCH_SW_CIL_0371: MMG_runCheckModeStatus shall be called to get the abortion conditions for tensioning cycles (and haptic cycle and BSR).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in the function CIL_runCANToAppli.
+
+	Step 3: Check if CPU stopped in function CIL_runCANToAppli.
+
+	Step 4: Step in function cil_ManageInputSignals.
+
+	Step 5: Set a breakpoint in the function MMG_runCheckModeStatus.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0363, ARCH_SW_CIL_0371, ARCH_SW_CIL_0361, ARCH_SW_CIL_0362
+
+	Step 6: Check if CPU stopped in function MMG_runCheckModeStatus. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

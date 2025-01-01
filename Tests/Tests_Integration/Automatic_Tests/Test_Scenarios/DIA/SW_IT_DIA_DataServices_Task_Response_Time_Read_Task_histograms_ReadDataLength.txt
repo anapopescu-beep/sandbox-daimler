@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0635; ARCH_SW_DIA_0639; ARCH_SW_DIA_0640
+ARCH_SW_DIA_0635: Service 0x22 (Read Data By Identifier) will be implemented for DID 01E0 (Task Response Time)
+ARCH_SW_DIA_0639: Response data length shall be 16 bytes for each task. Note: Full Response length = 3 bytes + Response data length Note: For each task there will be 16 bytes on response meaning that the total length for each task is 16 bytes x 11 tasks = 176 bytes 
+ARCH_SW_DIA_0640: Bytes #4 - #15 = Task Histogram [16 bytes]: ?[Byte0] Task ID ?[Byte1] 0-19%, PercentUpdate ?[Byte2] 20-39%, PercentUpdate ?[Byte3] 40-59%, PercentUpdate ?[Byte4] 60-79%, PercentUpdate ?[Byte5] 80-99%, PercentUpdate ?[Byte6] 100-119%, PercentUpdate ?[Byte7] 120-139%, PercentUpdate ?[Byte8] 140-159%, PercentUpdate ?[Byte9] 160-179%, PercentUpdate ?[Byte10] 180-199%, PercentUpdate ?[Byte11] >=200%, PercentUpdate ?[Byte12-Byte15] Max us, Microseconds 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Task_Response_Time_Read_Task_histograms_ReadDataLength*.
+
+Action: ARCH_SW_DIA_0635; ARCH_SW_DIA_0639; ARCH_SW_DIA_0640
+
+	Step 3: Send diag request for 22 01E0 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Task_Response_Time_Read_Task_histograms_ReadDataLength was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

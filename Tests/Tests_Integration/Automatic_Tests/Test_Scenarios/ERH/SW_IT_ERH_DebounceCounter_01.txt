@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0156
+ARCH_SW_ERH_0156: A debounce timer of 5s shall be applicable for the following storage condition groups if all the SCs are fulfiled: Power Distribution, Network Communication without Clam 15 and Network Communication.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_cyclic() at line 'if(KU16_ERH_TIMER_TRESHOLD > ERH_u16DebounceCounter_NetworkComunication)'.
+
+Action: ARCH_SW_ERH_0156
+
+	Step 3: Check if CPU stopped in function ERH_cyclic() at line 'if(KU16_ERH_TIMER_TRESHOLD > ERH_u16DebounceCounter_NetworkComunication)'.
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function ERH_cyclic() at line 'if(KU16_ERH_TIMER_TRESHOLD > ERH_u16DebounceCounter_NetworkComunication15)'.
+
+Action: ARCH_SW_ERH_0156
+
+	Step 5: Check if CPU stopped in function ERH_cyclic() at line 'if(KU16_ERH_TIMER_TRESHOLD > ERH_u16DebounceCounter_NetworkComunication15)'.
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function ERH_cyclic() at line 'if(KU16_ERH_TIMER_TRESHOLD > ERH_u16DebounceCounter_PowerDistribution)'.
+
+Action: ARCH_SW_ERH_0156
+
+	Step 7: Check if CPU stopped in function ERH_cyclic() at line 'if(KU16_ERH_TIMER_TRESHOLD > ERH_u16DebounceCounter_PowerDistribution)'.
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 8: Return ECU to default values

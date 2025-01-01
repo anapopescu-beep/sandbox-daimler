@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>5</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>430</x>
+      <y>0</y>
+      <w>603</w>
+      <h>1564</h>
+    </coordinates>
+    <panel_attributes>title:OS_ISR_BMM_HES_IT
+Start
+Get pin level for both sensors inputs.
+Check if level on pin A is LOW.
+If
+	[TRUE]
+	Check if level on pin B is HIGH.
+	If
+		[TRUE]
+		Set phase as A_DOWN
+
+		[FALSE]
+		Set phase as B_DOWN
+	EndIf
+
+	[FALSE]
+	Check if level on pin B is LOW.
+	If
+		[TRUE]
+		Set phase as A_UP
+
+		[FALSE]
+		Set phase as B_UP
+	EndIf
+EndIf
+Check if both sensors are OK
+If
+	[TRUE]
+	Get position from time capture.
+	Check if position is lower than the minimum.
+	If
+		[TRUE]
+		Set minimum as position.
+
+		[FALSE]
+		Check if position is higher than maximum.
+		If
+			[TRUE]
+			Set maximum as position.
+
+			[FALSE]
+		EndIf
+	EndIf
+		
+	[FALSE]
+	Position can not be trusted, keep previous value
+EndIf
+Store time capture.
+
+Check if current phase is different than the previous one.
+If
+	[TRUE]
+	Check if the related time stamp is not zero.
+	If
+		[TRUE]
+		Calculate absolute value for the period.
+
+		[FALSE]
+		Check if the edge time stamp is not zero.
+		If
+			[TRUE]
+			Calculate absolute value for edge period.
+			Calculate period using edge period, based on sensors state.
+			Store edge time stamp.
+
+			[FALSE]
+		EndIf
+	EndIf
+
+	[FALSE]
+	Unexpected phase, do not compute period.
+
+EndIf
+Save phase for the next call.
+Check that the sensors are not both broken.
+If
+	[TRUE]
+	Check if current position is bigger than last position.
+	If
+		[TRUE]
+		Set belt direction as pay out.
+
+		[FALSE]
+		Set belt direction as pay in
+	EndIf
+
+	[FALSE]
+	Set belt direction as UNKNOWN.
+EndIf
+
+Update time stamp
+Update last position
+
+Check if period is higher than pyro detection period
+If
+		[Period higher]
+		Set pyro detect count as zero
+
+		[Period lower]
+		Set pyro detect status to active
+
+		[else]
+		Increment pyro detection count
+		
+EndIf
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

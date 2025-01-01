@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0201, ARCH_SW_MMG_0408
+ARCH_SW_MMG_0201: ATM_runGetTestResult shall be called to get the status of the last executed autotest.
+ARCH_SW_MMG_0408: ATM_runGetTestResult shall be called in order to get the autotest result for EOL counters.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line 'mmg_UpdateModeStatus_CriticalAutotestsNok();'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus at line 'mmg_UpdateModeStatus_CriticalAutotestsNok();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set variable MMG_u32ModesStatus to MMG_KU32_MASK_CRITICAL_AT_NOK.
+
+	Step 5: Set a breakpoint in function MMG_runUpdateModeStatus at line 'Rte_Call_pclAutotestServices_GetTestResult(u8AutoTestId, &u8StatusOfLastCriticalAutoTest);'.
+
+	Step 6: Check if CPU stopped in function MMG_runUpdateModeStatus at line 'Rte_Call_pclAutotestServices_GetTestResult(u8AutoTestId, &u8StatusOfLastCriticalAutoTest);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0201, ARCH_SW_MMG_0408
+
+	Step 7: Step in function Rte_Call_pclAutotestServices_GetTestResult. 
+		Expected result:  Stepped in function ATM_runGetTestResult
+
+Postcondition
+
+	Step 8: Return ECU to default values

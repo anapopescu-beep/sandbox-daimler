@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0005
+ARCH_SW_BMM_0005: Information from Hall effect sensor shall be managed periodically by BMM.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_runMainFunction at line Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);.
+
+Action: ARCH_SW_BMM_0005
+
+	Step 3: Check if CPU stopped at line Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function BMM_runMainFunction at line Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);.
+
+	Step 5: Check if CPU stopped at line Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 6: Return ECU to default values

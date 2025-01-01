@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0000; ARCH_SW_DIA_0051; ARCH_SW_DIA_0052, ARCH_SW_NVP_0003
+ARCH_SW_DIA_0000: Service 0x22 will be implemented for DID F18C.
+ARCH_SW_DIA_0051: Service should be available in Default and extended session.
+ARCH_SW_DIA_0052: NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData will be read.
+ARCH_SW_NVP_0003: NVP_BLOCK_ID_AEE_TRACEABILITY block shall be configured. Parameter NVP_au8AeeTraceabilityNumber should have 12 bytes and should store AEE ECU Traceability number. (default values 0xFF).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter default or extended session.
+
+	Step 3: Set breakpoint in function *DIA_runDidF18C_ECUSerialNumberRead*.
+
+Action: ARCH_SW_DIA_0000, ARCH_SW_DIA_0051
+
+	Step 4: Send diag request for 22 F18C and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Check if breakpoint from function DIA_runDidF18C_ECUSerialNumberRead was reached. 
+		Expected result:  BP was reached.
+
+Action: ARCH_SW_DIA_0000, ARCH_SW_DIA_0051, ARCH_SW_NVP_0003
+
+	Step 6: Read first byte of NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 7: Return ECU to default values

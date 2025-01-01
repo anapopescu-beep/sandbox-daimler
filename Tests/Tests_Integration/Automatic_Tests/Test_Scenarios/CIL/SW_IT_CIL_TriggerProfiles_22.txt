@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test:  ARCH_SW_CIL_0137, ARCH_SW_CIL_0124, ARCH_SW_CIL_0188
+ARCH_SW_CIL_0137: If signal is received with value 6, then tensioning cycle 4 shall be requested.
+ARCH_SW_CIL_0124: If signal is received with value 6, then tensioning cycle 4 shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL6.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles() under case I_C04_PRESF_LVL_V2_LVL6 at line '(void)Rte_Read_prrEnableCycle4_b8CycleValidity(&u8CycleValidityStatus);'.
+
+Action: ARCH_SW_CIL_0124, ARCH_SW_CIL_0137, ARCH_SW_CIL_0188
+
+	Step 6: Check if CPU stopped in function cil_TriggerProfiles() under case I_C04_PRESF_LVL_V2_LVL6 at line '(void)Rte_Read_prrEnableCycle4_b8CycleValidity(&u8CycleValidityStatus);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 7: Return ECU to default values

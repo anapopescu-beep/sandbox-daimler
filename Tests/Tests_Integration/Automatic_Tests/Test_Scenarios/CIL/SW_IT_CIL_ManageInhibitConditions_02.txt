@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0212
+ARCH_SW_CIL_0212: CIL component should ensure that if a BSR is request by ALGO ( on Buckle Switch / BeltSlackMode Switch) and it is inhibitted by:	Measured KL30 battery voltage is outside Normal Operating Range or value received on CAN for signal PT4_PTCoor_PT_Rdy_ST3(only for buckle switch) or timeout DTC powertrain KU32_AEC_GROUP_MASK_TIMEOUT_POWERTRAIN;�	value received on CAN for corresponding belt for signal BeltHdOvr_FL_Stat_ST3 or BeltHdOvr_FR_Stat_ST if enabled in the coding;�	timeout DTC KU32_AEC_GROUP_MASK_TIMEOUT_BH_R/L;�	value received on CAN for for signal PT4_PTCoor_DrvPosn_Stat_ST, execution of BSR will be postponed until all starting conditions will be fulfilled
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PT4_PTCoor_PT_Rdy_ST3 to NOT_RDY.
+
+	Step 3: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 4: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 6: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_Bckl_Sw_Inhibition);'.
+
+Action: ARCH_SW_CIL_0212
+
+	Step 8: Check if CPU stopped in function cil_ManageInputSignals() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_Bckl_Sw_Inhibition);'. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set signal PT4_PTCoor_PT_Rdy_ST3 to RDY.
+
+	Step 10: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_Bckl_Sw_Inhibition);'.
+
+Action: ARCH_SW_CIL_0212
+
+	Step 11: Check if CPU stopped in function cil_ManageInputSignals() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_Bckl_Sw_Inhibition);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 12: Return ECU to default values

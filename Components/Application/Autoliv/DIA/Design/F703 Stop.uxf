@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>112</y>
+      <w>1839</w>
+      <h>696</h>
+    </coordinates>
+    <panel_attributes>title:F703 Stop
+Start
+ret = OK
+Read currently executed Cycle
+Read currently requested Cycle
+If
+	[(KU8_NO_CYCLE == u8CurrentCycleExecutedByBFE) || \(KU8_NO_CYCLE == u8DiagRequestedCycle)]
+	If
+		[RequestResults = KU8_ROUTINE_SUCCESSFULLY_COMPLETED]
+		*routineInfo = KU8_ROUTINE_SUCCESSFULLY_COMPLETED
+		ret = OK
+
+		[RequestResults = KU8_ROUTINE_STOPPED_WITHOUT_RESULTS]
+		*routineInfo = KU8_ROUTINE_STOPPED_WITHOUT_RESULTS
+		ret = OK
+
+		[RequestResults = KU8_ROUTINE_IN_PROGRESS]
+		RequestResults = KU8_ROUTINE_SUCCESSFULLY_COMPLETED
+		*routineInfo = KU8_ROUTINE_SUCCESSFULLY_COMPLETED
+
+		*ErrorCode = DCM_E_REQUESTSEQUENCEERROR
+		ret = NOK
+		
+	Update Requested Cycle and its complement
+	*routineInfo = KU8_ROUTINE_STOPPED_WITHOUT_RESULTS
+	RequestResults = KU8_ROUTINE_STOPPED_WITHOUT_RESULTS
+
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1113</w>
+      <h>746</h>
+    </coordinates>
+    <panel_attributes>title:pal_DriveMotorInReleasing
+Start
+Reset timer for the next free-wheeling phase
+Set the "not toggling" Half Bridge in its Idle state
+Correct the consign to take into consideration the HW impacts
+Rescale the power order to a [0 ; 0x8000] full range
+Check motor power order
+If
+	[negative motor power order]
+	Apply the Idle consign value
+
+	[out of the upper bound motor power order]
+	Apply the upper limit
+
+	[motor power order within the valid range]
+	Adapt the consign to HW constraints
+EndIf
+Store data in the local data structure
+Apply the new duty cycle
+Activate the H-bridges
+Store the status of Enable Command into local structure
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

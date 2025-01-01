@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0019; ARCH_SW_DIA_0197; ARCH_SW_DIA_0198; ARCH_SW_DIA_0199; ARCH_SW_DIA_0200
+ARCH_SW_DIA_0019: Service 0x31 02 will be implemented for RID 0330
+ARCH_SW_DIA_0197: Service shall be available in Extended and Development session
+ARCH_SW_DIA_0198: Type of Tensioning Cycle shall accept only values between 0x01 and 0x05.
+ARCH_SW_DIA_0199: Presafe Duration shall determine the time of the tensioning cycle
+ARCH_SW_DIA_0200: Result can have the following values: 0x00, 0x01 and 0x02
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runRid0330_TriggerTensioningCycleStart*.
+
+Action: ARCH_SW_DIA_0019; ARCH_SW_DIA_0197; ARCH_SW_DIA_0198; ARCH_SW_DIA_0199; ARCH_SW_DIA_0200
+
+	Step 4: Send diag request for RID 03 30 Start 
+		Expected result:  Request Sent.
+
+	Step 5: Check if breakpoint from function DIA_runRid0330_TriggerTensioningCycleStart was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

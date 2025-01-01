@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0070, ARCH_SW_PAL_0075, ARCH_SW_PAL_0076.
+ARCH_SW_PAL_0070: The component shall be able to set the power state to IDLE.
+ARCH_SW_PAL_0075: The component shall be able to activate/deactivate the half bridge connected to the Vp pin of the motor.
+ARCH_SW_PAL_0076: The component shall be able to activate/deactivate the half bridge connected to the Vn pin of the motor.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0070
+
+	Step 3: Set a breakpoint in function PAL_runMainFunction at the IDLE running mode for PAL SWC 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0075
+
+	Step 4: Set a breakpoint in function PAL_DisablePowerStage at the Dio_WriteChannel call to to deactivate the half bridge connected to the Vp pin of the motor 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0076
+
+	Step 5: Set a breakpoint in function PAL_DisablePowerStage at the Dio_WriteChannel call to to deactivate the half bridge connected to the Vn pin of the motor 
+		Expected result:  BP reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

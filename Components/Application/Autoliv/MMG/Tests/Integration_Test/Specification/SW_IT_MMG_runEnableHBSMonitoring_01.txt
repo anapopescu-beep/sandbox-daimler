@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0206
+ARCH_SW_MMG_0206: BMM_runEnableHBSMonitoring shall be called to notify BMM about restoring the puls counting.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).
+
+	Step 3: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor().
+
+	Step 4: Step in mmg_UpdateModeStatus_NoHallEffectSensor.
+
+	Step 5: Set a breakpoint at line if (KU8_TRUE == MMG_u8PrevHESModeStatus).
+
+	Step 6: Set variable MMG_u8PrevHESModeStatus to KU8_TRUE.
+
+Action: ARCH_SW_MMG_0206
+
+	Step 7: Set a breakpoint at line Rte_Call_pcl_HBSControl_EnableHBSMonitoring(); 
+		Expected result:  BP set
+
+Postcondition
+
+	Step 8: Return ECU to default values

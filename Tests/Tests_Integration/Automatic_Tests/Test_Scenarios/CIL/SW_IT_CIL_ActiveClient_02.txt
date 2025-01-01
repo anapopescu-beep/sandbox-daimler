@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0100
+ARCH_SW_CIL_0100: When executed cycle is requested on PRESAFE, signal RBTMxy_SP_ActvClient_ST35 shall be 1, as long as profile and next cycle is executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 3: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 4: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageActiveClientRequestSource() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_ActvClient_ST35_RBTMFL_SP_ActvClient_ST35(CIL_u8Actv_Client);'.
+
+	Step 6: Check if CPU stopped at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_ActvClient_ST35_RBTMFL_SP_ActvClient_ST35(CIL_u8Actv_Client);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0100
+
+	Step 7: Check if signal RBTMFL_SP_ActvClient_ST35 value is I_C04_RBTM_ACTVCLIENT_PRESAFE. 
+		Expected result:  I_C04_RBTM_ACTVCLIENT_PRESAFE (0x1)
+
+Postcondition
+
+	Step 8: Return ECU to default values

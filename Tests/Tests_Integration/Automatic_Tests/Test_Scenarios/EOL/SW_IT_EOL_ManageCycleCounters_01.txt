@@ -1,0 +1,53 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0007, ARCH_SW_EOL_0009, ARCH_SW_EOL_0013, ARCH_SW_EOL_0014, ARCH_SW_EOL_0016
+ARCH_SW_EOL_0007: In order to increment the corresponding counter the current executed cycle from BFE shall be an input. NVP_au32ExecutedCycleCounters NVM parameter shall be used.
+ARCH_SW_EOL_0009: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be read to get executed cycle number.
+ARCH_SW_EOL_0013: Rte_Read_prrCustomerSpecific_u8TriggerRequest shall be read to get the status of a requested presafe level.
+ARCH_SW_EOL_0014: Rte_Read_prrPreSafeLvl_u8PreSafeLvl shall be read to get the actual level of a requested presaf.
+ARCH_SW_EOL_0016: Rte_Write_EOL_AC_EndOfLifeManagement_ObsolescenceDataBlockNumber_BlockNumber  shall be called in order to write the obsolence data block number.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function EOL_runMainFunction.
+
+	Step 3: Check if CPU is stopped in EOL_runMainFunction function at line eol_ManageCycleCounters();.
+
+	Step 4: Step in eol_ManageCycleCounters function.
+
+Action: ARCH_SW_EOL_0016
+
+	Step 5: Set a breakpoint in function eol_ManageCycleCounters at line Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber);.
+
+	Step 6: Set a breakpoint in function eol_ManageCycleCounters at line (void)Rte_Read_prrCustomerSpecific_u8TriggerRequest(&u8CILTriggerRequest);.
+
+	Step 7: Set a breakpoint in function eol_ManageCycleCounters at line Rte_Read_prrPreSafeLvl_u8PreSafeLvl(&u8PreSafeLvl);.
+
+Action: ARCH_SW_EOL_0007, ARCH_SW_EOL_0009
+
+	Step 8: Check if CPU stopped in function eol_ManageCycleCounters at line Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber); 
+		Expected result:  CPU stopped at BP.
+
+Action: ARCH_SW_EOL_0013
+
+	Step 9: Check if CPU stopped in function eol_ManageCycleCounters at line (void)Rte_Read_prrCustomerSpecific_u8TriggerRequest(&u8CILTriggerRequest); 
+		Expected result:  CPU stopped at BP.
+
+Action: ARCH_SW_EOL_0014
+
+	Step 10: Check if CPU stopped in function eol_ManageCycleCounters at line Rte_Read_prrPreSafeLvl_u8PreSafeLvl(&u8PreSafeLvl); 
+		Expected result:  CPU stopped at BP.
+
+Postcondition
+
+	Step 11: Return ECU to default values

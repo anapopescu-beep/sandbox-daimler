@@ -1,0 +1,71 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+ARCH_SW_CIL_0359: MMG_runCheckModeStatus shall be called to get the inhibition conditions for all cycles.
+ARCH_SW_CIL_0360: MMG_runCheckModeStatus shall be called to get the inhibition conditions for tensioning cycles.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in the function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 3: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 4: Set a breakpoint in the function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 5: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 6: Set a breakpoint in the function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_TENS_INHIBITING_MODES, &u8ContextStatus);'.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+
+	Step 7: Check if CPU stopped in function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_TENS_INHIBITING_MODES, &u8ContextStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in the function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_ALL_INHIBITING_MODES, &u8ContextStatus);'.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+
+	Step 9: Check if CPU stopped in function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_ALL_INHIBITING_MODES, &u8ContextStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in the function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_BSR_INHIBITING_MODES, &u8ContextStatus);'.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+
+	Step 11: Check if CPU stopped in function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_BSR_INHIBITING_MODES, &u8ContextStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 12: Set a breakpoint in the function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(MMG_KU32_MASK_AEC_INHIB_ALL_CYCLES, &u8ContextStatus);'.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+
+	Step 13: Check if CPU stopped in function cil_ManageInhibitConditions() at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(MMG_KU32_MASK_AEC_INHIB_ALL_CYCLES, &u8ContextStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 14: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation() at line 'Rte_Call_pclModeManagement_CheckModeStatus(MMG_KU32_MASK_TENSIONING, &u8TensioningModeStatus);'.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+
+	Step 15: Check if CPU stopped in function in function PMP_Autotest_CheckPowerSupplyUVDuringActivation() at line 'Rte_Call_pclModeManagement_CheckModeStatus(MMG_KU32_MASK_TENSIONING, &u8TensioningModeStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 16: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation() at line 'Rte_Call_pclModeManagement_CheckModeStatus(MMG_KU32_MASK_TENSIONING, &u8TensioningModeStatus);'.
+
+Action: ARCH_SW_CIL_0359, ARCH_SW_CIL_0360, ARCH_SW_CIL_0361
+
+	Step 17: Check if CPU stopped in function in function PMP_Autotest_CheckPowerSupplyOVDuringActivation() at line 'Rte_Call_pclModeManagement_CheckModeStatus(MMG_KU32_MASK_TENSIONING, &u8TensioningModeStatus);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 18: Return ECU to default values

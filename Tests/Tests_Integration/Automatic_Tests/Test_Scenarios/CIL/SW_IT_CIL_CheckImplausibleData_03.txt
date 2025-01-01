@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0416
+ARCH_SW_CIL_0416: SBeltTens_SP_Lvl_ST3 shall be evaluated to set the specified autotest to OK/NOK.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_Autotest_CheckImplausibleData_API() at line 'cil_u8ResultOfAutoTest = KU8_ATM_TEST_OK;'.
+
+	Step 3: Check if CPU stopped at line 'cil_u8ResultOfAutoTest = KU8_ATM_TEST_OK;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0416
+
+	Step 4: Evaluate if signal SBeltTens_SP_Lvl_ST3::RBTMFL_SP_Lvl_Rq_ST35 is equal to KU8_ZERO. 
+		Expected result:   KU8_ZERO
+
+	Step 5: Set a breakpoint in function CIL_Autotest_CheckImplausibleData_API() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0416
+
+	Step 6: Check if CPU stopped at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0416
+
+	Step 7: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_NOK
+
+Postcondition
+
+	Step 8: Return ECU to default values

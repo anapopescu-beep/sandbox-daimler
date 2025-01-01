@@ -1,0 +1,1698 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "Project_configuration.cin"
+}
+
+variables
+{ 
+  diagRequest * dRequest;
+  diagResponse * dResponse;
+  
+  //Dignostic session control
+  diagRequest RBTMFL174.Default_Start dDefaultSessionRequest;
+  diagResponse RBTMFL174.Default_Start dDefaultSessionResponse;
+  
+  diagRequest RBTMFL174.Extended_Start dExtendedSessionRequest;
+  diagResponse RBTMFL174.Extended_Start dExtendedSessionResponse;
+  
+  diagRequest RBTMFL174.ProgrammingStart dProgrammingSessionRequest;
+  diagResponse RBTMFL174.ProgrammingStart dProgrammingSessionResponse;
+  
+  diagRequest RBTMFL174.Development_Start dDevelopmentSessionRequest;
+  diagResponse RBTMFL174.Development_Start dDevelopmentSessionResponse;
+  
+  // ECU reset.
+  diagRequest RBTMFL174.HardReset dHardResetRequest;
+  diagResponse RBTMFL174.HardReset dHardResetResponse;
+  
+  diagRequest RBTMFL174.SoftReset dSoftResetRequest;
+  diagResponse RBTMFL174.SoftReset dSoftResetResponse;
+  
+  //RDBLI
+  diagRequest SoftwareVersion_Read dReadSWVersionRequest;
+  diagResponse SoftwareVersion_Read dReadSWVersionResponse;
+  
+  // Seatbelt serial number.
+  diagRequest Seatbelt_Serial_Number_Read dSeatbeltSerialNumberRequest;
+  diagResponse Seatbelt_Serial_Number_Read dSeatbeltSerialNumberResponse;
+     
+  // ECU serial number.
+  diagRequest RBTMFL174.ECUSerialNumberDataIdentifier_Read dECUSerialNumberRequest;
+  diagResponse RBTMFL174.ECUSerialNumberDataIdentifier_Read dECUSerialNumberResponse;
+ 
+  byte bLock[4] = {0x31, 0x02 ,0xf7, 0x81};
+  byte bUnlock[4] = {0x31, 0x01, 0xf7, 0x81};
+  
+  byte bLeft[4] = {0x2E, 0xFD, 0x2F, 0x9C};
+  byte bRight[4] = {0x2E, 0xFD, 0x2F, 0x99};
+  
+  diagRequest  ECU_Location_Write dECULocationWriteRequest;
+  diagResponse ECU_Location_Write dECULocationWriteResponse;
+  
+  diagRequest  ECU_Location_Read dECULocationReadRequest;
+  diagResponse ECU_Location_Read dECULocationReadResponse;
+  
+  diagRequest  FaultMem_ReportDTCByStatusMask dReportDTCByStatusMaskRequest;
+  diagResponse FaultMem_ReportDTCByStatusMask dReportDTCByStatusMaskResponse;
+  
+  diagRequest  FaultMem_ReportDTCExtendedDataByDTCNbr dReportDTCExtendedDataByDTCNbrRequest;
+  diagResponse FaultMem_ReportDTCExtendedDataByDTCNbr dReportDTCExtendedDataByDTCNbrResponse;
+  
+  diagRequest  FaultMem_ReportNbrOfDTCStatusMask dReportNbrOfDTCByStatusMaskRequest;
+  diagResponse FaultMem_ReportNbrOfDTCStatusMask dReportNbrOfDTCByStatusMaskResponse;
+  
+  diagRequest  FaultMem_ReportSupportedDTCs dReportSupportedDTCsRequest;
+  diagResponse FaultMem_ReportSupportedDTCs dReportSupportedDTCsResponse;
+  
+  //ClearAllAec
+  diagRequest FaultMem_ClearGroup dClearAllDTCsRequest;
+  diagResponse FaultMem_ClearGroup dClearAllDTCsResponse;
+  
+  char sDefault[8] = "default";
+  char sExtended[9] = "extended";
+  char sProgramming[12] = "programming";
+  char sDevelopment[12] = "development";
+  
+  char sUnlock[10] = "unlock";
+  char sLock[10] = "lock";
+   
+  char sTargetECUFrontLeftName[10] = "RBTMFL174";
+  char sTargetECUFrontRightName[10] = "RBTMFR174";
+  
+  int iSideFlag;
+  
+  const DIAG_SEND_OR_RECEIVE_ERROR = -1;
+  byte bEmptyBuffer[1000];
+  
+  // Read PRE-SAFE counters. 
+  diagRequest  PRE_SAFE_Counter_read_Read dReadPreSafeCountersRequest;
+  diagResponse PRE_SAFE_Counter_read_Read dReadPreSafeCountersResponse;
+  
+  // Read BSR counters.
+  diagRequest  BSR_Counter_read_Read dReadBSRCounterRequest;
+  diagResponse BSR_Counter_read_Read dReadBSRCounterResponse;
+  
+  // Read Cycles configuration. 
+  diagRequest  RBTMFL174.Cycle_configuration_Read dReadCycleConfigRequest;
+  diagResponse RBTMFL174.Cycle_configuration_Read dReadCycleConfigResponse;
+  
+  // Write Cycles configuration. 
+  diagRequest  RBTMFL174.Cycle_configuration_Write dWriteCycleConfigRequest;
+  diagResponse RBTMFL174.Cycle_configuration_Write dWriteCycleConfigResponse;
+  
+  // Read Steps configuration.
+  diagRequest  Steps_library_Read dReadStepsConfigRequest;
+  diagResponse Steps_library_Read dReadStepsConfigResponse;
+  
+  // Write Steps configuration.
+  diagRequest  Steps_library_Write dWriteStepsConfigRequest;
+  diagResponse Steps_library_Write dWriteStepsConfigResponse;
+  
+  diagRequest ReadCycleCounters dReadCountersRequest; // To be deleted
+  diagResponse ReadCycleCounters dReadCountersResponse; // To be deleted
+  
+  diagRequest  Measurement_Frames_Configuration_Read dActivateMFRequest;
+  diagResponse Measurement_Frames_Configuration_Read dActivateMFResponse;
+  
+  byte bDefaultStepsRequest[963];
+  byte bDefaultStepsLibraryRequest[3] = {0x2E, 0xFD, 0x2A};
+  
+  // NRCs.
+  byte bNRC_GeneralReject                          = 0x10;
+  byte bNRC_IncorrectMessangeLengthOrInvalidFormat = 0x13;
+  byte bNRC_ConditionsNotCorrect                   = 0x22;
+  byte bNRC_RequestOutOfRange                      = 0x31;
+  byte bNRC_SecurityAccessDenied                   = 0x33;
+  byte bNRC_AuthenticationRequired                 = 0x34;
+}
+
+//Enter diagnostic session
+// Option 1: EnterDiagnosticSession("default");
+// Option 2: EnterDiagnosticSession("extended");
+// Option 3: EnterDiagnosticSession("programming");
+// Option 4: EnterDiagnosticSession("development");
+void EnterDiagnosticSession(char session[])
+{
+  
+  toLower(session, session, elcount(session));
+  if(strncmp(session, sDefault , strlen(sDefault)) == 0)
+  {
+    
+    SendDiagnosticRequest(dDefaultSessionRequest, dDefaultSessionResponse);
+    if (diagIsPositiveResponse(dDefaultSessionResponse) == 0)
+    {
+      testStepFail(iLevelOfDetailFail, "", "Enter Default Session - Negative response received");
+      testReportWriteDiagResponse(dDefaultSessionRequest);
+    }
+  }
+  else
+  {
+    if(strncmp(session, sExtended, strlen(session)) == 0)
+    {
+      SendDiagnosticRequest(dExtendedSessionRequest, dExtendedSessionResponse);
+      if (diagIsPositiveResponse(dExtendedSessionResponse) == 0)
+      {
+        testStepFail(iLevelOfDetailFail, "", "Enter Extended Session - Negative response received");
+        testReportWriteDiagResponse(dExtendedSessionRequest);
+      }
+    }
+    else
+    {
+      if(strncmp(session, sProgramming, strlen(session)) == 0)
+      {
+        SendDiagnosticRequest(dProgrammingSessionRequest, dProgrammingSessionResponse);
+        if (diagIsPositiveResponse(dProgrammingSessionResponse) == 0)
+        {
+          testStepFail(iLevelOfDetailFail, "", "Enter Programming Session - Negative response received");
+          testReportWriteDiagResponse(dProgrammingSessionRequest);
+        }
+      }
+      else
+      {
+        if(strncmp(session, sDevelopment, strlen(session)) == 0)
+        {
+          SendDiagnosticRequest(dDevelopmentSessionRequest, dDevelopmentSessionResponse);
+          if (diagIsPositiveResponse(dDevelopmentSessionResponse) == 0)
+          {
+            testStepFail(iLevelOfDetailFail, "", "Enter Development Session - Negative response received");
+            testReportWriteDiagResponse(dDevelopmentSessionRequest);
+          }
+        }
+        else
+        {
+           testStepFail(iLevelOfDetailFail, "Error", "Invalid parameter for EnterDiagnosticSession function: %s", session);
+        }
+      }
+     }
+    }
+}
+
+/// <Helpers>
+//Send diagnostic request and receive reponse
+//Example: SendDiagnosticRequest(dDefaultSessionRequest, dDefaultSessionResponse)
+//Return: 0 - timeout received for response
+//        1 - request sent and response received
+//       -1 - Error received during sending request or during receiving response 
+long SendDiagnosticRequest(diagRequest * dRequest, diagResponse * dResponse)
+{
+  stack int iErrHandle = 0;
+  
+  diagSendRequest(dRequest);
+  
+  iErrHandle = testWaitForDiagRequestSent(dRequest, 1500); // 500 ms too short for Write Steps Library.
+
+  switch(iErrHandle)
+  {
+    case 1: 
+      iErrHandle = testWaitForDiagResponse(dRequest, 5000);
+  
+      switch(iErrHandle)
+      {
+        case 1: 
+          // testCaseComment("Diagnostic response is received");
+          diagGetLastResponse(dRequest, dResponse);
+          
+          return 1;
+          break;
+        case 0:
+          testStepFail(iLevelOfDetailFail, "Error", "Diagnostic response is not received in 5000ms");
+          dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+          
+          return 0;
+          break;
+        default:
+          testStepFail(iLevelOfDetailFail, "Error", "Error occured while receiving diagnostic response");
+          dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+          testReportWriteDiagObject(dRequest);
+          
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+      }
+      break;
+    case 0:
+      testStepFail(iLevelOfDetailFail, "Error", "Diagnostic request was not sent in 1500ms");
+      dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+      return DIAG_SEND_OR_RECEIVE_ERROR;
+          
+      break;
+    default:
+      testStepFail(iLevelOfDetailFail, "Error", "Error occured while sending diagnostic request");
+      dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+      return 0;
+          
+      break;
+  }
+}
+
+/// <Helpers>
+//Send diagnostic request and receive reponse; Overload for byte array diagnostic request parameter.
+//Example: SendDiagnosticRequest(dDefaultSessionRequest, dDefaultSessionResponse, bDefaultSessionResponse)
+//Return: 0 - timeout received for response
+//        1 - request sent and response received
+//       -1 - Error received during sending request or during receiving response 
+long SendDiagnosticRequest(diagRequest * dRequest, diagResponse * dResponse, byte bRequest[])
+{
+  stack int iErrHandle = 0;
+  
+  diagResize(dRequest, elcount(bRequest));
+  
+  dRequest.SetPrimitiveData(bRequest, elcount(bRequest));
+  
+  diagSendRequest(dRequest);
+  
+  iErrHandle = testWaitForDiagRequestSent(dRequest, 1500); // 500 ms too short for Write Steps Library.
+
+  switch(iErrHandle)
+  {
+    case 1: 
+      iErrHandle = testWaitForDiagResponse(dRequest, 5000);
+  
+      switch(iErrHandle)
+      {
+        case 1: 
+          // testCaseComment("Diagnostic response is received");
+          diagGetLastResponse(dRequest, dResponse);
+          
+          return 1;
+          break;
+        case 0:
+          testStepFail(iLevelOfDetailFail, "Error", "Diagnostic response is not received in 5000ms");
+          dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+          
+          return 0;
+          break;
+        default:
+          testStepFail(iLevelOfDetailFail, "Error", "Error occured while receiving diagnostic response");
+          dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+          testReportWriteDiagObject(dRequest);
+          
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+      }
+      break;
+    case 0:
+      testStepFail(iLevelOfDetailFail, "Error", "Diagnostic request was not sent in 1500ms");
+      dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+      return DIAG_SEND_OR_RECEIVE_ERROR;
+          
+      break;
+    default:
+      testStepFail(iLevelOfDetailFail, "Error", "Error occured while sending diagnostic request");
+      dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+      return 0;
+          
+      break;
+  }
+}
+
+/// <Helpers>
+// Send diagnostic request without waiting for response
+// Example: SendDiagnosticRequest(dDefaultSessionRequest)
+// Return: 0 - timeout received
+//         1 - request sent
+//        -1 - Error received during sending request
+//long SendDiagnosticRequest(diagRequest * dRequest)
+//{
+//  int iErrHandle = 0;
+//  diagSendRequest(dRequest);
+//  
+//  iErrHandle = testWaitForDiagRequestSent(dRequest, 500);
+//
+//  switch(iErrHandle)
+//  {
+//    case 1:
+//      testStepPass(iLevelOfDetailPass, "", "Request is sent"); 
+//      return 1;
+//      break;
+//    case 0:
+//      testStepFail(iLevelOfDetailFail, "Error", "Diagnostic request was not sent in 500ms");
+//
+//      return -1;
+//      break;
+//    default:
+//      testStepFail(iLevelOfDetailFail, "Error", "Error occured while sending diagnostic request");
+//
+//      return 0;
+//      break;
+//  }
+//}
+
+/// <Helpers>
+//Check if diagnostic response is positive or not with verdict
+//Example: CheckPositiveResponse("Check positive response", dDefaultSessionRequest, dDefaultSessionResponse);
+//Output: 1 - positive response
+//        0 - negative response, invalid function call 
+long CheckPositiveResponse(char sInputString[], diagRequest * dRequest, diagResponse * dResponse)
+{
+  if ( DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsPositiveResponse(dResponse) == 0)
+    {
+      testStepFail(iLevelOfDetailFail, "", "%s", sInputString);
+      testReportWriteDiagResponse(dRequest);
+      return 0;
+    }
+    else
+    {
+      testStepPass(iLevelOfDetailPass,"", "%s", sInputString);
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "Error", "Parameters doesn't match for CheckPositiveResponse function");
+   return 0;
+  }
+}
+
+/// <Helpers>
+//Check if diagnostic response is positive or not without verdict
+//Example: CheckPositiveResponse("Check positive response", dDefaultSessionRequest, dDefaultSessionResponse);
+//Output: 1 - positive response
+//        0 - negative response, invalid function call 
+long CheckPositiveResponse(diagRequest * dRequest, diagResponse * dResponse)
+{
+  if ( DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsPositiveResponse(dResponse) == 0)
+    {
+      return 0;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "Error", "Parameters doesn't match for CheckPositiveResponse function");
+   return 0;
+  }
+}
+
+/// <Helpers>
+////Check if diagnostic response is positive or not without verdict
+////Example: CheckPositiveResponse("Check positive response", dDefaultSessionRequest, dDefaultSessionResponse);
+////Output: 0 - positive response, invalid function call 
+////        1 - negative response
+long CheckNegativeResponse(char sInputString[], diagRequest * dRequest, diagResponse * dResponse)
+{
+  if ( DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsNegativeResponse(dResponse) == 0) 
+    {
+      testStepFail(iLevelOfDetailFail, "", "%s", sInputString);
+      testReportWriteDiagResponse(dRequest);
+      return 0;
+    }
+    else
+    {
+      testStepPass(iLevelOfDetailPass, "", "%s", sInputString);
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "Error", "Parameters doesn't match for CheckNegativeResponse function");
+   return 0;
+  }
+}
+
+/// <Helpers>
+void CheckNegativeResponseCode(diagRequest * dRequest, diagResponse * dResponse, byte bNRC)
+{
+  byte response[20];
+  char dResponseName[1000];
+  char output[20];
+  long table = 0;
+  
+  if ( DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (dResponse.GetResponseCode() != -1)
+    {
+      if ( dResponse.GetResponseCode() != bNRC )
+      {       
+        table = testInfoTable("Wrong negative response code received");
+        testInfoHeadingBegin(table, 0);
+        testInfoCell(table, "Actual");
+        testInfoCell(table, "Expected");
+        testInfoHeadingEnd(table);
+        
+        testInfoRow(table, 0);
+        snprintf(output, elCount(output), "0x%02x", dResponse.GetResponseCode());
+        testInfoCell(table,  output);
+        snprintf(output, elCount(output), "0x%02x", bNRC);
+        testInfoCell(table, output);
+        
+        testStepFail(iLevelOfDetailFail, "", table);
+      }
+      else
+      {
+        dResponse.GetObjectName(dResponseName, elcount(dResponseName));
+        testStepPass(iLevelOfDetailPass, "", "NRC 0x%02x was received for '%s' diagnostic request.", dResponse.GetResponseCode(), dResponseName);
+      }
+    }
+    else
+    {
+      testStepFail(iLevelOfDetailFail, "", "Response is positive");
+    }
+   }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "Error", "Parameters doesn't match for CheckNegativeResponseCode function");
+  }
+}
+
+/// <Helpers>
+void CheckResponseLength(diagRequest * dRequest, diagResponse * dResponse, long iExpectedLength)
+{
+  char output[20];
+  long table = 0;
+  
+  if ( DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (dResponse.GetPrimitiveSize() != iExpectedLength)
+    {  
+      EvalManStepEqual("Response length is different than expected", dResponse.GetPrimitiveSize(), iExpectedLength);
+    }
+    else
+    {
+      EvalManStepEqual("Response length is correct", dResponse.GetPrimitiveSize(), iExpectedLength);
+    }
+  }
+  else
+  {
+   testStepFail(iLevelOfDetailFail, "Error", "Parameters doesn't match for CheckResponselength function");
+  }
+}
+
+//Get security access
+// Option 1: GetSecurityAccess("supplier");
+// Option 2: GetSecurityAccess("programming"); 
+//void GetSecurityAccess(char session[])
+//{
+//  byte seed[8];
+//  int index;
+//  
+//  toLower(session, session, elcount(session));
+//    if(strncmp(session, sProgramming, strlen(session)) == 0)
+//    {      
+//      EnterDiagnosticSession("default");
+//      EnterDiagnosticSession("extended");
+//      EnterDiagnosticSession("programming");
+//      
+//      diagResize(dRequest,2);                  
+//      diagSetPrimitiveByte(dRequest, 0, 0x27);  
+//      diagSetPrimitiveByte(dRequest, 1, 0x11);  
+//      
+//      SendDiagnosticRequest(dRequest, dResponse);
+//      if (diagIsPositiveResponse(dResponse) == 0)
+//      {
+//        testStepFail(iLevelOfDetailFail, "", "Security Access Seed in Programming session not received");
+//        testReportWriteDiagResponse(dRequest);
+//      }
+//      
+//      
+//      for(index = 0; index < 4; index++)
+//      {
+//        seed[index] = (byte)diagGetRespPrimitiveByte( dRequest, (index+2));
+//      }
+//      
+//      securityAlgoProgramming(seed);
+//
+//      diagResize(dRequest,6);                  //UDS request size
+//      diagSetPrimitiveByte(dRequest, 0, 0x27); //SID
+//      diagSetPrimitiveByte(dRequest, 1, 0x12); //Send Key
+//      diagSetPrimitiveByte(dRequest, 2, securityAlgoDataBuffer[0]); //Key Byte 0
+//      diagSetPrimitiveByte(dRequest, 3, securityAlgoDataBuffer[1]); //Key Byte 1
+//      diagSetPrimitiveByte(dRequest, 4, securityAlgoDataBuffer[2]); //Key Byte 2
+//      diagSetPrimitiveByte(dRequest, 5, securityAlgoDataBuffer[3]); //Key Byte 3
+//
+//      SendDiagnosticRequest(dRequest, dResponse);
+//      if (diagIsPositiveResponse(dResponse) == 0)
+//      {
+//        testStepFail(iLevelOfDetailFail, "", "Security Access in Programming session not granted");
+//        testReportWriteDiagResponse(dRequest);
+//      }
+//    }
+//    else
+//    {
+//      if (strncmp(session, sSupplier, strlen(session)) == 0)
+//      {
+//        EnterDiagnosticSession("default");
+//        EnterDiagnosticSession("supplier");
+//        
+//        diagResize(dRequest,2);                  
+//        diagSetPrimitiveByte(dRequest, 0, 0x27);  
+//        diagSetPrimitiveByte(dRequest, 1, 0x61);  
+//        
+//        SendDiagnosticRequest(dRequest, dResponse);
+//        if (diagIsPositiveResponse(dResponse) == 0)
+//        {
+//          testStepFail(iLevelOfDetailFail, "","Security Access Seed in Supplier session not received");
+//          testReportWriteDiagResponse(dRequest);
+//        }
+//        
+//        for(index = 0; index < 8; index++)
+//        {
+//          seed[index] = (byte)diagGetRespPrimitiveByte( dRequest, (index+2));
+//        }
+//        
+//        securityAlgoSupplier(seed);
+//        
+//        diagResize(dRequest,10);                  //UDS request size
+//        diagSetPrimitiveByte(dRequest, 0, 0x27); //SID
+//        diagSetPrimitiveByte(dRequest, 1, 0x62); //Send Key
+//        diagSetPrimitiveByte(dRequest, 2, securityAlgoDataBuffer[0]); //Key Byte 0
+//        diagSetPrimitiveByte(dRequest, 3, securityAlgoDataBuffer[1]); //Key Byte 1
+//        diagSetPrimitiveByte(dRequest, 4, securityAlgoDataBuffer[2]); //Key Byte 2
+//        diagSetPrimitiveByte(dRequest, 5, securityAlgoDataBuffer[3]); //Key Byte 3
+//        diagSetPrimitiveByte(dRequest, 6, securityAlgoDataBuffer[4]); //Key Byte 3
+//        diagSetPrimitiveByte(dRequest, 7, securityAlgoDataBuffer[5]); //Key Byte 3
+//        diagSetPrimitiveByte(dRequest, 8, securityAlgoDataBuffer[6]); //Key Byte 3
+//        diagSetPrimitiveByte(dRequest, 9, securityAlgoDataBuffer[7]); //Key Byte 3
+//        
+//        SendDiagnosticRequest(dRequest, dResponse);
+//        if (diagIsPositiveResponse(dResponse) == 0)
+//        {
+//          testStepFail(iLevelOfDetailFail, "", "Security Access in Supplier session not granted");
+//          testReportWriteDiagResponse(dRequest);
+//        }
+//      }
+//      else
+//      {
+//        testStepFail(iLevelOfDetailFail, "", "Error","Invalid parameter for GetSecurityAccess function: %s", session);
+//      }
+//    }
+//  
+//}
+
+/// <Helpers>
+// Security algorithm for programming session 
+//void securityAlgoProgramming(byte data[])
+//{ 
+//  dword temp;
+//  int i, Carry;
+//  temp =  data[0]*16777216 + data[1]*65536 + data[2] * 256 + data[3];
+//  
+//  i = 5;
+//  while(i>0)
+//  {
+//    Carry = 0;
+//    if(temp>= 0xE0D1C2B3)
+//    {
+//      Carry = 1;
+//    }
+//    
+//    temp+= 0x1F2E3D4C;
+//    
+//    if(Carry == 1)
+//    {
+//      temp = (temp << 1) + ((temp & 0x80000000)?1:0);
+//    }
+//    temp ^=0x4D5E234B;
+//    i--;
+//  }
+//  securityAlgoDataBuffer[0] = ((temp) & 0xFF000000)>>24;
+//  securityAlgoDataBuffer[1] = ((temp) & 0xFF0000)>>16;
+//  securityAlgoDataBuffer[2] = ((temp) & 0xFF00)>>8;
+//  securityAlgoDataBuffer[3] = ((temp) & 0xFF);
+//}
+
+/// <Helpers>
+// Security algorithm for programming session 
+//void securityAlgoSupplier(byte data[])
+//{ 
+//  byte temp[8];
+//  int i, Carry;
+//  
+//  temp[0] = (0xFF ^ data[0]) + 0x01; 
+//  temp[1] = (0xFF ^ data[1]) + 0x01; 
+//  temp[2] = (0xFF ^ data[2]) + 0x01; 
+//  temp[3] = (0xFF ^ data[3]) + 0x01; 
+//  temp[4] = (0xFF ^ data[4]) + 0x01; 
+//  temp[5] = (0xFF ^ data[5]) + 0x01; 
+//  temp[6] = (0xFF ^ data[6]) + 0x01; 
+//  temp[7] = (0xFF ^ data[7]) + 0x01; 
+//  
+//  securityAlgoDataBuffer[0] = temp[0];
+//  securityAlgoDataBuffer[1] = temp[1];
+//  securityAlgoDataBuffer[2] = temp[2];
+//  securityAlgoDataBuffer[3] = temp[3];
+//  securityAlgoDataBuffer[4] = temp[4];
+//  securityAlgoDataBuffer[5] = temp[5];
+//  securityAlgoDataBuffer[6] = temp[6];
+//  securityAlgoDataBuffer[7] = temp[7];
+//}
+
+// Lock/Unlock ECU
+// Option 1: SetECUMode("lock");
+// Option 2: SetECUMode("unlock");
+void SetECUMode(char mode[])
+{
+  toLower(mode, mode, elcount(mode));
+  if(strncmp(mode, sLock, strlen(mode)) == 0)
+  {
+    EnterDiagnosticSession("development");
+    
+    diagResize(dRequest, 4);
+    diagSetPrimitiveData(dRequest, bLock, 4);
+    
+    SendDiagnosticRequest(dRequest, dResponse);
+    CheckPositiveResponse("ECU is locked", dRequest, dResponse);
+  }
+  else
+  {
+    if(strncmp(mode, sUnlock, strlen(mode)) == 0)
+    {
+      EnterDiagnosticSession("development");
+      
+      diagResize(dRequest, 4);
+      diagSetPrimitiveData(dRequest, bUnlock, 4);
+      
+      SendDiagnosticRequest(dRequest, dResponse);
+      CheckPositiveResponse("ECU is unlocked", dRequest, dResponse);
+    }
+    else
+    {
+      testStepFail(iLevelOfDetailFail, "Error", "Invalid parameter for SetECUMode function: %s", mode);
+    }
+  }
+}
+
+/// <DTC_management>
+// To be updated until all DTCs are implemented--------------------------------------------------------------------------------------------------------------------------------------
+//Check all DTC status and report all that are qualified.
+void CheckDTCPresence()
+{
+  CheckDTCPresence(0x21); // testFailedSinceLastClear or testFailed.
+}
+
+//Check all DTC status and report all that are qualified.
+void CheckDTCPresence(dword DTCStatusMask)
+{
+  int iLength;
+  int i;
+  byte bStatusByte;
+  byte bBit;
+  dword DTC;
+  long EvalManStepTable = 0;
+  char cDTC[200];
+  char cStatusByte[200];
+  char cTmp[200];
+    
+  
+  diagSetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask", DTCStatusMask); 
+  SendDiagnosticRequest(dReportDTCByStatusMaskRequest, dReportDTCByStatusMaskResponse);
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord");
+  if (iLength < 0)
+  {
+     testStepFail(iLevelOfDetailFail, "", "CheckDTCPresence: Error code obtained for diagGetIterationCount: %i", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(iLevelOfDetailPass, "DTC", "All autotests are passed.");
+  }
+  else
+  {        
+    // begin table
+    EvalManStepTable = TestInfoTable("CheckDTCPresence");
+
+    // header
+    TestInfoHeadingBegin(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "DTC");
+    TestInfoCell(EvalManStepTable, "DTC name");
+    TestInfoCell(EvalManStepTable, "DTC status");
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    TestInfoHeadingEnd(EvalManStepTable);
+    
+   for(i = 0; i < iLength; i++)
+   {
+    DTC = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "DTCRecord");
+    bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "StatusOfDTC");
+    
+    strncpy(cDTC, "", 1);
+    strncpy(cStatusByte, "", 1);
+    strncpy(cTmp, "", 1);
+  
+    // row 1
+    TestInfoRow(EvalManStepTable, 0);
+    snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+    TestInfoCell(EvalManStepTable, cDTC);
+    TestInfoCell(EvalManStepTable, ""); // To Add name once available
+    snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+    TestInfoCell(EvalManStepTable, cStatusByte);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.WarningIndicatorRequested", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedThisOperationCycle", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailedSinceLastClear", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedSinceLastClear", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.ConfirmedDTC", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.PendingDTC", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailedThisOperationCycle", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);  
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailed", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+   }
+    testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+
+//  EnterDiagnosticSession("supplier");
+//  
+//  SendDiagnosticRequest(dReadAllAECStatusRequest, dReadAllAECStatusResponse);
+//  if (diagIsPositiveResponse(dReadAllAECStatusResponse) == 0)
+//  {
+//    testStepFail(iLevelOfDetailFail, "", "No response for Read All AEC Status request");
+//    testReportWriteDiagResponse(dReadAllAECStatusRequest);
+//  }
+//  testReportWriteDiagObject(dReadAllAECStatusResponse);
+//  diagGetPrimitiveData(dReadAllAECStatusResponse, bAllAec, 168);
+//
+//  for(index = 1; index <= (elcount(bAllAec)-3)/3; index+=1)
+//  {
+////    write("Aec %02x with status %02x", bAllAec[index*3+1], bAllAec[index*3+2]);
+//    
+//    if (((bAllAec[index*3+2] != 0x00) && (bAllAec[index*3+2] != 0x40)) || ((bAllAec[index*3+2] != 0x00) && (bAllAec[index*3+1] == 0x47)))
+//    {
+//      testStepFail(iLevelOfDetailFail, "AEC", "Autotest failed - Autoliv ERROR Code: %02x - %s - status: %02x",  bAllAec[index*3+1], _sAEC_NameConfig[index-1], bAllAec[index*3+2]);
+//      iErrorFlag = 1;
+//    }
+//  }
+//  if (iErrorFlag!=1)
+//  {
+//   testStepPass(iLevelOfDetailPass, "AEC", "All autotests are passed");
+//  }
+//  write("%d", (elcount(bAllAec)-3)/3);
+}
+
+
+/// <DTC_management>
+// To be updated until all DTCs are implemented--------------------------------------------------------------------------------------------------------------------------------------
+//Check all AEC status and report all that are qualified
+void CheckDTCPresenceInBenchInit()
+{
+//  int index;
+//  int index1;
+//  int ignoredflag;
+//  byte bAllAec[168];
+//  int iErrorFlag;
+//  
+//  iErrorFlag = 0;
+//  ignoredflag = 0;
+  
+  int iLength;
+  int i;
+  byte bStatusByte;
+  byte bBit;
+  dword DTC;
+  long EvalManStepTable = 0;
+  char cDTC[200];
+  char cStatusByte[200];
+  char cTmp[200];
+  
+  diagSetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask", 0x21); // testFailedSinceLastClear or testFailed.
+  SendDiagnosticRequest(dReportDTCByStatusMaskRequest, dReportDTCByStatusMaskResponse);
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord");
+  if (iLength < 0)
+  {
+     testStepFail(iLevelOfDetailFail, "", "CheckDTCPresenceInBenchInit: Error code obtained for diagGetIterationCount: %i", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(iLevelOfDetailPass, "DTC", "All autotests are passed.");
+  }
+  else
+  {        
+    // begin table
+    EvalManStepTable = TestInfoTable("CheckDTCPresenceInBenchInit");
+
+    // header
+    TestInfoHeadingBegin(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "DTC");
+    TestInfoCell(EvalManStepTable, "DTC name");
+    TestInfoCell(EvalManStepTable, "DTC status");
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    TestInfoHeadingEnd(EvalManStepTable);
+    
+   for(i = 0; i < iLength; i++)
+   {
+    DTC = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "DTCRecord");
+    bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "StatusOfDTC");
+    
+    strncpy(cDTC, "", 1);
+    strncpy(cStatusByte, "", 1);
+    strncpy(cTmp, "", 1);
+  
+    // row 1
+    TestInfoRow(EvalManStepTable, 0);
+    snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+    TestInfoCell(EvalManStepTable, cDTC);
+    TestInfoCell(EvalManStepTable, ""); // To Add name once available.
+    snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+    TestInfoCell(EvalManStepTable, cStatusByte);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.WarningIndicatorRequested", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedThisOperationCycle", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailedSinceLastClear", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedSinceLastClear", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.ConfirmedDTC", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.PendingDTC", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailedThisOperationCycle", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);  
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailed", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+   }
+    testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+ 
+//  EnterDiagnosticSession("supplier");
+//  
+//  SendDiagnosticRequest(dReadAllAECStatusRequest, dReadAllAECStatusResponse);
+//  if (diagIsPositiveResponse(dReadAllAECStatusResponse) == 0)
+//  {
+//    testStepFail(iLevelOfDetailFail, "", "No response for Read All AEC Status request");
+//    testReportWriteDiagResponse(dReadAllAECStatusRequest);
+//  }
+//  
+//  diagGetPrimitiveData(dReadAllAECStatusResponse, bAllAec, 168);
+//  
+//  for(index = 1; index <= (elcount(bAllAec)-3)/3; index+=1)
+//  {
+//    if (((bAllAec[index*3+2] != 0x50) && (bAllAec[index*3+2] != 0x00) && (index != 36) && (index != 35) && (index != 47)) || ((bAllAec[index*3+2] != 0x50) && (index == 36)) || ((bAllAec[index*3+2] != 0x50) && (index == 35)) || ((bAllAec[index*3+2] != 0x50) && (index == 47)))
+//    {
+//      ignoredflag = 0;
+//      for (index1 = 0; index1 < elcount(_sAEC_NotExecAfterReset); index1++)
+//      {
+//        if (strncmp(_sAEC_NameConfig[index-1], _sAEC_NotExecAfterReset[index1], strlen(_sAEC_NotExecAfterReset[index1])) == 0)
+//        {
+//         ignoredflag = 1;
+//        break;
+//        }
+//      }
+//      if ( ignoredflag == 0 )
+//      {
+//        if (((bAllAec[index*3+2] != 0x00) && (bAllAec[index*3+2] != 0x40)) || ((bAllAec[index*3+2] != 0x00) && (bAllAec[index*3+1] == 0x47)))
+//        {
+//          testStepFail("AEC", "Autotest failed - Autoliv ERROR Code: %02x - %s - status: %02x",  bAllAec[index*3+1], _sAEC_NameConfig[index-1], bAllAec[index*3+2]);
+//          iErrorFlag = 1;
+//        }
+//      }
+//    }
+//  }
+//  if (iErrorFlag!=1)
+//  {
+//   testStepPass(iLevelOfDetailPass, "AEC", "All autotests are passed");
+//  }
+//  write("%d", (elcount(bAllAec)-3)/3);
+}
+
+/// <DTC_management>
+// To be updated until all DTCs are implemented--------------------------------------------------------------------------------------------------------------------------------------
+//Check all DTC status and report all that are qualified.
+void CheckDTCPresenceAfterClear()
+{
+//  int index;
+//  int index1;
+//  int ignoredflag = 0;
+//  byte bAllAec[168];
+//  int iErrorFlag = 0;
+//  
+//  iErrorFlag = 0;
+//  ignoredflag = 0;
+
+  int iLength;
+  int i;
+  byte bStatusByte;
+  byte bBit;
+  dword DTC;
+  long EvalManStepTable = 0;
+  char cDTC[200];
+  char cStatusByte[200];
+  char cTmp[200];
+  
+  diagSetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask", 0x21); // testFailedSinceLastClear or testFailed.
+  SendDiagnosticRequest(dReportDTCByStatusMaskRequest, dReportDTCByStatusMaskResponse);
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord");
+  if (iLength < 0)
+  {
+     testStepFail(iLevelOfDetailFail, "", "CheckDTCPresenceAfterClear: Error code obtained for diagGetIterationCount: %i", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(iLevelOfDetailPass, "DTC", "All autotests are passed.");
+  }
+  else
+  {        
+    // begin table
+    EvalManStepTable = TestInfoTable("CheckDTCPresenceAfterClear");
+
+    // header
+    TestInfoHeadingBegin(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "DTC");
+    TestInfoCell(EvalManStepTable, "DTC name");
+    TestInfoCell(EvalManStepTable, "DTC status");
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    TestInfoHeadingEnd(EvalManStepTable);
+    
+   for(i = 0; i < iLength; i++)
+   {
+    DTC = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "DTCRecord");
+    bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "StatusOfDTC");
+    
+    strncpy(cDTC, "", 1);
+    strncpy(cStatusByte, "", 1);
+    strncpy(cTmp, "", 1);
+  
+    // row 1
+    TestInfoRow(EvalManStepTable, 0);
+    snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+    TestInfoCell(EvalManStepTable, cDTC);
+    TestInfoCell(EvalManStepTable, ""); // To Add name once available
+    snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+    TestInfoCell(EvalManStepTable, cStatusByte);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.WarningIndicatorRequested", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedThisOperationCycle", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailedSinceLastClear", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedSinceLastClear", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.ConfirmedDTC", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.PendingDTC", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailedThisOperationCycle", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);  
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestFailed", cTmp, elcount(cTmp));
+    TestInfoCell(EvalManStepTable, cTmp);
+   }
+    testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+//  EnterDiagnosticSession("supplier");
+//  
+//  SendDiagnosticRequest(dReadAllAECStatusRequest, dReadAllAECStatusResponse);
+//  if (diagIsPositiveResponse(dReadAllAECStatusResponse) == 0)
+//  {
+//    testStepFail(iLevelOfDetailFail, "", "No response for Read All AEC Status request");
+//    testReportWriteDiagResponse(dReadAllAECStatusRequest);
+//  }
+//  
+//  diagGetPrimitiveData(dReadAllAECStatusResponse, bAllAec, 168);
+//  
+//  for(index = 1; index <= (elcount(bAllAec)-3)/3; index+=1)
+//  {
+//    if (((bAllAec[index*3+2] != 0x50) && (bAllAec[index*3+2] != 0x00) && (index != 36) && (index != 35) && (index != 47)) || ((bAllAec[index*3+2] != 0x50) && (index == 36)) || ((bAllAec[index*3+2] != 0x50) && (index == 35)) || ((bAllAec[index*3+2] != 0x50) && (index == 47)))
+//    {
+//      ignoredflag = 0;
+//      for (index1 = 0; index1 < elcount(_sAEC_NotExecAfterReset); index1++)
+//      {
+//        if (strncmp(_sAEC_NameConfig[index-1], _sAEC_NotExecAfterReset[index1], strlen(_sAEC_NotExecAfterReset[index1])) == 0)
+//        {
+//         ignoredflag = 1;
+//        break;
+//        }
+//      }
+//      if ( ignoredflag == 0 )
+//      {
+//        if (((bAllAec[index*3+2] != 0x00) && (bAllAec[index*3+2] != 0x40)) || ((bAllAec[index*3+2] != 0x00) && (bAllAec[index*3+1] == 0x47)))
+//        {
+//          testStepFail("AEC", "Autotest failed - Autoliv ERROR Code: %02x - %s - status: %02x",  bAllAec[index*3+1], _sAEC_NameConfig[index-1], bAllAec[index*3+2]);
+//          iErrorFlag = 1;
+//        }
+//      }
+//    }
+//  }
+//  if (iErrorFlag!=1)
+//  {
+//   testStepPass(iLevelOfDetailPass, "AEC","All autotests are passed");
+//  }
+//  write("%d", (elcount(bAllAec)-3)/3);
+}
+
+/// <DTC_management>
+///Clear all DTCs.
+void ClearAll()
+{  
+  ClearAll_R20();
+//  SendDiagnosticRequest(dClearAllDTCsRequest, dClearAllDTCsResponse);
+//  CheckPositiveResponse("Clear all DTCs", dClearAllDTCsRequest, dClearAllDTCsResponse);
+}
+
+void ClearAll_R20()
+{
+  byte DTC_GEN_FAILURE[4] = {0x14, 0xA0, 0x00, 0x20};
+  byte DTC_POWER[4]       = {0x14, 0xA0, 0x00, 0x10};
+  
+  SendDiagnosticRequest(dClearAllDTCsRequest, dClearAllDTCsResponse,DTC_GEN_FAILURE);
+  CheckPositiveResponse("Clear DTC.", dClearAllDTCsRequest, dClearAllDTCsResponse);
+  
+  SendDiagnosticRequest(dClearAllDTCsRequest, dClearAllDTCsResponse,DTC_POWER);
+  CheckPositiveResponse("Clear DTC.", dClearAllDTCsRequest, dClearAllDTCsResponse);
+}
+
+
+// Change ECU side .
+// Option 1: ChangeECUSide("left")
+// Option 2: ChangeECUSide("right")
+//void ChangeECUSide(char side[])
+//{
+//  message Meas8_RBTM_FL_ST3 MeasurementFrameFL;
+//  message Meas8_RBTM_FR_ST3 MeasurementFrameFR;
+//  
+//  toLower(side, side, elcount(side));
+//  if(strncmp(side, "left", strlen(side)) == 0)
+//  {
+//    AuthenticateECU(2);
+//    EnterDiagnosticSession("development"); 
+//
+//    dECULocationWriteRequest.SetPrimitiveByte(3, 0x9C);
+//    SendDiagnosticRequest(dECULocationWriteRequest, dECULocationWriteResponse);
+//    CheckPositiveResponse("ECU side is changed to left", dECULocationWriteRequest, dECULocationWriteResponse);
+//
+//    testWaitForTimeout(1000);
+//    ResetECU("soft");
+//    @sysvar::ProjectConfiguration::sysMeasurementFrameID = MeasurementFrameFL.id;
+//    iSideFlag = 0;
+//    SetDiagTarget("RBTMFL174");
+//    WaitECUInitialization();
+//  }
+//  else
+//  {
+//    if(strncmp(side, "right", strlen(side)) == 0)
+//    {
+//      AuthenticateECU(2);
+//      EnterDiagnosticSession("development");
+//      
+//      dECULocationWriteRequest.SetPrimitiveByte(3, 0x99);
+//      SendDiagnosticRequest(dECULocationWriteRequest, dECULocationWriteResponse);
+//      CheckPositiveResponse("ECU side is changed to right",dECULocationWriteRequest, dECULocationWriteResponse);
+//      
+//      testWaitForTimeout(1000);
+//      ResetECU("soft");
+//      @sysvar::ProjectConfiguration::sysMeasurementFrameID = MeasurementFrameFR.id;
+//      iSideFlag = 1;
+//      SetDiagTarget("RBTMFR174");
+//      WaitECUInitialization();   
+//    }
+//    else
+//    {
+//      testStepFail(iLevelOfDetailFail, "Error", "Invalid parameter for ChangeECUSide function: %s", side);
+//    }
+//  }
+//}
+
+// ECU reset.
+// Option 1: ResetECU("soft");
+// Option 2: ResetECU("hard");
+void ResetECU(char reset[])
+{
+  toUpper(reset, reset, elcount(reset));
+  if(strncmp(reset, "SOFT", strlen(reset)) == 0)
+  {    
+    SendDiagnosticRequest(dSoftResetRequest, dSoftResetResponse);
+    CheckPositiveResponse("Soft reset performed to ECU", dSoftResetRequest, dSoftResetResponse);
+  }
+  else
+  {
+    if(strncmp(reset, "HARD", strlen(reset)) == 0)
+    {
+      SendDiagnosticRequest(dHardResetRequest, dHardResetResponse);
+      CheckPositiveResponse("Hard reset performed to ECU", dHardResetRequest, dHardResetResponse);
+    }
+    else
+    {
+      testStepFail(iLevelOfDetailFail, "Error", "Invalid parameter for ResetECU function: %s", reset);
+    }
+  }
+}
+
+void SetDiagTarget(char cECUQualifier[])
+{
+ dword dErrorCode;
+ dErrorCode = diagSetTarget(cECUQualifier);
+ if(dErrorCode != 0)
+ {
+    testStepFail(iLevelOfDetailFail, "", "Error when setting diag target: %d", dErrorCode);
+ }
+ else
+ {
+    testStepPass(iLevelOfDetailPass, "", "Diag target successfully set to %s", cECUQualifier);
+ }   
+}
+
+/// <DTC_management>
+// Reads DTC fault memory using "ReportDTCByStatusMask" (0x02) sub-service and a given "bMask" status mask then evaluates the result.
+// "cDescription" = Description that will appear inside the report.
+// "dDTC"         = DTC ID to be evaluated.
+// "bMask"        = Expected DTC status. Used as mask to read the fault memory.
+// "cPresence"    = Describes evaluation method. Available inputs:
+//                      1. "present"         - DTC is present with the "bMask" bits active.
+//                                             Result is PASSED if all "bMask" status bits are active even if other status bits are active.
+//                      2. "not_present"     - DTC is not present.
+//                                             Result is PASSED if DTC is not present in fault memory.     
+//                      3. "expected"        - DTC is present with only "bMask" bits active.
+//                                             Result is PASSED if only "bMask" status bits are active.
+//                      4. "not_expected"    - DTC is present but with different status.
+//                                             Result is PASSED if "bMask" is different than the actual DTC mask.
+//                      5. "bitwise"         - Output is a table with a pass or fail result for each status bit and an overall pass/fail result.
+//                                             Only bits set to 1 must be equal for pass result.
+//                      6. "bitwise_expected"- Output is a table with a pass or fail result for each status bit and an overall pass/fail result.
+//                                             All bits must be equal for pass result.
+byte VerifyDTCByStatus(char cDescription[], dword dDTC, byte bMask, char cPresence[])
+{
+  stack int iLength;
+  stack int i;
+  stack int iFound = 0;
+  byte bResponseStatus;
+  stack dword dResponseDTC;
+  stack char cObtained[1000];
+  stack char cExpected[1000];
+  stack long EvalManStepTable;
+  
+  bResponseStatus = -1;
+  
+  toUpper(cPresence, cPresence, elcount (cPresence));
+  
+  diagSetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask", bMask);
+  SendDiagnosticRequest(dReportDTCByStatusMaskRequest, dReportDTCByStatusMaskResponse);
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord");
+  if (iLength < 0)
+  {
+    testStepFail(iLevelOfDetailFail, "", "VerifyDTCByStatus: Error code obtained for diagGetIterationCount: %i", iLength);
+    return -1;
+  }
+        
+  for(i = 0; i < iLength; i++)
+  {
+   dResponseDTC = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "DTCRecord");
+   bResponseStatus = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", i, "StatusOfDTC");
+        
+   if(dResponseDTC == dDTC)
+   {
+    iFound = 1;
+    if(strncmp(cPresence, "PRESENT", elcount(cPresence)) == 0) // 1. DTC is present with the "bMask" bits active.
+    {
+      if((bMask & bResponseStatus) == bMask)
+      {
+        if(bMask | bResponseStatus != bMask) // Extra status bits are present.
+        {
+          snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: 0x%lX - 0x%02X. Extra active and accepted status bits: 0x%02X", dResponseDTC, bResponseStatus, (bResponseStatus - bMask));
+          snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: 0x%lX - 0x%02X.", dDTC, bMask);
+          EvalManStepUnEqual(cDescription, cObtained, cExpected);
+        }
+        else
+        {
+          snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: 0x%lX - 0x%02X", dResponseDTC, bResponseStatus);
+          snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: 0x%lX - 0x%02X", dDTC, bMask);
+          EvalManStepEqual(cDescription, cObtained, cExpected);
+        }
+      }
+      else
+      {
+        snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: 0x%lX - 0x%02X. Not all expected status bits are active: 0x%02X ", dResponseDTC, bResponseStatus, (bMask - (bMask & bResponseStatus)));
+        snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: 0x%lX - 0x%02X.", dDTC, bMask);
+        EvalManStepEqual(cDescription, cObtained, cExpected);
+      }
+    }
+    else if(strncmp(cPresence, "EXPECTED", elcount(cPresence)) == 0) // 3. DTC is present with only "bMask" bits active.
+    {
+      snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: 0x%lX - 0x%02X", dResponseDTC, bResponseStatus);
+      snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: 0x%lX - 0x%02X", dDTC, bMask);
+      EvalManStepEqual(cDescription, cObtained, cExpected);
+    }
+    else if(strncmp(cPresence, "NOT_EXPECTED", elcount(cPresence)) == 0) // 4. DTC is present but with different status.
+    {
+      if(bMask && bResponseStatus == bMask)
+      {
+       snprintf(cObtained, elcount(cObtained), "DTC present in fault memory with same status: 0x%lX - 0x%02X", dResponseDTC, bResponseStatus);
+       snprintf(cExpected, elcount(cExpected), "DTC present in fault memory but with different status: 0x%lX - 0x%02X", dDTC, bMask);
+       EvalManStepEqual(cDescription, cObtained, cExpected);
+      }
+      else
+      {
+       snprintf(cObtained, elcount(cObtained), "DTC present in fault memory with different status: 0x%lX - 0x%02X", dResponseDTC, bResponseStatus);
+       snprintf(cExpected, elcount(cExpected), "DTC present in fault memory but with different status: 0x%lX - 0x%02X", dDTC, bMask);
+       EvalManStepUnEqual(cDescription, cObtained, cExpected);
+      }
+    }
+    else if(strncmp(cPresence, "NOT_PRESENT", elcount(cPresence)) == 0)  // 2. DTC is not present.
+    { 
+      snprintf(cObtained, elcount(cObtained), "DTC 0x%lX is present in fault memory with status 0x%02X.", dResponseDTC, bResponseStatus);
+      snprintf(cExpected, elcount(cExpected), "DTC 0x%lX is not present in fault memory with status 0x%02X.", dDTC, bMask);
+      EvalManStepEqual(cDescription, cObtained, cExpected);
+    }  
+    else if (strncmp(cPresence, "BITWISE", elcount(cPresence)) == 0)  // 5. Table output.
+    {    
+      DTCStatusBitwiseCompare(cDescription, dReportDTCByStatusMaskRequest, dReportDTCByStatusMaskResponse, i, 0);
+    }
+    else if (strncmp(cPresence, "BITWISE_EXPECTED", elcount(cPresence)) == 0)  // 6. Table output.
+    {    
+      DTCStatusBitwiseCompare(cDescription, dReportDTCByStatusMaskRequest, dReportDTCByStatusMaskResponse, i, 1);
+    }
+    else
+    {
+      testStepFail(iLevelOfDetailFail, "", "Incorrect input for VerifyDTCBtStatus function");
+    }
+   break;
+   }
+  }
+  
+  if (iFound == 0)
+  {
+    if(strncmp(cPresence, "NOT_PRESENT", elcount(cPresence)) == 0)  // 2. DTC is not present.
+    { 
+       snprintf(cObtained, elcount(cObtained), "DTC 0x%lX is not present in fault memory with status 0x%02X.", dDTC, bMask);
+       EvalManStepEqual(cDescription, cObtained, cObtained);
+    }
+    else
+    {
+      snprintf(cObtained, elcount(cObtained), "DTC 0x%lX is NOT present in fault memory with status 0x%02X.", dDTC, bMask);
+      snprintf(cExpected, elcount(cExpected), "DTC 0x%lX is present in fault memory with status 0x%02X.", dDTC, bMask);
+      EvalManStepEqual(cDescription, cObtained, cExpected);
+    }
+  }
+  
+  return bResponseStatus;
+}
+
+/// <Helpers>
+// ReportDTCByStatusMask diagnostic request/response needed as input.
+// Output is a table.
+void DTCStatusBitwiseCompare(char cDescription[], diagRequest * dReportDTCByStatusMaskRequest, diagResponse * dReportDTCByStatusMaskResponse, int iIteration, byte bIsResultRelevant)
+{
+  stack char cTmpObtained[100];
+  stack char cTmpExpected[100];
+  stack char cAvailabilityMask[100];
+  stack long  EvalManStepTable = 0;
+  stack int iTableResult = 0;
+  byte bResponseStatus;
+  byte bExpectedStatus;
+  stack dword dResponseDTC;
+  
+  bResponseStatus = -1;
+  bExpectedStatus = -1;
+  
+  dResponseDTC = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "DTCRecord");
+  bResponseStatus = diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC");
+  bExpectedStatus = diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask");
+  snprintf(cTmpObtained, elcount(cTmpObtained), "DTC 0x%lX present in fault memory with status 0x%02X expected 0x%02X", dResponseDTC, bResponseStatus, bExpectedStatus);
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(cDescription);   
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cTmpObtained, 1);
+  TestInfoHeadingEnd(EvalManStepTable);
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Status bit");
+  TestInfoCell(EvalManStepTable, "Obtained");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoCell(EvalManStepTable, "Result");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.WarningIndicatorRequested", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.WarningIndicatorRequested", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.WarningIndicatorRequested", cAvailabilityMask, elcount(cAvailabilityMask));
+        
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.TestNotCompletedThisOperationCycle", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.TestNotCompletedThisOperationCycle", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "StatusOfDTC.TestNotCompletedThisOperationCycle", cAvailabilityMask, elcount(cAvailabilityMask));
+
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.TestFailedSinceLastClear", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.TestFailedSinceLastClear", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "DTCAvailabilityMask.TestFailedSinceLastClear", cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.TestNotCompletedSinceLastClear", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.TestNotCompletedSinceLastClear", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "DTCAvailabilityMask.TestNotCompletedSinceLastClear", cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.ConfirmedDTC", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.ConfirmedDTC", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "DTCAvailabilityMask.ConfirmedDTC", cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.PendingDTC", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.PendingDTC", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "DTCAvailabilityMask.PendingDTC", cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.TestFailedThisOperationCycle", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationCycle");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.TestFailedThisOperationCycle", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "DTCAvailabilityMask.TestFailedThisOperationCycle", cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskRequest, "DTCStatusMask.TestFailed", cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    diagGetComplexParameter(dReportDTCByStatusMaskResponse, "DTCAndStatusRecord", iIteration, "StatusOfDTC.TestFailed", cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResponse, "DTCAvailabilityMask.TestFailed_1Bit", cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  if(iTableResult < 0)
+  {
+    testStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    testStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  } 
+}
+
+/// <DTC_management>
+// Check DTC status using "ReportDTCExtendedDataByDTCNbr" (0x06) sub-service.
+// Only checks DTC status -> To be updated.
+void VerifyDTCByExtendedData(char cDescription[], dword dDTC, byte bExpectedMask)
+{
+  stack int iLength;
+  stack int i;
+  stack byte bStatusByte;
+  stack dword dResponseDTC;
+  stack char cObtained[1000];
+  stack char cExpected[1000];
+    
+  diagSetParameter(dReportDTCExtendedDataByDTCNbrRequest, "DTCRecord", dDTC);
+  if(SendDiagnosticRequest(dReportDTCExtendedDataByDTCNbrRequest, dReportDTCExtendedDataByDTCNbrResponse) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"VerifyDTCByExtendedData: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  if(CheckPositiveResponse(dReportDTCExtendedDataByDTCNbrRequest, dReportDTCExtendedDataByDTCNbrResponse) == 0)
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"VerifyDTCByExtendedData: Negative response received when reading DTCExtendedDataByDTCNbr: 0x%X", dReportDTCExtendedDataByDTCNbrResponse.GetResponseCode());
+    return;
+  }
+  
+  dResponseDTC = diagGetParameter(dReportDTCExtendedDataByDTCNbrResponse, "DTCRecord");
+  bStatusByte = diagGetParameter(dReportDTCExtendedDataByDTCNbrResponse, "StatusOfDtc");
+ 
+  snprintf(cObtained, elcount(cObtained), "DTC 0x%lX status = 0x%02X", dDTC, bStatusByte);
+  snprintf(cExpected, elcount(cExpected), "DTC 0x%lX status = 0x%02X", dResponseDTC, bExpectedMask);
+  
+  EvalManStepEqual(cDescription, cObtained, cExpected);
+}
+
+
+/// <DTC_management>
+// Check DTC status using "ReportDTCExtendedDataByDTCNbr" (0x06) sub-service.
+byte GetDTCStatusByExtendedData(dword dDTC)
+{  
+  diagSetParameter(dReportDTCExtendedDataByDTCNbrRequest, "DTCRecord", dDTC);
+  SendDiagnosticRequest(dReportDTCExtendedDataByDTCNbrRequest, dReportDTCExtendedDataByDTCNbrResponse);
+  
+  if(CheckPositiveResponse(dReportDTCExtendedDataByDTCNbrRequest, dReportDTCExtendedDataByDTCNbrResponse) == 0)
+  {
+    testStepFail(iLevelOfDetailFail, "" ,"VerifyDTCByExtendedData: Negative response received when reading DTCExtendedDataByDTCNbr: 0x%X", dReportDTCExtendedDataByDTCNbrResponse.GetResponseCode());
+  }
+  
+  return (byte)diagGetParameter(dReportDTCExtendedDataByDTCNbrResponse, "StatusOfDtc");
+}
+
+
+/// <DTC_management>
+// Check DTC status change time using "ReportDTCExtendedDataByDTCNbr" (0x06) sub-service.
+// Returns: the status change time OR -1 if status change was not detected or an error occured.
+float ReturnDTCStatusChangeTime(dword dDTC, byte bExpectedMask, int iCheckInterval, float iMaxTime)
+{
+  stack byte bStatusByte;
+  stack dword dResponseDTC;
+  stack float fStartTime = 0;
+  stack float fTimeSinceStart = 0;
+  
+  if(iCheckInterval < 10 || iCheckInterval > iMaxTime)
+  {
+      testStepFail(iLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Incorrect Check time interval: %i. Must be greater or equal to 10 ms and smaller than iMaxTime.", iCheckInterval);
+      return -1;
+  }
+  
+  diagSetParameter(dReportDTCExtendedDataByDTCNbrRequest, "DTCRecord", dDTC);
+  
+  fStartTime = timeNow() / 100;
+  
+  while(fTimeSinceStart < iMaxTime)
+  {    
+    SendDiagnosticRequest(dReportDTCExtendedDataByDTCNbrRequest, dReportDTCExtendedDataByDTCNbrResponse);
+    
+    if(CheckPositiveResponse(dReportDTCExtendedDataByDTCNbrRequest, dReportDTCExtendedDataByDTCNbrResponse) == 0)
+    {
+      testStepFail(iLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Negative response received when reading DTCExtendedDataByDTCNbr: 0x%X", dReportDTCExtendedDataByDTCNbrResponse.GetResponseCode());
+      return -1;
+    }
+  
+    bStatusByte = diagGetParameter(dReportDTCExtendedDataByDTCNbrResponse, "StatusOfDtc");
+    
+    fTimeSinceStart =  (timeNow() / 100) - fStartTime;
+    
+    if(bExpectedMask != bStatusByte)
+    {     
+      testWaitForTimeout(iCheckInterval);
+    }
+    else
+    {
+      dResponseDTC = diagGetParameter(dReportDTCExtendedDataByDTCNbrResponse, "DTCRecord");
+      testStep("", "The status of the DTC 0x%lX  was changed into 0x%02X in %.f ms", dDTC, bStatusByte, fTimeSinceStart);
+      return fTimeSinceStart;
+    }
+  }
+  
+  testStepFail("", "The status of the DTC 0x%lX  was NOT changed into 0x%02X in %.f ms", dDTC, bExpectedMask, fTimeSinceStart);
+  return -1;
+}

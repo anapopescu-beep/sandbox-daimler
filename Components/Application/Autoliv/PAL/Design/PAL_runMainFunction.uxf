@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>2084</w>
+      <h>1003</h>
+    </coordinates>
+    <panel_attributes>title:PAL_runMainFunction
+Start
+Update the free wheeling counter
+Check if a change mode request has been received from another SW/C
+If
+	[TRUE]
+	Apply the new mode directly
+	Reset the request bitfield
+
+	[FALSE]
+EndIf
+Check running mode for PAL SW/C
+If
+	[PAL_KU8_DIAGNOSTIC_MODE_STATE]
+	Check Mode Status
+	If
+		[KU8_MODE_STATUS_OFF]
+		Allow belt function activation since critical autotests are passed
+
+		[KU8_MODE_STATUS_ON]
+	EndIf
+
+	[PAL_KU8_IDLE_MODE_STATE]
+	Check if free wheeling counter is 0
+	If
+		[TRUE]
+		Refresh the disable pin for power stage
+		
+		[FALSE]
+		Set activation mode state
+	EndIf
+
+	[PAL_KU8_ACTIVATION_MODE_STATE]
+	Check if free wheeling counter is 0
+	If
+		[TRUE]
+		Set idle mode state
+		Refresh the disable pin for power stage
+		
+		[FALSE]
+	EndIf
+	
+	[PAL_KU8_OFF_MODE_STATE]
+	
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

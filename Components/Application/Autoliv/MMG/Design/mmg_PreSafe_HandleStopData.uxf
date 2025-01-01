@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>2784</w>
+      <h>2439</h>
+    </coordinates>
+    <panel_attributes>title:mmg_PreSafe_HandleStopData
+Start
+
+Stop1BuckleSwitch = u8BuckleStateType
+Stop1BeltHandOver = u8BeltHdOvStat
+
+Check ProfileInterrupedStatus
+If
+	[True]
+	Stop2PreSafeLvl = NewProfileExecuted
+
+	[False]
+	Check PreSafeState
+	If
+		[KU8_TENSIONING_END]
+		Stop2PreSafeLvl = StartedProfile
+
+		[Other]
+		Stop2PreSafeLvl = u8PresafeLevelType
+EndIf
+EndIf
+
+
+Check Impact X is Set
+If
+	[Impact X is 1]
+	Stop2ImpactX = 0x01
+
+	[Impact X is 0]
+	Stop2ImpactX = 0x00
+
+EndIf
+
+Check RollOverType1 is Set
+If
+	[RollOverType1 is 1]
+	Stop2RollOverType1 = 0x01
+
+	[RollOverType1 is 0]
+	Stop2RollOverType1 = 0x00
+
+EndIf
+Check RollOverType2 is Set
+If
+	[RollOverType2 is 1]
+	Stop2RollOverType2 = 0x01
+
+	[RollOverType2 is 0]
+	Stop2RollOverType2 = 0x00
+
+EndIf
+
+Compute local voltage
+Check local voltage
+
+If
+	[Local voltage &gt; Voltage Max]
+	Local voltage = voltage max
+
+	[Local voltage &lt; voltage max]
+
+EndIf
+
+StopVoltage = Local voltage
+
+Check deficiency value
+If
+	[Deficiency value &lt; MMG_KU32_DEF_LVL_LOW_THRS]
+	Deficiency level = 0x00
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_LOW_THRS AND Deficiency value &lt; MMG_KU32_DEF_LVL_MID_THR]
+	Deficiency level = 0x01
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_MID_THRS AND Deficiency value &lt; MMG_KU32_DEF_LVL_HIGH_THRS]
+	Deficiency level = 0x02
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_HIGH_THRS AND Deficiency value &lt; MMG_KU32_DEF_LVL_HOT_THRS]
+	Deficiency level = 0x03
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_HOT_THRS]
+	Deficiency level = 0x04
+EndIf
+
+StopTemperature1 = Deficiency level
+StopTemperature2 = 0x00
+
+Check if System time return is E_OK
+
+If
+	[E_OK]
+	StopSystemTime5 = 0x00
+	StopSystemTime4 = mmg_TimeStamp.seconds
+	StopSystemTime3 = mmg_TimeStamp.seconds right sift 4
+	StopSystemTime2 = mmg_TimeStamp.seconds right sift 16
+	StopSystemTime1 = mmg_TimeStamp.seconds right sift 24
+	
+	[E_NOT_OK]
+
+EndIf
+
+Call mmg_PreSafe_CopyStopData function
+
+Call mmg_PreSafe_HandleStateData function
+
+Check u8PreSafeRecorderID
+
+If
+	[TRUE]
+	Rte_IrvWrite_MMG_runPreSafeRecorder_b8PreSafeRecorder1Update(KU8_TRUE)
+	Rte_IrvWrite_MMG_runPreSafeRecorder_b8PreSafeRecorder2Update(KU8_FALSE)
+
+	[FALSE]
+	Rte_IrvWrite_MMG_runPreSafeRecorder_b8PreSafeRecorder1Update(KU8_FALSE);
+	Rte_IrvWrite_MMG_runPreSafeRecorder_b8PreSafeRecorder2Update(KU8_TRUE);	
+	
+EndIf
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

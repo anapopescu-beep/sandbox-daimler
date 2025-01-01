@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0045
+ARCH_SW_ERH_0045: The ERH_KU8_END_OF_LIFE_MAX_FORCE_AEC_CFG (NGU should have the following properties: ? Qualification Count: Instantaneously (i.e. : NVP_u16CounterToValidateEOLMaxForce = 1;? Deskill Count: None (shall never be deskilled even after reset) (i.e. : NVP_u16CounterToDeskillEOLMaxForce = 0); - associated group: KU32_AEC_GROUP_MASK_EOL_MAX.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_Init() at line 'erh_au16AecCounter[u8Index] = KU16_ZERO;'.
+
+	Step 3: Check if CPU stopped in function ERH_Init() at line 'erh_au16AecCounter[u8Index] = KU16_ZERO;'.
+
+	Step 4: Set a breakpoint in ERH_Init() at the end of the function.
+
+Action: ARCH_SW_ERH_0045
+
+	Step 5: Evaluate if erh_au16AecCounter[u8Index], where u8Index is ATM_KU8_ID_END_OF_LIFE_MAX_FORCE, is equal to KU16_ZERO. 
+		Expected result:  erh_au16AecCounter[u8Index] == KU16_ZERO
+
+	Step 6: Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeMaxForce() at line '*pu8TestResult = pal_u8ResultOfAutoTest;'.
+
+	Step 7: Check if CPU stopped in function EOL_Autotest_CheckProductEndOfLifeMaxForce() at line '*pu8TestResult = pal_u8ResultOfAutoTest;'.
+
+	Step 8: Set variable *pu8TestResult to KU8_ATM_TEST_NOK.
+
+	Step 9: Set a breakpoint in function erh_ManageFailedCounterEvent() at line 'erh_au16AecCounter[cu8Index] += KU16_ONE;'.
+
+	Step 10: Check if CPU stopped in function erh_ManageFailedCounterEvent() at line 'erh_au16AecCounter[cu8Index] += KU16_ONE;'.
+
+Action: ARCH_SW_ERH_0045
+
+	Step 11: Evaluate if erh_au16AecCounter[u8Index], where u8Index is ATM_KU8_ID_END_OF_LIFE_MAX_FORCE, is equal to KU16_ONE. 
+		Expected result:  erh_au16AecCounter[u8Index] == KU16_ONE
+
+Postcondition
+
+	Step 12: Return ECU to default values

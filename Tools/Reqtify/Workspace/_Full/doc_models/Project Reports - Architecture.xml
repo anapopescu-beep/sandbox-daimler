@@ -1,0 +1,1105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generator: reqtify -->
+
+<DocumentList name1="Project Reports - Architecture" name2="">
+	<Document name1="PSE 1P1P SBE Software Architecture Matrix (SwArchM)" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="ArchM.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Architecture*&quot;)">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Id" text2="SW Architecture Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Description" text2="SW Architecture Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true">
+								<DataMethodCallLoop receiver="req1" variable="testOrDesign" method="referencers" loopIfNull="true" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;) OR STRMATCHRE(testOrDesign.type.name, &quot;SW.*Design.*&quot;)">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.type.name, &quot;SW.*Design.*&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributeValue" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Test Result" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataTerminalCode code="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;) IF TRUE: {testOrDesign.actualFilename;}" />
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="text">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell" style="Without format but centered">
+											<DataMethodCallText receiver="testOrDesign" method="text" condition="STRMATCHRE(testOrDesign.type.name, &quot;SW.*Design.*&quot;)">
+											</DataMethodCallText>
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="PSE 1P1P RCM Software Architecture Matrix (SwArchM)" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="ArchM.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Architecture - Enterprise Architect - Constraint&quot;) OR STRMATCH(abstr2.document.type.name, &quot;SW Architecture - Enterprise Architect - Interface&quot;)">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="docName">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Id" text2="SW Architecture Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Description" text2="SW Architecture Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true" condition="STRMATCHRE(req1.type.name, &quot;SW Architecture Design - Constraint&quot;) OR STRMATCHRE(req1.type.name, &quot;SW Architecture Design - Interface&quot;)">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true">
+								<DataMethodCallLoop receiver="req1" variable="ent1" method="referencers" condition="STRMATCHRE(ent1.type.name, &quot;Entity&quot;)">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributeValue">
+												<CallParameter value="Test Result" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributePrint">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributePrint">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributePrint">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataTerminalCode code="{ent1.actualFilename;}" />
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="text">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell" style="Without format but centered">
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+								<DataMethodCallLoop receiver="req1" variable="req2" method="requirementReferencers" loopIfNull="true" condition="STRMATCH(req2.document.type.name, &quot;SW Architecture - Enterprise Architect - Interface&quot;)">
+									<DataMethodCallLoop receiver="req2" variable="test" method="referencers" loopIfNull="true" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+										<Structure type="line">
+											<Structure type="cell">
+												<DataMethodCallText receiver="abstr1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req2" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="test" method="print" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="test" method="attributeValue" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Test Result" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="test" method="attributePrint" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="test" method="attributePrint" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Created Issue" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="test" method="attributePrint" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataTerminalCode code="STRMATCHRE(test.type.name, &quot;Entity&quot;) IF TRUE: {test.actualFilename;}" />
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="text">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req2" method="text">
+												</DataMethodCallText>
+											</Structure>
+										</Structure>
+									</DataMethodCallLoop>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="PSE 1P1P RCM System Architecture Matrix (SyArchM)" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="ArchM.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;System*Architect*&quot;)">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="System Architecture Id" text2="System Architecture Id" />
+							</Structure>
+							<Structure type="columnTitle">
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="System Architecture Description" text2="System Architecture Description" />
+							</Structure>
+							<Structure type="columnTitle">
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true">
+								<DataMethodCallLoop receiver="req1" variable="test" method="referencers" loopIfNull="true" condition="STRMATCHRE(test.type.name, &quot;Entity&quot;)">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="test" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="test" method="attributeValue">
+												<CallParameter value="Test Result" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="test" method="attributePrint">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="test" method="attributePrint">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="test" method="attributePrint">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataTerminalCode code="STRMATCHRE(test.type.name, &quot;Entity&quot;) IF TRUE: {test.actualFilename;}" />
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="text">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell" style="Without format but centered">
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="PSE 1P1P SBE SW Design Matrix SDM (TR6) (Good -BFD and BFE only)" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="SDM_TR6.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Design*&quot;) ">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections" condition="STRMATCHRE(STR(sect1),&quot;BFE|BFD&quot;)">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Design Id" text2="SW Design Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Design Description" text2="SW Design Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" condition="STRMATCHRE(abstr1.ident,&quot;ARCH&quot;) AND &quot;false&quot; $&lt;  STR((STRMATCHRE(STR(abstr1.parent),&quot;Undefined&quot;) ))">
+								<DataMethodCallLoop receiver="abstr1" variable="abstr3" method="allReferences" condition="STRMATCHRE(abstr3.ident,&quot;_TF_&quot;)  AND STRMATCHRE(abstr3.attributeValue(&quot;Target&quot;),&quot;P01&quot;) ">
+									<DataMethodCallLoop receiver="req1" variable="testOrDesign2" method="referencers" loopIfNull="true" condition="STRMATCHRE(testOrDesign2.document.type.name, &quot;Source|Test&quot;)">
+										<Structure type="line">
+											<Structure type="cell">
+												<DataMethodCallText receiver="abstr1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="print" condition="STRMATCHRE(testOrDesign2.document.type.name, &quot;Source&quot;)">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="print" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributeValue" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Test Result" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributePrint" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributePrint" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Created Issue" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributePrint" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataTerminalCode code="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;) IF TRUE: {testOrDesign2.actualFilename;}" />
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="text">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="text" condition="STRMATCHRE(testOrDesign2.type.name, &quot;SW.*Design.*&quot;)">
+												</DataMethodCallText>
+											</Structure>
+										</Structure>
+									</DataMethodCallLoop>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+							<DataMethodCallLoop receiver="req1" variable="abstr5" method="references" condition="STRMATCHRE(STR(abstr5),&quot;_TF_&quot;) AND  STRMATCHRE(abstr5.attributeValue(&quot;Target&quot;),&quot;P01&quot;) AND &quot;false&quot; $&lt;  STR((STRMATCHRE(STR(abstr5.parent),&quot;Undefined&quot;) ))">
+								<DataMethodCallLoop receiver="req1" variable="testOrDesign" method="referencers" loopIfNull="true">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr5" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.document.type.name, &quot;Source&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributeValue" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Test Result" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataTerminalCode code="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;) IF TRUE: {testOrDesign.actualFilename;}" />
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="text">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="text" condition="STRMATCHRE(testOrDesign.type.name, &quot;SW.*Design.*&quot;)">
+											</DataMethodCallText>
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="SDM - Jenkins" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="SDM_TR6.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Design*&quot;) ">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Design Id" text2="SW Design Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Design Description" text2="SW Design Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" condition="STRMATCHRE(abstr1.ident,&quot;ARCH&quot;) AND &quot;false&quot; $&lt;  STR((STRMATCHRE(STR(abstr1.parent),&quot;Undefined&quot;) ))">
+								<DataMethodCallLoop receiver="abstr1" variable="abstr3" method="allReferences" condition="STRMATCHRE(abstr3.ident,&quot;_TF_&quot;)  AND STRMATCHRE(abstr3.attributeValue(&quot;Target&quot;),&quot;P0&quot;) ">
+									<DataMethodCallLoop receiver="req1" variable="testOrDesign2" method="referencers" loopIfNull="true" condition="STRMATCHRE(testOrDesign2.document.type.name, &quot;Source|Test|TRESOS&quot;)">
+										<Structure type="line">
+											<Structure type="cell">
+												<DataMethodCallText receiver="abstr1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="print" condition="STRMATCHRE(testOrDesign2.document.type.name, &quot;Source&quot;) OR STRMATCHRE(testOrDesign2.document.type.name, &quot;TRESOS&quot;)">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="print" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributeValue" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Test Result (3)" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributePrint" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributePrint" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Created Issue" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="attributePrint" condition="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;)">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataTerminalCode code="STRMATCHRE(testOrDesign2.type.name, &quot;Entity&quot;) IF TRUE: {testOrDesign2.actualFilename;}" />
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="text">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="testOrDesign2" method="text" condition="STRMATCHRE(testOrDesign2.type.name, &quot;SW.*Design.*&quot;)">
+												</DataMethodCallText>
+											</Structure>
+										</Structure>
+									</DataMethodCallLoop>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+							<DataMethodCallLoop receiver="req1" variable="abstr5" method="references" condition="STRMATCHRE(STR(abstr5),&quot;_TF_&quot;) AND  STRMATCHRE(abstr5.attributeValue(&quot;Target&quot;),&quot;P0&quot;) AND &quot;false&quot; $&lt;  STR((STRMATCHRE(STR(abstr5.parent),&quot;Undefined&quot;) ))">
+								<DataMethodCallLoop receiver="req1" variable="testOrDesign" method="referencers" loopIfNull="true">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr5" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.document.type.name, &quot;Source&quot;) OR  STRMATCHRE(testOrDesign.document.type.name, &quot;TRESOS&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributeValue" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Test Result (3)" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataTerminalCode code="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;) IF TRUE: {testOrDesign.actualFilename;}" />
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="text">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="text" condition="STRMATCHRE(testOrDesign.type.name, &quot;SW.*Design.*&quot;)">
+											</DataMethodCallText>
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="SwArchM - Jenkins" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="ArchM_TR6.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Architecture*&quot;)">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Id" text2="SW Architecture Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Description" text2="SW Architecture Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true">
+								<DataMethodCallLoop receiver="req1" variable="testOrDesign" method="referencers" loopIfNull="true" condition="STRMATCHRE(testOrDesign.document.type.name, &quot;Source|Design|Test&quot;)">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.document.type.name, &quot;Source|Design&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="print" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributeValue" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Test Result (3)" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="testOrDesign" method="attributePrint" condition="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataTerminalCode code="STRMATCHRE(testOrDesign.type.name, &quot;Entity&quot;) IF TRUE: {testOrDesign.actualFilename;}" />
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="text">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell" style="Without format but centered">
+											<DataMethodCallText receiver="testOrDesign" method="text" condition="STRMATCHRE(testOrDesign.type.name, &quot;SW.*Design.*&quot;)">
+											</DataMethodCallText>
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="SwArchM - DAI - Old R1.0" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="ArchM_ProjectSpecific.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Architecture*&quot;)">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Id" text2="SW Architecture Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Description" text2="SW Architecture Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true" condition="STRMATCHRE(STR(STRMATCHRE(STR(abstr1.parent),&quot;Undefined&quot;)),&quot;false&quot;)">
+								<DataMethodCallLoop receiver="req1" variable="abstr3" method="requirementReferencers" loopIfNull="true">
+									<DataMethodCallLoop receiver="req1" variable="ent1" method="referencers" loopIfNull="true" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+										<Structure type="line">
+											<Structure type="cell">
+												<DataMethodCallText receiver="abstr1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="req1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="abstr3" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="ent1" method="print">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="ent1" method="attributeValue">
+													<CallParameter value="Test Result" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="ent1" method="attributePrint">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="ent1" method="attributePrint">
+													<CallParameter value="Created Issue" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="ent1" method="attributePrint">
+													<CallParameter value="Justification" />
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+												<DataMethodCallText receiver="ent1" method="parentDisplay">
+												</DataMethodCallText>
+											</Structure>
+											<Structure type="cell">
+											</Structure>
+											<Structure type="cell" style="Without format but centered">
+											</Structure>
+										</Structure>
+									</DataMethodCallLoop>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="SDM - DAI" name3="可跟踪性矩阵" type="document" receiverName="project" receiverClass="Project" template="SDM_ProjectSpecific.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Design*&quot;) ">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Design Id" text2="SW Design Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Design Description" text2="SW Design Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" condition="STRMATCHRE(req1.ident,&quot;DSG_&quot;)">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true" condition="STRMATCHRE(STR(STRMATCHRE(STR(abstr1.parent),&quot;Undefined&quot;)),&quot;false&quot;)">
+								<DataMethodCallLoop receiver="req1" variable="ent1" method="referencers" loopIfNull="true">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="print" condition="STRMATCHRE(ent1.parent.document.parent.name,&quot;Code&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="print" condition="STRMATCHRE(ent1.parent.document.parent.name,&quot;Unit Tests&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributeValue" condition="STRMATCHRE(ent1.parent.document.parent.name,&quot;Unit Test&quot;)">
+												<CallParameter value="Test Result" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributeValue" condition="STRMATCHRE(ent1.parent.document.parent.name,&quot;Unit Test&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributeValue" condition="STRMATCHRE(ent1.parent.document.parent.name,&quot;Unit Test&quot;)">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributeValue" condition="STRMATCHRE(ent1.parent.document.parent.name,&quot;Unit Test&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="parentDisplay">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+										</Structure>
+										<Structure type="cell">
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+	<Document name1="SwArchM - DAI" name3="可跟踪性矩阵" description="Improved to take in consideration the treaceability between Arch and ARXML " type="document" receiverName="project" receiverClass="Project" template="ArchM_ProjectSpecific.xlsm">
+		<StructParameter name="withTitle" value="FALSE" />
+		<DataMethodCallLoop receiver="project" variable="abstr2" method="documents" condition="STRMATCH(abstr2.document.type.name, &quot;SW Architecture*&quot;)">
+			<DataMethodCallLoop receiver="abstr2" variable="sect1" method="sections">
+				<Structure type="title">
+					<Structure type="sectionTitle">
+						<DataMethodCallText receiver="sect1" method="print">
+						</DataMethodCallText>
+					</Structure>
+					<Structure type="table">
+						<StructParameter name="numberOfColumns" value="11" />
+						<Structure type="titleRow">
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Upstream Coverage Requirement Id" text2="Upstream Coverage Requirement Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Id" text2="SW Architecture Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Implemented By" text2="Implemented By" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test Id" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Result" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Justification" text2="Justification" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Issue" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Comment" text2="Comment" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="Test File" text2="Test File corresponding to TestId" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="SW Architecture Description" text2="SW Architecture Description" />
+							</Structure>
+							<Structure type="columnTitle">
+								<DataTerminalText text1="&quot;Implemented by&quot; Description" text2="&quot;Implemented by&quot; Description" />
+							</Structure>
+						</Structure>
+						<DataMethodCallLoop receiver="sect1" variable="req1" method="leafRequirements" loopIfNull="true">
+							<DataMethodCallLoop receiver="req1" variable="abstr1" method="references" loopIfNull="true" condition="STRMATCHRE(STR(STRMATCHRE(STR(abstr1.parent),&quot;Undefined&quot;)),&quot;false&quot;)">
+								<DataMethodCallLoop receiver="req1" variable="ent1" method="referencers" loopIfNull="true">
+									<Structure type="line">
+										<Structure type="cell">
+											<DataMethodCallText receiver="abstr1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="req1" method="print">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="print" condition="STRMATCHRE(ent1.document.parent.name, &quot;Detailed Design&quot;) OR STRMATCHRE(ent1.document.parent.name, &quot;Code&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="print" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributeValue" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+												<CallParameter value="Test Result (3)" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributePrint" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributePrint" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+												<CallParameter value="Created Issue" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="attributePrint" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+												<CallParameter value="Justification" />
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+											<DataMethodCallText receiver="ent1" method="parentDisplay" condition="STRMATCHRE(ent1.document.parent.name, &quot;Domain Integration Tests&quot;)">
+											</DataMethodCallText>
+										</Structure>
+										<Structure type="cell">
+										</Structure>
+										<Structure type="cell" style="Without format but centered">
+										</Structure>
+									</Structure>
+								</DataMethodCallLoop>
+							</DataMethodCallLoop>
+						</DataMethodCallLoop>
+					</Structure>
+				</Structure>
+			</DataMethodCallLoop>
+		</DataMethodCallLoop>
+	</Document>
+</DocumentList>

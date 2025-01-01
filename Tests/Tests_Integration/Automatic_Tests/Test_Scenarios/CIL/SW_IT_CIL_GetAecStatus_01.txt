@@ -1,0 +1,85 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0423
+ARCH_SW_CIL_0423: For the following autotests ERH_runGetAecStatus shall be called to read the AEC status: CIL_Autotest_Presafe_CheckTimeoutError; CIL_Autotest_Buckle_CheckTimeoutError; CIL_Autotest_CheckTimeoutError_BelthandoverL; CIL_Autotest_CheckTimeoutError_BelthandoverR; CIL_Autotest_CheckTimeoutError_Powertrain
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_runGetAecStatus() at line '(*pu8AecStatus) = erh_au8AecStatus[u8Index];'.
+
+	Step 3: Check if CPU stopped in function ERH_runGetAecStatus() at line '(*pu8AecStatus) = erh_au8AecStatus[u8Index];'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0423
+
+	Step 4: Evaluate AEC status of ATM_KU8_ID_TIMEOUT_PRESAFE. 
+		Expected result:  KU8_ATM_TEST_NOT_DECIDED
+
+Action: ARCH_SW_CIL_0423
+
+	Step 5: Evaluate AEC status of ATM_KU8_ID_TIMEOUT_BUCKLE. 
+		Expected result:  KU8_ATM_TEST_NOT_DECIDED
+
+Action: ARCH_SW_CIL_0423
+
+	Step 6: Evaluate AEC status of ATM_KU8_ID_TIMEOUT_BLTHD_L. 
+		Expected result:  KU8_ATM_TEST_NOT_DECIDED
+
+Action: ARCH_SW_CIL_0423
+
+	Step 7: Evaluate AEC status of ATM_KU8_ID_TIMEOUT_BLTHD_R. 
+		Expected result:  KU8_ATM_TEST_NOT_DECIDED
+
+Action: ARCH_SW_CIL_0423
+
+	Step 8: Evaluate AEC status of ATM_KU8_ID_TIMEOUT_POWERTRAIN. 
+		Expected result:  KU8_ATM_TEST_NOT_DECIDED
+
+	Step 9: Set a breakpoint in function CIL_Autotest_Presafe_CheckTimeoutError() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0423
+
+	Step 10: Check if CPU stopped in function CIL_Autotest_Presafe_CheckTimeoutError() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+	Step 11: Set a breakpoint in function CIL_Autotest_Buckle_CheckTimeoutError() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0423
+
+	Step 12: Check if CPU stopped in function CIL_Autotest_Buckle_CheckTimeoutError() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+	Step 13: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_BelthandoverL() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0423
+
+	Step 14: Check if CPU stopped in function CIL_Autotest_CheckTimeoutError_BelthandoverL() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+	Step 15: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_BelthandoverR() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0423
+
+	Step 16: Check if CPU stopped in function CIL_Autotest_CheckTimeoutError_BelthandoverR() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+	Step 17: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_Powertrain() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'.
+
+Action: ARCH_SW_CIL_0423
+
+	Step 18: Check if CPU stopped in function CIL_Autotest_CheckTimeoutError_Powertrain() at line '*pu8TestResult = cil_u8ResultOfAutoTest;'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 19: Return ECU to default values

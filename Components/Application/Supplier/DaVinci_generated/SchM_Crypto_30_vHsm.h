@@ -1,0 +1,86 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *             File:  SchM_Crypto_30_vHsm.h
+ *           Config:  StartApplication.dpa
+ *      ECU-Project:  StartApplication
+ *
+ *        Generator:  MICROSAR RTE Generator Version 4.32.0
+ *                    RTE Core Version 4.32.0
+ *          License:  CBD2200333
+ *
+ *      Description:  Header of BSW Scheduler for BSW Module <Crypto_30_vHsm>
+ *********************************************************************************************************************/
+#ifndef SCHM_CRYPTO_30_VHSM_H
+# define SCHM_CRYPTO_30_VHSM_H
+
+# ifdef __cplusplus
+extern "C" {
+# endif  /* __cplusplus */
+
+# include "SchM_Crypto_30_vHsm_Type.h"
+
+# include "Os.h" /* PRQA S 0828, 0883 */ /* MD_MSR_Dir1.1, MD_Rte_Os */
+
+# define CRYPTO_30_VHSM_START_SEC_CODE
+# include "Crypto_30_vHsm_MemMap.h" /* PRQA S 5087 */ /* MD_MSR_MemMap */
+
+FUNC(void, CRYPTO_30_VHSM_CODE) Crypto_30_vHsm_MainFunction(void); /* PRQA S 3451, 3449 */ /* MD_Rte_3451, MD_Rte_3449 */
+
+# define CRYPTO_30_VHSM_STOP_SEC_CODE
+# include "Crypto_30_vHsm_MemMap.h" /* PRQA S 5087 */ /* MD_MSR_MemMap */
+
+# define SchM_Enter_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_0() SuspendAllInterrupts()  /* RteAnalyzer(ExclusiveArea, ALL_INTERRUPT_BLOCKING) */
+
+# define SchM_Exit_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_0() ResumeAllInterrupts()  /* RteAnalyzer(ExclusiveArea, ALL_INTERRUPT_BLOCKING) */
+
+# define SchM_Enter_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_1() SuspendAllInterrupts()  /* RteAnalyzer(ExclusiveArea, ALL_INTERRUPT_BLOCKING) */
+
+# define SchM_Exit_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_1() ResumeAllInterrupts()  /* RteAnalyzer(ExclusiveArea, ALL_INTERRUPT_BLOCKING) */
+
+# define SchM_Enter_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_2()  /* RteAnalyzer(ExclusiveArea, NONE) */
+
+# define SchM_Exit_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_2()  /* RteAnalyzer(ExclusiveArea, NONE) */
+
+# define SchM_Enter_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_3()  /* RteAnalyzer(ExclusiveArea, NONE) */
+
+# define SchM_Exit_Crypto_30_vHsm_CRYPTO_30_VHSM_EXCLUSIVE_AREA_3()  /* RteAnalyzer(ExclusiveArea, NONE) */
+
+
+# ifdef __cplusplus
+} /* extern "C" */
+# endif  /* __cplusplus */
+
+#endif /* SCHM_CRYPTO_30_VHSM_H */
+
+/**********************************************************************************************************************
+ MISRA 2012 violations and justifications
+ *********************************************************************************************************************/
+
+/* module specific MISRA deviations:
+   MD_Rte_3449:  MISRA rule: Rule8.5
+     Reason:     Schedulable entities are declared by the RTE and also by the BSW modules.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+   MD_Rte_3451:  MISRA rule: Rule8.5
+     Reason:     Schedulable entities are declared by the RTE and also by the BSW modules.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+   MD_Rte_Os:
+     Reason:     This justification is used as summary justification for all deviations caused by the MICROSAR OS
+                 which is for testing of the RTE. Those deviations are no issues in the RTE code.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+*/

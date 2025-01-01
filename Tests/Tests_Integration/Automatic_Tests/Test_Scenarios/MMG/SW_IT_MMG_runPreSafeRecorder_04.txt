@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0010
+ARCH_SW_MMG_0010: The Stop Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM when a requested profile has ended regardless of status of execution: ended successful, aborted or inhibited.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 3: Set a breakpoint in MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStopData(mmg_stPreSafeManagement.PreSafeBufferID);' under case KU8_TENSIONING_END.
+
+	Step 4: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_NOLVL.
+
+Action: ARCH_SW_MMG_0010
+
+	Step 5: Check if CPU stopped in function MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStopData(mmg_stPreSafeManagement.PreSafeBufferID);' under case KU8_TENSIONING_END. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in mmg_PreSafe_CopyStopData() at line 'NVP_BLOCK_ID_PRE_SAFE_RECORDER_1_RamBlockData.NVP_au8PreSafeRecorderStop[KU8_ZERO] = u8PreSafeRecStop1;'.
+
+Action: ARCH_SW_MMG_0010
+
+	Step 7: Check if CPU stopped in mmg_PreSafe_CopyStopData() at line 'NVP_BLOCK_ID_PRE_SAFE_RECORDER_1_RamBlockData.NVP_au8PreSafeRecorderStop[KU8_ZERO] = u8PreSafeRecStop1;'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 8: Return ECU to default values

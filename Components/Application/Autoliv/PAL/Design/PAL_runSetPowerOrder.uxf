@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1036</w>
+      <h>849</h>
+    </coordinates>
+    <panel_attributes>title:PAL_runSetPowerOrder
+Start
+Check if this function is allowed to control the power stage
+If
+	[TRUE]
+	Compute the absolute value of motor command
+	Check if the absolute value of motor command is 0
+	If
+		[TRUE]
+		Store data in the local data structure
+		Disable power layer
+
+		[FALSE]
+		Check if the absolute value of motor command is smaller than 0
+		If
+			[TRUE]
+			Drive the motor in releasing direction
+
+			[FALSE]
+			Drive the motor in tensioning direction
+		EndIf
+
+	EndIf
+
+	[FALSE]
+
+EndIf
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

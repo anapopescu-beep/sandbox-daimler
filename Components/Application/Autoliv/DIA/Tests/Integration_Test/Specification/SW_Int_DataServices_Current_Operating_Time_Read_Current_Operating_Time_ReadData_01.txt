@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0325; ARCH_SW_DIA_0326; ARCH_SW_DIA_0327; ARCH_SW_DIA_0467; ARCH_SW_DIA_0468; ARCH_SW_DIA_0469; ARCH_SW_DIA_0470
+ARCH_SW_DIA_0467: DataIdentifier shall be 0x0133
+ARCH_SW_DIA_0468: The DID shall be available in the following sessions:?Default Session?Programming?Extended session?Update Session?Development Session
+ARCH_SW_DIA_0469: This service shall be available under the following forms of Authentication:?Supplier?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?Internal Diagnostic Test Tool
+ARCH_SW_DIA_0326: Response data shall be 5 bytes long.
+ARCH_SW_DIA_0470: Bytes 0-3 of the positive response shall represent the Current Operating Time.
+ARCH_SW_DIA_0327: Byte 4 of the positive response shall represent the Operating Time Status, defined as follows:?	Bits 0 � 3: converted value based on timeBaseStatus
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Current_Operating_Time_Read_Current_Operating_Time_ReadData*.
+
+Action: ARCH_SW_DIA_0325; ARCH_SW_DIA_0326; ARCH_SW_DIA_0327; ARCH_SW_DIA_0467; ARCH_SW_DIA_0468; ARCH_SW_DIA_0469; ARCH_SW_DIA_0470
+
+	Step 3: Send diag request for security access 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Current_Operating_Time_Read_Current_Operating_Time_ReadData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

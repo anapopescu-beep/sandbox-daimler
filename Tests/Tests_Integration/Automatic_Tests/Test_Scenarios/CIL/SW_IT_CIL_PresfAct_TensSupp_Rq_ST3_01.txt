@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0182
+ARCH_SW_CIL_0182: Value for PresfAct_TensSupp_Rq_ST3 SNA is 7 and should not inhibit anything.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PresfAct_TensSupp_Rq_ST3 to 7.
+
+	Step 3: Set a breakpoint in function CIL_ComNotification_PresfAct_Adj_Pr5_ST3_2joar1a41xrgjqab60epnbplm_25141edc_Rx().
+
+	Step 4: Check if CPU stopped in function CIL_ComNotification_PresfAct_Adj_Pr5_ST3_2joar1a41xrgjqab60epnbplm_25141edc_Rx(). 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0182
+
+	Step 5: Read variable cil_stPresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 
+		Expected result:  7.
+
+	Step 6: Set a breakpoint in function cil_ManageInhibitConditions() at line 'if(I_C03_NO_LT_RT_BOTH_LEFT == cil_stPresfActAdjFrame.PresfAct_TensSupp_Rq_ST3)'.
+
+	Step 7: Check if CPU stopped at line 'if(I_C03_NO_LT_RT_BOTH_LEFT == cil_stPresfActAdjFrame.PresfAct_TensSupp_Rq_ST3)'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_TensSuppInhibition);'.
+
+Action: ARCH_SW_CIL_0182
+
+	Step 9: Check if CPU stopped at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_TensSuppInhibition);'. 
+		Expected result:  CPU is Running
+
+Postcondition
+
+	Step 10: Return ECU to default values

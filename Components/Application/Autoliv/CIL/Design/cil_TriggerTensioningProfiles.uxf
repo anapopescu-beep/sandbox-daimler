@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>3</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>249</x>
+      <y>246</y>
+      <w>1318</w>
+      <h>320</h>
+    </coordinates>
+    <panel_attributes>title:cil_TriggerTensioningProfiles
+Start
+
+Write CarCrashDetected to FALSE
+Write PreCrashRequestEnable to TRUE
+
+Switch u8CycleRequest
+If
+	[case KU8_NO_CYCLE]
+	Check if PresfAccelReset_NotExcd_ST3 is equal to KU8_TWO
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to TRUE 
+		Write PreCrashRequest to NO_PRECRASH
+		Write PreCrashSeverityLevel to NO_PRECRASH
+		
+		[FALSE]
+		Write IsCarAccelerationLow to FALSE
+		Check if CIL_u8TensioningAbortedStatus is TRUE
+		If
+			[TRUE]
+			Write PreCrashSeverityLevel to NO_PRECRASH
+		
+			[FALSE]
+			QAC
+		EndIf
+	EndIf
+	
+	[case KU8_CIL_PRESF_LVL_SIGNAL_LVL1]
+	Read cycle0 validity
+	Check if u8Cycle0ValidityStatus is TRUE
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE 
+		Write PreCrashRequest to PRECRASH_LEVEL_1
+		Write PreCrashSeverityLevel to PRECRASH_LEVEL_1
+		
+		[FALSE]
+		Write u8ResponseSignal to KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+	EndIf
+
+	[case KU8_CIL_PRESF_LVL_SIGNAL_LVL2]
+	Nothing to do 
+
+	[case KU8_CIL_PRESF_LVL_SIGNAL_LVL3]
+	Read cycle1 validity
+	Check if u8Cycle1ValidityStatus is TRUE
+	
+	If
+		[TRUE]
+			Write IsCarAccelerationLow to FALSE 
+			Write PreCrashRequest to PRECRASH_LEVEL_2
+			Write PreCrashSeverityLevel to PRECRASH_LEVEL_2
+		
+		[FALSE]
+		Write u8ResponseSignal to KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+	EndIf
+
+	[case KU8_CIL_PRESF_LVL_SIGNAL_LVL4]
+	Read cycle2 validity
+	Check if u8Cycle1ValidityStatus is TRUE
+	If
+		[TRUE]
+			Write IsCarAccelerationLow to FALSE 
+			Write PreCrashRequest to PRECRASH_LEVEL_3
+			Write PreCrashSeverityLevel to PRECRASH_LEVEL_3
+		
+		[FALSE]
+		Write u8ResponseSignal to KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+	EndIf
+
+	[case KU8_CIL_PRESF_LVL_SIGNAL_LVL5]
+	Read cycle3 validity
+	Check if u8Cycle1ValidityStatus is TRUE
+	If
+		[TRUE]
+			Write IsCarAccelerationLow to FALSE 
+			Write PreCrashRequest to PRECRASH_LEVEL_4
+			Write PreCrashSeverityLevel to PRECRASH_LEVEL_4
+		
+		[FALSE]
+		Write u8ResponseSignal to KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+	EndIf
+
+	[default]
+	Write IsCarAccelerationLow to FALSE 
+	Write PreCrashRequest to NO_PRECRASH
+	Write PreCrashSeverityLevel to NO_PRECRASH
+	Write u8ResponseSignal to KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+
+
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

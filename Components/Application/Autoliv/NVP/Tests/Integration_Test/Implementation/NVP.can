@@ -1,0 +1,363 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Project_functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Defines.cin"
+}
+
+
+variables
+{
+
+}
+
+
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation();
+  
+  strncpy(cLogPathAndName, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\DIA\\",  elcount(cLogPathAndName));
+}
+
+
+testcase SW_Int_NVP_ReadNVP_Parameters_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_NVP_0005; ARCH_SW_NVP_0010; ARCH_SW_NVP_0013; ARCH_SW_NVP_0014; ARCH_SW_NVP_0018; ARCH_SW_NVP_0019; ARCH_SW_NVP_0023; ARCH_SW_NVP_0008; ARCH_SW_NVP_0009; ARCH_SW_NVP_00010; ARCH_SW_NVP_0022;");
+  AddRequirementInfo("ARCH_SW_NVP_0005", "NVP_BLOCK_ID_TESTS_PARAM shall be configured to have the following parameters : - NVP_u32CheckMotorOrderMediumMaxDuration = 120 000 ms(4 bytes) - NVP_u32MotorCurrentMediumMaxDuration = 120 000 ms (4 bytes) - NVP_u32SWThermalProtectionValidationThrs = 160 000 AA(4 bytes) - NVP_u32SWThermalProtectionDeskillingThrs = 32 000 AA (4 bytes) - NVP_u16MotorCurrentHighResetTime = 300 ms (2 bytes) - NVP_u16MotorCurrentMediumResetTime = 1000 ms (2 bytes) - NVP_u16CheckMotorOrderHighMaxDuration = 2000 ms (2 bytes) - NVP_u16MotorCurrentHighMaxDuration = 1200 ms (2 bytes) - NVP_u16CheckMotorOrderHighResetTime = 100 ms (2 bytes) - NVP_u16CheckMotorOrderMediumResetTime = 100 ms (2 byte ) - NVP_u16CheckMotorOrderResetTime = 60 000 ms (2 bytes) - NVP_u16MotorCurrentResetTime = 60 000 (2 bytes) - NVP_u8MotorCurrentHighThrs = 25 A (1 byte) - NVP_u8MotorCurrentMediumThrs = 10 A (1 byte) - NVP_u8CheckMotorOrderHighThrs = 80% PWM (1 byte) - NVP_u8CheckMotorOrderMediumThrs = 20% PWM (1 byte) .");
+  AddRequirementInfo("ARCH_SW_NVP_0010", "CALIB_BLOCK_ID_BFS_PRIO_PARAM will contain the priority for the belt cycles :{ 03 Pre-Safe level 1 (Strong tensioning) 03 Pre-Safe level 2 (Strong tensioning) 03 Pre-Safe level 3 (Strong tensioning) 03 Pre-Safe level 4 (Strong tensioning) 00 Pre-Safe level 5 (Strong tensioning) 00 Pre-Safe level 6 (Strong tensioning) 00 Pre-Safe level 7 (Strong tensioning) 00 Pre-Safe level 8 (Strong tensioning) 00 Pre-Safe level 9 (Strong tensioning) 00 Pre-Safe level 10 (Strong tensioning) 00 Pre-Safe level 11 (Strong tensioning) 00 Pre-Safe level 12 (Strong tensioning) 00 Pre-Safe level 13 (Strong tensioning) 00 Pre-Safe level 14 (Strong tensioning) 03 Curve 1 (Smooth tensioning) 00 Curve 2 (Smooth tensioning) 00 Curve 3 (Smooth tensioning) 00 Curve 4 (Smooth tensioning) 03 Haptic 1-1 (Warning 1) 03 Haptic 1-2 (Warning 1) 00 Haptic 2-1 (Warning 2) 00 Haptic 2-2 (Warning 2) 00 Haptic 3-1 (Warning 3) 00 Haptic 3-2 (Warning 3) 00 Haptic 4-1 (Warning 4) 00 Haptic 4-2 (Warning 4) 08 BSR 1 (Comfort) 00 BSR 2 (Comfort) 00 BSR 3 (Comfort) 04 Smooth Release 04 Hard Release 04 Backup Release 04 Start-up Release 00 ANG 00 AEE 00 'Unused 00 'Unused 00 'Unused ");
+  AddRequirementInfo("ARCH_SW_NVP_0013", "Temperature compensaton tables should be stored: • CALIB_BLOCK_ID_WEIGHT_TENS0_TABLE • CALIB_BLOCK_ID_WEIGHT_TENS1_TABLE • CALIB_BLOCK_ID_WEIGHT_TENS2_TABLE • CALIB_BLOCK_ID_WEIGHT_TENS3_TABLE -40°C (0x0000) 1.75 (0x70) -25°C (0x0071) 1.234375 (0x4F) -5°C (0x0109) 1.09375 (0x46) 30°C (0x01FC)) 1.046875 (0x43) 55°C (0x02D0) 1 (0x40) 77°C (0x0377) 1.046875 (0x43) 85°C (0x03B4) 1.09375 (0x46) Note: Temp[°C] = Raw * 0.1318359375 - 40 Fact ");
+  AddRequirementInfo("ARCH_SW_NVP_0014", "EOL counters should be defined as follows: • NVP_u32ComfortCyclesEOLThrs =60 000 • NVP_u32LowForceEOLThrs = 10 000 • NVP_u32HighForceEOLThrs = 1 500 • NVP_u32MaxForceEOLThrs = 50. ");
+  AddRequirementInfo("ARCH_SW_NVP_0018", "NVP_BLOCK_ID_VELOCITY_PID_PARAM shall be stored. ");
+  AddRequirementInfo("ARCH_SW_NVP_0019", "Power degradation table shall be stored : CALIB_BLOCK_ID_POWER_DEGRADATION Voltage Factor 8.95V (0x22F6) 0.835 (0x6B) 9V (0x2328) 0.835 (0x6B) 9.6V (0x2580) 0.89 (0x72) 10.2V (0x27D8) 0.945 (0x79) 10.8V (0x2A30) 1 (0x80) 13V (0x32C8) 1 (0x80) Note: Voltage[mV] = Raw * 1mV Factor ");
+  AddRequirementInfo("ARCH_SW_NVP_0023", "CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData shall be used to store the vehicle equipment default data { 1 byte - NVP_u8VehEquipFirstByte; 1 byte - NVP_u8VehEquipSecondByte; 1 byte - NVP_u8VehEquipThirdByte; 1 byte - NVP_u8VehEquipFourthByte; 2 byte - NVP_u16VehEquipmentUVAbort; 2 byte - NVP_u16VehEquipmentUV; 2 byte - NVP_u16VehEquipmentOVAbort; 2 byte - NVP_u16VehEquipmentOV; 4 byte - NVP_u32VehEquipPreSafeCycleAct; } ");
+  AddRequirementInfo("ARCH_SW_NVP_0008", "The NVP configuration tool (excel file) shall allow specifying the EEPROM file version.");
+  AddRequirementInfo("ARCH_SW_NVP_0009", "The NVP configuration tool (excel file) shall manage the EEPROM memory clustering (using watermarks).");
+  AddRequirementInfo("ARCH_SW_NVP_00010", "The NVP configuration tool (excel file) shall allow specifying which blocks must be programmed.");
+  AddRequirementInfo("ARCH_SW_NVP_0022", "If Vehicle Equipment Configuration Data has not valid data the default data from CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData block will be used instead.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+    
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+
+  debugger_run();
+  debugger_stop();
+  
+  testCaseComment("Action: ARCH_SW_NVP_0005;");
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32CheckMotorOrderMediumMaxDuration*.");
+  debugger_readVariable("uint32", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "0x1d4c0", "Variable equal to 120000 (0x0x1d4c0)");
+ 
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32MotorCurrentMediumMaxDuration*.");
+  debugger_readVariable("uint32", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "1");
+  ExpectedTestResult(debugger_result, "0x1d4c0", "Variable equal to 120000 (0x1d4c0)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32SWThermalProtectionValidationThrs*.");
+  debugger_readVariable("uint32", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "2");
+  ExpectedTestResult(debugger_result, "0x27100", "Variable equal to 160 000 (0x27100)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32SWThermalProtectionDeskillingThrs*.");
+  debugger_readVariable("uint32", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "3");
+  ExpectedTestResult(debugger_result, "0x7d00", "Variable equal to 32 000 (0x7d00)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighResetTime*.");
+  debugger_readVariable("uint16", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "12");
+  ExpectedTestResult(debugger_result, "0x12c", "Variable equal to 300 (0x12c)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentMediumResetTime*.");
+  debugger_readVariable("uint16", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "13");
+  ExpectedTestResult(debugger_result, "0x3e8", "Variable equal to 1000 (0x3e8)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderHighMaxDuration*.");
+  debugger_readVariable("uint16", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "15");
+  ExpectedTestResult(debugger_result, "0x7d0", "Variable equal to 2000 (0x7d0)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighMaxDuration*.");
+  debugger_readVariable("uint16", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "16");
+  ExpectedTestResult(debugger_result, "0x4b0", "Variable equal to 1200 (0x4b0)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighMaxDuration*.");
+  debugger_readVariable("uint16", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "17");
+  ExpectedTestResult(debugger_result, "0x64", "Variable equal to 100 (0x64)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderResetTime*.");
+  debugger_readVariable("uint16", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "24");
+  ExpectedTestResult(debugger_result, "0xea60", "Variable equal to 60 000 (0xea60)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8MotorCurrentHighThrs*.");
+  debugger_readVariable("uint8", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "88");
+  ExpectedTestResult(debugger_result, "0x19", "Variable equal to 25 (0x19)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8MotorCurrentMediumThrs*.");
+  debugger_readVariable("uint8", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "89");
+  ExpectedTestResult(debugger_result, "0xa", "Variable equal to 10 (0xa)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8CheckMotorOrderHighThrs*.");
+  debugger_readVariable("uint8", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "90");
+  ExpectedTestResult(debugger_result, "0x50", "Variable equal to 80 (0x50)");
+  
+  testStep("STEP", "Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8CheckMotorOrderMediumThrs*.");
+  debugger_readVariable("uint8", "NVP_BLOCK_ID_TESTS_PARAM_RamBlockData,,app.elf", "91");
+  ExpectedTestResult(debugger_result, "0x14", "Variable equal to 20 (0x14)");
+  
+  testCaseComment("Action: ARCH_SW_NVP_0010;");
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 1 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 2 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "1");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 3 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "2");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 4 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "3");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 5 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "4");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 6 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "5");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 7 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "6");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 8 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "7");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 9 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "8");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 10 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "9");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 11 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "10");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 12 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "11");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 13 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "12");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 14 (Strong tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "13");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 1 (Smooth tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "14");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 03");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 2 (Smooth tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "15");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 3 (Smooth tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "16");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 4 (Smooth tensioning)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "17");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 1-1 (Warning 1)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "18");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 3");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 1-2 (Warning 1)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "19");
+  ExpectedTestResult(debugger_result, "0x3", "Variable equal to 3");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 2-1 (Warning 2)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "20");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 2-2 (Warning 2)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "21");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 3-1 (Warning 3)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "22");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 3-2 (Warning 3)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "23");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-1 (Warning 4)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "24");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-2 (Warning 4)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "25");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-1 (Warning 4)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "24");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-2 (Warning 4)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "25");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  BSR 1 (Comfort)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "26");
+  ExpectedTestResult(debugger_result, "0x8", "Variable equal to 8");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  BSR 2 (Comfort)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "27");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  BSR 3 (Comfort)*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "28");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Smooth Release*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "29");
+  ExpectedTestResult(debugger_result, "0x4", "Variable equal to 4");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Hard Release*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "30");
+  ExpectedTestResult(debugger_result, "0x4", "Variable equal to 4");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Backup Release*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "31");
+  ExpectedTestResult(debugger_result, "0x4", "Variable equal to 4");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Start-up Release*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "32");
+  ExpectedTestResult(debugger_result, "0x4", "Variable equal to 4");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  ANG*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "33");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  AEE*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf", "34");
+  ExpectedTestResult(debugger_result, "0x0", "Variable equal to 0");
+  
+  testCaseComment("Action: ARCH_SW_NVP_0013; ARCH_SW_NVP_0014;");
+  testStep("STEP", "Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  NVP_u32ComfortCyclesEOLThrs*.");
+  debugger_readVariable("uint32", "CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "0xea60", "Variable equal to 60000");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  NVP_u32LowForceEOLThrs *.");
+  debugger_readVariable("uint32", "CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf", "1");
+  ExpectedTestResult(debugger_result, "0x2710", "Variable equal to 10000");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  NVP_u32HighForceEOLThrs *.");
+  debugger_readVariable("uint32", "CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf", "2");
+  ExpectedTestResult(debugger_result, "0x5dc", "Variable equal to 1 500");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  u32MaxForceEOLThrs *.");
+  debugger_readVariable("uint32", "CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf", "3");
+  ExpectedTestResult(debugger_result, "0x32", "Variable equal to 50");
+  
+  testCaseComment("Action: ARCH_SW_NVP_0018;");
+  testStep("STEP", "Read NVP_BLOCK_ID_VELOCITY_PID_PARAM_RamBlockData*.");
+  debugger_readVariable("uint32", "NVP_BLOCK_ID_VELOCITY_PID_PARAM_RamBlockData,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "NVP_BLOCK_ID_VELOCITY_PID_PARAM", "Variable read");
+  
+  testCaseComment("Action: ARCH_SW_NVP_0019;");
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Voltage - 8.95V*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "0x22f6", "Variable equal to 8.95 (0x22F6)");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.835*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "12");
+  ExpectedTestResult(debugger_result, "0x6b", "Variable equal to 0.835 (0x6B)");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  9V*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "1");
+  ExpectedTestResult(debugger_result, "0x2328", "Variable equal to 9");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.835*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "13");
+  ExpectedTestResult(debugger_result, "0x6b", "Variable equal to 0.835 (0x6B)");
+
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  9.6V*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "2");
+  ExpectedTestResult(debugger_result, "0x2580", "Variable equal to 9.6");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.89*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "14");
+  ExpectedTestResult(debugger_result, "0x72", "Variable equal to 0.89 (0x72)");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  10.2V*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "3");
+  ExpectedTestResult(debugger_result, "0x27d8", "Variable equal to 10.2");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.945*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "15");
+  ExpectedTestResult(debugger_result, "0x79", "Variable equal to 0.945 (0x79)");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  10.8V*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "4");
+  ExpectedTestResult(debugger_result, "0x2a30", "Variable equal to 10.8");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 1*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "16");
+  ExpectedTestResult(debugger_result, "0x80", "Variable equal to 1 (0x80)");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  13V*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "5");
+  ExpectedTestResult(debugger_result, "0x32c8", "Variable equal to 13");
+  
+  testStep("STEP", "Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 1*.");
+  debugger_readVariable("uint8", "CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf", "17");
+  ExpectedTestResult(debugger_result, "0x80", "Variable equal to 1 (0x80)");
+  
+  testCaseComment("Action: ARCH_SW_NVP_0023; ARCH_SW_NVP_0008; ARCH_SW_NVP_0009; ARCH_SW_NVP_00010; ARCH_SW_NVP_0022;");
+  testStep("STEP", "Read CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData*.");
+  debugger_readVariable("uint16", "CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData", "Variable read");
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+void MainTest()
+{
+InitTestModule();
+SW_Int_NVP_ReadNVP_Parameters_01();
+
+
+}

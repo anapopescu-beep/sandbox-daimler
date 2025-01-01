@@ -1,0 +1,344 @@
+/*@!Encoding:1252*/
+/*  
+    AUTOSAR GLOBAL TIME implementation of time manager
+
+    (C) 2018 Vector Informatik GmbH, Department for Networks and Distributed Systems
+    CAPL Include File - Version 0.4
+
+    This include file implements the manager of time domains.
+
+    Restrictions:
+    - no interpolation of clock jitter/drift
+*/
+variables
+{
+  //
+  // Constants
+  //
+
+  const int cARGTMgr_DomainCount = 16; // Maximum is 16 (because the unique domain ID uses only 4 bit)
+
+  enum ARGTMgr_Role { eARGTMgr_UnknownRole, eARGTMgr_TimeMaster, eARGTMgr_TimeSlave, eARGTMgr_TimeGatewayMaster, eARGTMgr_TimeGatewaySlave };
+
+  enum ARGTMgr_Status { eARGTMgr_NotSynchronized = 0, eARGTMgr_Synchronized = 1, eARGTMgr_SyncTimeout = 2 };
+
+  enum ARGTMgr_TxCompliance
+  {
+    eARGTMgr_UNPROTECTED          = 1, // For TX: Do not protect message (instead of CRC transfer user byte 0)
+    eARGTMgr_CRC_PROTECTED        = 2  // For TX: Calculate CRC and protect message (and do not transfer user byte 0)
+  };
+ 
+  enum ARGTMgr_RxCompliance
+  {
+    eARGTMgr_CRC_VALIDATED        = 0, // For RX: Accept only protected with valid CRC
+    eARGTMgr_CRC_NOT_VALIDATED    = 1, // For RX: Accept only non-protected
+    eARGTMgr_CRC_IGNORED          = 2, // For RX: Accept non-protected and protected messages with any CRC
+    eARGTMgr_CRC_OPTIONAL         = 3  // For RX: Accept non-protected and protected messages with valid CRC
+  };
+  
+  enum ARGTMgr_Validation
+  {
+    eARGTMgr_Valid                       = 0, // For RX: CRC was validated and is valid or CRC is not required
+    eARGTMgr_CRC_TimeSecureCrc_Missing   = 1, // For RX: CRC is missing, but required
+    eARGTMgr_CRC_TimeSecureCrc0_Invalid  = 2, // For RX: CRC0 of time-secured TLV is invalid
+    eARGTMgr_CRC_TimeSecureCrc1_Invalid  = 3, // For RX: CRC1 of time-secured TLV is invalid
+    eARGTMgr_CRC_StatusSecureCrc_Invalid = 4, // For RX: CRC of status-secured TLV is invalid
+    eARGTMgr_CRC_UserDataCrc_Invalid     = 5, // For RX: CRC of user-data TLV is invalid
+    eARGTMgr_CRC_TimeOffsetCrc_Invalid   = 6, // For RX: CRC of time-offset TLV is invalid
+    eARGTMgr_SequenceId_Invalid          = 7, // For RX: Received sequence ID in follow-up does not match sequence ID in Sync
+    eARGTMgr_FollowupTimeout             = 8  // For RX: Timeout, follow-up not received within timeout time
+  };
+
+  //
+  // Structs
+  //
+
+  struct ARGTMgr_TimeDomain
+  {
+    // properties of time domain
+    char   name[256];
+    word   domainId;
+    qword  syncLossTimeoutNs; // Time after last synchronization when the time-domain is marked as out-of-sync
+    qword  syncLossThresholdNs;
+    
+    qword  timeOffsetNs;
+    // time counters
+    qword  syncSimTimeNs;     // Simulation time of last synchonization/update of the time domain.
+    qword  syncTimeNs;        // Time value of last synchonization/update.
+    qword  syncSimTimeOldNs;  // Simulation time of second last synchonization/update of the time domain.
+    qword  syncTimeOldNs;     // Time value of second last synchonization/update.
+    double drift;
+    // status fields
+    byte   statusTimeout;     // 1 - no synchronization for at least syncLossTimeoutNs
+    byte   statusGlobalTime;  // 1 - time was at least synchronized once
+    word   mVerbose;
+  };
+
+  //
+  // Global variables
+  //
+
+  struct ARGTMgr_TimeDomain gARGTMgr_Domains[cARGTMgr_DomainCount];
+  msTimer                       gARGTMgr_TimeoutTimer[cARGTMgr_DomainCount];
+}
+
+on timer gARGTMgr_TimeoutTimer( dword timeDomainIndex )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    gARGTMgr_Domains[timeDomainIndex].statusTimeout = 1;
+    OnARGTMgr_StatusChanged( timeDomainIndex, gARGTMgr_Domains[timeDomainIndex].domainId, eARGTMgr_SyncTimeout );
+  }
+}
+
+/// <Setup>
+void ARGTMgr_OnInit()
+{
+  word timeDomainIndex;
+  
+  for( timeDomainIndex = 0; timeDomainIndex < cARGTMgr_DomainCount; timeDomainIndex++ )
+  {
+    strncpy( gARGTMgr_Domains[timeDomainIndex].name, "", elcount(gARGTMgr_Domains[timeDomainIndex].name) );
+    gARGTMgr_Domains[timeDomainIndex].domainId            = 0xFFFF;
+    
+    if (isTimerActive( gARGTMgr_TimeoutTimer[timeDomainIndex] ))
+    {
+      cancelTimer( gARGTMgr_TimeoutTimer[timeDomainIndex] );
+    }
+  }
+}
+
+/// <Setup>
+void ARGTMgr_OnStart()
+{
+  word timeDomainIndex;
+
+  // call OnARGTMgr_StatusChanged for every initialized time-domain
+  for( timeDomainIndex = 0; timeDomainIndex < cARGTMgr_DomainCount; timeDomainIndex++ )
+  {
+    if (strlen(gARGTMgr_Domains[timeDomainIndex].name) > 0)
+    {
+      OnARGTMgr_StatusChanged( timeDomainIndex, gARGTMgr_Domains[timeDomainIndex].domainId, eARGTMgr_NotSynchronized );
+    }
+  }
+}
+
+/// <Setup>
+void ARGTMgr_InitTimeDomain( word timeDomainIndex, char name[], word domainId, dword syncLossTimeoutMs, dword syncLossThresholdMs, word verbosityLevel )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    strncpy( gARGTMgr_Domains[timeDomainIndex].name, name, elcount(gARGTMgr_Domains[timeDomainIndex].name) );
+    gARGTMgr_Domains[timeDomainIndex].domainId            = domainId;
+    gARGTMgr_Domains[timeDomainIndex].syncLossTimeoutNs   = syncLossTimeoutMs * 1e6;
+    gARGTMgr_Domains[timeDomainIndex].syncLossThresholdNs = syncLossThresholdMs * 1e6;
+    gARGTMgr_Domains[timeDomainIndex].syncTimeNs          = 0;
+    gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs       = 0;
+    gARGTMgr_Domains[timeDomainIndex].syncTimeOldNs       = 0;
+    gARGTMgr_Domains[timeDomainIndex].syncSimTimeOldNs    = 0;
+    gARGTMgr_Domains[timeDomainIndex].drift               = 1.0;
+    gARGTMgr_Domains[timeDomainIndex].statusTimeout       = 0;
+    gARGTMgr_Domains[timeDomainIndex].mVerbose            = verbosityLevel;
+  }
+}
+
+/// <Setup>
+word ARGTMgr_GetDomainId( word timeDomainIndex )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    return gARGTMgr_Domains[timeDomainIndex].domainId;
+  }
+  return 0xFFFF;
+}
+
+/// <Time>
+qword ARGTMgr_GetCurrentTimeNs( word timeDomainIndex )
+{
+  return ARGTMgr_SimTimeToSyncTime( timeDomainIndex, timeNowInt64() );
+}
+
+/// <Time>
+qword ARGTMgr_SyncTimeToSimTime( word timeDomainIndex, qword syncTimeNs )
+{
+  qword simTimeNs;
+  
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    int64 deltaSyncTim;
+    
+    deltaSyncTim = syncTimeNs - gARGTMgr_Domains[timeDomainIndex].syncTimeNs;
+
+    simTimeNs  = gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs;
+    if (gARGTMgr_Domains[timeDomainIndex].drift != 0.0)
+    {
+      simTimeNs += deltaSyncTim / gARGTMgr_Domains[timeDomainIndex].drift;
+    }
+  }
+  else
+  {
+    simTimeNs = 0LL;
+  }
+  
+  return simTimeNs;
+}
+/// <Time>
+qword ARGTMgr_SyncTimeToSimTimeRel( word timeDomainIndex, qword relSyncTimeNs )
+{
+  return ARGTMgr_SyncTimeToSimTime( timeDomainIndex, ARGTMgr_GetCurrentTimeNs( timeDomainIndex ) + relSyncTimeNs );
+}
+
+/// <Time>
+qword ARGTMgr_SimTimeToSyncTime( word timeDomainIndex, qword simTimeNs )
+{
+  qword synTimeNs;
+
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    int64 deltaSimTim;
+
+    deltaSimTim = simTimeNs - gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs;
+
+    synTimeNs  = gARGTMgr_Domains[timeDomainIndex].syncTimeNs;
+    synTimeNs += deltaSimTim * gARGTMgr_Domains[timeDomainIndex].drift;
+
+    if (gARGTMgr_Domains[timeDomainIndex].mVerbose & 4)
+    {
+      writeLineEx(-3, 0, "ARGTMgr \"%NODE_NAME%\": sim time %fs - last sim time %fs at sync point + last master time %fs ==> global time %fs", simTimeNs/1e9, gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs/1e9, gARGTMgr_Domains[timeDomainIndex].syncTimeNs/1e9, synTimeNs/1e9);
+    }
+  }
+  else
+  {
+    synTimeNs = 0LL;
+  }
+  return synTimeNs;
+}
+
+/// <Time>
+qword ARGTMgr_SimTimeToSyncTimeRel( word timeDomainIndex, qword relSimTimeNs )
+{
+  return ARGTMgr_SimTimeToSyncTime( timeDomainIndex, timeNowInt64() + relSimTimeNs );
+}
+
+/// <Time>
+void ARGTMgr_GetSyncTimeStatus( word timeDomainIndex, byte &timeout, byte &globalTimeBase )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    timeout        = gARGTMgr_Domains[timeDomainIndex].statusTimeout;
+    globalTimeBase = gARGTMgr_Domains[timeDomainIndex].statusGlobalTime;
+  }
+  else
+  {
+    timeout        = 0;
+    globalTimeBase = 0;
+  }
+}
+
+/// <Time>
+int ARGTMgr_GetTimeOffsetNs( word timeDomainIndex, qword &timeOffsetNs )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    timeOffsetNs = gARGTMgr_Domains[timeDomainIndex].timeOffsetNs;
+  }
+  else
+  {
+    timeOffsetNs = 0LL;
+  }
+  return (timeOffsetNs > 0) ? 1 : 0;
+}
+
+/// <Time>
+void ARGTMgr_SetTimeOffsetNs( word timeDomainIndex, qword timeOffsetNs )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    gARGTMgr_Domains[timeDomainIndex].timeOffsetNs = timeOffsetNs;
+  }
+}
+
+/// <Provider_Callbacks>
+void ARGTMgr_OnSyncPoint( word timeDomainIndex, byte dir, qword timeNs )
+{
+  if (timeDomainIndex < cARGTMgr_DomainCount)
+  {
+    qword  currentSimTime;
+      
+    currentSimTime = timeNowInt64();
+    
+    if (dir == RX)
+    {
+      qword  deltaSimTime;
+      qword  deltaSyncTime;
+      double drift;
+      
+      if (gARGTMgr_Domains[timeDomainIndex].statusTimeout == 1)
+      {
+        gARGTMgr_Domains[timeDomainIndex].statusTimeout = 0;
+        OnARGTMgr_StatusChanged( timeDomainIndex, gARGTMgr_Domains[timeDomainIndex].domainId, eARGTMgr_Synchronized );
+      }
+
+      // calculate offset and drift of synchronized time to simulation time in [ns]
+      deltaSimTime  = currentSimTime - gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs;
+      deltaSyncTime = timeNs         - gARGTMgr_Domains[timeDomainIndex].syncTimeNs;
+      if (deltaSimTime != 0)
+      {
+        drift         = (double)deltaSyncTime / deltaSimTime;
+
+        // store old synchronized time stamp
+        gARGTMgr_Domains[timeDomainIndex].syncTimeOldNs    = gARGTMgr_Domains[timeDomainIndex].syncTimeNs;
+        gARGTMgr_Domains[timeDomainIndex].syncSimTimeOldNs = gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs;
+        // store synchronized time stamp
+        gARGTMgr_Domains[timeDomainIndex].syncTimeNs       = timeNs;
+        gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs    = currentSimTime;
+        gARGTMgr_Domains[timeDomainIndex].drift            = drift;
+      }
+	  else
+      {
+        // Simulation time does not proceed since last sync point?! Use the second last sync point:
+
+        deltaSimTime  = currentSimTime - gARGTMgr_Domains[timeDomainIndex].syncSimTimeOldNs;
+        deltaSyncTime = timeNs         - gARGTMgr_Domains[timeDomainIndex].syncTimeOldNs;
+        if (deltaSimTime != 0)
+        {
+          drift         = (double)deltaSyncTime / deltaSimTime;
+
+          // store synchronized time stamp
+          gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs  = currentSimTime;
+          gARGTMgr_Domains[timeDomainIndex].drift          = drift;
+        }
+        gARGTMgr_Domains[timeDomainIndex].syncTimeNs       = timeNs;
+      }
+
+      if (gARGTMgr_Domains[timeDomainIndex].statusGlobalTime == 0)
+      {
+        gARGTMgr_Domains[timeDomainIndex].statusGlobalTime = 1;
+        OnARGTMgr_StatusChanged( timeDomainIndex, gARGTMgr_Domains[timeDomainIndex].domainId, eARGTMgr_Synchronized );
+      }
+
+      if (gARGTMgr_Domains[timeDomainIndex].mVerbose & 2)
+      {
+        writeLineEx(-3, 0, "ARGTMgr \"%NODE_NAME%\": SYNC POINT at %fs ==> delta sim time %fs, delta global time %fs (current global time = %fs, drift = %f)", currentSimTime/1e9, deltaSimTime/1e9, deltaSyncTime/1e9, timeNs/1e9, drift);
+      }
+    }
+    else if (dir == TX)
+    {
+      // Follow-up was sent by me as master, so update local sync-time.
+
+      // store old synchronized time stamp
+      gARGTMgr_Domains[timeDomainIndex].syncTimeOldNs    = gARGTMgr_Domains[timeDomainIndex].syncTimeNs;
+      gARGTMgr_Domains[timeDomainIndex].syncSimTimeOldNs = gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs;
+      // store synchronized time stamp
+      gARGTMgr_Domains[timeDomainIndex].syncSimTimeNs = currentSimTime;
+      gARGTMgr_Domains[timeDomainIndex].syncTimeNs    = timeNs;
+    }
+
+    setTimer( gARGTMgr_TimeoutTimer[timeDomainIndex], gARGTMgr_Domains[timeDomainIndex].syncLossTimeoutNs / 1000000LL );
+  }
+  
+  // Inform application:
+  OnARGTMgr_SyncPoint( timeDomainIndex, gARGTMgr_Domains[timeDomainIndex].domainId, dir, timeNs );
+}
+
+// EOF

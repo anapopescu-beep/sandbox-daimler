@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>770</w>
+      <h>990</h>
+    </coordinates>
+    <panel_attributes>title:PMP_runSurveyBatteryVoltage
+Start
+Get the raw value (ADC value) of the KL30 voltage
+Initialize old battery voltage value to the first value
+Check if the battery voltage is inside the range
+If
+	[TRUE]
+	Calculate the difference between actual voltage and the previous one
+	Check if the variation is inside the authorized range
+	If
+		[TRUE]
+		Check if delay time has expired
+		If
+			[TRUE]
+			Battery is stable
+			
+			[FALSE]
+			Increment delay counter
+
+		EndIf
+		
+		[FALSE]
+		Battery is unstable
+		Reset counter
+		
+	EndIf
+
+	[FALSE]
+	Battery is unstable
+	Reset counter
+
+Update the old battery voltage value
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

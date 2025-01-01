@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0027; ARCH_SW_DIA_0102; ARCH_SW_DIA_0103; ARCH_SW_DIA_0104; ARCH_SW_DIA_0368; ARCH_SW_DIA_0045
+ARCH_SW_DIA_0027: Service 0x22 will be implemented for DID 0310
+ARCH_SW_DIA_0102: Service shall be available in Default, Extended and Development session
+ARCH_SW_DIA_0103: Response data shall be 1 byte long
+ARCH_SW_DIA_0104: Data returned shall represent Equipment 1 stored in Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment.Equipment1
+ARCH_SW_DIA_0368: Byte 0 shall represent Equipment 1, byte encoded as follows: Byte0_bit0  Configuration of Left right hand drive (steering style of the vehicle) 0x00  right hand drive 0x01  left hand drive  Byte0_bit1  Activation / Deactivation of BSR 0x00  yes  enabled   0x01  no  disabled  Byte0_bit2 Belt Handover ngagedngy 0x00 yes Belt hand over available 0x01 no Belt hand over not available Byte0_bit3 Reserved Byte0_bit4 Activation / Deactivation Haptic Warning left 0x00 yes enabled 0x01 no disabled Byte0_bit5 Activation / Deactivation Haptic Warning right 0x00 yes enabled 0x01 no disabled Byte0_bit6 - Activation / Deactivation of Service Provider (API) 0x00 yes enabled 0x01 no disabled Byte0_bit7 Reserved 
+ARCH_SW_DIA_0045: There shall be 2 reserved bytes located between Equipment 6 and Uberspannungsabbruchschwelle for response of DID 0310
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Vehicle_Equipment_Read_Equipment_1_ReadData*.
+
+Action: ARCH_SW_DIA_0027; ARCH_SW_DIA_0102; ARCH_SW_DIA_0103; ARCH_SW_DIA_0104; ARCH_SW_DIA_0368; ARCH_SW_DIA_0045
+
+	Step 4: Use the Read service 0x22 for DID 0310 and wait for timeout. 
+		Expected result:  Timeout is occured because breakpoint was reached.
+
+	Step 5: Read Equipment 1 byte of Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment 
+		Expected result:  Byte was read.
+
+	Step 6: Use the Read service 0x22 for DID 0310. 
+		Expected result:  Response is received.
+
+Postcondition
+
+	Step 7: Return ECU to default values

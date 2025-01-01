@@ -1,0 +1,328 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  const _iCriticalAutotestExecutionTime= 480; // (ms)
+  
+  
+  // Defines different thresholds for the project.
+  const float _fBAT_NOMINAL_VALUE = 12.5; // battery nominal value.
+  const float NVP_u16KL30MinimumThr = 7;
+  const float NVP_u16KL30MaximumThr = 18.5;
+  const byte _bQualified = 0x17; // to be deleted
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+  
+  // AECs with no DTC identifier:
+  
+  const NVP_u16MOSFETinSCMaxDropVoltage  = 1000;                                  // (mV)
+  // Thresholds for MOSFET_LOW_SC autotest. ************************************************************************************
+  const _iERR_MOSFET_LOW_SC_Periodicity  = 100;                                    // (ms)
+  const _iQualif_MOSFET_LOW_SC           = 5000;                                   // (ms)
+  const _iDeskill_MOSFET_LOW_SC          = 10000;                                  // (ms)
+	const _iERR_MOSFET_LOW_SC_Delay        = 5000;                                   // (ms) delay execution after motor activation.
+  const int _iMOSFET_SC_LOW_uC_THRESHOLD = NVP_u16MOSFETinSCMaxDropVoltage / 9.33; // (mV) Scaled for FIB.
+  
+  // Thresholds for MOSFET_HIGH_SC autotest. **********************************************************************************************************************
+  const _iERR_MOSFET_HIGH_SC_Periodicity  = 100;                                                                     // (ms)
+  const _iQualif_MOSFET_HIGH_SC           = 5000;                                                                    // (ms)
+  const _iDeskill_MOSFET_HIGH_SC          = 10000;                                                                   // (ms)
+	const _iERR_MOSFET_HIGH_SC_Delay        = 5000;                                                                    // (ms) delay execution after motor activation.
+  const int _iMOSFET_SC_HIGH_uC_THRESHOLD = (_fBAT_NOMINAL_VALUE * 1000.0 - NVP_u16MOSFETinSCMaxDropVoltage) / 9.33; // (mV) Scaled for FIB.
+  
+  // Thresholds for MOSFET_OC autotest. ***************************************************************************************************************
+  const _iERR_MOSFET_OC_Periodicity       = 20;                                                                    // (ms)
+  const _iQualif_MOSFET_OC                = 60;                                                                    // (ms)
+  const _iDeskill_MOSFET_OC               = 20;                                                                    // (ms)
+  const NVP_u8MOSFETinOCMaxTries          = 10;                                                                    // (ms)
+  const NVP_u16MOSFETinOCMinDropVoltage   = 3000;                                                                  // (mV) MOSFET open circuit threshold.
+  const int _iMOSFET_OC_HIGH_uC_THRESHOLD = (_fBAT_NOMINAL_VALUE * 1000 - NVP_u16MOSFETinOCMinDropVoltage) / 9.33; // (mV) Scaled for FIB.
+  const int _iMOSFET_OC_LOW_uC_THRESHOLD  = NVP_u16MOSFETinOCMinDropVoltage / 9.33;                                // (mV) Scaled for FIB.
+  const int _iDelayAfterMotorActivation   = 5000;                                                                  // (ms)
+  
+  // Thresholds for HALL_SENSOR autotest. **********************************************************************
+  const _iQualif_HALL_SENSOR          = 100;                           // (ms)
+	const _iDeskill_HALL_SENSOR         = 100;                           // (ms)
+	const _iERR_HALL_SENSOR_Periodicity = 100;                           // (ms)
+	// const _iERR_HALL_SENSOR_Delay    = 0;                             // (ms)
+	const NVP_u16HESTestLowThrs         = 603;                           // (mv)
+	const NVP_u16HESTestHighThrs        = 960;                           // (mv)
+	const int _iHES_HIGH_THRESHOLD      = 4.88 * NVP_u16HESTestHighThrs;  // (mV) HES input voltage high threshold.
+	const int _iHES_LOW_THRESHOLD       = 4.88 * NVP_u16HESTestLowThrs; // (mV) HES input voltage low threshold.
+  
+  // Thresholds for ENABLE_OUT_OF_ORDER autotest. ***************************************************
+	const _iQualif_ENABLE_OUT_OF_ORDER          = 200;  // (ms)
+	const _iDeskill_ENABLE_OUT_OF_ORDER         = 6000; // (ms)
+	const _iERR_ENABLE_OUT_OF_ORDER_Periodicity = 100;  // (ms)
+	//const _iERR_ENABLE_OUT_OF_ORDER_Delay     = 0;    // (ms) delay execution after motor activation.
+  
+  // Thresholds for ERR_HIGH_SIDE_SWITCH autotest. *****************************************************************************************
+	const _iDeskill_HIGH_SIDE_SWITCH          = 0;                                                        // (ms) only at start-up.
+	const NVP_u16HSSWRegTestDeadTime          = 5000;                                                     // (ms)
+	const NVP_u8HSSWRegMaxTries               = 3;                                                        // (ms)
+	const int _iQualif_HIGH_SIDE_SWITCH       = NVP_u16HSSWRegTestDeadTime * (NVP_u8HSSWRegMaxTries - 1); // (ms)
+	// const _iERR_HIGH_SIDE_SWITCH_Delay     = 0;                                                        // (ms) delay execution after motor activation.
+	const int NVP_u16HSSWRegTestHighThreshold = 12000 * 12 / 112.0;                                       // (mV)
+	const int NVP_u16HSSWRegTestLowThreshold  = 5000 * 12 / 112.0;                                        // (mV)
+	const int NVP_u16HSSWRegTestInitThreshold = 456 * 12 / 112.0;                                         // (mV)
+  
+  // Thresholds for ERR_WARM_RESET autotest. ****************************************
+  const _iQualif_WARM_RESET    = 0; // (ms)
+	const _iDeskill_WARM_RESET   = 0; // (ms)
+	const _iERR_WARM_RESET_Delay = 0; // (ms) delay execution after motor activation.
+  
+  // Thresholds for ERR_LOW_FORCE_END_OF_LIFE autotest.
+  const _iQualif_LOW_FORCE_END_OF_LIFE  = 0; // (ms)
+	const _iDeskill_LOW_FORCE_END_OF_LIFE = 0; // (ms)
+	const NVP_u32LowForceEOLThrs          = 10000;
+  
+  // Thresholds for ERR_HIGH_FORCE_END_OF_LIFE autotest.
+  const _iQualif_HIGH_FORCE_END_OF_LIFE  = 0; // (ms)
+	const _iDeskill_HIGH_FORCE_END_OF_LIFE = 0; // (ms)
+	const NVP_u32HighForceEOLThrs          = 1500;
+  
+  // Thresholds for ERR_MAX_FORCE_END_OF_LIFE autotest.
+  const _iQualif_MAX_FORCE_END_OF_LIFE  = 0; // (ms)
+	const _iDeskill_MAX_FORCE_END_OF_LIFE = 0; // (ms)
+  const NVP_u32MaxForceEOLThrs          = 50;
+  
+  // Thresholds for ERR_COMFORT_END_OF_LIFE autotest.
+  const _iQualif_COMFORT_END_OF_LIFE  = 0; // (ms)
+	const _iDeskill_COMFORT_END_OF_LIFE = 0; // (ms)
+	const long NVP_u32ComfortCyclesEOLThrs   = 60000;
+  
+  // Thresholds for ERR_MOTOR_BLOCKED autotest.
+  const _iQualif_MOTOR_BLOCKED      = 50; // (ms)
+	const _iDeskill_MOTOR_BLOCKED     = 10; // (ms)
+  const _iMOTOR_BLOCKED_Periodicity = 10; // (ms)
+  const NVP_u8NbOccurenceToValidateMotorBlocked = 5;
+  const NVP_u8NbOccurenceToDeskillMotorBlocked  = 1;
+  const NVP_s16MotorDisengagementMinPowerOrder  = -12; // (PWM) to check value
+	const NVP_s16MotorDisengagementMaxPowerOrder  = -75; // (PWM) to check value
+  const _iRw = 40; // (mOhm) HW resistance (u16ECUResistance)
+  
+  // Thresholds for ERR_TEMPERATURE_SENSOR_FAILURE autotest.
+  const _iQualif_TEMPERATURE_SENSOR_FAILURE  = 1000; // (ms)
+	const _iDeskill_TEMPERATURE_SENSOR_FAILURE = 1000; // (ms)
+  const NVP_u16TemperatureSensorLowThrs      = 0;
+  const NVP_u16TemperatureSensorHighThrs     = 1024;
+  
+  // Thresholds for ERR_MOTOR_IN_SC autotest.
+  const _iQualif_MOTOR_IN_SC               = 60;   // (ms)
+	const _iDeskill_MOTOR_IN_SC              = 0;    // (ms)
+  const NVP_u8NbOccurenceToValidateMotorSC = 6;
+  const _iERR_MOTOR_IN_SC_Periodicity      = 10;   // (ms)
+  const NVP_u16MotorSCCurrentThrsMin       = 1000; // (mA)
+
+  // Thresholds for ERR_MOTOR_DISCONNECTED autotest.
+  const _iQualif_MOTOR_DISCONNECTED            = 5000; // (ms)
+  const _iDeskill_MOTOR_DISCONNECTED           = 100;  // (ms)
+  const _iMOTOR_DISCONNECTED_Periodicity       = 100;  // (ms)
+  const _iMOTOR_DISCONNECTED_Delay             = 5000; // (ms) delay execution after motor activation
+  const NVP_u16MotorDisconnectedVoltageThrs    = 1200; // (mV) motor disconnected threshold 
+  const int _iMOTOR_DISCONNECTED_uC_THRESHOLD  = NVP_u16MotorDisconnectedVoltageThrs / 9.33; // (mV) Motor disconnected threshold read by ADC.
+  
+  // Thresholds for ERR_PWM_ORDER autotest.
+  const long NVP_u16CheckMotorOrderHighMaxDuration   = 2000;   // (ms)
+  const long NVP_u32CheckMotorOrderMediumMaxDuration = 120000; // (ms)
+  const long NVP_u8CheckMotorOrderMediumThrs         = 20;     // (PWM)
+  const long NVP_u8CheckMotorOrderHighThrs           = 80;     // (PWM)
+  const long NVP_u16CheckMotorOrderHighResetTime     = 100;    // (ms)
+  const long NVP_u16CheckMotorOrderMediumResetTime   = 100;    // (ms)
+  const long NVP_u16CheckMotorOrderResetTime         = 60000;  // (ms)
+  
+  const long _iQualif_HIGH_PWM_ORDER   = NVP_u16CheckMotorOrderHighMaxDuration;   // (ms)
+	const long _iQualif_MEDIUM_PWM_ORDER = NVP_u32CheckMotorOrderMediumMaxDuration; // (ms)
+  const long _iDeskill_PWM_ORDER       = NVP_u16CheckMotorOrderResetTime;         // (ms)
+  
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+  // Motor_Current, HW_Self_Protection, SW_Self_Protection
+  
+  // Thresholds for MOTOR_CURRENT autotest. ******************
+//const _iERR_MOTOR_CURRENT_Periodicity      = 10;
+  const long NVP_u8MotorCurrentHighThrs           = 25000;  // (mA)
+  const int  NVP_u32MotorCurrentHighMaxDuration   = 1200;   // (ms)
+  const int  NVP_u16MotorCurrentHighResetTime     = 300;    // (ms)
+ 	const long NVP_u8MotorCurrentMediumThrs         = 10000;  // (mA)
+  const long NVP_u32MotorCurrentMediumMaxDuration = 120000; // (ms)
+  const int  NVP_u16MotorCurrentMediumResetTime   = 1000;   // (ms) 
+  const long NVP_u16MotorCurrentResetTime         = 60000;  // (ms)
+  
+  //// Thresholds for HW_SELF_PROTECTION autotest. *************************************************
+	const int _iQualif_HW_SELF_PROTECTION          = 1000;  // (ms)
+  const int NVP_u16HWSelfProtecMaturateTime      = 1000;  // (ms)
+  const int NVP_u16HWSelfProtecDematurateTime    = 60000; // (ms)
+	const long _iDeskill_HW_SELF_PROTECTION        = 60000; // (ms)
+ 	const int  NVP_u16HWSelfProtecCurrentThrs      = 4000;  // (mA)
+  const int _iERR_HW_SELF_PROTECTION_Periodicity = 10;    // (ms)
+  
+// const _iERR_HW_SELF_PROTECTION_Delay      = 0;     // (ms) delay execution after motor activation.
+  
+  //// Thresholds for SW_SELF_PROTECTION autotest. ***********
+  const long NVP_u32SWThermalProtectionValidationThrs = 160000;
+  const long NVP_u32SWThermalProtectionDeskillingThrs = 32000;
+  const long NVP_u8SWThermalProtecDecStep             = 40;
+  const long iDeskill_SW_SELF_PROTECTION              = 100 * (NVP_u32SWThermalProtectionValidationThrs - NVP_u32SWThermalProtectionDeskillingThrs) / NVP_u8SWThermalProtecDecStep; // (ms)
+  
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////	
+  // Battery Power
+  
+	// Thresholds for Overvoltage Power autotest. *********************************************************************************
+  const _iERR_BAT_PWR_OVER_VOLTAGE_Periodicity  = 10;                                                      // (ms)
+//const _iERR_BAT_PWR_OVER_VOLTAGE_Delay        = 0;                                                       // (ms)
+  const _iQualif_BAT_PWR_OVER_VOLTAGE           = 15000;                                                   // (ms)
+  const _iDeskill_BAT_PWR_OVER_VOLTAGE          = 15000;                                                   // (ms)
+	const NVP_u16OverKL30QualificationThrs        = 16;                                                      // (V)
+	const NVP_u16OverKL30DeskillingThrs           = 15.5;                                                    // (V)
+  const int NVP_u16OverKL30QualificationThrs_uC = ((NVP_u16OverKL30QualificationThrs * 5) / 33.0 ) * 1000; // (mV) Scaled for FIB.
+  
+	// Thresholds for Undervoltage Power autotest. *********************************************************************************
+	const _iQualif_BAT_PWR_UNDER_VOLTAGE           = 15000;                                                    // (ms)
+	const _iDeskill_BAT_PWR_UNDER_VOLTAGE          = 15000;                                                    // (ms)
+  const _iERR_BAT_PWR_UNDER_VOLTAGE_Periodicity  = 10;                                                       // (ms)
+//const _iERR_BAT_PWR_UNDER_VOLTAGE_Delay        = 5000;                                                     // (ms)
+	const NVP_u16UnderKL30QualificationThrs        = 9;                                                        // (V)
+  const NVP_u16UnderKL30DeskillingThrs           = 9.5;                                                      // (V)
+  const int NVP_u16UnderKL30QualificationThrs_uC = ((NVP_u16UnderKL30QualificationThrs * 5) / 33.0 ) * 1000; // (mV) Scaled for FIB.
+  
+  // Thresholds for Undervoltage during tensioning autotest. ******************
+	const _iQualif_BAT_PWR_UNDER_VOLTAGE_TENSIONING          = 30;  // (ms)
+	const _iDeskill_BAT_PWR_UNDER_VOLTAGE_TENSIONING         = 30;  // (ms)
+//const _iERR_BAT_PWR_UNDER_VOLTAGE_TENSIONING_Periodicity = 10;  // (ms)
+//const _iERR_BAT_PWR_UNDER_VOLTAGE_TENSIONING_Delay       = 0;   // (ms)
+	const NVP_u16UnderKL30DuringTensQualificationThrs        = 7.5; // (V) (TBD)
+	const NVP_u16UnderKL30DuringTensDeskillingThrs           = 9;   // (V) (TBD)
+  
+  // Thresholds for Overvoltage during tensioning autotest. ******************
+	const _iQualif_BAT_PWR_OVER_VOLTAGE_TENSIONING          = 30;  // (ms)
+	const _iDeskill_BAT_PWR_OVER_VOLTAGE_TENSIONING         = 30;  // (ms)
+//const _iERR_BAT_PWR_OVER_VOLTAGE_TENSIONING_Periodicity = 10;   // (ms)
+//const _iERR_BAT_PWR_OVER_VOLTAGE_TENSIONING_Delay       = 0;    // (ms)
+	const NVP_u16OverKL30DuringTensQualificationThrs        = 18;   // (V) (TBD)
+	const NVP_u16OverKL30DuringTensDeskillingThrs           = 16;   // (V) (TBD)
+
+
+  // Thresholds for Battery Logic Overvoltage Logic autotest. ***************************************************************************
+	const _iQualif_BAT_LOG_OVER_VOLTAGE              = 400;                                                    // (ms) Qualification time.
+	const _iDeskill_BAT_LOG_OVER_VOLTAGE             = 900;                                                    // (ms) Deskill time.
+//const _iERR_BAT_LOG_OVER_VOLTAGE_Periodicity     = 10;                                                     // (ms)
+//const _iERR_BAT_LOG_OVER_VOLTAGE_Delay           = 0;                                                      // (ms)
+	const NVP_u16OverKL30bgQualificationThrs         = 16;                                                     // (V) Qualification threshold.
+	const NVP_u16OverKL30bgDeskillingThrs            = 15.5;                                                   // (V) Deskill threshold.
+	const int _fBAT_LOG_OVER_THRESHOLD_HIGH_uC       = (NVP_u16OverKL30bgQualificationThrs * 5 / 33.0) * 1000; // (mV) Scaled for FIB.
+	const int _fBAT_LOG_OVER_Deskilling_Threshold_uC = (NVP_u16OverKL30bgDeskillingThrs *5 / 33.0) * 1000;     // (mV) Scaled for FIB.
+  
+  // Thresholds for Battery Logic Undervoltage Logic autotest. *******************************************************************************************
+	const _iQualif_BAT_LOG_UNDER_VOLTAGE              = 400;                                                     // (ms) Qualification time.
+	const _iDeskill_BAT_LOG_UNDER_VOLTAGE             = 900;                                                     // (ms) Deskill time.
+//const _iERR_BAT_LOG_UNDER_VOLTAGE_Periodicity     = 10;                                                      // (ms)
+//const _iERR_BAT_LOG_UNDER_VOLTAGE_Delay           = 5000;                                                    // (ms) Delay execution after motor activation.
+	const  NVP_u16UnderKL30bgQualificationThrs        = 9;                                                       // (V) Qualification threshold.
+	const  NVP_u16UnderKL30bgDeskillingThrs           = 9.5;                                                     // (V) Deskill threshold.
+	const int _fBAT_LOG_UNDER_THRESHOLD_LOW_uC        = (NVP_u16UnderKL30bgQualificationThrs * 5 / 33.0) * 1000; // (mV) Scaled for FIB.
+ 	const int _fBAT_LOG_UNDER_Deskilling_Threshold_uC = (NVP_u16UnderKL30bgDeskillingThrs * 5 / 33.0) * 1000;    // (mV) Scaled for FIB.
+  
+  // Thresholds for Battery Under/Over-voltage System autotests. *******************************************************************************************
+  const _iBAT_PWR_UNDER_VOLTAGE_SYSTEM_Qualification_Thrs = 9;      // (V) Qualification threshold.
+  const _iBAT_PWR_UNDER_VOLTAGE_SYSTEM_Deskill_Thrs       = 9.5;    // (V) Deskill threshold.
+	const _iQualif_BAT_PWR_UNDER_VOLTAGE_SYSTEM             = 15000;  // (ms) Qualification time.
+	const _iDeskill_BAT_PWR_UNDER_VOLTAGE_SYSTEM            = 15000;  // (ms) Deskill time.
+  const _iBAT_PWR_UNDER_VOLTAGE_SYSTEM_Periodicity        = 100;    // (ms) Autotest periodicity - ARCH_SW_ATM_0235
+
+  const _iBAT_PWR_OVER_VOLTAGE_SYSTEM_Qualification_Thrs = 16;    // (V) Qualification threshold.
+  const _iBAT_PWR_OVER_VOLTAGE_SYSTEM_Deskill_Thrs       = 15.5;  // (V) Deskill threshold.
+	const _iQualif_BAT_PWR_OVER_VOLTAGE_SYSTEM             = 15000; // (ms) Qualification time.
+	const _iDeskill_BAT_PWR_OVER_VOLTAGE_SYSTEM            = 15000; // (ms) Deskill time.
+  const _iBAT_PWR_OVER_VOLTAGE_SYSTEM_Periodicity        = 100;   // (ms) Autotest periodicity. - ARCH_SW_ATM_0236
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
+// COM ERRORS
+  
+  const PresfAct_Adj_ST3_ID              = 0x695;
+  const Bckl_Sw_Fx_Stat_ST3_ID           = 0x6A3;
+  const PN14_Master_Stat1_ST3_ID         = 0x464;
+  const Impact3_ST3_ID                   = 0x465; // ORC
+  const Ign_Stat_ST3_ID                  = 0x07F;
+  const PT4_PTCoor4_ST3_ID               = 0x35F; // POWERTRAIN 1: TIMEOUT & IMPLAUSIBLE
+  const PT4_PTCoor_DrvPosn_Gear_ST3_ID   = 0x582; // POWERTRAIN 2: IMPLAUSIBLE
+  const BeltHdOvr_FL_State_ST3_ID        = 0x5FC;
+  const BeltHdOvr_FR_State_ST3_ID        = 0x5FD;
+  const SBeltTens_SP_Lvl_ST3_ID          = 0x30E; // API
+  
+  const Bckl_Sw_Fx_Stat_ST3_Periodicity         = 200; // (ms)
+  const PresfAct_Adj_ST3_Periodicity            = 200;
+  const Ign_Stat_ST3_Periodicity                = 100;
+  const Impact3_ST3_Periodicity                 = 500;
+  const PN14_Master_Stat1_ST3_Peridicity        = 200;
+  const PT4_PTCoor4_ST3_Periodicity             = 100; // POWERTRAIN 1
+  const PT4_PTCoor_DrvPosn_Gear_ST3_Periodicity = 100; // POWERTRAIN 2
+  const BeltHdOvr_FL_State_ST3_Periodicity      = 500;
+  const BeltHdOvr_FR_State_ST3_Periodicity      = 500;
+  const SBeltTens_SP_Lvl_ST3_Periodicity        = 200; // API
+  
+  // STEERING CONFIGURATION
+  const _iQualif_STEERING_CONFIGURATION  = 20; // autotest periodicity = 10ms
+  const _iDeskill_STEERING_CONFIGURATION = 20;
+  
+  // TIMEOUT thresholds in ms. ************************************************************************************
+  // BUCKLE
+  const _iQualif_TIMEOUT_BUCKLE = 1000;
+  const _iDeskill_TIMEOUT_BUCKLE = 2 * Bckl_Sw_Fx_Stat_ST3_Periodicity; // 3x frame transmission
+  
+  // PRE-SAFE.
+  const _iQualif_TIMEOUT_PRESAFE = 2000;
+  const _iDeskill_TIMEOUT_PRESAFE = 2 * PresfAct_Adj_ST3_Periodicity; // 3x frame transmission
+  
+  // IGNITION.
+  const _iQualif_TIMEOUT_IGNITION = 1000; // (ms)
+  const _iDeskill_TIMEOUT_IGNITION = 2 * Ign_Stat_ST3_Periodicity; // 3x frame transmission
+  
+  // POWER TRAIN
+  const _iQualif_TIMEOUT_POWERTRAIN = 1000;
+  const _iDeskill_TIMEOUT_POWERTRAIN = 2 * PT4_PTCoor4_ST3_Periodicity; // 3x frame transmission
+  
+  // BELT HANDOVER LEFT
+  const _iQualif_TIMEOUT_BELT_HANDOVER_LEFT = 2500;
+  const _iDeskill_TIMEOUT_BELT_HANDOVER_LEFT = 2 * BeltHdOvr_FL_State_ST3_Periodicity; // 3x frame transmission
+  
+  // BELT HANDOVER RIGHT
+  const _iQualif_TIMEOUT_BELT_HANDOVER_RIGHT = 2500;
+  const _iDeskill_TIMEOUT_BELT_HANDOVER_RIGHT = 2 * BeltHdOvr_FR_State_ST3_Periodicity; // 3x frame transmission
+  
+  // API
+  const _iQualif_TIMEOUT_API_INTERFACE = 2000;
+  const _iDeskill_TIMEOUT_API_INTERFACE = 2 * SBeltTens_SP_Lvl_ST3_Periodicity; // 3x frame transmission
+   
+  // BUS OFF status
+  const _iQualif_BUS_OFF = 3000;
+  const _iDeskill_BUS_OFF = 0; // after reset or BUSOff flag is no longer set.
+  
+  // IMPLAUSIBLE DATA threshholds in ms (MC (SQC), CRC, FLT & SNA). ***********************************************
+  // BUCKLE
+  const dword _iQualif_BUCKLE_IMPLAUSIBLE          = 10 * Bckl_Sw_Fx_Stat_ST3_Periodicity; // 2000
+  const dword _iDeskill_BUCKLE_IMPLAUSIBLE         = 3 * Bckl_Sw_Fx_Stat_ST3_Periodicity; // 600
+  const dword _iATM_BUCKLE_IMPLAUSIBLE_Periodicity = 100; // ATM SW unit
+  
+  // PRESAFE
+  const dword _iQualif_PRESAFE_IMPLAUSIBLE          = 10 * PresfAct_Adj_ST3_Periodicity; // 2000
+  const dword _iDeskill_PRESAFE_IMPLAUSIBLE         = 3 * PresfAct_Adj_ST3_Periodicity; // 600
+  const dword _iATM_PRESAFE_IMPLAUSIBLE_Periodicity = 100; // ATM SW unit
+  
+  // IGNITION
+  const dword _iQualif_IGNITION_IMPLAUSIBLE          = 10 * Ign_Stat_ST3_Periodicity; // 1000
+  const dword _iDeskill_IGNITION_IMPLAUSIBLE         = 3 * Ign_Stat_ST3_Periodicity; // 300
+  const dword _iATM_IGNITION_IMPLAUSIBLE_Periodicity = 10; // ATM SW unit
+  
+  // POWER TRAIN
+  const dword _iQualif_POWERTRAIN_IMPLAUSIBLE          = 10 * PT4_PTCoor4_ST3_Periodicity; // 1000
+  const dword _iDeskill_POWERTRAIN_IMPLAUSIBLE         = 3 * PT4_PTCoor4_ST3_Periodicity; // 300
+  const dword _iATM_POWERTRAIN_IMPLAUSIBLE_Periodicity = 10; // ATM SW unit
+  
+  // ORC
+  const dword _iQualif_ORC_IMPLAUSIBLE          = 10 * Impact3_ST3_Periodicity; // 500
+  const dword _iDeskill_ORC_IMPLAUSIBLE         = 3 * Impact3_ST3_Periodicity; // 150
+  const dword _iATM_ORC_IMPLAUSIBLE_Periodicity = 100; // ATM SW unit
+}
+

@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0615; ARCH_SW_DIA_0616; ARCH_SW_DIA_0617; ARCH_SW_DIA_0618; ARCH_SW_DIA_0619
+ARCH_SW_DIA_0615: Service 0x22 (Read Data By Identifier) will be implemented for DID 010B (Adjust ISO 15765-2 Block Size and STmin Parameter)
+ARCH_SW_DIA_0616: Description: Service Read Adjust ISO 15765-2 Block Size and STmin Parameter shall report the ISO 15762-2 Transport Protocol parameters such as BlockSize (BS) and minimum Separation Time which are transmitted within the FlowControl message.
+ARCH_SW_DIA_0617: The Read Adjust ISO 15765-2 Block Size and STmin Parameter service shall be available in the following sessions: ?Default Session (0x01) ?Programming (0x02) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0618: The Read Adjust ISO 15765-2 Block Size and STmin Parameter service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0619: DataIdentifier of the Read Adjust ISO 15765-2 Block Size and STmin Parameter shall be: 0x010B.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Adjust_ISO_15765_2_Block_Size_and_STmin_Parameter_Read_Block_Size_Value_ReadData*.
+
+Action: ARCH_SW_DIA_0615; ARCH_SW_DIA_0616; ARCH_SW_DIA_0617; ARCH_SW_DIA_0618; ARCH_SW_DIA_0619
+
+	Step 3: Send diag request for 22 010B and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Adjust_ISO_15765_2_Block_Size_and_STmin_Parameter_Read_Block_Size_Value_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

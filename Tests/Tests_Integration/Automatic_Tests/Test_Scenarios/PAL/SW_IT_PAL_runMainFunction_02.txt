@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0456
+ARCH_SW_PAL_0456: The PAL_runMainFunction function shall allow the application to switch to the OFF_MODE if a Shut Down is requested or if a critical autotest has failed during startup.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMosfetHighSC() in order to call Mosfet High SC autotest.
+
+	Step 3: Check if CPU stopped in function PAL_cbk_CheckMosfetHighSC().
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC() in order to create fault.
+
+	Step 5: Check if CPU stopped in function PAL_cbk_CheckMosfetHighSC().
+
+	Step 6: Write variable pu8TestResult with KU8_ATM_TEST_NOK (0x2).
+
+	Step 7: Set a breakpoint in function PAL_runMainFunction() at line 'switch (PAL_u8ModeState)'.
+
+Action: ARCH_SW_PAL_0456
+
+	Step 8: Check if CPU has stopped at line 'switch (PAL_u8ModeState)'. 
+		Expected result:  CPU stopped at BP
+
+	Step 9: Check if variable PAL_u8ModeState is equal to PAL_KU8_OFF_MODE_STATE'. 
+		Expected result:  PAL_KU8_OFF_MODE_STATE
+
+Postcondition
+
+	Step 10: Return ECU to default values

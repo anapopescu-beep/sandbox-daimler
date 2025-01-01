@@ -1,0 +1,75 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_1000, ARCH_SW_PMP_1001, ARCH_SW_PMP_1005, ARCH_SW_PMP_1007, ARCH_SW_PMP_1008
+ARCH_SW_PMP_1000: PMP shall check if an overvoltage is detected on the power stage of the battery voltage.
+ARCH_SW_PMP_1001: NVP parameters shall be used by this auto-tests.
+ARCH_SW_PMP_1005: PMP_runGetBatteryVoltage_100ms shall be called to get the measured value on the power supply.
+ARCH_SW_PMP_1007: ATM_runGetTestResult shall be called to get the status oft specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PMP_1008: ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PMP_cbk_CheckPowerSupplyOV at the RTE Call for PMP_Autotest_CheckPowerSupplyOV autotest 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the RTE call for GetTestResult 
+		Expected result:  BP reached
+
+	Step 4: Write autotest result with 0x1 
+		Expected result:  Variable overwritten with value 0x1
+
+	Step 5: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the RTE Call for PMP_runGetBatteryVoltage_100ms 
+		Expected result:  BP reached.
+
+	Step 6: Step in.
+
+	Step 7: Run until return PMP_runGetBatteryVoltage_100ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 8: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the RTE Call for ERH_runGetAecStatus 
+		Expected result:  BP reached.
+
+	Step 9: Step in.
+
+	Step 10: Run until return ERH_runGetAecStatus
+
+	Step 11: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 12: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PMP_1007
+
+	Step 13: Evaluate u8PreviousADCTestResult 
+		Expected result:  Variable is equal to 0x1.
+
+Action: ARCH_SW_PMP_1008
+
+	Step 14: Evaluate pmp_u8AECStatus 
+		Expected result:  Variable is read
+
+Action: ARCH_SW_PMP_1005
+
+	Step 15: Evaluate pmp_u16FilteredVbatPowerVoltage 
+		Expected result:  Variable is equal to *pu16Voltage data pointer.
+
+	Step 16: Set a breakpoint in function PMP_cbk_CheckPowerSupplyOV after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 17: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x01.
+
+Postcondition
+
+	Step 18: Return ECU to default values

@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0400
+ARCH_SW_MMG_0400: RCM_runGetResetCause  shall be called to get the reset cause.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runManageModeDelays() at line 'mmg_ManageModeDelays_ExecutedCycle()'.
+
+	Step 3: Check if CPU stopped in function MMG_runManageModeDelays() at line 'mmg_ManageModeDelays_ExecutedCycle()'.
+
+	Step 4: Step infunction mmg_ManageModeDelays_ExecutedCycle().
+
+	Step 5: Set a breakpoint at line 'Rte_Call_pclResetCause_GetResetCause(&mmg_u32ResetCause)' and press run.
+
+Action: ARCH_SW_MMG_0400
+
+	Step 6: Step in function Rte_Call_pclResetCause_GetResetCause(&mmg_u32ResetCause). 
+		Expected result:  RCM_runGetResetCause,,app.elf
+
+	Step 7: Set a breakpoint in function RCM_runGetResetCause() at line '*pu32ResetCause = rcm_u32ResetCause;' and press run.
+
+	Step 8: Check if CPU stopped in function RCM_runGetResetCause() at line '*pu32ResetCause = rcm_u32ResetCause;'.
+
+Action: ARCH_SW_MMG_0400
+
+	Step 9: Evaluate if variable *pu32ResetCause is equal to KU32_ZERO. 
+		Expected result:  KU32_ZERO
+
+Postcondition
+
+	Step 10: Return ECU to default values

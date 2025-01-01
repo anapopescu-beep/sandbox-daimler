@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0036; ARCH_SW_DIA_0168; ARCH_SW_DIA_0169; ARCH_SW_DIA_0170, ARCH_SW_NVP_0012; ARCH_SW_DIA_0038
+ARCH_SW_DIA_0036: Service 0x22 will be implemented for DID FEFF.
+ARCH_SW_DIA_0168: Service shall be available in Development session.
+ARCH_SW_DIA_0169: Response data shall be 4 bytes long.
+ARCH_SW_DIA_0170: Response shall return Timing and Block Config stored in NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG.
+ARCH_SW_NVP_0012: NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG shall be used to configure measurement frames blocks. 
+ARCH_SW_DIA_0038: Service 0x2E will be implemented for DID FEFF. 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFEFF_MeasuruementFrameConfigurationRead*.
+
+	Step 3: Start Development Session.
+
+Action: ARCH_SW_DIA_0036; ARCH_SW_DIA_0168; ARCH_SW_DIA_0169; ARCH_SW_DIA_0170, ARCH_SW_NVP_0012; ARCH_SW_DIA_0038;
+
+	Step 4: Send diag request for 22 FEFF and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Check if breakpoint from function DIA_runDidFEFF_MeasuruementFrameConfigurationRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Read first byte (NVP_u8MeasFrameTiming) of NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 7: Read 4th byte of (NVP_au8MeasFrameBlockConfig) of NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 8: Use the Read service 0x22 for DID FEFF. 
+		Expected result:  Response is received.
+
+Postcondition
+
+	Step 9: Return ECU to default values

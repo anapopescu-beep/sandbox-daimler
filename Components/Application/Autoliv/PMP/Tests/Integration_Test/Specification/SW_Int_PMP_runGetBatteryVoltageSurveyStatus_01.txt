@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0205, ARCH_SW_PMP_0206
+ARCH_SW_PMP_0205: This function shall provide the actual battery state.
+ARCH_SW_PMP_0206: The PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState value shall be sent externally.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+Action: ARCH_SW_PMP_0205, ARCH_SW_PMP_0013
+
+	Step 4: Set a breakpoint in function mmg_UpdateModeStatus_PowerVoltageUnstable at the RTE Call for PMP_runGetBatteryVoltageSurveyStatus function 
+		Expected result:  BP reached.
+
+	Step 5: Read local variable pu8BatteryVoltageSurveyStatus 
+		Expected result:  Variable read from ADC channel 
+
+	Step 6: Set a breakpoint in function mmg_UpdateModeStatus_PowerVoltageUnstable at the end of function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0206
+
+	Step 7: Evaluate local variable u8BatteryVoltageSurveyStatus 
+		Expected result:  Variable read is the same from *(pu8BatteryVoltageSurveyStatus) data pointer
+
+Postcondition
+
+	Step 8: Return ECU to default values

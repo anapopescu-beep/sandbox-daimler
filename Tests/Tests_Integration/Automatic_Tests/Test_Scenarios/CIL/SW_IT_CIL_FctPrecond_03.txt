@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0110
+ARCH_SW_CIL_0110: Bit 5 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if DTC: U012287 - Communication with control unit ''Traction system'' has a malfunction OR U041608 - Implausible data received from control unit Traction system OR U042708- Implausible data received from the electronic ignition lock OR	U015187 - Communication with the supplemental restraint system (SRS) has a malfunction OR	U045208 - Implausible data were received from the supplemental restraint system is set.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_SNA.
+
+	Step 3: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 4: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageFctPrecondSignal() at line '(KU32_ZERO != (u32AECGroupStatus & KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC))' and press run.
+
+	Step 6: Check if CPU stopped in function cil_ManageFctPrecondSignal() at line '(KU32_ZERO != (u32AECGroupStatus & KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC))'.
+
+	Step 7: Set a breakpoint in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Communication_error_BflMask);' and press run.
+
+Action: ARCH_SW_CIL_0110
+
+	Step 8: Check if CPU stopped in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Communication_error_BflMask);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0110
+
+	Step 9: Evaluate if signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to 0x20. 
+		Expected result:  0x20
+
+Postcondition
+
+	Step 10: Return ECU to default values

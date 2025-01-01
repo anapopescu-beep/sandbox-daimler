@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0375; ARCH_SW_DIA_0376; ARCH_SW_DIA_0377; ARCH_SW_DIA_0378; ARCH_SW_DIA_0379; ARCH_SW_DIA_0474; ARCH_SW_DIA_0475; ARCH_SW_DIA_0476
+ARCH_SW_DIA_0375: Service 0x22 (Read Data By Identifier) will be implemented for DID F151 (Software Version Information)
+ARCH_SW_DIA_0474: DataIdentifier shall be 0xF151
+ARCH_SW_DIA_0475: The DID shall be available in the following sessions:?Default Session?Programming?Extended session?Update Session?Development Session
+ARCH_SW_DIA_0476: This service shall be available with or without Any form of Authentication.
+ARCH_SW_DIA_0376: Response data shall be 3 bytes long
+ARCH_SW_DIA_0377: Byte 0 of the positive response shall represent the year when the SW was designed.
+ARCH_SW_DIA_0378: Byte 1 of the positive response shall represent the week when the SW was designed.
+ARCH_SW_DIA_0379: Byte 2 of the positive response shall represent the current patch level of the SW.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_SoftwareVersion_Read_Software_Logical_Block_Version_Information_ReadData*.
+
+Action: ARCH_SW_DIA_0375; ARCH_SW_DIA_0376; ARCH_SW_DIA_0377; ARCH_SW_DIA_0378; ARCH_SW_DIA_0379; ARCH_SW_DIA_0474; ARCH_SW_DIA_0475; ARCH_SW_DIA_0476
+
+	Step 3: Send diag request for 22 F1 51 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_SoftwareVersion_Read_Software_Logical_Block_Version_Information_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0267
+ARCH_SW_CIL_0267: Signal PS_Curve_FL/FR_Stat_ST3 shall be set to ON in Default ROM.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+Action: ARCH_SW_CIL_0267
+
+	Step 3: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManageInputSignals() at line '(void)Rte_Read_CIL_AC_CommunicationInteractionLayer_R_PS_Curve_FL_Rq_HU_ST3_PS_Curve_FL_Rq_HU_ST3(&CIL_u8PSCurve);'.
+
+	Step 5: Check if CPU stopped in function cil_ManageInputSignals() at line '(void)Rte_Read_CIL_AC_CommunicationInteractionLayer_R_PS_Curve_FL_Rq_HU_ST3_PS_Curve_FL_Rq_HU_ST3(&CIL_u8PSCurve);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0267
+
+	Step 6: Evaluate if variable CIL_u8PSCurve is equal to I_C02_OFF_STAGE1_STAGE2_SNA. 
+		Expected result:  I_C02_OFF_STAGE1_STAGE2_SNA
+
+Postcondition
+
+	Step 7: Return ECU to default values

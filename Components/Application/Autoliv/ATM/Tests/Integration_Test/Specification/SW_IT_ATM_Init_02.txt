@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0004
+ARCH_SW_ATM_0004: Verify that cyclic tests won't run unless critical tests are not passed or finished.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in ATM_runMainFunction at line: if (atm_u8StartupTestIndex < (ATM_KU8_NB_OF_STARTUP_AUTO_TESTS + 1u))
+
+	Step 3: Set variable atm_u8StartupTestIndex to 0x12.
+
+	Step 4: Set a breakpoint in ATM_runMainFunction() at line *atm_PlayOneShotTests();*.
+
+Action: ARCH_SW_ATM_0004
+
+	Step 5: Check if CPU stopped at ATM_runMainFunction() at line *atm_PlayOneShotTests();*. 
+		Expected result:  CPU is Running
+
+Postcondition
+
+	Step 6: Return ECU to default values

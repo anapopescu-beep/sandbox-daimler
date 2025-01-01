@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0800
+ARCH_SW_CIL_0800: CIL shall check if timeout is present for Presafe frame.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PresfAct_Adj_ST3 to I_C04_PRESF_LVL_V2_SNA.
+
+	Step 3: Set a breakpoint in function CIL_Autotest_Presafe_CheckTimeoutError( ) at line *pu8TestResult = cil_u8ResultOfAutoTest;.
+
+Action: ARCH_SW_CIL_0800
+
+	Step 4: Check if CPU stopped at line *pu8TestResult = cil_u8ResultOfAutoTest;. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0800
+
+	Step 5: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_OK
+
+Postcondition
+
+	Step 6: Return ECU to default values

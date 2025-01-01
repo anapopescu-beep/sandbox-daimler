@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0009; ARCH_SW_DIA_0074; ARCH_SW_DIA_0075
+ARCH_SW_DIA_0009: Service 0x2E will be implemented for DID FD03
+ARCH_SW_DIA_0074: Service should be available in Default and extended session
+ARCH_SW_DIA_0075: NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData will be Written.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0009; ARCH_SW_DIA_0074; ARCH_SW_DIA_0075
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD03_AEETraceabilityNumbeWrite*.
+
+	Step 4: Send diag request for 2E FD03 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD03_AEETraceabilityNumbeWrite was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Write first byte of NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData 
+		Expected result:  Variable overwritten with 0x1.
+
+	Step 7: Send diag request for 2E FD03 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 8: Return ECU to default values

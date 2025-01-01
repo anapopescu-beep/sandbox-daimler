@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0315
+ARCH_SW_MMG_0315: If Step order is not a valid one (not 0x00: PWM order ; 0x01: Current order ; 0x02: Velocity Control order type; 0x03: Velocity Control + backup PWM order type; 0x04: Voltage order type; 0x05: Velocity Control + backup Current order type; 0x06: Velocity Control + backup Voltage order type ) then step is invalid.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init() at line 'mmg_CheckCycleEnable();'.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line 'mmg_CheckCycleEnable();'.
+
+	Step 4: Step in function mmg_CheckCycleEnable().
+
+	Step 5: Set a breakpoint in function mmg_CheckIfCycleStepIsvalid() at line 'else if ( KU8_SEVEN == (NVP_BLOCK_ID_STEP_0_RamBlockData.NVP_au8StepsDefinitions[u16Step0Index0 + KU8_THREE] & MMG_STEPS_ORDER_TYPE_MASK ))'.
+
+	Step 6: Check if CPU stopped in function mmg_CheckIfCycleStepIsvalid() at line 'else if ( KU8_SEVEN == (NVP_BLOCK_ID_STEP_0_RamBlockData.NVP_au8StepsDefinitions[u16Step0Index0 + KU8_THREE] & MMG_STEPS_ORDER_TYPE_MASK ))'.
+
+	Step 7: Set variable NVP_BLOCK_ID_STEP_0_RamBlockData.NVP_au8StepsDefinitions[u16Step0Index0 + KU8_THREE] to KU8_SEVEN.
+
+	Step 8: Set a breakpoint in function mmg_CheckIfCycleStepIsvalid() at line 'b8Ret = B_FALSE;'.
+
+Action: ARCH_SW_MMG_0315
+
+	Step 9: Check if CPU stopped in function mmg_CheckIfCycleStepIsvalid() at line 'b8Ret = B_FALSE;'.
+
+Action: ARCH_SW_MMG_0315
+
+	Step 10: Check if function mmg_CheckIfCycleStepIsvalid() returns B_FALSE. 
+		Expected result:  B_FALSE
+
+Postcondition
+
+	Step 11: Return ECU to default values

@@ -1,0 +1,308 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "AuthData.cin"  
+}
+
+variables
+{
+  char cNodeName[7] = "DDSECU";
+  byte VIN[17] = {0x31, 0x32, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x31, 0x41};
+  byte VIN_Default[17] = {0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F};
+  
+  enum UserRole
+  {
+   Undefined = -1,
+   Anybody = 0,
+   Supplier = 1,
+   Development_Enhanced = 2,
+   Production = 3,
+   AS_Enhanced = 4,
+   AS_Standard = 5,
+   AS_Basic = 6,
+   Internal_Diagnostic_Test_Tool = 7,
+   ePTI_Test_Tool = 8
+  };
+  
+  enum UserRole gRole = Anybody;
+  
+  int gAuthenticated = 0;
+  
+  byte gBackendCertSubjKeyId[20] = { 0x51, 0x82, 0xB1, 0xC2, 0xD6, 0x8C, 0xF7, 0x9A, 0x52, 0xEC, 0x83, 0x4A, 0x1A, 0x80, 0x82, 0x8F, 0x0C, 0x53, 0x58, 0xD4 };
+
+  byte gChallenge[1024];
+  long gSizeOfChallenge;
+  
+  byte gSerialNumber_NotAuthenticated[16] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+  
+  byte gSerialNumber_Authenticated[1024];
+  long gSizeOfSerialNumberAuthenticated;
+  
+  byte gSignature[1024];
+  long gSizeOfSignature;
+  
+  // 'BackTestRoot1'
+  byte gIssuer[15]=  { 0x42, 0x61, 0x63, 0x6b, 0x54, 0x65, 0x73, 0x74, 0x52, 0x6f, 0x6f, 0x74, 0x31, 0x00, 0x00 };
+  int debug = 0;
+  
+  msTimer RespVerifySigTimer;
+  diagResponse DDS.Verify_Signature_Start RespVerifySig;
+  
+  msTimer RespVINDataIdentifier_ReadTimer;
+  diagResponse DDS.VINDataIdentifier_Read RespVINDataIdentifier_Read;
+}
+
+
+on diagRequest DDS.VINDataIdentifier_Read
+{
+  diagResponse this resp;
+  
+  if(@sysvar::SecVarResponseNode::UseDefaultVIN == 0)
+    RespVINDataIdentifier_Read.SetParameterRaw("VINDataIdentifier", VIN,elcount(VIN));
+  else
+    RespVINDataIdentifier_Read.SetParameterRaw("VINDataIdentifier", VIN_Default,elcount(VIN_Default));
+  setTimer(RespVINDataIdentifier_ReadTimer,@sysvar::SecVarResponseNode::DelayVINDataIdentifier_Read);
+}
+
+on timer RespVINDataIdentifier_ReadTimer
+{
+  RespVINDataIdentifier_Read.SendResponse();
+}
+
+on diagRequest DDS.Verify_Signature_Start
+{
+  byte RoutineInfo[1] = {0x00};
+  byte VerificationResult[3] = {0x00,0x10,0x11};
+// 0x00 Signature verifcation successful
+// 0x10 Signature verifcation failed - Invalid Signature
+// 0x11 Signature verifcation failed - No signature Verification Key available 
+  diagResponse this resp;
+  
+  RespVerifySig.SetParameter("routineInfo",RoutineInfo[0]);
+  RespVerifySig.SetParameter("Verification_Result",@sysvar::SecVarResponseNode::SignatureVerificationResult);
+
+  settimer(RespVerifySigTimer,@sysvar::SecVarResponseNode::DelayVerify_Signature_Start); // delayed response
+}
+
+on Timer RespVerifySigTimer
+{
+  RespVerifySig.SendResponse();
+}
+
+
+
+on diagRequest DDS.Backend_CA_Certificate_Identification_Read
+{
+  diagResponse this resp;
+
+  if(debug )write("%s :on diagRequest DDS.Backend_CA_Certificate_Identification_Read",cNodeName);  
+  DiagSetParameterRaw(resp, "Backend_CA_SubjectKeyIdentifier",  gBackendCertSubjKeyId, elcount(gBackendCertSubjKeyId));
+  DiagSendResponse(resp);
+}
+
+on diagRequest DDS.Authenticate_Diagnostic_User_or_Tester_Start
+{
+  diagResponse this resp;
+  byte empty_challenge[2] = { 0x00, 0x00 };
+  
+  long certLen;
+  byte cert[4000];
+  
+  long signatureLen;
+  byte signature[128];
+  
+  byte uniOrBidirectional;
+  byte task;
+  int res;
+  
+  enum UserRole role;
+
+  if(debug )write("%s: on diagRequest DDS.Authenticate_Diagnostic_User_or_Tester_Start",cNodeName);
+  
+  _diagSetParameterRaw(resp, "routineInfo", 0x00);
+  _diagSetParameterRaw(resp, "Verification_Result", 0x00); 
+  diagSetParameterRaw(resp, "Challenge_Certificate_Proof_of_Ownership", empty_challenge, elcount(empty_challenge));
+    
+  _diagGetParameterRaw(this, "Configuration.Uni_or_bidirectional_Authentication", uniOrBidirectional); 
+  _diagGetParameterRaw(this, "Task", task);
+  if(debug )write("%s: Task = %d",cNodeName, task);
+
+  if (task == 0)
+  {
+    certLen = diagGetParameterSizeRaw(this, "Tester_Authentication/EndOfServiceIteration1/Challenge_Certificate_Proof_of_Ownership") / 8;
+    diagGetParameterRaw(this, "Tester_Authentication/EndOfServiceIteration1/Challenge_Certificate_Proof_of_Ownership", cert, elcount(cert));
+    if(debug )write("%s: certLen = %d", cNodeName,certLen);
+    
+    role = GetRole(cert, certLen, 2);
+    write("role = 0x%02X", role);
+    
+    if (certLen > 2 && (cert[0]*256 + cert[1]) == certLen - 2 && role > 0)
+    {
+      gRole = role;
+      _diagSetParameterRaw(resp, "routineInfo", 0x00);
+      _diagSetParameterRaw(resp, "Verification_Result", 0x00); // 0x00: Certificate verified, Ownership verification 
+      
+      gSizeOfChallenge = GetChallenge(gRole, gChallenge, 2);
+      if (gSizeOfChallenge > 0)
+      {
+        gChallenge[0] = (gSizeOfChallenge >> 8 ) & 0xff;
+        gChallenge[1] = gSizeOfChallenge & 0xff;
+        write("sizeOfChallenge = %d", gSizeOfChallenge);
+        
+        diagSetParameterRaw(resp, "Challenge_Certificate_Proof_of_Ownership", gChallenge, gSizeOfChallenge + 2);
+      }
+      else
+      {
+        _diagSetParameterRaw(resp, "routineInfo", 0x00);
+        _diagSetParameterRaw(resp, "Verification_Result", 0x41); // internal error
+      }
+    }
+    else
+    {
+      _diagSetParameterRaw(resp, "routineInfo", 0x00);
+      _diagSetParameterRaw(resp, "Verification_Result", 0x15); // 0x15: … – Invalid Content 
+    }
+  }
+  else if (task == 1)
+  {
+    gSizeOfSignature = GetSignature(gRole, gSignature, 0);
+    write("gSizeOfSignature = %d", gSizeOfSignature);
+    if (gSizeOfSignature > 0)
+    {   
+    signatureLen = diagGetParameterSizeRaw(this, "Tester_Authentication/EndOfServiceIteration1/Challenge_Certificate_Proof_of_Ownership") / 8;
+    diagGetParameterRaw(this, "Tester_Authentication/EndOfServiceIteration1/Challenge_Certificate_Proof_of_Ownership", signature, elcount(signature));
+    if(debug )write("%s: signatureLen = %d", cNodeName,signatureLen);
+      if (signatureLen > 2 && (signature[0]*256 + signature[1]) == signatureLen - 2 && AreEqual(signature, signatureLen, 2, gSignature, gSizeOfSignature, 0))
+      {
+        _diagSetParameterRaw(resp, "routineInfo", 0x00);
+        _diagSetParameterRaw(resp, "Verification_Result", 0x01); // 0x01: Ownership verified, authentication complete 
+      
+      if(debug )write("%s: Ecu is authenticated",cNodeName);
+      gAuthenticated = 1;
+    }
+    else
+    {
+      _diagSetParameterRaw(resp, "routineInfo", 0x00);
+      _diagSetParameterRaw(resp, "Verification_Result", 0x20); // 0x20 Ownership verification failed 
+    }
+  }
+    else
+    {
+      _diagSetParameterRaw(resp, "routineInfo", 0x00);
+      _diagSetParameterRaw(resp, "Verification_Result", 0x41); // internal error
+    }
+  }
+  else if (task == 2)
+  {
+    _diagSetParameterRaw(resp, "routineInfo", 0x00);
+    _diagSetParameterRaw(resp, "Verification_Result", 0x02); // 0x02: De-authentication successful
+    
+    write("DDS ecu is not authenticated");
+    gAuthenticated = 0;
+  }
+  
+  diagSendResponse(resp);
+}
+
+on diagRequest DDS.Diagnostic_Authentication_Certificate_Identification_Read
+{ 
+  diagResponse this resp;
+  
+  DiagSetParameterRaw(resp, "Diagnostic_Authentication_Certificate_Issuer", gIssuer, elcount(gIssuer));
+  
+  if (gAuthenticated)
+  {
+    gSizeOfSerialNumberAuthenticated = GetSerialNumber(gRole, gSerialNumber_Authenticated, 0);
+    
+    if (gSizeOfSerialNumberAuthenticated > 0)
+    {
+      diagSetParameterRaw(resp, "Diagnostic_Authentication_Certificate_Serial_Number", gSerialNumber_Authenticated, gSizeOfSerialNumberAuthenticated);
+    }
+  }
+  else
+  {
+    diagSetParameterRaw(resp, "Diagnostic_Authentication_Certificate_Serial_Number", gSerialNumber_NotAuthenticated, 16);  
+  }
+  diagSendResponse(resp);
+}
+
+// ---------------------------------------------------------------------------------------------------------------------
+// helper functions
+// ---------------------------------------------------------------------------------------------------------------------
+int _diagSetParameterRaw(diagResponse* obj, char diagSpecRef[], byte val)
+{
+  return _diagSetParameterRaw(obj, diagSpecRef, val, 1);
+}
+// ---------------------------------------------------------------------------------------------------------------------
+int _diagSetParameterRaw(diagResponse* obj, char diagSpecRef[], byte val, int length)
+{
+  long res;
+  byte dataBuffer [4096];
+  int i;
+  for(i = 0; i < length; i++)
+  {
+    dataBuffer[i] = val;
+  }
+  
+  res = diagSetParameterRaw(obj, diagSpecRef, dataBuffer, length);
+  if (res == 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+// ---------------------------------------------------------------------------------------------------------------------
+int _diagGetParameterRaw(diagRequest* obj, char diagSpecRef[], byte &val)
+{
+  byte dataBuffer[1];
+  long res;
+  long len;
+  
+  // returns the length of the raw parameter in bits (raw stream) including leading size byte, terminating zeros etc.
+  len = diagGetParameterSizeRaw(obj, diagSpecRef);
+  
+  if (len <= 8 && len > 0)
+  {
+    res = diagGetParameterRaw(obj, diagSpecRef, dataBuffer, elcount(dataBuffer));
+    if (res == 0)
+    {
+      val = dataBuffer[0];
+      return 1;
+    }
+    else
+    {
+      return 0;
+    }
+  }
+  else
+  {
+    return 0; 
+  }
+}
+// ---------------------------------------------------------------------------------------------------------------------
+int AreEqual(byte array1[], dword size1, dword offset1, byte array2[], dword size2, dword offset2)
+{
+  dword i;
+  
+  if (offset1 < size1 && offset2 < size2 && size1 - offset1 == size2 - offset2)
+  {   
+    for (i = 0; i < size1 - offset1; ++i)
+    {
+      if (array1[offset1 + i] != array2[offset2 + i])
+      {
+        if(debug ) write("%s:not equal at pos %d",cNodeName, i);
+
+        return 0;
+      }
+    }
+    
+    return 1;
+  }
+  else
+  {
+    return 0; 
+  }
+}

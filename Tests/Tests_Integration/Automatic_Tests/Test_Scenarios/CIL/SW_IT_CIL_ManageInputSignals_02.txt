@@ -1,0 +1,60 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0266
+ARCH_SW_CIL_0266: Signal PS_Curve_FL/FR_Stat_ST3 shall be computed based on signal PS_Curve_FL/FR_Rq_HU_ST3 using NVP_u8PSCurveConfig:-STAGE_OFF when Request is STAGE_OFF (0); -STAGE1 When request is STAGE1 (1). -	STAGE2 When request is STAGE2 (2). Last valid value when request is SNA  is received on PS_Curve_FL/FR_Rq_HU_ST3 over the current power cycle.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PS_Curve_FL_Rq_HU_ST3 from to I_C02_OFF_STAGE1_STAGE2_OFF.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+Action: ARCH_SW_CIL_0266
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals() at line 'if(NVP_BLOCK_ID_CAN_INPUT_SIGNALS_RamBlockData.NVP_u8PSCurveConfig != CIL_u8PSCurve)'.
+
+	Step 6: Check if CPU stopped in function cil_ManageInputSignals() at line '(void)Rte_Write_psrCANInputBlockStatus_b8NVMBlockStatus(KU8_TRUE);' under 'if(NVP_BLOCK_ID_CAN_INPUT_SIGNALS_RamBlockData.NVP_u8PSCurveConfig != CIL_u8PSCurve)'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0266
+
+	Step 7: Evaluate if variable CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3. 
+		Expected result:  CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3
+
+	Step 8: Set signal PS_Curve_FL_Rq_HU_ST3 from to I_C02_OFF_STAGE1_STAGE2_STAGE1.
+
+Action: ARCH_SW_CIL_0266
+
+	Step 9: Evaluate if variable CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3. 
+		Expected result:  CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3
+
+	Step 10: Set signal PS_Curve_FL_Rq_HU_ST3 from to I_C02_OFF_STAGE1_STAGE2_STAGE2.
+
+Action: ARCH_SW_CIL_0266
+
+	Step 11: Evaluate if variable CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3. 
+		Expected result:  CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3
+
+	Step 12: Set signal PS_Curve_FL_Rq_HU_ST3 from to I_C02_OFF_STAGE1_STAGE2_SNA.
+
+Action: ARCH_SW_CIL_0266
+
+	Step 13: Evaluate if variable CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3. 
+		Expected result:  CIL_u8PSCurve is equal to signal PS_Curve_FR_Stat_ST3
+
+Postcondition
+
+	Step 14: Return ECU to default values

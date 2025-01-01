@@ -1,0 +1,87 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0372, ARCH_SW_PAL_0395, ARCH_SW_PAL_0396
+ARCH_SW_PAL_0372: The component shall check the Short Circuit failure for High Mosfets and set the result of autotest..
+ARCH_SW_PAL_0395: ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0396: PMP_runGetBatteryVoltage_100ms , PMP_runGetMotorVp_100ms and PMP_runGetMotorVn_100ms shall be called to check battery voltage.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMosfetHighSC at line 'Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);'.
+
+	Step 3: Check if the CPU stopped at line 'Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_PAL_0372
+
+	Step 4: Step in function 'Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);'. 
+		Expected result:  Stepped in PAL_Autotest_CheckMosfetHighSC function
+
+	Step 5: Check if the CPU stopped in function PAL_Autotest_CheckMosfetHighSC(). 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult);'.
+
+	Step 7: Check if the CPU stopped at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_PAL_0395
+
+	Step 8: Check if the CPU stopped in function ATM_runGetTestResult(). 
+		Expected result:  CPU stopped at BP
+
+	Step 9: Write autotest result with KU8_ONE.
+
+	Step 10: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at line 'Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage );'.
+
+	Step 11: Check if the CPU stopped at line 'Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage );'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_PAL_0396
+
+	Step 12: Step in function Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage ). 
+		Expected result:  Stepped in PMP_runGetBatteryVoltage_100ms function
+
+	Step 13: Check if the CPU stopped in function PMP_runGetBatteryVoltage_100ms(). 
+		Expected result:  CPU stopped at BP
+
+	Step 14: Run until return PMP_runGetBatteryVoltage_100ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 15: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at line '*pu8TestResult = u8ResultOfAutoTest;'.
+
+	Step 16: Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'. 
+		Expected result:  CPU stopped at BP
+
+	Step 17: Overwrite autotest result with KU8_ATM_TEST_OK.
+
+Action: ARCH_SW_PAL_0395
+
+	Step 18: Evaluate PreviousHighSideSWTestResult. 
+		Expected result:  Variable is equal to 0x1
+
+Action: ARCH_SW_PAL_0396
+
+	Step 19: Evaluate FilteredMotorPlusVoltage. 
+		Expected result:  Variable is read
+
+	Step 20: Set a breakpoint in function PAL_cbk_CheckMosfetHighSC after the return of the autotest result.
+
+	Step 21: Check if CPU stopped after the return of the autotest result. 
+		Expected result:  CPU stopped at BP
+
+	Step 22: Read autotest result transmited from ATM.
+
+Postcondition
+
+	Step 23: Return ECU to default values

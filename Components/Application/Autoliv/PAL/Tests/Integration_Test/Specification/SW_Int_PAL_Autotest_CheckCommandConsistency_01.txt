@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0369
+ARCH_SW_PAL_0369: The component shall check if the power stage activation state is consistent with the order.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckCommandConsistency at the RTE Call for CheckCommandConsistency autotest 
+		Expected result:  BP reached.
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckCommandConsistency at the return of autotest result  
+		Expected result:  BP reached.
+
+	Step 5: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1 .
+
+Action: ARCH_SW_PAL_0369
+
+	Step 6: Set a breakpoint in function PAL_cbk_CheckCommandConsistency after the return of the autotest result  
+		Expected result:  BP reached.
+
+	Step 7: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1 .
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0564, ARCH_SW_CIL_0565
+ARCH_SW_CIL_0564: Bit 7 (Other)  of RBTMxy_SP_FctPrecond_Stat_ST35 signal shall be set to '1=TRUE' if none of the up conditions are detected and profile can not be executed (is inhibited or aborted).
+ARCH_SW_CIL_0565: If an unfulfilled function conditions can only be tested when a belt profile is requested or a belt profile is active then the coresponding bit of RBTMxy_SP_FctPrecond_Stat_ST35 signal remains set as long as the request is present.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Bckl_Sw_D_Stat_ST3 to NOK (0x01).
+
+	Step 3: Set RBTMFL_SP_Lvl_Rq_ST35 Presf_Lvl_ST3 to I_C06_RBTM_LVL_RQ_PROFILE10.
+
+	Step 4: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 5: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function cil_ManageFctPrecondSignal() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_FctPrecond_Stat_ST35_RBTMFL_SP_FctPrecond_Stat_ST35(cil_u16Fct_Precond);' and press run.
+
+Action: ARCH_SW_CIL_0564
+
+	Step 7: Check if CPU stopped in function cil_ManageFctPrecondSignal() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_FctPrecond_Stat_ST35_RBTMFL_SP_FctPrecond_Stat_ST35(cil_u16Fct_Precond);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0564, ARCH_SW_CIL_0565
+
+	Step 8: Evaluate if bit 7 of signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to KU8_ONE (TRUE). 
+		Expected result:  bit 7 of signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to KU8_ONE
+
+Postcondition
+
+	Step 9: Return ECU to default values

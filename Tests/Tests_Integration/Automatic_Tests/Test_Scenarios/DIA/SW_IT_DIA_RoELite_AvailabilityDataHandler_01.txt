@@ -1,0 +1,61 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0430; ARCH_SW_DIA_0431; ARCH_SW_DIA_0432; ARCH_SW_DIA_0433, ARCH_SW_DIA_0435; ARCH_SW_DIA_0436; ARCH_SW_DIA_0437; ARCH_SW_DIA_0438
+ARCH_SW_DIA_0430: RoELite for AvailabilityData will be implemented
+ARCH_SW_DIA_0431: ROE_0_RBTM_xy_ST3 (Byte 1) signal shall be transmitted with the value 0x04 - AVAILABILITY_DATA if availability data has been changed. Byte 2 of the ROE_RBTM_xy_ST3 frame shall contain the function number. Bytes 3 of the ROE_RBTM_xy_ST3 frame shall contain the category (yelow, green, red) Bytes 4-8 of the ROE_RBTM_xy_ST3 frame shall be 0x0000000000.
+ARCH_SW_DIA_0432: Function number: BSR: 0x00 PRE-SAFE 1-3: 0x00 PRE-SAFE 4-5: 0x00 PRE-SAFE 6-8: 0x00
+ARCH_SW_DIA_0433: Only when the Availability changes from - 'Green' to 'Red' the ECU shall send the corresponding RoE-Lite PDU.
+ARCH_SW_DIA_0435: RoELite for DiagSessionChange will be implemented
+ARCH_SW_DIA_0436: ROE_0_RBTM_xy_ST3 (Byte 1) signal shall be transmitted with the value 05 - DIAG_SESSION_CHANGE if diagnostic sesion has been changed. Byte 2 of the ROE_RBTM_xy_ST3 frame shall contain the new Diagnostic session. Bytes 3-8 of the ROE_RBTM_xy_ST3 frame shall be 0x000000000000.
+ARCH_SW_DIA_0437: On ECU start-up the ECU shall transmit a RoE-lite PDU containing the DiagnosticSessionType of the target session. (This includes ECU start-ups for example due to ECUReset or watchdog resets.)
+ARCH_SW_DIA_0438: RoE-lite PDUs indicating Diagnostic Session Changes shall only be sent from Application Software, not from Boot Software.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *RoELite_AvailabilityDataHandler*.
+
+Action: ARCH_SW_DIA_0430; ARCH_SW_DIA_0431; ARCH_SW_DIA_0432; ARCH_SW_DIA_0433, ARCH_SW_DIA_0435; ARCH_SW_DIA_0436; ARCH_SW_DIA_0437; ARCH_SW_DIA_0438
+
+	Step 3: Send diag request for 22 01 42 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function RoELite_AvailabilityDataHandler was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read roe_AvailabilityData byte 1 
+		Expected result:  Variable read.
+
+	Step 6: Read roe_AvailabilityData byte 2 
+		Expected result:  Variable read.
+
+	Step 7: Read roe_AvailabilityData byte 3 
+		Expected result:  Variable read.
+
+	Step 8: Read roe_AvailabilityData byte 4 
+		Expected result:  Variable read.
+
+	Step 9: Read roe_AvailabilityData byte 5 
+		Expected result:  Variable read.
+
+	Step 10: Read roe_AvailabilityData byte 6 
+		Expected result:  Variable read.
+
+	Step 11: Read roe_AvailabilityData byte 7
+		Expected result:  Variable read.
+
+	Step 12: Read roe_AvailabilityData byte 8
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 13: Return ECU to default values

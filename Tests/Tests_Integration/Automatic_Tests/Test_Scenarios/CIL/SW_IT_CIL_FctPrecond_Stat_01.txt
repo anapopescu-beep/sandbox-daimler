@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0112
+ARCH_SW_CIL_0112: Bit 1 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if Belt Handover_extended_TRUE.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BeltHdOvr_FL_Stat_ST3 from frame BeltHdOvr_FL_State_ST3 to I_C02_BELTHDOVR_STAT_EXTEND.
+
+	Step 3: Set a breakpoint in function CIL_runAppliToCAN() at line 'cil_ManageFctPrecondSignal();'.
+
+	Step 4: Step in function cil_ManageFctPrecondSignal(). 
+		Expected result:  	Stepped in function cil_ManageFctPrecondSignal,,app.elf
+
+	Step 5: Set a breakpoint in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Seatbelt_Handover_extended_BflMask);' and press run.
+
+	Step 6: Check if CPU stopped at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Seatbelt_Handover_extended_BflMask);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0112
+
+	Step 7: Evaluate if signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to KU8_ONE. 
+		Expected result:  KU8_ONE
+
+Postcondition
+
+	Step 8: Return ECU to default values

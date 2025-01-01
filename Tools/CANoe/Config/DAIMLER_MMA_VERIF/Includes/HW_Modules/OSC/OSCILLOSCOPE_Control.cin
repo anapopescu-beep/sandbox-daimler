@@ -1,0 +1,414 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  const RESPONSE_STATUS_SIZE = 1000; // do not change!
+  char cScopeRequestStatus[RESPONSE_STATUS_SIZE];
+  
+  char cScopePositiveResponse[100] = "Operation completed successfully.";
+  
+  char ScopePictureWidth[7];
+  char ScopePictureHeight[6];
+  
+  int iScopeConnectionStatus = 0;
+  
+  //Scope 1 info
+  char sScope1_Address[50];
+  char cScope1_PictureWidth[7];
+  char cScope1_PictureHeight[7];
+  
+  //Scope 2 info
+  char sScope2_Address[50];
+  char cScope2_PictureWidth[7];
+  char cScope2_PictureHeight[7];
+  
+  // Path to folder containing config files for Oscilloscope.
+  char cSetupPath[400];
+  
+  char cScopePictureFullPath[1500];
+}
+
+// Connect to Scope.
+void ConnectScope()
+{
+  sysGetVariableString(sysvar::OSC::sysScope1_Address      , sScope1_Address      , elcount(sScope1_Address));
+  sysGetVariableString(sysvar::OSC::sysScope1_PictureHeight, cScope1_PictureHeight, elcount(cScope1_PictureHeight));
+  sysGetVariableString(sysvar::OSC::sysScope1_PictureWidth , cScope1_PictureWidth , elcount(cScope1_PictureWidth));
+  sysGetVariableString(sysvar::OSC::sysScope2_Address      , sScope2_Address      , elcount(sScope2_Address));
+  sysGetVariableString(sysvar::OSC::sysScope2_PictureHeight, cScope2_PictureHeight, elcount(cScope2_PictureHeight));
+  sysGetVariableString(sysvar::OSC::sysScope2_PictureWidth , cScope2_PictureWidth , elcount(cScope2_PictureWidth));
+  sysGetVariableString(sysvar::OSC::sysSetupPath           , cSetupPath           , elcount(cSetupPath));
+  
+  iScopeConnectionStatus = 0;
+  
+  // Try scope 1.
+  OpenScopeSession(sScope1_Address, cScopeRequestStatus);
+  if(strncmp(cScopePositiveResponse, cScopeRequestStatus, strlen(cScopePositiveResponse)) == 0)
+  {
+    strncpy(ScopePictureWidth, cScope1_PictureWidth, elcount(ScopePictureWidth));
+    strncpy(ScopePictureHeight, cScope1_PictureHeight, elcount(ScopePictureHeight));
+    iScopeConnectionStatus = 1;
+  }
+  else
+  {
+    // Try scope 2.
+    OpenScopeSession(sScope2_Address, cScopeRequestStatus);
+    if(strncmp(cScopePositiveResponse, cScopeRequestStatus, strlen(cScopePositiveResponse)) == 0)
+    {
+      strncpy(ScopePictureWidth, cScope2_PictureWidth, elcount(ScopePictureWidth));
+      strncpy(ScopePictureHeight, cScope2_PictureHeight, elcount(ScopePictureHeight));
+      iScopeConnectionStatus = 1;
+    }
+  }
+//  write("%s|%s|Status:%i", ScopePictureWidth, ScopePictureHeight,iScopeConnectionStatus);
+}
+
+// Disconnects the Scope.
+void Disconnect_Scope()
+{
+  // Close scope session.
+  CloseScopeSession(cScopeRequestStatus);
+  
+  if(strncmp(cScopePositiveResponse, cScopeRequestStatus, strlen(cScopePositiveResponse)) == 0)
+  {
+   iScopeConnectionStatus = 0;
+  }
+  else
+  {
+    EvalManStepEqual("Disconnect Scope.", cScopeRequestStatus, cScopePositiveResponse);
+  }
+}
+
+// Connects to oscilloscope then resets it to factory settings.
+// Wait for a minimum of 3 seconds for scope to be fully functional after reset.
+void DefaultScopeSetup()
+{
+  if(iScopeConnectionStatus == 0)
+  {
+    ConnectScope();
+  }
+  
+  if(iScopeConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No scope is detected: %s", cScopeRequestStatus);
+    return;
+  }
+  
+  WriteScopeString("*RST", cScopeRequestStatus);
+  if(strncmp(cScopeRequestStatus, cScopePositiveResponse, elcount(cScopeRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Reset Scope to factory settings.", cScopeRequestStatus, cScopePositiveResponse);
+  }
+}
+
+// Writes the scope setup from the '.tek' files located at 'cInputPathAndName'.
+void WriteScopeSetup(char cInputPathAndName[])
+{
+  stack dword dFileHandle;
+  stack char cBuffer[750];
+  
+  if(iScopeConnectionStatus == 0)
+  {
+    ConnectScope();
+  }
+  
+  dFileHandle = openFileRead(cInputPathAndName, 0);
+  
+  if(dFileHandle == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Error when opening .tek file!");
+  }
+  else if(iScopeConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No scope is detected: %s", cScopeRequestStatus);
+  }
+  else
+  {
+     while(fileGetString(cBuffer, elcount(cBuffer), dFileHandle) != 0) 
+     {
+        WriteScopeString(cBuffer, cScopeRequestStatus);
+        testWaitForTimeout(5);
+     }
+  }
+  fileClose(dFileHandle);
+}
+
+
+// Writes the scope setup from the '.tek' files located at 'cSetupPath'.
+// The .tek file and TestCase name need to respect the following nameing convention:
+//  Testcase name  = 'TR6_EXT_TF_H_SW_Autotests_MosfetInOC_TestDescriptionTest1Fails'
+//              .tek file name = 'TFH_Autotests_MosfetInOC_TestDescriptionTest1Fails'
+void WriteScopeSetup()
+{
+  stack char cTEKFile[500] = "TFH_";
+  stack char cFullPath[1500];
+  stack dword dFileHandle;
+  stack char cBuffer[750];
+  stack char cTestCaseTitle[1000];
+  
+  if(iScopeConnectionStatus == 0)
+  {
+    ConnectScope();
+  }
+  
+  // cOriginalTestCaseTitle wont be initialized if PreTS is not executed.
+  testGetCurrentTestCaseTitle(cTestCaseTitle, elcount(cTestCaseTitle));
+  
+  if (iOriginalTestCaseTitleLength == 0)
+  {
+    strncpy(cTestCaseTitle, cTestCaseTitle, elcount(cLogName));  // Logging is started before PreTs(). No title length change.
+  }
+  else
+  {
+    strncpy(cTestCaseTitle, cTestCaseTitle, iOriginalTestCaseTitleLength + 1); // Logging is started after PreTs(). Only copy original title.    
+  }
+   
+  substr_cpy_off(cTEKFile, 4, cTestCaseTitle, strstr(cTestCaseTitle, "Autotests_"), -1, elcount(cTEKFile));
+  snprintf(cFullPath, elcount(cFullPath), "%s%s.tek", cSetupPath, cTEKFile);
+  
+  write("%s", cFullPath); // to be deleted
+  
+  dFileHandle = openFileRead (cFullPath, 0);
+  
+  if(dFileHandle == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Error when opening .tek file!");
+  }
+  else if(iScopeConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No scope is detected: %s", cScopeRequestStatus);
+  }
+  else
+  {
+     while(fileGetString(cBuffer, elcount(cBuffer), dFileHandle) != 0) 
+     {
+        WriteScopeString(cBuffer, cScopeRequestStatus);
+        testWaitForTimeout(5);
+     }
+  }
+  fileClose(dFileHandle);
+}
+
+
+// Saves the scope screen in 'cLogPath' location.
+// Naming structure {TEST_CASE_NAME}_{DATE_AND_TIME}.png
+void SaveScopeScreen()
+{
+  stack char cTimeBuffer[64];
+  stack char cTestCaseTitle[1000];
+  
+  strncpy(cScopePictureFullPath, "", elcount(cScopePictureFullPath)); // used for TesterConfirmation_ScopeScreen
+  
+  // cOriginalTestCaseTitle wont be initialized if PreTS is not executed.
+  testGetCurrentTestCaseTitle(cTestCaseTitle, elcount(cTestCaseTitle));
+  
+  if (iOriginalTestCaseTitleLength == 0)
+  {
+    strncpy(cTestCaseTitle, cTestCaseTitle, elcount(cLogName));  // Logging is started before PreTs(). No title length change.
+  }
+  else
+  {
+    strncpy(cTestCaseTitle, cTestCaseTitle, iOriginalTestCaseTitleLength + 1); // Logging is started after PreTs(). Only copy original title.    
+  }
+  
+  getLocalTimeString(cTimeBuffer);
+  str_replace(cTimeBuffer, " ", "_");
+  str_replace(cTimeBuffer, ":", "_");
+  str_replace(cTimeBuffer, "__", "_");
+
+  strncat(cTestCaseTitle, "_", elcount(cLogName));
+  strncat(cTestCaseTitle, cTimeBuffer, elcount(cLogName));
+  strncat(cTestCaseTitle, ".png", elcount(cLogName));
+  
+  if(iScopeConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No scope is detected: %s", cScopeRequestStatus);
+    return;
+  }
+  
+  SaveScopePicture(cLogPath, cTestCaseTitle, cScopeRequestStatus);
+  
+  if(strncmp(cScopeRequestStatus, cScopePositiveResponse, elcount(cScopeRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Save oscilloscope screen:", cScopeRequestStatus, cScopePositiveResponse);
+    return;
+  }
+  else
+  {
+  testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "","Oscilloscope picture '%s.png' succesfully saved at: '%s'", cTestCaseTitle, cLogPath);
+  
+  strncat(cScopePictureFullPath, cLogPath, elcount(cScopePictureFullPath));
+  strncat(cScopePictureFullPath, cTestCaseTitle, elcount(cScopePictureFullPath));
+  strncat(cScopePictureFullPath, ".png", elcount(cScopePictureFullPath));
+  }
+}
+
+// Saves the scope screen in 'cLogPath' location and also embedds it into the report.
+// Naming structure {TEST_CASE_NAME}_{DATE_AND_TIME}.png
+// NOTE: The picture is also embedded in the report.
+void SaveScopeScreen_EmbeddToReport()
+{
+  stack char cTimeBuffer[64];
+  stack char cTestCaseTitle[1000];
+  stack char cScopePictureFullPath[2000];
+  
+  // cOriginalTestCaseTitle wont be initialized if PreTS is not executed.
+  testGetCurrentTestCaseTitle(cTestCaseTitle, elcount(cTestCaseTitle));
+  
+  if (iOriginalTestCaseTitleLength == 0)
+  {
+    strncpy(cTestCaseTitle, cTestCaseTitle, elcount(cLogName));  // Logging is started before PreTs(). No title length change.
+  }
+  else
+  {
+    strncpy(cTestCaseTitle, cTestCaseTitle, iOriginalTestCaseTitleLength + 1); // Logging is started after PreTs(). Only copy original title.    
+  }
+  
+  getLocalTimeString(cTimeBuffer);
+  str_replace(cTimeBuffer, " ", "_");
+  str_replace(cTimeBuffer, ":", "_");
+  str_replace(cTimeBuffer, "__", "_");
+
+  strncat(cTestCaseTitle, "_", elcount(cLogName));
+  strncat(cTestCaseTitle, cTimeBuffer, elcount(cLogName));
+  strncat(cTestCaseTitle, ".png", elcount(cLogName));
+  
+  if(iScopeConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No scope is detected: %s", cScopeRequestStatus);
+    return;
+  }
+  
+  SaveScopePicture(cLogPath, cTestCaseTitle, cScopeRequestStatus);
+  
+  if(strncmp(cScopeRequestStatus, cScopePositiveResponse, elcount(cScopeRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Request Save oscilloscope screen operation:", cScopeRequestStatus, cScopePositiveResponse);
+    return;
+  }
+  
+  strncat(cScopePictureFullPath, cLogPath, elcount(cScopePictureFullPath));
+  strncat(cScopePictureFullPath, cTestCaseTitle, elcount(cScopePictureFullPath));
+  strncat(cScopePictureFullPath, ".png", elcount(cScopePictureFullPath));
+  
+  TestReportAddImage("Scope screen:", cScopePictureFullPath, ScopePictureWidth, ScopePictureHeight);
+}
+
+// Saves the scope screen in 'cLogPath' location with the 'cFileName'.
+void SaveScopeScreen(char cFileName[])
+{
+  strncpy(cScopePictureFullPath, "", elcount(cScopePictureFullPath)); // used for TesterConfirmation_ScopeScreen
+  
+  if(iScopeConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No scope is detected: %s", cScopeRequestStatus);
+    return;
+  }
+  
+  SaveScopePicture(cLogPath, cFileName, cScopeRequestStatus);
+  
+  if(strncmp(cScopeRequestStatus, cScopePositiveResponse, elcount(cScopeRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Save oscilloscope screen:", cScopeRequestStatus, cScopePositiveResponse);
+    return;
+  }
+  else
+  {
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "","Oscilloscope picture '%s.png' succesfully saved at: '%s'", cFileName, cLogPath);
+    
+    strncat(cScopePictureFullPath, cLogPath, elcount(cScopePictureFullPath));
+    strncat(cScopePictureFullPath, cFileName, elcount(cScopePictureFullPath));
+    strncat(cScopePictureFullPath, ".png", elcount(cScopePictureFullPath));
+  }
+}
+
+//void SaveScopeScreen_2Flash()
+//{
+//  // TBD.
+//}
+
+//void SaveScopeScreen_2Flash(char cFileName[])
+//{
+//  // TBD.
+//}
+
+void singleAcquisition()
+{
+  WriteScopeString("ACQUIRE:STOPAFTER SEQUENCE", cScopeRequestStatus);
+  testWaitForTimeout(5);
+  
+  if(strncmp(cScopeRequestStatus, cScopePositiveResponse, elcount(cScopeRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Single Acquisition.", cScopeRequestStatus, cScopePositiveResponse);
+    return;
+  }
+  
+  WriteScopeString("ACQuire:STATE RUN", cScopeRequestStatus);
+  testWaitForTimeout(5);
+  
+  if(strncmp(cScopeRequestStatus, cScopePositiveResponse, elcount(cScopeRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Single Acquisition.", cScopeRequestStatus, cScopePositiveResponse);
+    return;
+  }
+}
+
+// Creates a messagebox for tester confirmation -> Yes, No, Unsure.
+// The the last picture generated by any of the 'SaveScopeScreen' functions will be selected.
+// 'cInquiry' = Question to be answered in the messagebox.
+// 'YesOrNo'..............= Expected result: Can be Yes or No enum variables.
+// Example: TesterConfirmation_ScopeScreen("Is this ok?", Yes);
+void TesterConfirmation_ScopeScreen(char cInquiry[], char cExpectedResult[])
+{
+  
+  if (strncmp(cScopePictureFullPath, "", elcount(cScopePictureFullPath)) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation_ScopeScreen: No scope screen is saved. Use 'SaveScopeScreen' before using this function.");
+    return;
+  }
+  
+  TesterConfirmation_ScopeScreen(cInquiry, cScopePictureFullPath, cExpectedResult);
+}
+
+// Creates a messagebox for tester confirmation -> Yes, No, Unsure.
+// The the picture located at 'cScopePicture' will be selected.
+// 'cScopePictureAndName' = Full path and name of the scope picture.
+// 'cInquiry'             = Question to be answered in the messagebox.
+// 'YesOrNo'..............= Expected result: Can be Yes or No enum variables.
+// Example: TesterConfirmation_ScopeScreen("Is this ok?", "c:\\Temp\\myPicture_1.png", Yes);
+void TesterConfirmation_ScopeScreen(char cInquiry[], char cScopePictureAndName[], char cExpectedResult[])
+{
+  stack dword returnvalue;
+  toUpper(cExpectedResult, cExpectedResult, elcount(cExpectedResult));
+  
+  if(strncmp("YES",  cExpectedResult, elcount(cExpectedResult)) == 0)
+  {
+    returnvalue = TestValidateTesterConfirmation(cInquiry, "Validate tester confirmation.", 0, 1, 1, 0, cScopePictureAndName, cScopePictureAndName, 600000);
+  }
+  else
+  if(strncmp("NO",  cExpectedResult, elcount(cExpectedResult)) == 0)
+  {
+    returnvalue = TestValidateTesterConfirmation(cInquiry, "Validate tester confirmation.", 1, 0, 1, 0, cScopePictureAndName, cScopePictureAndName, 600000);
+  }
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation_ScopeScreen: Invalid input.");
+    return;
+  }
+  
+  switch(returnvalue)
+  {
+    case 0: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Timeout occurred.");
+      break;
+    case -1: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation_ScopeScreen: General error, e.g. due to a call outside of a test sequence.");
+      break;
+    case -2: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Constraint occurred.");
+      break; 
+    default: // do nothing.
+      break;
+  }
+}

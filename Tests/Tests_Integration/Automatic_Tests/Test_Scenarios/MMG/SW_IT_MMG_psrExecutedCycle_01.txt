@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0401
+ARCH_SW_MMG_0401: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be called to get cycle number.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runManageModeDelays() at line 'mmg_ManageModeDelays_ExecutedCycle()'.
+
+	Step 3: Step in function mmg_ManageModeDelays_ExecutedCycle().
+
+	Step 4: Set a breakpoint in function mmg_ManageModeDelays_ExecutedCycle() at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle);' and press run.
+
+Action: ARCH_SW_MMG_0401
+
+	Step 5: Check if CPU stopped in function mmg_ManageModeDelays_ExecutedCycle() at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0401
+
+	Step 6: Read variable mmg_u8ExecutedCycle (Rte_BFE_psrExecutedCycle_u8CycleNumber). 
+		Expected result:  0xff
+
+Postcondition
+
+	Step 7: Return ECU to default values

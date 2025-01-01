@@ -1,0 +1,70 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_OS_0050, ARCH_SW_OS_0051, ARCH_SW_OS_0052, ARCH_SW_OS_0053, ARCH_SW_OS_0054, ARCH_SW_OS_0057, ARCH_SW_OS_0058, ARCH_SW_OS_0065, ARCH_SW_OS_0059, ARCH_SW_OS_0060, ARCH_SW_OS_0061
+ARCH_SW_OS_0050: The Default_Init_Task task shall have the highest priority regarding periodic tasks.
+ARCH_SW_OS_0051: The priority of the Default_Init_Task_Trusted task shall also have a high priority for init functions.
+ARCH_SW_OS_0052: The priority of the ApplInitTask_Core0 shall be also higher sincer the applications init functions are called here.
+ARCH_SW_OS_0053: The priority of the BswTask_Core0_HighPrio task shall be lower than the init tasks.
+ARCH_SW_OS_0054: The priority of the ApplTask_Core0_HighPrio task shall be lower than the BswTask_Core0_HighPrio task one.
+ARCH_SW_OS_0057: The priority of the BswTask_Core0_LowPrio shall be lower than higher priorirty tasks.
+ARCH_SW_OS_0058: The priority of the OsTask_ALV_BeltFunctionAlgo task shall be bigger than ApplTask_Core0_LowPrio task.
+ARCH_SW_OS_0065: The priority of the ApplTask_Core0_LowPrio task shall be lower than all perioric tasks, except wdg monitoring one.
+ARCH_SW_OS_0059: The priority of the ApplBackgroundTask_Core0 shall be low.
+ARCH_SW_OS_0060: The priority of the BackgroundTask_Core0 task shall be low.
+ARCH_SW_OS_0061: The priority of the IdleTask_OsCore0 idle task has the virtual priority 0xFFFFFFFF to differentiate it from regular tasks. It will be generated to have the lowest priority, even if there are tasks configured with priority 0.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_OS_0050
+
+	Step 2: Set breakpoint in TASK(Default_Init_Task).
+
+Action: ARCH_SW_OS_0051
+
+	Step 3: Set breakpoint in TASK(Default_Init_Task_Trusted).
+
+Action: ARCH_SW_OS_0052
+
+	Step 4: Set breakpoint in TASK(ApplInitTask_Core0).
+
+Action: ARCH_SW_OS_0053
+
+	Step 5: Set breakpoint in TASK(BswTask_Core0_HighPrio).
+
+Action: ARCH_SW_OS_0054
+
+	Step 6: Set breakpoint in TASK(ApplTask_Core0_HighPrio).
+
+Action: ARCH_SW_OS_0057
+
+	Step 7: Set breakpoint in TASK(BswTask_Core0_LowPrio).
+
+Action: ARCH_SW_OS_0058
+
+	Step 8: Set breakpoint in TASK(OsTask_ALV_BeltFunctionAlgo).
+
+Action: ARCH_SW_OS_0065
+
+	Step 9: Set breakpoint in TASK(OsTask_ALV_BeltFunctionAlgo).
+
+Action: ARCH_SW_OS_0059
+
+	Step 10: Set breakpoint in TASK(ApplBackgroundTask_Core0).
+
+Action: ARCH_SW_OS_0060, ARCH_SW_OS_0061
+
+	Step 11: Set breakpoint in TASK(BackgroundTask_Core0).
+
+Postcondition
+
+	Step 12: Return ECU to default values

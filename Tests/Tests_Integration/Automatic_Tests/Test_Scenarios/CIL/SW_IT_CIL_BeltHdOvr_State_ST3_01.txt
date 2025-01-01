@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0185
+ARCH_SW_CIL_0185: If values for this signal are different than 0x00= RETRACT (Belt hand over retracted).Then all BSR cycles are inhibitted/aborted if signal is enabled in the coding.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BeltHdOvr_FL_Stat_ST3 from frame BeltHdOvr_FL_State_ST3 to I_C02_BELTHDOVR_STAT_OUT_OF_END.
+
+	Step 3: Set a breakpoint in fucntion CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped at function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals at line 'cil_ManageInhibitConditions();'.
+
+	Step 6: Step in function cil_ManageInhibitConditions();. 
+		Expected result:  cil_ManageInhibitConditions,,app.elf
+
+	Step 7: Set a breakpoint at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_DTCInhibitionOfBSR);'.
+
+Action: ARCH_SW_CIL_0185
+
+	Step 8: Check if CPU stoped at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_DTCInhibitionOfBSR);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

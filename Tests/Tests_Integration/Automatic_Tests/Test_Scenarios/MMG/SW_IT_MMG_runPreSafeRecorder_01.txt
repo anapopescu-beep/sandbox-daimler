@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0009, ARCH_SW_MMG_0011, ARCH_SW_MMG_0012, ARCH_SW_MMG_0013, ARCH_SW_MMG_0014
+ARCH_SW_MMG_0009: The Start Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM when a requested profile has started regardless of status of execution: inhibited or started successful.
+ARCH_SW_MMG_0011: The State Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM whenever a start or stop block is saved.
+ARCH_SW_MMG_0012: The PRE-SAFE Recorder 1/2 Data shall be saved in NVM as a rolling buffer containing the data of the last two profiles requested when the ECU goes to sleep.
+ARCH_SW_MMG_0014: The writing of a PRE-SAFE Recorder data should be tiggered if a PreSafe profile (PRE-SAFE = 1 and PRE-SAFE = 8 except PRE-SAFE = 2) is requested regardless of type of request: PreSafe, API CAN frames or a UDS diagnostic request.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStartData(u8PreSafeRecorderNewID);' under case KU8_TENSIONING_START.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+Action: ARCH_SW_MMG_0011, ARCH_SW_MMG_0014, ARCH_SW_MMG_0013
+
+	Step 4: Check if CPU stopped in function MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStartData(u8PreSafeRecorderNewID);' under case KU8_TENSIONING_START. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_PreSafe_HandleStateData(u8PreSafeRecorderID);'.
+
+	Step 6: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_PreSafe_HandleStateData(u8PreSafeRecorderID);'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function mmg_PreSafe_CopyStateData() at line 'NVP_BLOCK_ID_PRE_SAFE_RECORDER_2_RamBlockData.NVP_au8PreSafeRecorderState[KU8_ZERO] = u8PreSafeState1;'.
+
+Action: ARCH_SW_MMG_0009, ARCH_SW_MMG_0011, ARCH_SW_MMG_0012
+
+	Step 8: Check if CPU stopped at line 'NVP_BLOCK_ID_PRE_SAFE_RECORDER_2_RamBlockData.NVP_au8PreSafeRecorderState[KU8_ZERO] = u8PreSafeState1;'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

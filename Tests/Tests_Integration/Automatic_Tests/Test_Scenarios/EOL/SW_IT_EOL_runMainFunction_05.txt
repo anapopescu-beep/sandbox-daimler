@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0017
+ARCH_SW_EOL_0017: The EOL_runMainFunction function shall update the associated cycle counter (low, high, max, comfort) when tensioning cycles 7, 8, 9, 10, 11, 12 and 13 are executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_TriggerProfiles.
+
+	Step 3: Set variable u8CycleRequest to 0xD.
+
+	Step 4: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle11_b8CycleValidity(&u8CycleValidityStatus);.
+
+	Step 5: Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();
+
+	Step 6: Step in eol_ManageCycleCounters function.
+
+	Step 7: Set a breakpoint in eol_ManageCycleCounters at the end of the function.
+
+Postcondition
+
+	Step 8: Return ECU to default values

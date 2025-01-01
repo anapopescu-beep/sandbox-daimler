@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0105, ARCH_SW_CIL_0106
+ARCH_SW_CIL_0105: Signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be written and send to CAN.
+ARCH_SW_CIL_0106: Signal should be set to 0 if no setting condition is present.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 3: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManageFctPrecondSignal() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_FctPrecond_Stat_ST35_RBTMFL_SP_FctPrecond_Stat_ST35(cil_u16Fct_Precond);'.
+
+Action: ARCH_SW_CIL_0105
+
+	Step 5: Check if CPU stopped in function cil_ManageFctPrecondSignal() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_FctPrecond_Stat_ST35_RBTMFL_SP_FctPrecond_Stat_ST35(cil_u16Fct_Precond);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0105, ARCH_SW_CIL_0106
+
+	Step 6: Check if signal RBTMFL_SP_FctPrecond_Stat_ST35 value is I_C02_BCKL_SW_STAT_OK. 
+		Expected result:  I_C02_BCKL_SW_STAT_OK
+
+Postcondition
+
+	Step 7: Return ECU to default values

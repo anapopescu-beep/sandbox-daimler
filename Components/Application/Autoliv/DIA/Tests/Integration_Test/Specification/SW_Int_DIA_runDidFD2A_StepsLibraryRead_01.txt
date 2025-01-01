@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0006; ARCH_SW_DIA_0068; ARCH_SW_DIA_0069; ARCH_SW_NVP_0007
+ARCH_SW_DIA_0006: Service 0x22 will be implemented for DID FD2A.
+ARCH_SW_DIA_0068: Service should be available in Development Session.
+ARCH_SW_DIA_0069: NVP_BLOCK_ID_STEPS0 - 144_RamBlockData will be read.
+ARCH_SW_NVP_0007: NVP_BLOCK_ID_STEP_0 � 144 blocks should be configured. Parameter NVP_au8StepsDefinitions should have 1160 bytes.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD2A_StepsLibraryRead*.
+
+Action: ARCH_SW_DIA_0006; ARCH_SW_DIA_0068; ARCH_SW_DIA_0083
+
+	Step 3: Send diag request for 22 FD2A and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFD2A_StepsLibraryRead was reached. 
+		Expected result:  BP was reached.
+
+Action: ARCH_SW_NVP_0007; ARCH_SW_DIA_0069
+
+	Step 5: Read first byte of NVP_BLOCK_ID_STEP_0_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0302
+ARCH_SW_CIL_0302: Rte_Write_psrPreSafeLvl_u8PreSafeLvl Will be wriiten by CIL in order to inform about the Presafe LEVEL Request (signal Presf_Lvl).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_CIL_0302
+
+	Step 2: Read variable cil_stPresfActAdjFrame.Presf_Lvl_ST3 
+		Expected result:  0x0.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x2).
+
+	Step 4: Set a breakpoint in the function CIL_runCANToAppli.
+
+	Step 5: Check if CPU stopped in function CIL_runCANToAppli. 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Step in function cil_ManageInputSignals.
+
+	Step 7: Set a breakpoint at line Rte_Write_psrPreSafeLvl_u8PreSafeLvl(cil_stPresfActAdjFrame.Presf_Lvl_ST3);.
+
+Action: ARCH_SW_CIL_0302
+
+	Step 8: Read variable cil_stPresfActAdjFrame.Presf_Lvl_ST3 
+		Expected result:  0x1.
+
+Postcondition
+
+	Step 9: Return ECU to default values

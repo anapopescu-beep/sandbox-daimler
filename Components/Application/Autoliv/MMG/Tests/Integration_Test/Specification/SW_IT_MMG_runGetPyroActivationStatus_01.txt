@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0204, ARCH_SW_MMG_0402, ARCH_SW_MMG_0015
+ARCH_SW_MMG_0204: BMM_runGetPyroActivationStatus shall be called to get pyro activation status.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).
+
+	Step 3: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().
+
+	Step 4: Check if CPU stopped in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().
+
+	Step 5: Step in function mmg_UpdateModeStatus_ExecutedCycle().
+
+	Step 6: Set a breakpoint at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).
+
+Action: ARCH_SW_MMG_0204, ARCH_SW_MMG_0402
+
+	Step 7: Check if CPU stopped at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).
+
+	Step 8: Set a breakpoint in function BMM_runGetPyroActivationStatus().
+
+Action: ARCH_SW_MMG_0204, ARCH_SW_MMG_0015
+
+	Step 9: Check if CPU stopped in function BMM_runGetPyroActivationStatus(). 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 10: Return ECU to default values

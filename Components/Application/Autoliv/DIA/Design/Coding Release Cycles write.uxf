@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>30</x>
+      <y>40</y>
+      <w>975</w>
+      <h>562</h>
+    </coordinates>
+    <panel_attributes>title:Release cycles write
+Start
+Get NVM status of NVP_BLOCK_ID_CYCLE
+Get NVM status of NVP_BLOCK_ID_STEPS
+If
+	[((retVal != E_OK) || (errorStatusCycles == NVM_REQ_PENDING)) \|| ((retVal2 != E_OK) || (errorStatusSteps == NVM_REQ_PENDING))]
+	retVal = DCM_E_PENDING
+	OpStatus = DCM_E_PENDING
+
+	Change ReleaseCyclesBsrAndPreSafe coding
+	             Copy BSR values to appropriate \NVP_BLOCK_ID_CYCLE_0_RamBlockData positions
+	             Copy Library values to appropriate \NVP_BLOCK_ID_STEP_0_RamBlockData positions
+	
+Return OK
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,58 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0340, ARCH_SW_PMP_9006, ARCH_SW_PMP_9007, ARCH_SW_PMP_9008, ARCH_SW_PMP_9004, ARCH_SW_PMP_9005, ARCH_SW_PMP_0341, ARCH_SW_PMP_9001, ARCH_SW_PMP_9002, ARCH_SW_PMP_9003
+ARCH_SW_PMP_0340: PMP shall compute the estimation of the energy stored in the motor.
+ARCH_SW_PMP_9006: If the current consumption is different than 0 and temperature is below 35 degrees, the new deficiency level shall be computed by adding the square current to the previous deficiency level.
+ARCH_SW_PMP_9007: If the current consumption is different than 0 and the temperature is above 35 degrees, the new deficiency level shall be computed using the following formula: new def level= previous def level+ square current * (1+2*(temperature-35)/100).
+ARCH_SW_PMP_9008: If the current consumption is 0, the deficiency level shall be decreased with the value of  NVP_u8SWThermalProtecDecStep.
+ARCH_SW_PMP_9004: NVP_u8SWThermalProtecDecStep shall be used to get the decrement step used to decrease the deficiency level when current consumption is 0.
+ARCH_SW_PMP_9005: NVP_u32SWThermalProtectionValidationThrs shall be used to get the maximum value of the deficiency level to which its value will be saturated.
+ARCH_SW_PMP_0341: PAL_runReadMotorCurrentInA shall be called to get the measured current in amps.
+ARCH_SW_PMP_9002: PMP_runGetFilteredTemperature_deg shall be called to get the temperature in degrees.
+ARCH_SW_PMP_9001: Rte_IrvRead_PMP_runComputeDeficiencyLevel_u32DeficiencyLevel shall be used to get the previous deficiency level.
+ARCH_SW_PMP_9003: Rte_IrvWrite_PMP_runComputeDeficiencyLevel_u32DeficiencyLevel shall be used to write the new deficiency level. 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_0340, ARCH_SW_PMP_9006, ARCH_SW_PMP_9007, ARCH_SW_PMP_9008, ARCH_SW_PMP_9004, ARCH_SW_PMP_9005, ARCH_SW_PMP_9002
+
+	Step 2: Set a breakpoint in function PMP_runComputeDeficiencyLevel at the RTE Call for PAL_runReadMotorCurrentInA function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0341
+
+	Step 3: Read local variable ps8MotorCurrentInA 
+		Expected result:  Variable read from ADC channel.
+
+	Step 4: Set a breakpoint in function PMP_runComputeDeficiencyLevel in order to Overwrite local variable pmp_s8MotorCurrentInA and read pmp_u32PreviousDeficiencyLevel
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_9001
+
+	Step 5: Evaluate local variable pmp_u32PreviousDeficiencyLevel 
+		Expected result:  Variable is read
+
+	Step 6: Overwrite variable pmp_s8MotorCurrentInA with value 0x7 
+		Expected result:  Overwritten local variable with 0x7
+
+	Step 7: Set a breakpoint in function PMP_runGetFilteredTemperature_deg in order to check if function was called 
+		Expected result:  BP reached.
+
+Action:ARCH_SW_PMP_9003
+
+	Step 8: Set a breakpoint in function PMP_runComputeDeficiencyLevel after RTE Call for Write PMP_runComputeDeficiencyLevel_u32DeficiencyLevel function  
+		Expected result:  BP reached.
+
+Postcondition
+
+	Step 9: Return ECU to default values

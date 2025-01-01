@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0120
+ARCH_SW_ATM_0120: ATM_runMainFunction shall call the PAL_Autotest_CheckMosfetOCAT function.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in ATM_runMainFunction() at line 'atm_PlayCyclicTests(castRunningCyclicList);'.
+
+Action: ARCH_SW_ATM_0120
+
+	Step 3: Check if CPU stopped at line 'atm_PlayCyclicTests(castRunningCyclicList);'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in atm_PlayCyclicTests() at line 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))'.
+
+	Step 5: Check if CPU stopped in atm_PlayCyclicTests() at line 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Step in function atm_PlayCyclicTests(). 
+		Expected result:  Stepped in function atm_PlayCyclicTests
+
+	Step 7: Set a breakpoint in PAL_Autotest_CheckMosfetOCAT().
+
+Action: ARCH_SW_ATM_0120
+
+	Step 8: Check if CPU stopped at PAL_Autotest_CheckMosfetOCAT()*. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

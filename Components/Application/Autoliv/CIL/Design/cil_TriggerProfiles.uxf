@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>4</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>56</y>
+      <w>18163</w>
+      <h>672</h>
+    </coordinates>
+    <panel_attributes>title:cil_TriggerTensioningProfiles
+Start
+
+Write CarCrashDetected to FALSE
+Write PreCrashRequestEnable to TRUE
+Write u8FctPrecond_ProfileNotImplemented to FALSE
+Read AEC group status
+
+Switch u8CycleRequest
+If
+	[case KU8_NO_CYCLE]
+	Check InhibitionStatus &amp; CIL_REL_INHIB_MASK is ZERO
+	If
+		[TRUE]
+		Check TensioningAbortedStatus is TRUE
+		If
+			[TRUE]
+			Write HapticRequest to KU8_NO_HAPTIC_REQUEST
+			
+			[FALSE]
+			Nothing to do
+		EndIf
+
+		Check u8RequestSource is ACTVCLIENT_PRESAFE &amp; Presf_Enbl_ST3 is FALSE_TRUE_SNA_SNA &amp; u8OldRequestedCycle = PRESF_LVL_V2_LVL1 through PRESF_LVL_V2_LVL7
+		If
+			[TRUE]
+			Keep tensioning
+
+			[FALSE]
+			Check u8OldRequestedCycle is not PRESF_LVL_V2_LVL8
+			If
+				[TRUE]
+				Write IsCarAccelerationLow to TRUE
+				Write PreCrashSeverityLevel to KU8_NO_PRECRASH_SEVERITY_LEVEL
+
+				[FALSE]
+				Check if CIL_u16InhibitionStatus &amp; KU8_CIL_InhibitionAfterORC is ZERO
+				If
+					[TRUE]
+					Write b8IsCarAccelerationLow to TRUE
+				EndIf
+			
+				u8RequestSource= RBTM_ACTVCLIENT_NONE
+				Check u8CurrentRequestedCycle != NO_CYCLE
+				If
+					[TRUE]
+					u8OldRequestedCycle = u8CurrentRequestedCycle
+					u8CurrentRequestedCycle = NO_CYCLE
+					Write u8TriggerRequest to	NO_CYCLE
+
+					[FALSE]
+					Nothing to do
+				EndIf
+			EndIf
+			
+			Check if Presf_Lvl_ST3 != PRESF_LVL_V2_NOLVL &amp;&amp; Presf_Lvl_ST3 != PRESF_LVL_V2_LVL2
+			If
+				[TRUE]
+				u8TensioningStateType = TENSIONING_INHIBIT
+
+				[FALSE]
+				Check if CIL_u16InhibitionStatus &amp; KU16_CIL_PRESAFE_INHIB_MASK != ZERO
+				If
+					[TRUE]
+					u8TensioningStateType = TENSIONING_NONE
+
+					[FALSE]
+					Nothing to do
+				EndIf
+			EndIf
+
+		[FALSE]
+		
+		Check if Presf_Lvl_ST3 is PRESF_LVL_V2_NOLVL
+		If
+			[TRUE] 	
+			u8TensioningStateType = KU8_TENSIONING_NONE
+
+			[FALSE]
+			Nothing to do
+			
+		EndIf
+		cil_RequestTensioning(u8ExecutedCycle);
+	EndIf
+			
+	[case I_C04_PRESF_LVL_V2_LVL1]
+	Read cycle0 validity
+	Check if u8Cycle0ValidityStatus is TRUE &amp;&amp; PreSafeCycleActivation is ZERO &amp; CIL_VAL_PROFILE_ENABLE(PRESF_LVL_V2_LVL1)
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE 
+		Write PreCrashSeverityLevel to PRECRASH_LEVEL_1
+
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+		Check if u8TensioningStateTyp=KU8_TENSIONING_START.
+		If
+			[TRUE]
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+
+			[FALSE]
+			Do nothing
+		EndIf		
+	EndIf
+	
+	[case I_C04_PRESF_LVL_V2_LVL2]
+	Read cycle18 validity
+	Check if CycleValidityStatus is TRUE
+	If
+		[TRUE]
+		Read cycle19 validity
+		Check if u8CycleValidityStatus is TRUE &amp;&amp; (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(PRESF_LVL_V2_LVL2))) &amp;&amp;( ((ZERO == NVP.HWALeftActivation) &amp;&amp; (ECU_FRONT_LEFT ==ECU_LOCATION) ) ||((ZERO == NVP.HWARightActivation) &amp;&amp; (ECU_FRONT_RIGHT == ECU_LOCATION)) is ZERO
+		If
+			[TRUE]
+			Write b8IsCarAccelerationLow to FALSE
+			Write b8IsCarCrashDetected to FALSE
+			Write u8HapticRequest to HAPTIC_REQUEST_0
+			Check if CIL_bHWA1PhaseStarted is TRUE
+			If
+				[TRUE]
+				Write u8PreCrashSeverityLevel to NO_PRECRASH_SEVERITY_LEVEL
+
+				[FALSE]
+				Do nothing
+			EndIf
+
+			[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+		EndIf
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+	
+
+	[case I_C04_PRESF_LVL_V2_LVL3]
+	Read cycle1 validity
+	Check if u8Cycle1ValidityStatus is &amp; (ZERO == (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(PRESF_LVL_V2_LVL3)))
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE 
+		Write PreCrashSeverityLevel to PRECRASH_LEVEL_2
+
+		[FALSE]
+		Write ActvLvlSignal to KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+		Check if u8TensioningStateType=KU8_TENSIONING_START
+		If
+			[TRUE]		
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+
+			[FALSE]
+			Nothing
+		EndIf
+	EndIf
+	
+	[case I_C04_PRESF_LVL_V2_LVL4]
+	Read cycle2 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp; (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(PRESF_LVL_V2_LVL4)) is ZERO)
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE 
+		Write PreCrashSeverityLevel to PRECRASH_LEVEL_3
+		
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+		Check if u8TensioningStateType=KU8_TENSIONING_START
+		If
+			[TRUE]
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+
+		EndIf
+	EndIf
+	
+	[case I_C04_PRESF_LVL_V2_LVL5]
+	Read cycle3 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp;(NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(PRESF_LVL_V2_LVL5)) is ZERO)
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE 
+		Write PreCrashSeverityLevel to PRECRASH_LEVEL_4	
+			
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+	Endif
+
+	[case I_C04_PRESF_LVL_V2_LVL6]
+	Read cycle4 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp; ((NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(PRESF_LVL_V2_LVL6))) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_5 == u8ExecutedCycle)) ) is ZERO
+	If
+		[TRUE]
+		b8IsCarAccelerationLow is FALSE
+		cil_RequestTensioning(PRECRASH_SEVERITY_LEVEL_5)
+
+		[FALSE]
+		Check if u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX is TRUE
+		If
+			[TRUE]
+			Read cycle3 validity
+			Check if (TRUE is u8CycleValidityStatus) &amp;&amp;(ZERO =(NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(PRESF_LVL_V2_LVL5)))
+			If
+				[TRUE]
+				Write b8IsCarAccelerationLow to FALSE
+				cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_4)
+
+				[FALSE]
+				Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+			EndIf
+				
+			[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+		EndIf
+		
+	EndIf
+
+	[case I_C04_PRESF_LVL_V2_LVL7]
+	Read cycle5 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(PRESF_LVL_V2_LVL7))) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_6 == u8ExecutedCycle)) ) 
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_6)
+
+		[FALSE]
+		Check if u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX is ZERO
+		If
+			[TRUE]
+			Read cycle3 validity
+			Check if (TRUE= u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(I_C04_PRESF_LVL_V2_LVL5)))
+			If
+				[TRUE]
+				Write b8IsCarAccelerationLow to FALSE
+				cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_4)
+
+				[FALSE]
+				Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED				
+			EndIf
+					
+			[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+		EndIf
+		
+	EndIf
+
+	[case I_C04_PRESF_LVL_V2_LVL8]
+	Read cycle6 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(PRESF_LVL_V2_LVL8))) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_7 == u8ExecutedCycle)) ) 
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_7)
+
+		[FALSE]
+		Check if u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_MAX is ZERO
+		If
+			[TRUE]
+			Read cycle3 validity
+			Check if (TRUE= u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(I_C04_PRESF_LVL_V2_LVL5)))
+			If
+				[TRUE]
+				Write b8IsCarAccelerationLow to FALSE
+				cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_4)
+
+				[FALSE]
+				Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED				
+			EndIf
+					
+			[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+		EndIf
+
+		Check if u8RequestSource is ACTVCLIENT_POSTCRASH
+		If
+			[TRUE]
+			Check if Presf_Lvl_ST3 is not PRESF_LVL_V2_NOLVL &amp; Presf_Lvl_ST3 is not PRESF_LVL_V2_LVL2
+			If
+				[TRUE]
+				u8TensioningStateType = TENSIONING_INHIBIT	
+				
+				[FALSE]
+				u8TensioningStateType = TENSIONING_NONE			
+			EndIf
+			
+			[FALSE]
+			Nothing to do
+		EndIf
+		
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE9]
+	Read cycle7 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE9)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_8)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE10]
+	Read cycle8 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE10)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_9)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	
+	[case I_C06_RBTM_LVL_RQ_PROFILE11]
+	Read cycle9 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE11)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_10)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE12]
+	Read cycle10 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE12)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_11)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE13]
+	Read cycle11 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE13)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_12)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE14]
+	Read cycle12 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE14)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_13)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE15]
+	Read cycle13 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (ZERO = (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(I_C06_RBTM_LVL_RQ_PROFILE15)))
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_14)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE16]
+	Read cycle20 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE 
+	If
+		[TRUE]
+		Read cycle22 validity
+		Check if (TRUE == u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE16))) &amp;&amp;( ((ZERO == NVP.HWALeftActivation) &amp;&amp; (ECU_SIDE_FRONT_LEFT == ECU_LOCATION) ) ||((KU8_ZERO == NVP.HWARightActivation) &amp;&amp; (ECU_SIDE_FRONT_RIGHT == ECU_LOCATION))
+		If
+			[TRUE]
+			Write IsCarAccelerationLow to FALSE 
+			Write b8IsCarCrashDetected to FALSE
+			Write u8HapticRequest to HAPTIC_REQUEST_2
+			Check if TRUE == CIL_bHWA1PhaseStarted
+			If
+				[TRUE]
+				Write u8PreCrashSeverityLevel to KU8_NO_PRECRASH_SEVERITY_LEVEL
+				
+				[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+			EndIf
+		EndIf
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE17]
+	Read cycle22 validity
+	Check if u8Cycle1ValidityStatus is TRUE 
+	If
+		[TRUE]
+		Read cycle23 validity
+		Check if (TRUE == u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE17))) &amp;&amp;( ((ZERO == NVP.HWALeftActivation) &amp;&amp; (ECU_SIDE_FRONT_LEFT == ECU_LOCATION) ) ||((KU8_ZERO == NVP.HWARightActivation) &amp;&amp; (ECU_SIDE_FRONT_RIGHT == ECU_LOCATION))
+		If
+			[TRUE]
+			Write IsCarAccelerationLow to FALSE 
+			Write b8IsCarCrashDetected to FALSE
+			Write u8HapticRequest to HAPTIC_REQUEST_4
+			Check if TRUE == CIL_bHWA1PhaseStarted
+			If
+				[TRUE]
+				Write u8PreCrashSeverityLevel to KU8_NO_PRECRASH_SEVERITY_LEVEL
+				
+				[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+			EndIf
+		EndIf
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE18]
+	Read cycle24 validity
+	Check if u8Cycle1ValidityStatus is TRUE 
+	If
+		[TRUE]
+		Read cycle25 validity
+		Check if (TRUE == u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE18))) &amp;&amp;( ((ZERO == NVP.HWALeftActivation) &amp;&amp; (ECU_SIDE_FRONT_LEFT == ECU_LOCATION) ) ||((KU8_ZERO == NVP.HWARightActivation) &amp;&amp; (ECU_SIDE_FRONT_RIGHT == ECU_LOCATION))
+		If
+			[TRUE]
+			Write IsCarAccelerationLow to FALSE 
+			Write b8IsCarCrashDetected to FALSE
+			Write u8HapticRequest to HAPTIC_REQUEST_6
+			Check if TRUE == CIL_bHWA1PhaseStarted
+			If
+				[TRUE]
+				Write u8PreCrashSeverityLevel to KU8_NO_PRECRASH_SEVERITY_LEVEL
+				
+				[FALSE]
+			Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+			EndIf
+		EndIf
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE19]
+	Read cycle26 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (TRUE == u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(LVL_RQ_PROFILE19))) &amp;&amp;( (ZERO == (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((KU32_ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_BSR_1 == u8ExecutedCycle)) ) )
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_BSR_1)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE20]
+	Read cycle27 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (TRUE == u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(LVL_RQ_PROFILE20))) &amp;&amp;( (ZERO == (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((KU32_ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_BSR_2 == u8ExecutedCycle)) ) )
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_BSR_2)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE21]
+	Read cycle28 validity
+	Check if Check if u8Cycle1ValidityStatus is TRUE &amp; (TRUE == u8CycleValidityStatus) &amp;&amp;(ZERO == (NVP.PreSafeCycleActivation &amp; CIL_VAL_PROFILE_ENABLE(LVL_RQ_PROFILE21))) &amp;&amp;( (ZERO == (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((KU32_ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_BSR_3 == u8ExecutedCycle)) ) )
+	If
+		[TRUE]
+		Write b8IsCarAccelerationLow to FALSE
+		cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_BSR_3)
+		
+		[FALSE]
+		Write u8ActvLvlSignal to RBTM_LVL_STAT_REJECTED
+	EndIf
+	
+	[case I_C06_RBTM_LVL_RQ_PROFILE22]
+	Read cycle 14 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp;(NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE22)) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (PRECRASH_SEVERITY_LEVEL_15 == u8ExecutedCycle)) )  is ZERO
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE
+		Write PreCrashSeverityLevel to PRECRASH_LEVEL_15
+		
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+		Check if u8TensioningStateType=KU8_TENSIONING_START
+		If
+			[TRUE]
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+		EndIf	
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE23]
+	Read cycle 15 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp;(NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE23)) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_16 == u8ExecutedCycle)) )  is ZERO
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE
+		Write PreCrashSeverityLevel to KU8_PRECRASH_SEVERITY_LEVEL_16
+		
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+		Check if u8TensioningStateType=KU8_TENSIONING_START
+		If
+			[TRUE]
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+		EndIf	
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE24]
+	Read cycle 16 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp;(NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE24)) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_17 == u8ExecutedCycle)) )  is ZERO
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE
+		Write PreCrashSeverityLevel to KU8_PRECRASH_SEVERITY_LEVEL_17
+		
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+		Check if u8TensioningStateType=KU8_TENSIONING_START
+		If
+			[TRUE]
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+		EndIf	
+	EndIf
+
+	[case I_C06_RBTM_LVL_RQ_PROFILE25]
+	Read cycle 17 validity
+	Check if u8Cycle1ValidityStatus is TRUE &amp;(NVP.PreSafeCycleActivation &amp; PROFILE_ENABLE(LVL_RQ_PROFILE25)) &amp;&amp;( (ZERO =(u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) ||((ZERO != (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_COMFORT)) &amp;&amp; (KU8_PRECRASH_SEVERITY_LEVEL_18 == u8ExecutedCycle)) )  is ZERO
+	If
+		[TRUE]
+		Write IsCarAccelerationLow to FALSE
+		Write PreCrashSeverityLevel to KU8_PRECRASH_SEVERITY_LEVEL_18
+		
+		[FALSE]
+		Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+		Check if u8TensioningStateType=KU8_TENSIONING_START
+		If
+			[TRUE]
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+		EndIf	
+	EndIf
+
+	[default]
+	Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED 
+	Write ProfileNotImplemented to KU8_TRUE
+	Write u8TensioningStateType to KU8_TENSIONING_NONE
+
+EndIf
+End
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

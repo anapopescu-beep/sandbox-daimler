@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0100, ARCH_SW_ERH_0110
+ARCH_SW_ERH_0100: DemConf_DemOperationCycle_PowerCycle and Dem_SetEnableCondition called to enable conditions for error handler mechanism.
+ARCH_SW_ERH_0110: DemConf_DemOperationCycle_IgnitionCycle is called to enable Ignition cycle, when Ignition status is TRUE, otherwise DemConf_DemOperationCycle_IgnitionCycle is called to end DEM ignition status.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_Init() at line '(void)Dem_SetOperationCycleState(DemConf_DemOperationCycle_PowerCycle, DEM_CYCLE_STATE_START);'.
+
+Action: ARCH_SW_ERH_0100
+
+	Step 3: Check if CPU stopped in function ERH_Init() at line '(void)Dem_SetOperationCycleState(DemConf_DemOperationCycle_PowerCycle, DEM_CYCLE_STATE_START);'.
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function ERH_cyclic() at line '(void)Dem_SetOperationCycleState(DemConf_DemOperationCycle_IgnitionCycle, DEM_CYCLE_STATE_END);'.
+
+Action: ARCH_SW_ERH_0110
+
+	Step 5: Check if CPU stopped in function ERH_cyclic() at line '(void)Dem_SetOperationCycleState(DemConf_DemOperationCycle_IgnitionCycle, DEM_CYCLE_STATE_END);'.
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 6: Return ECU to default values

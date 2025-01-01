@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0035; ARCH_SW_DIA_0167
+ARCH_SW_DIA_0035: Service 0x22 will be implemented for DID FE00
+ARCH_SW_DIA_0166: Response data shall return AEC_ID_X and Status_X of said AEC
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+Action: ARCH_SW_DIA_0035; ARCH_SW_DIA_0167
+
+	Step 3: Set BP in function *DIA_runDidF18C_EcuSerialNumberReadDataLength* 
+		Expected result:  BP was reached.
+
+	Step 4: Send diag request for 22 FE00 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Evaluate response data lenght. 
+		Expected result:  response data lenght is 168.
+
+Postcondition
+
+	Step 6: Return ECU to default values

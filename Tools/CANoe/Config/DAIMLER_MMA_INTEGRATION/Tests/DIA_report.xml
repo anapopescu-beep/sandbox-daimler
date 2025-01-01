@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<testmodule starttime="2023-03-08 10:29:18" timestamp="  39.391570" verdicts="2_basic" measurementid="4931b431-0d40-4a82-b7b0-01b43e0062e1">
+  <testcase starttime="2023-03-08 10:29:18" timestamp="  39.391570">
+    <verdict time="2023-03-08 10:29:18" timestamp="  39.391570" endtime="2023-03-08 10:29:18" endtimestamp="  39.391570" result="pass" />
+    <title>InitTestModule</title>
+  </testcase>
+  <testcase starttime="2023-03-08 10:29:18" timestamp="  39.391570">
+    <comment timestamp="  39.391570">
+      <text>Preconditions</text>
+    </comment>
+    <teststep timestamp="  39.391570" level="0" type="user" ident="STEP" result="na">Bench Initialization</teststep>
+    <teststep timestamp="  39.391570" level="0" type="user" ident="" result="na">Delete all breakpoint from debugger.</teststep>
+    <teststep timestamp="  40.391570" level="0" type="user" ident="" result="na">Reset the debugger.</teststep>
+    <teststep timestamp="  42.091570" level="0" type="user" ident="" result="na">Run the debugger.</teststep>
+    <testpattern timestamp="  43.191570" name="RunPreTs" type="testpattern">
+      <title>RunPreTs</title>
+      <teststep timestamp="  45.023572" type="user" ident="" result="na">
+        <tabularinfo>
+          <description>RBTMFL174: //RBTMFL174/V040/Development_Start/STDS_RQ</description>
+          <heading>
+            <cell>Parameter</cell>
+            <cell>Value</cell>
+            <cell>Raw</cell>
+          </heading>
+          <row level="0">
+            <cell>SID-RQ</cell>
+            <cell>0x10</cell>
+            <cell>10 </cell>
+          </row>
+          <row level="0">
+            <cell>DiagnosticSessionType</cell>
+            <cell>0x7E</cell>
+            <cell>7e </cell>
+          </row>
+        </tabularinfo>
+      </teststep>
+      <result timestamp="  46.955130" result="pass"/>
+    </testpattern>
+    <teststep timestamp="  46.955130" level="0" type="user" ident="STEP" result="na">Enter default or extended session.</teststep>
+    <teststep timestamp="  46.963489" type="user" ident="" result="na">
+      <tabularinfo>
+        <description>RBTMFL174: //RBTMFL174/V040/Default_Start/STDS_RQ</description>
+        <heading>
+          <cell>Parameter</cell>
+          <cell>Value</cell>
+          <cell>Raw</cell>
+        </heading>
+        <row level="0">
+          <cell>SID-RQ</cell>
+          <cell>0x10</cell>
+          <cell>10 </cell>
+        </row>
+        <row level="0">
+          <cell>DiagnosticSessionType</cell>
+          <cell>0x01</cell>
+          <cell>01 </cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <teststep timestamp="  46.963489" level="0" type="user" ident="STEP" result="na">Set breakpoint in function *DIA_runDidF18C_ECUSerialNumberRead*.</teststep>
+    <comment timestamp="  49.063489">
+      <text>Action: ARCH_SW_DIA_0000, ARCH_SW_DIA_0051</text>
+    </comment>
+    <teststep timestamp="  49.063489" level="0" type="user" ident="STEP" result="na">Send diag request for 22 F18C and wait for timeout error</teststep>
+    <teststep timestamp="  49.064799" level="0" type="user" ident="" result="pass">Negative response received as expected.</teststep>
+    <teststep timestamp="  49.064799" type="user" ident="" result="na">
+      <tabularinfo>
+        <description>RBTMFL174: //RBTMFL174/V040/ECUSerialNumberDataIdentifier_Read/RDBI_RQ</description>
+        <heading>
+          <cell>Parameter</cell>
+          <cell>Value</cell>
+          <cell>Raw</cell>
+        </heading>
+        <row level="0">
+          <cell>SID-RQ</cell>
+          <cell>0x22</cell>
+          <cell>22 </cell>
+        </row>
+        <row level="0">
+          <cell>RecordDataIdentifier</cell>
+          <cell>0xF18C</cell>
+          <cell>f1 8c </cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <teststep timestamp="  49.064799" level="0" type="user" ident="STEP" result="na">Check if breakpoint from function DIA_runDidF18C_ECUSerialNumberRead was reached. --&gt; BP was reached.</teststep>
+    <teststep timestamp="  50.132799" level="0" type="user" ident="" result="pass">
+      <tabularinfo expand="true">
+        <description></description>
+        <heading>
+          <cell>Expected Result</cell>
+          <cell>Actual Result</cell>
+        </heading>
+        <row level="0">
+          <cell>BP is reached.</cell>
+          <cell>CPU stopped at BP in function DIA_runDidF18C_EcuSerialNumberRead,,app.elf</cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <teststep timestamp="  50.132799" level="0" type="user" ident="STEP" result="na">Read first byte of NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData.</teststep>
+    <teststep timestamp="  51.132799" level="0" type="user" ident="" result="pass">
+      <tabularinfo expand="true">
+        <description></description>
+        <heading>
+          <cell>Expected Result</cell>
+          <cell>Actual Result</cell>
+        </heading>
+        <row level="0">
+          <cell>Variable is read</cell>
+          <cell>Variable NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData,,app.elf is equal to 0xff</cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <comment timestamp="  51.132799">
+      <text>Postcondition</text>
+    </comment>
+    <teststep timestamp="  51.132799" level="0" type="user" ident="STEP" result="na">Return ECU to default values</teststep>
+    <testpattern timestamp="  51.132799" name="RunPostTs" type="testpattern">
+      <title>RunPostTs</title>
+      <result timestamp="  51.132799" result="pass"/>
+    </testpattern>
+    <verdict time="2023-03-08 10:29:18" timestamp="  39.391570" endtime="2023-03-08 10:29:30" endtimestamp="  51.132799" result="pass" />
+    <title>SW_Int_DIA_runDidF18C_EcuSerialNumberRead_01_Wed_Mar_08_10_29_22_2023</title>
+    <miscinfo>
+      <title>AUTOLIV ELECTRONICS document</title>
+      <info>
+        <name>Nightly test</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Test type</name>
+        <description>Requirement-Based test</description>
+      </info>
+      <info>
+        <name>Regression Test</name>
+        <description>Yes</description>
+      </info>
+      <info>
+        <name>Fault injection method used</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Resource usage evaluation</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Priority</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Safety relevant</name>
+        <description>No</description>
+      </info>
+    </miscinfo>
+    <miscinfo>
+      <title>Test equipment</title>
+      <info>
+        <name>Tester Name</name>
+        <description>CGA</description>
+      </info>
+      <info>
+        <name>CAN case ID</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>SBC Board</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>Power supply ID</name>
+        <description>AER-PWR-005</description>
+      </info>
+      <info>
+        <name>Motherboard</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>MCU</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>DUT</name>
+        <description>Sample_1</description>
+      </info>
+      <info>
+        <name>HW Info</name>
+        <description>22/04.00</description>
+      </info>
+    </miscinfo>
+    <extendedinfo type="html"><![CDATA[<table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0000; ARCH_SW_DIA_0051; ARCH_SW_DIA_0052</th></tr></table>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0000</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Service 0x22 will be implemented for DID F18C.</td></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0051</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Service should be available in Default and extended session.</td></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0052</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData will be read.</td></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[</table>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_Int_DIA_runDidF18C_EcuSerialNumberRead_01_Wed_Mar_8_10_29_22_2023.asc'>Log file: SW_Int_DIA_runDidF18C_EcuSerialNumberRead_01_Wed_Mar_8_10_29_22_2023.asc </A>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_Int_DIA_runDidF18C_EcuSerialNumberRead_01_Wed_Mar_8_10_29_22_2023.blf'>Log file: SW_Int_DIA_runDidF18C_EcuSerialNumberRead_01_Wed_Mar_8_10_29_22_2023.blf </A>]]></extendedinfo>
+  </testcase>
+  <testcase starttime="2023-03-08 10:29:30" timestamp="  51.132799">
+    <comment timestamp="  51.132799">
+      <text>Preconditions</text>
+    </comment>
+    <teststep timestamp="  51.132799" level="0" type="user" ident="STEP" result="na">Bench Initialization</teststep>
+    <teststep timestamp="  51.132799" level="0" type="user" ident="" result="na">Delete all breakpoint from debugger.</teststep>
+    <teststep timestamp="  52.132799" level="0" type="user" ident="" result="na">Reset the debugger.</teststep>
+    <teststep timestamp="  53.832799" level="0" type="user" ident="" result="na">Run the debugger.</teststep>
+    <testpattern timestamp="  54.932799" name="RunPreTs" type="testpattern">
+      <title>RunPreTs</title>
+      <teststep timestamp="  57.201011" type="user" ident="" result="na">
+        <tabularinfo>
+          <description>RBTMFL174: //RBTMFL174/V040/Development_Start/STDS_RQ</description>
+          <heading>
+            <cell>Parameter</cell>
+            <cell>Value</cell>
+            <cell>Raw</cell>
+          </heading>
+          <row level="0">
+            <cell>SID-RQ</cell>
+            <cell>0x10</cell>
+            <cell>10 </cell>
+          </row>
+          <row level="0">
+            <cell>DiagnosticSessionType</cell>
+            <cell>0x7E</cell>
+            <cell>7e </cell>
+          </row>
+        </tabularinfo>
+      </teststep>
+      <result timestamp="  59.182486" result="pass"/>
+    </testpattern>
+    <teststep timestamp="  59.182486" level="0" type="user" ident="STEP" result="na">Enter default or extended session.</teststep>
+    <teststep timestamp="  59.190914" type="user" ident="" result="na">
+      <tabularinfo>
+        <description>RBTMFL174: //RBTMFL174/V040/Extended_Start/STDS_RQ</description>
+        <heading>
+          <cell>Parameter</cell>
+          <cell>Value</cell>
+          <cell>Raw</cell>
+        </heading>
+        <row level="0">
+          <cell>SID-RQ</cell>
+          <cell>0x10</cell>
+          <cell>10 </cell>
+        </row>
+        <row level="0">
+          <cell>DiagnosticSessionType</cell>
+          <cell>0x03</cell>
+          <cell>03 </cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <comment timestamp="  59.190914">
+      <text>Action: ARCH_SW_DIA_0052, ARCH_SW_DIA_0053</text>
+    </comment>
+    <teststep timestamp="  59.190914" level="0" type="user" ident="STEP" result="na">Send diag request for 22 F1 8C, and evaluate response.</teststep>
+    <teststep timestamp="  59.206657" type="user" ident="" result="na">
+      <tabularinfo>
+        <description>RBTMFL174: //RBTMFL174/V040/ECUSerialNumberDataIdentifier_Read/RDBI_RQ</description>
+        <heading>
+          <cell>Parameter</cell>
+          <cell>Value</cell>
+          <cell>Raw</cell>
+        </heading>
+        <row level="0">
+          <cell>SID-RQ</cell>
+          <cell>0x22</cell>
+          <cell>22 </cell>
+        </row>
+        <row level="0">
+          <cell>RecordDataIdentifier</cell>
+          <cell>0xF18C</cell>
+          <cell>f1 8c </cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <teststep timestamp="  59.206657" level="0" type="user" ident="STEP" result="na">Evaluate that response size is 12 bytes long.</teststep>
+    <teststep timestamp="  59.206657" level="0" type="user" ident="" result="pass">
+      <tabularinfo expand="true">
+        <description></description>
+        <heading>
+          <cell>Expected Result</cell>
+          <cell>Actual Result</cell>
+        </heading>
+        <row level="0">
+          <cell>Response data lenght is 12 bytes long.</cell>
+          <cell>Response data lenght is 12.000000 bytes long.</cell>
+        </row>
+      </tabularinfo>
+    </teststep>
+    <comment timestamp="  59.206657">
+      <text>Postcondition</text>
+    </comment>
+    <teststep timestamp="  59.206657" level="0" type="user" ident="STEP" result="na">Return ECU to default values</teststep>
+    <testpattern timestamp="  59.206657" name="RunPostTs" type="testpattern">
+      <title>RunPostTs</title>
+      <result timestamp="  59.206657" result="pass"/>
+    </testpattern>
+    <verdict time="2023-03-08 10:29:30" timestamp="  51.132799" endtime="2023-03-08 10:29:38" endtimestamp="  59.206657" result="pass" />
+    <title>SW_Int_DIA_runDidF18C_EcuSerialNumberReadDataLength_01_Wed_Mar_08_10_29_34_2023</title>
+    <miscinfo>
+      <title>AUTOLIV ELECTRONICS document</title>
+      <info>
+        <name>Nightly test</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Test type</name>
+        <description>Requirement-Based test</description>
+      </info>
+      <info>
+        <name>Regression Test</name>
+        <description>Yes</description>
+      </info>
+      <info>
+        <name>Fault injection method used</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Resource usage evaluation</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Priority</name>
+        <description>No</description>
+      </info>
+      <info>
+        <name>Safety relevant</name>
+        <description>No</description>
+      </info>
+    </miscinfo>
+    <miscinfo>
+      <title>Test equipment</title>
+      <info>
+        <name>Tester Name</name>
+        <description>CGA</description>
+      </info>
+      <info>
+        <name>CAN case ID</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>SBC Board</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>Power supply ID</name>
+        <description>AER-PWR-005</description>
+      </info>
+      <info>
+        <name>Motherboard</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>MCU</name>
+        <description>-</description>
+      </info>
+      <info>
+        <name>DUT</name>
+        <description>Sample_1</description>
+      </info>
+      <info>
+        <name>HW Info</name>
+        <description>22/04.00</description>
+      </info>
+    </miscinfo>
+    <extendedinfo type="html"><![CDATA[<table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0000; ARCH_SW_DIA_0053</th></tr></table>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0000</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Service 0x22 will be implemented for DID F18C.</td></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_DIA_0053</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Runnable shall set response length to 12.</td></tr>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[</table>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_Int_DIA_runDidF18C_EcuSerialNumberReadDataLength_01_Wed_Mar_8_10_29_34_2023.asc'>Log file: SW_Int_DIA_runDidF18C_EcuSerialNumberReadDataLength_01_Wed_Mar_8_10_29_34_2023.asc </A>]]></extendedinfo>
+    <extendedinfo type="html"><![CDATA[<A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_Int_DIA_runDidF18C_EcuSerialNumberReadDataLength_01_Wed_Mar_8_10_29_34_2023.blf'>Log file: SW_Int_DIA_runDidF18C_EcuSerialNumberReadDataLength_01_Wed_Mar_8_10_29_34_2023.blf </A>]]></extendedinfo>
+  </testcase>
+  <verdict time="2023-03-08 10:29:18" timestamp="  39.391570" endtime="2023-03-08 10:29:38" endtimestamp="  59.206657" result="pass" />
+  <title>DIA</title>
+  <testlogfiles>
+  </testlogfiles>
+  <engineer>
+    <xinfo>
+      <name>Windows Login Name</name>
+      <description>g-rbe.electronics</description>
+    </xinfo>
+    <info>
+      <name>Tester Name</name>
+      <description>CGA</description>
+    </info>
+  </engineer>
+  <testsetup>
+    <xinfo>
+      <name>Version</name>
+      <description>CANoe.ISO11783.J1939.CANopen.CAN /pro 15.4.35 (SP4)</description>
+    </xinfo>
+    <xinfo>
+      <name>Configuration</name>
+      <description>S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\BODY3_11.cfg</description>
+    </xinfo>
+    <xinfo>
+      <name>Database BODY3 on BODY3</name>
+      <description>S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTM_FL_FR_STAR_3_Ecu_Extract_2022_17a0_AR43.arxml (2023-01-16 15:06:14)</description>
+    </xinfo>
+    <xinfo>
+      <name>Diagnostic Description of RBTMFL174</name>
+      <description>V040, en-US, S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTMFL174.cdd (04.04.02, 2022-07-25 16:25:32+03:00)</description>
+    </xinfo>
+    <xinfo>
+      <name>Diagnostic Description of RBTMFR174</name>
+      <description>V010, en-US, S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTMFR174.cdd (04.04.02, 2022-07-25 16:25:46+03:00)</description>
+    </xinfo>
+    <xinfo>
+      <name>Test Module Name</name>
+      <description>DIA</description>
+    </xinfo>
+    <xinfo>
+      <name>Test Module File</name>
+      <description>S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Tests\DIA.can</description>
+    </xinfo>
+    <xinfo>
+      <name>Last modification of Test Module File</name>
+      <description>2023-03-08, 10:28:31</description>
+    </xinfo>
+    <xinfo>
+      <name>Windows Computer Name</name>
+      <description>ART-LA-WD3145</description>
+    </xinfo>
+    <xinfo>
+      <name>CAPL DLL FIB_CANOE_DLL</name>
+      <description>S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\HW_Modules\FIB\FIB_CANOE_DLL.dll</description>
+    </xinfo>
+    <xinfo>
+      <name>Nodelayer Module DAG_ZenzefiNodeLayer</name>
+      <description>Security Manager ZenZefi Node Layer (DAG) (Version 2.9.25.0), C:\ProgramData\Vector\Security Manager\DAG\Binaries\ZenzefiNodeLayer\CANoe_13.0.117\Windows-x64\ZenzefiNodeLayer.dll</description>
+    </xinfo>
+    <xinfo>
+      <name>Nodelayer Module SecMgrCANoeClient</name>
+      <description>Security Manager CANoe Node Layer Client (Version 2.9.25.0), C:\ProgramData\Vector\Security Manager\General\Binaries\SecMgrCANoeClient\CANoe_13.0.117\Windows-x64\SecMgrCANoeClient.dll</description>
+    </xinfo>
+    <xinfo>
+      <name>Nodelayer Module AsrPDUIL</name>
+      <description>CANoe AutoSAR PDU Interaction Layer NL (General OEM) Version 1.85.67 (Sep 17 2021 15:13:31) , c:\ProgramData\Vector\AddOn Packages\Vector AddOn\vModules\CANoe_14_0\Exec64\AsrPDUIL.dll</description>
+    </xinfo>
+    <xinfo>
+      <name>Nodelayer Module AsrNM33</name>
+      <description>AsrNM (Version 3.3.72 Windows 64-Bit), c:\ProgramData\Vector\AddOn Packages\Vector AddOn\vModules\CANoe_14_0\Exec64\AsrNM33.dll</description>
+    </xinfo>
+    <xinfo>
+      <name>Nodelayer Module J1939TestServiceLibraryNL</name>
+      <description>J1939 Test Service Library for CANoe, Version 15.4.35.0, c:\Program Files\Vector CANoe 15\Exec64\J1939TestServiceLibraryNL.dll</description>
+    </xinfo>
+    <info>
+      <name>CAN case ID</name>
+      <description>-</description>
+    </info>
+    <info>
+      <name>Power supply ID</name>
+      <description>AER-PWR-005</description>
+    </info>
+    <info>
+      <name>Motherboard</name>
+      <description>-</description>
+    </info>
+    <info>
+      <name>SBC Board</name>
+      <description>-</description>
+    </info>
+    <info>
+      <name>MCU</name>
+      <description>-</description>
+    </info>
+  </testsetup>
+  <sut>
+    <info>
+      <name>DUT</name>
+      <description>Sample_1</description>
+    </info>
+    <info>
+      <name>HW Info</name>
+      <description>22/04.00</description>
+    </info>
+  </sut>
+  <hardware name="CAN Channel Interfaces" category="CategoryCANIF">
+    <xinfoset type="device">
+      <xinfoobject type="device">
+      <xinfo key="channel">
+        <name>Channel</name>
+        <description>1</description>
+      </xinfo>
+      <xinfo key="device">
+        <name>Device</name>
+        <description>VN1611</description>
+      </xinfo>
+      <xinfo key="serialnumber">
+        <name>Serial number</name>
+        <description>15258</description>
+      </xinfo>
+      <xinfo key="driverdllversion">
+        <name>Driver DLL version</name>
+        <description>11.6.12</description>
+      </xinfo>
+      <xinfo key="driverversion">
+        <name>Driver version</name>
+        <description>10.9.12</description>
+      </xinfo>
+      </xinfoobject>
+    </xinfoset>
+  </hardware>
+</testmodule>
+<!--footprint="d50ea53dea6af2ffbbbdadfe1b88e702" version="1"-->

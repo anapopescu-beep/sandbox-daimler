@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0046, ARCH_SW_CIL_0077
+ARCH_SW_CIL_0046: If value for Bckl_Sw_FP_Stat_ST3 is transitioning from 1 to 0 then cycle 18 (BSR) shall be executed.
+ARCH_SW_CIL_0077: If value for Bckl_Sw_FP_Stat_ST3 is trasitioning from 1 to 0 and BSR is being executed than any profile activation on API-interface request will be inhibited..
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal Bckl_Sw_FP_Stat_ST3 to 0x1.
+
+	Step 4: Set signal Bckl_Sw_FP_Stat_ST3 to 0x0.
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle18_b8CycleValidity(&u8CycleValidityStatus);.
+
+Action: ARCH_SW_CIL_0046, ARCH_SW_CIL_0077
+
+	Step 6: Check if CPU stopped in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle18_b8CycleValidity(&u8CycleValidityStatus);. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

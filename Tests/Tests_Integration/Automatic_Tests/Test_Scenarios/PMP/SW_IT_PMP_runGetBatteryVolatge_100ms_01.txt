@@ -1,0 +1,49 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0014, ARCH_SW_PMP_0020
+ARCH_SW_PMP_0014: PMP shall be providing filtered battery voltage value every 100ms.
+ARCH_SW_PMP_0020: The AdcIf_runGetKL30_V_(Ext)* function shall be called to get the sampled value of the KL30 signal.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_0014
+
+	Step 2: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the RTE Call for PMP_runGetBatteryVoltage function 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PMP_runGetBatteryVoltage_100ms at the RTE Call for AdcIf_runGetKL30_V function 
+		Expected result:  BP reached.
+
+	Step 4: Read local variable pu16SampledSignal 
+		Expected result:  Variable read from ADC channel.
+
+	Step 5: Set a breakpoint in function PMP_runGetBatteryVoltage_100ms at the pu16Voltage assignment
+		Expected result:  BP reached.
+
+	Step 6: Evaluate local variable pmp_u16InternalAnalogSignal 
+		Expected result:  Variable read is the same from *(pu16SampledSignal) data pointer.
+
+	Step 7: Read local variable (pu16Voltage) 
+		Expected result:  Variable read.
+
+	Step 8: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC after the RTE Call for PMP_runGetBatteryVoltage function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0020
+
+	Step 9: Evaluate local variable u16FilteredVbatPowerVoltage_mV 
+		Expected result:  Variable read is the same from *(pu16Voltage) data pointer
+
+Postcondition
+
+	Step 10: Return ECU to default values

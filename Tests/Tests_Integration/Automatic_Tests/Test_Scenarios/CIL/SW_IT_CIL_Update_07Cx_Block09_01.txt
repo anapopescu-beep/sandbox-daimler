@@ -1,0 +1,72 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0719, ARCH_SW_CIL_0752
+ARCH_SW_CIL_0719: If selected, the content of the measurement frame - block #10 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0752: AdcIf_runGetKL30_V_(Ext)* shall be called to get the sample value of the battery voltage.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 9.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block09_InfosToSend at line Rte_Call_pclKL30_V_raw_Get(&u16KL30_V_raw);.
+
+Action: ARCH_SW_CIL_0752
+
+	Step 4: Check if CPU stopped at line Rte_Call_pclKL30_V_raw_Get(&u16KL30_V_raw);. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint at the last line of function cil_Update_07Cx_Block09_InfosToSend.
+
+Action: ARCH_SW_CIL_0719
+
+	Step 6: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 and signal Meas_RBTM_FL_01_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 is equal to signal Meas_RBTM_FL_01_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 7: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 is equal to signal Meas_RBTM_FL_02_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 8: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 is equal to signal Meas_RBTM_FL_03_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 9: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 and signal Meas_RBTM_FL_04_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 is equal to signal Meas_RBTM_FL_04_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 10: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 and signal Meas_RBTM_FL_05_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 is equal to signal Meas_RBTM_FL_05_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 11: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 is equal to signal Meas_RBTM_FL_06_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 12: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 is equal to signal Meas_RBTM_FL_07_ST3
+
+Action: ARCH_SW_CIL_0719
+
+	Step 13: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 and signal Meas_RBTM_FL_08_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 is equal to signal Meas_RBTM_FL_08_ST3
+
+Postcondition
+
+	Step 14: Return ECU to default values

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0340; ARCH_SW_DIA_0341; ARCH_SW_DIA_0342; ARCH_SW_DIA_0343; ARCH_SW_DIA_0344
+ARCH_SW_DIA_0340: Service 0x22 (Read Data By Identifier) will be implemented for DID 01E1 (CPU Load)
+ARCH_SW_DIA_0341: The Read CPU Load service shall be available in the following sessions: Default Session (0x01) Programming (0x02) Extended Session (0x03) Supplier Session/Development Session (0x7E) Update Session (0x42)
+ARCH_SW_DIA_0342: Read CPU Load service shall be available under the following forms of Authentication: Supplier Development ENHANCED Internal Diagnostic Test Tool
+ARCH_SW_DIA_0343: DataIdentifier of the Read CPU Load shall be: 0x01E1
+ARCH_SW_DIA_0344: Response data length shall be 12 bytes long: Bytes #2-#3: DataIdentifier of the Read CPU Load shall be: 0x01E1 Byte #4 = CPU ID [1byte]: [0x00] Core 1 Bytes #5 - #15 = CPU Load [11 bytes]: [Byte1] 0-9%, PercentUpdate [Byte2] 10-19%, PercentUpdate [Byte3] 20-29%, PercentUpdate [Byte4] 30-39%, PercentUpdate [Byte5] 40-49%, PercentUpdate [Byte6] 50-59%, PercentUpdate [Byte7] 60-69%, PercentUpdate [Byte8] 70-79%, PercentUpdate [Byte9] 80-89%, PercentUpdate [Byte10] 90-99%, PercentUpdate [Byte11] 100%, PercentUpdate Note: Full Response length = 3 bytes + Response data length
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_CPU_Load_Read_CPU_load_histograms_ReadData*.
+
+Action: ARCH_SW_DIA_0340; ARCH_SW_DIA_0341; ARCH_SW_DIA_0342; ARCH_SW_DIA_0343; ARCH_SW_DIA_0344
+
+	Step 3: Send diag request for 22 01 E1 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_CPU_Load_Read_CPU_load_histograms_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>100</x>
+      <y>30</y>
+      <w>1041</w>
+      <h>774</h>
+    </coordinates>
+    <panel_attributes>title:ECU Traceability Number Write
+Start
+If
+	[B_FALSE != DIA_bIsNvmQueued]
+	Copy NVP_BLOCK_ID_AEE_TRACEABILITY_RamBlockData to Data Buffer
+	Rte_Call_NvMService_NVP_BLOCK_ID_AEE_TRACEABILITY_WriteBlock(Data)
+	DIA_bIsNvmQueued = B_TRUE
+	
+	Do nothing
+
+Rte_Call_NvMService_NVP_BLOCK_ID_AEE_TRACEABILITY_GetErrorStatus()
+If
+	[NVM_REQ_PENDING == errorStatus]
+	Return RTE_E_DataServices_ECU_serial_number_Read_ECU_traceability_number_DCM_E_PENDING
+	
+	DIA_bIsNvmQueued = B_FALSE
+	Return RTE_E_OK
+	ErrorCode = DCM_E_POSITIVERESPONSE
+
+Return
+
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

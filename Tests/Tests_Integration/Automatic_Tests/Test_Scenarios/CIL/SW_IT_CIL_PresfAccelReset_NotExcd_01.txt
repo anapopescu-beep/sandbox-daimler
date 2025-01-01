@@ -1,0 +1,49 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0256
+ARCH_SW_CIL_0256: If PresfAccelReset_NotExcd_ST3 is '2' - Acceleration low (Release Allowed) for at lest NVP_u8APIAccelerationTimeout * 10 ms than smooth release shall be executed (after each cycle request on API source configured with next cycle).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 3: Check if CPU stopped at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();' and run.
+
+	Step 5: Check if CPU stopped at line 'cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function cil_ManageInhibitConditions() at line 'cil_u8AccelerationTimeout = ((uint16)(NVP_BLOCK_ID_CYCLE_DELAYS_MB_RamBlockData.NVP_u8APIAccelerationTimeout));'.
+
+	Step 7: Set signal Presf_Lvl_ST3 to I_C06_RBTM_LVL_RQ_PROFILE9.
+
+	Step 8: Check if CPU stopped at line 'cil_u8AccelerationTimeout = ((uint16)(NVP_BLOCK_ID_CYCLE_DELAYS_MB_RamBlockData.NVP_u8APIAccelerationTimeout));'. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_AccLowInhibition);'.
+
+Action: ARCH_SW_CIL_0256
+
+	Step 10: Check if CPU stopped at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_AccLowInhibition);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0256
+
+	Step 11: Evaluate if variable cil_u8AccLowCounter is equal to 0x1F. 
+		Expected result:  0x1F
+
+Postcondition
+
+	Step 12: Return ECU to default values

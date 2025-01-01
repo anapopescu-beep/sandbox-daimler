@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0727, ARCH_SW_CIL_0769
+ARCH_SW_CIL_0727: If selected, the content of the measurement frame - block #17 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0769: PMP_runGetHS1Level_(Ext)* shall be called to get the value of the HS_SW voltage in V.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 17.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block17_InfosToSend at line Rte_Call_pclHS1_V_Get(&u16VHs1);.
+
+Action: ARCH_SW_CIL_0769
+
+	Step 4: Step in function Rte_Call_pclHS1_V_Get(&u16VHs1);. 
+		Expected result:  PMP_runGetHS1Level,,app.elf
+
+	Step 5: Set a breakpoint at the last line of function cil_Update_07Cx_Block17_InfosToSend.
+
+	Step 6: Read variable u16VHs1.
+
+Action: ARCH_SW_CIL_0727
+
+	Step 7: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal with 0x36 (54). 
+		Expected result:  0x36 (54)
+
+Action: ARCH_SW_CIL_0727
+
+	Step 8: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal with 0x79 (121). 
+		Expected result:  0x79 (121)
+
+Postcondition
+
+	Step 9: Return ECU to default values

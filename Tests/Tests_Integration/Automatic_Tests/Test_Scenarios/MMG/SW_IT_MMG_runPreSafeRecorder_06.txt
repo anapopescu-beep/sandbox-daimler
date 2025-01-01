@@ -1,0 +1,76 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0029, ARCH_SW_MMG_0030, ARCH_SW_MMG_0032, ARCH_SW_MMG_0033, ARCH_SW_MMG_0034
+ARCH_SW_MMG_0029: Failure Message on the bus shall represent the 4 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by a failure message on buss; Yes = 1 if the tensioning was inhibited/ aborted by a failure message on buss
+ARCH_SW_MMG_0032: OverTemperature shall represent the 0 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by overtemperature; Yes = 1 if the tensioning was inhibited/ aborted by overtemperature
+ARCH_SW_MMG_0033: EOL counter rejection shall represent the 1 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by EOL counter limit; Yes = 1 if the tensioning was inhibited/ aborted by EOL counter limit
+ARCH_SW_MMG_0034: System failure shall represent the 2 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by system failure; Yes = 1 if the tensioning was inhibited/ aborted by system failure
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStopData(mmg_stPreSafeManagement.PreSafeBufferID);' under case KU8_TENSIONING_ABORT.
+
+	Step 3: Check if CPU stopped in MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStopData(mmg_stPreSafeManagement.PreSafeBufferID);' under case KU8_TENSIONING_ABORT. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function mmg_PreSafe_HandleStateData( ) at line 'mmg_stPreSafeStateData.State1PreSafeAbort = MMG_KU8_State_DTC_Is_Set;'.
+
+Action: ARCH_SW_MMG_0029
+
+	Step 5: Check if CPU stopped in function mmg_PreSafe_HandleStateData( ) at line 'mmg_stPreSafeStateData.State1PreSafeAbort = MMG_KU8_State_DTC_Is_Set;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0029
+
+	Step 6: Read variable mmg_stPreSafeStateData.State1PreSafeAbort 
+		Expected result:  KU8_ONE
+
+	Step 7: Set a breakpoint in function mmg_PreSafe_HandleStateData( ) at line 'mmg_stPreSafeStateData.State2OverTemp = MMG_KU8_State_DTC_Is_Set;'.
+
+Action: ARCH_SW_MMG_0032
+
+	Step 8: Check if CPU stopped in function mmg_PreSafe_HandleStateData( ) at line 'mmg_stPreSafeStateData.State2OverTemp = MMG_KU8_State_DTC_Is_Set;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0032
+
+	Step 9: Read variable mmg_stPreSafeStateData.State2OverTemp. 
+		Expected result:  KB_ZERO
+
+Action: ARCH_SW_MMG_0033
+
+	Step 10: Step in function mmg_PreSafe_CheckEOLLimit(). 
+		Expected result:  Stepped in mmg_PreSafe_CheckEOLLimit
+
+	Step 11: Check if CPU stopped in function mmg_PreSafe_CheckEOLLimit().
+
+	Step 12: Set a breakpoint in function mmg_PreSafe_HandleStateData( ) at line 'mmg_stPreSafeStateData.State2SystemFailure = MMG_KU8_State_DTC_Is_Set;'.
+
+Action: ARCH_SW_MMG_0034
+
+	Step 13: Check if CPU stopped in function mmg_PreSafe_HandleStateData( ) at line 'mmg_stPreSafeStateData.State2SystemFailure = MMG_KU8_State_DTC_Is_Set;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0034
+
+	Step 14: Read variable mmg_stPreSafeStateData.State2SystemFailure. 
+		Expected result:  KB_ZERO
+
+Action: ARCH_SW_MMG_0033
+
+	Step 15: Read variable mmg_stPreSafeStateData.State2PreSafeCounter. 
+		Expected result:  KB_ZERO
+
+Postcondition
+
+	Step 16: Return ECU to default values

@@ -1,0 +1,30 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0105, ARCH_SW_PAL_0106, ARCH_SW_PAL_0100
+ARCH_SW_PAL_0105: If the motor rotation direction is �tensioning�, the AdcIf_runGetMotor_Ip function shall be called to read the motor current measured by the half bridge connected to the VP pin of the motor.
+ARCH_SW_PAL_0106: If the motor rotation direction is �releasing�, the AdcIf_runGetMotor_In function shall be called to read the motor current measured by the half bridge connected to the VN pin of the motor.
+ARCH_SW_PAL_0100: The component shall provide the current in amps.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PAL_0105, ARCH_SW_PAL_0106, ARCH_SW_PAL_0100
+
+	Step 2: Set a breakpoint in function PAL_runReadMotorCurrentInA at PAL_runReadMotorCurrentInmA function call 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PAL_runReadMotorCurrentInmA after the pal_ComputeCurrentHalfBridgeP and pal_ComputeCurrentHalfBridgeN functions call 
+		Expected result:  BP reached.
+
+Postcondition
+
+	Step 4: Return ECU to default values

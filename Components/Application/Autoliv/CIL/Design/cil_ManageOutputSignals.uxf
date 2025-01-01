@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>3</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>147</x>
+      <y>258</y>
+      <w>1391</w>
+      <h>318</h>
+    </coordinates>
+    <panel_attributes>title:LOCAL void cil_ManageOutputSignals(void)
+Start
+Rte_IrvRead_CIL_runAppliToCAN_u8ResponseSignal
+Rte_Read_CIL_AC_CommunicationInteractionLayer_prrCycleNumber_u8CycleNumber(u8Cycle)
+  Switch\ u8Cycle
+If
+	[0x00]
+	If
+		[u8StatusRejected = KU8_CIL_ACTV_LVL_SIGNAL_REJECTED]
+		cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_REJECTED
+		
+		[u8StatusRejected != KU8_CIL_ACTV_LVL_SIGNAL_REJECTED]
+		cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_NONE
+	EndIf	
+	
+	[0x01]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_PRE_SAFE1
+
+	[KU8_BELT_FUNCTION_18]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_PRE_SAFE2_HWA
+
+	[KU8_CYCLE_ID_HWA_1]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_PRE_SAFE2_HWA
+
+	[KU8_PRECRASH_SEVERITY_LEVEL_2]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_PRE_SAFE3
+
+	[KU8_PRECRASH_SEVERITY_LEVEL_3]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_PRE_SAFE4
+
+	[KU8_PRECRASH_SEVERITY_LEVEL_4]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_PRE_SAFE5
+
+	[KU8_BELT_FUNCTION_26]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_BSR1
+
+	[default]
+	cil_u8Actv_Lvl = KU8_CIL_ACTV_LVL_SIGNAL_NONE
+  
+
+                 Check\ KU8_CIL_ECU_LOCATION
+If
+	[KU8_CIL_ECU_SIDE_FRONT_LEFT]
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_PS_Curve_FL_Stat_ST3_PS_Curve_FL_Stat_ST3(u8PSCurve)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_RBTM_FL_Disp_Rq_ST3_RBTM_FL_Disp_Rq_ST3(u8RBTMDisp)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_RBTM_FL_Tgl_ST3_RBTM_FL_Tgl_ST3(u8RBTMTgl)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_BltSlckDec_Md_FL_Stat_ST3_BltSlckDec_Md_FL_Stat_ST3(u8BltSlckDec)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_RBTMFL_Actv_Lvl_ST35_RBTMFL_Actv_Lvl_ST35(cil_u8Actv_Lvl);
+
+	
+	[KU8_CIL_ECU_SIDE_FRONT_RIGHT]
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_PS_Curve_FR_Stat_ST3_PS_Curve_FR_Stat_ST3(u8PSCurve)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_RBTM_FR_Disp_Rq_ST3_RBTM_FR_Disp_Rq_ST3(u8RBTMDisp)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_RBTM_FR_Tgl_ST3_RBTM_FR_Tgl_ST3(u8RBTMTgl)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_BltSlckDec_Md_FR_Stat_ST3_BltSlckDec_Md_FR_Stat_ST3(u8BltSlckDec)
+	Rte_Write_CIL_AC_CommunicationInteractionLayer_RBTMFR_Actv_Lvl_ST35_RBTMFR_Actv_Lvl_ST35(cil_u8Actv_Lvl);
+
+
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

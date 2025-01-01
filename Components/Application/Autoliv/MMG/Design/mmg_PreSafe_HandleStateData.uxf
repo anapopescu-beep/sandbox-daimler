@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>180</x>
+      <y>0</y>
+      <w>2038</w>
+      <h>2698</h>
+    </coordinates>
+    <panel_attributes>title:mmg_PreSafe_HandleStateData
+Start
+
+Get AEC Group Status
+Check Tensioning State Type
+If
+	[Start]
+	State1TensioningState = Successfull
+	
+	[End]
+	State1TensioningState = Successfull
+	
+	[Inhibit]
+	State1TensioningState = Not Started
+
+	[Abort]
+	State1TensioningState = Abort
+
+EndIf
+
+Check Presafe Function activation status
+If
+	[Disabled]
+	State1PreSafeDisabled = MMG_KU8_State_DTC_Is_Set
+	
+	[Active]
+	Check PreSafeCycleActivation &amp; u8PresafeLevelType != ZERO
+	If
+		[TRUE]
+		State1PreSafeDisabled = MMG_KU8_State_DTC_Is_Set	
+		
+		[FALSE]
+		State1PreSafeDisabled = MMG_KU8_State_DTC_Is_Not_Set
+	EndIf
+	Check if cycle executed is disabled
+	If
+		[Cycle disabled]
+		State1PreSafeDisabled = MMG_KU8_State_DTC_Is_Set
+	
+		[Cycle active]
+		State1PreSafeDisabled = MMG_KU8_State_DTC_Is_Not_Set
+
+	EndIf
+
+EndIf
+
+Check Tens Suppresion Type
+
+If
+	[No supp]
+	State1PreSafeSupp = MMG_KU8_State_DTC_Is_Not_Set
+	
+	[Left]
+	Check ECU location
+	If
+		[Left]
+		State1PreSafeSupp = MMG_KU8_State_DTC_Is_Set
+
+		[Right]
+		State1PreSafeSupp = MMG_KU8_State_DTC_Is_Not_Set
+	EndIf
+
+	
+	[Right]
+	Check ECU location
+	If
+		[Left]
+		State1PreSafeSupp = MMG_KU8_State_DTC_Is_Not_Set
+
+		[Right]
+		State1PreSafeSupp = MMG_KU8_State_DTC_Is_Set
+	EndIf
+
+	[Both]
+	State1TensioningState = MMG_KU8_State_DTC_Is_Set
+
+EndIf
+
+Check if Timeout and Implausible data AECs are NOK
+If
+	[AECs set]
+	State1PreSafeAbort = MMG_KU8_State_DTC_Is_Set
+	
+	[AECs not set]
+	State1PreSafeAbort = MMG_KU8_State_DTC_Is_Not_Set
+EndIf	
+
+Check if Ignition status is ON
+If
+	[IGN ON]
+	State1KL15 = MMG_KU8_State_DTC_Is_Not_Set
+	
+	[IGN not ON]
+	State1KL15 = MMG_KU8_State_DTC_Is_Set
+EndIf	
+
+Check if OV or UV AEC are set
+If
+	[AECs set]
+	State1UvOROV = MMG_KU8_State_DTC_Is_Set
+	
+	[AECs not set]
+	State1UvOROV = MMG_KU8_State_DTC_Is_Not_Set
+EndIf	
+
+Check if Overtemperature AEC is set
+If
+	[AEC set]
+	State2OverTemp = MMG_KU8_State_DTC_Is_Set
+	
+	[AEC not set]
+	State2OverTemp = MMG_KU8_State_DTC_Is_Not_Set
+EndIf	
+
+Call mmg_PreSafe_CheckEOLLimit function
+
+Check if System/Component failure AEC is set
+If
+	[AEC set]
+	State2SystemFailure = MMG_KU8_State_DTC_Is_Set
+	
+	[AEC not set]
+	State2SystemFailure = MMG_KU8_State_DTC_Is_Not_Set
+EndIf	
+
+Call mmg_PreSafe_CopyStateData function
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

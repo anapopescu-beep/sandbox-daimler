@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0028; ARCH_SW_DIA_0126; ARCH_SW_DIA_0127;
+ARCH_SW_DIA_0028: Service 0x2E will be implemented for DID 0310
+ARCH_SW_DIA_0126: Request data shall be 1 byte long
+ARCH_SW_DIA_0127: Runnable shall write Equipment 6 stored in Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment.Equipment6
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Vehicle_Equipment_Read_Equipment_6_WriteData*.
+
+Action: ARCH_SW_DIA_0028; ARCH_SW_DIA_0126; ARCH_SW_DIA_0127;
+
+	Step 4: Send diag request for 2E 0310 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_Vehicle_Equipment_Read_Equipment_6_WriteData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

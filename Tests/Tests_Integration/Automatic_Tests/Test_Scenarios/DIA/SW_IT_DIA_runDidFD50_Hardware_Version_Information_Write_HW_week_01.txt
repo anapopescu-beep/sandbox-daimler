@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0515; ARCH_SW_DIA_0517;
+ARCH_SW_DIA_0515: Service 0x2E (Write Data By Identifier) will be implemented for DID FD50 (HW Version)
+ARCH_SW_DIA_0515: Runnable shall return 2 bytes, representing PATCH of HW version
+ARCH_SW_DIA_0516: Runnable shall return 2 bytes, representing WEEK of HW version
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD50_Hardware_Version_Information_Write_HW_week*.
+
+Action: ARCH_SW_DIA_0515; ARCH_SW_DIA_0517;
+
+	Step 4: Send diag request for 2E FD50 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD50_Hardware_Version_Information_Write_HW_year was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Write Data byte 
+		Expected result:  Variable overwritten with 0x1.
+
+	Step 7: Send diag request for 2E FD50 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 8: Return ECU to default values

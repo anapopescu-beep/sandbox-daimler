@@ -1,0 +1,101 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0080, ARCH_SW_PAL_0380, ARCH_SW_PAL_0378, ARCH_SW_PAL_0379, ARCH_SW_PAL_0400, ARCH_SW_PAL_0401, ARCH_SW_PAL_0402, ARCH_SW_PAL_0403
+ARCH_SW_PAL_0380: The component shall check if the motor is coupled with the mechanic.
+ARCH_SW_PAL_0378: The current executed cycle shall be read from BFE.
+ARCH_SW_PAL_0379: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0400: PMP_runGetFilteredTemperature_deg shall be called to get the ECU temperature
+ARCH_SW_PAL_0401: PMP_runGetBatteryVoltage_10ms shall be called to get the battery voltage
+ARCH_SW_PAL_0402: PMP_runGetMotorResistance shall be called to get motor resistance
+ARCH_SW_PAL_0403: PAL_runReadMotorCurrentInmA shall be called to get motor current.
+ARCH_SW_PAL_0080: The component shall provide the current in miliamps.
+ARCH_SW_PAL_0085: If the motor rotation direction is �tensioning�, the AdcIf_runGetMotor_Ip function shall be called to read the motor current measured by the half bridge connected to the VP pin of the motor.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0380, ARCH_SW_PAL_0378
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckMotorDisengagement at the RTE Call for CheckMotorDisengagement autotest 
+		Expected result:  CPU is stopped at BP.
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE call for GetTestResult 
+		Expected result:  CPU is stopped at BP.
+
+	Step 5: Write autotest result with 0x1 
+		Expected result:  Variable written with 0x1
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetFilteredTemperature_deg CPU is stopped at BP 
+		Expected result:  CPU is stopped at BP.
+
+	Step 7: Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 8: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetBatteryVoltage_10ms 
+		Expected result:  CPU is stopped at BP.
+
+	Step 9: Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 10: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetMotorResistance 
+		Expected result:  CPU is stopped at BP.
+
+	Step 11: Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer 
+		Expected result:  Variable read from ADC.
+
+Action: ARCH_SW_PAL_0085
+
+	Step 12: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the PAL_runReadMotorCurrentInmA function call 
+		Expected result:  CPU is stopped at BP.
+
+Action: ARCH_SW_PAL_0080, ARCH_SW_PAL_0403
+
+	Step 13: Run until return PAL_runReadMotorCurrentInmA and evaluate *ps32MotorCurrentInmA data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 14: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the autotest result 
+		Expected result:  CPU is stopped at BP.
+
+Action: ARCH_SW_PAL_0379
+
+	Step 15: Evaluate PreviousADCTestResult 
+		Expected result:  Variable is equal to 0x1.
+
+	Step 16: Evaluate ExecutedCycleNumber 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_PAL_0400
+
+	Step 17: Evaluate ECUInternalTemperature 
+		Expected result:  Variable is equal to *ps16InternalTemperature_deg data pointer.
+
+Action: ARCH_SW_PAL_0401
+
+	Step 18: Evaluate KL30Voltage_mV 
+		Expected result:  Variable is equal to *pu16Voltage data pointer data pointer.
+
+Action: ARCH_SW_PAL_0402
+
+	Step 19: Evaluate MotorResistance_mOhm 
+		Expected result:  Variable is equal to *pu16Resistance_mOhm data pointer.
+
+	Step 20: Set a breakpoint in function PAL_cbk_CheckMotorDisengagement after the return of the autotest result 
+		Expected result:  CPU is stopped at BP.
+
+	Step 21: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 22: Return ECU to default values

@@ -1,0 +1,3961 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>NVP</title>
+    <style type="text/css">
+      
+       
+      
+      @media screen
+      {
+        body
+        {
+          background-color: rgb(255, 255, 255);
+          font-family:      arial, verdana, trebuchet, officina, sans-serif;
+        }
+      }
+  
+      
+      @media print
+      {
+        
+        body
+        {
+          background-color: rgb(255, 255, 255);
+          font-family:      arial, verdana, trebuchet, officina, sans-serif;
+        }
+        
+        
+        a
+        {
+          text-decoration: none;
+        }
+        
+        
+        .HeadingTable, .SubHeadingTable, .GroupHeadingTable , .GroupEndTable
+        {
+          border-width: 2px;
+          border-style: solid;
+          border-color: rgb(150,150,150);
+        }
+        
+        .ResultBlockHeading
+        {
+          border-width: 1px;
+          border-style: solid;
+          border-color: rgb(150,150,150);
+        }
+        
+        table.ResultTable, table.OverviewTable, table.CheckStatisticsTable
+        {
+          border-collapse: collapse;
+        }
+        
+        td.DefaultCell, td.DefineCell, td.NumberCell, td.NumberCellPositiveResult, td.NumberCellNegativeResult, 
+        td.NumberCellErrorResult, td.NumberCellInconclusiveResult, td.NumberCellNoneResult, td.NumberCellNoColor,
+        td.PositiveResultCell, td.NegativeResultCell, td.WarningCell, td.NoneResultCell, td.InconclusiveResultCell,
+        td.ErrorResultCell, th.TableHeadingCell
+        {
+          border-width: 1px;
+          border-style: solid;
+          border-color: rgb(150,150,150);
+        }
+        
+        .PatternSeparator
+        {
+          
+          border-style: none;
+        }
+        
+        .PositiveResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        .NegativeResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        .NoneResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        .InconclusiveResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        .ErrorResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+
+        
+        .TestcaseHeadingDefaultResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        .TestcaseHeadingPositiveResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        .TestcaseHeadingNegativeResult
+        {
+          
+          border-bottom: 2px solid;
+        }
+        
+        table.ScreenOnly, a.Undecorated, .LinkCell
+        {
+          display: none;
+        }
+      }
+      
+      a.Undecorated:hover 
+      {
+        color:red;
+      }
+      a.Undecorated
+      { 
+        text-decoration: none; 
+      }
+      
+      .NavStyle
+      {
+        background-color: rgb(220, 221, 222);
+      }
+      
+      td.LinkCell, td.UpCell
+      {
+        
+        width:              1px;
+        white-space:        nowrap;
+      }
+
+      
+      table
+      {
+        margin-bottom:    10px;
+        vertical-align:   top; 
+        border:           0;
+        border-spacing:   1px;
+        padding:          2px;
+      }
+      table.ScreenOnly
+      {
+        vertical-align: top; 
+        margin-bottom:  10px;
+      }
+      .NoMarginBottom
+      {
+        margin-bottom:    0px;
+      }
+      .HeadingTable
+      {
+        width:            100%;
+        text-align:       center;
+        margin-top:       15px;
+        margin-bottom:    30px;
+        margin-left:      auto;
+        margin-right:     auto;
+        background-color: rgb(220, 221, 222);
+      }
+      
+      .SubHeadingTable
+      {
+        width:            100%;
+        text-align:       center;
+        margin-top:       15px;
+        margin-bottom:    25px;
+        background-color: rgb(220, 221, 222);
+      }
+      
+      .GroupHeadingTable, .GroupEndTable
+      {
+        width:            100%;
+        text-align:       center;
+        margin-top:       15px;
+        padding-right:    20px;
+        background-color: rgb(220, 221, 222);
+      }
+      
+      .DefaultTable
+      {
+        padding:        0px;
+        border-spacing: 0px;
+      }
+      
+      .CheckStatisticsTable
+      {
+        margin-bottom: 8px;
+        padding-right:  20px;
+      }
+  
+      .OverviewTable
+      {
+        text-align:     left;
+      }
+      
+      .OverviewResultTable
+      {
+        width:          100%;
+        margin-bottom:  0px;
+        border-spacing: 0px;
+        padding:        0px;
+        text-align:     center;
+      }
+      
+      .ResultTable
+      {
+        width:          100%;
+        text-align:     left;
+        padding-right:  20px;
+      }
+      
+      .ResultTableInner
+      {
+        width:          100%;
+        text-align:     left;
+        padding-right:  0px;
+      }
+  
+      table.ResultTable td, table.ChildLinkTable td
+      {
+        vertical-align: top;
+      }
+      .ChildLinkTable
+      {
+        width:          1px;
+        text-align:     left;
+      }
+      .InfoTable
+      {
+        text-align:     left;
+        padding-right:  0px;
+        margin-bottom:  0px;
+        border-spacing: 0px;
+      }
+      .InfoTableExpand
+      {
+        width:          100%;
+        text-align:     left;
+        padding-right:  0px;
+        margin-bottom:  0px;
+        border-spacing: 0px;
+      }
+      .OverallResultTable
+      {
+        width:         50%;
+        text-align:    center;
+        margin-bottom: 20px;
+        margin-left:   auto;
+        margin-right:  auto;
+        font-weight:   bold;
+      }
+      
+      .TableHeadingCell
+      {
+        background-color: rgb(179, 179, 179);
+        font-family:      arial, verdana, trebuchet, officina, sans-serif;
+        font-weight:      bold;
+        text-align:       left;
+      }
+	  
+      .CellNoColor
+      {
+        text-align:     left;
+        vertical-align: top;
+      }   
+      
+      .DefineCell
+      {
+        background-color: rgb(179, 179, 179);
+        text-align:       left;
+      }
+      
+      .DefaultCell
+      {
+        background-color: rgb(229, 229, 229);
+        text-align:       left;
+      }
+	  
+	  .DefaultCellTestStep
+      {
+		background-color: rgb(229, 229, 229);
+        text-align:       left;
+		font-weight:      bold;
+      }
+	  
+	   .DefaultCellTestStepCellBlueUnderline
+      {
+		background-color: rgb(229, 229, 229);
+        text-align:       center;
+		font-weight:      bold;
+		font-style: 	  italic;
+		text-decoration:  underline;
+		color: 			  rgb(4,45,229);
+      }
+      
+      .DefaultCellBold
+      {
+		background-color: rgb(211, 233, 246);
+        font-weight:      normal;
+		text-decoration:  underline;
+		color: 			  rgb(4,45,229);
+		font-style: 	  italic;
+      }
+        
+      .NumberCell
+      {
+        background-color: rgb(229, 229, 229);
+        text-align:       center;
+        min-width:        50px;
+      }
+      
+      .NumberCellNegativeResult
+      {
+        background-color: rgb(240, 0, 0);
+        text-align:       center;
+        min-width:        50px;
+      }
+      
+      .NumberCellPositiveResult
+      {
+        background-color: rgb(25, 165, 0);
+        text-align:       center;
+        min-width:        50px;
+      }
+      
+      .NumberCellNoneResult
+      {
+        background-color: rgb(105, 105, 105);
+        text-align:       center;
+        text-align:       center;
+        min-width:        50px;
+      }
+      
+      .NumberCellInconclusiveResult
+      {
+        background-color: rgb(255, 165, 0);
+        text-align:       center;
+        min-width:        50px;
+      }
+      
+      .NumberCellErrorResult
+      {
+        background-color: rgb(205, 0, 0);
+        text-align:       center;
+        min-width:        50px;
+      }
+      
+      .NumberCellNoColor
+      {        
+        text-align: center;
+      }
+      
+      .PositiveResultCell
+      {
+        background-color: rgb(25, 165, 0);
+      }
+    
+      .NegativeResultCell
+      {
+        background-color: rgb(240, 0, 0);
+      }
+      
+      .NoneResultCell
+      {
+        background-color: rgb(105, 105, 105);
+      }
+      
+      .InconclusiveResultCell
+      {
+        background-color: rgb(255, 165, 0);
+      }
+      
+      .ErrorResultCell
+      {
+        background-color: rgb(205, 0, 0);
+        white-space:        nowrap;
+      }
+
+      .WarningCell
+      {
+        background-color: rgb(255, 255, 0);
+      }
+
+      .TestcaseHeadingDefaultResult
+      {
+        background-color: rgb(179, 179, 179);
+      }
+      .TestcaseHeadingPositiveResult
+      {
+        background-color: rgb(25, 165, 0);
+      }      
+      .TestcaseHeadingNegativeResult
+      {
+        background-color: rgb(240, 0, 0);
+      }      
+      .TestcaseHeadingNoneResult
+      {
+        background-color: rgb(105, 105, 105);
+      }
+      .TestcaseHeadingInconclusiveResult
+      {
+        background-color: rgb(255, 165, 0);
+      }
+      .TestcaseHeadingErrorResult
+      {
+        background-color: rgb(205, 0, 0);
+      }
+      
+      .PatternSeparator
+      {
+        height: 0.2em;
+      }
+      
+      .NegativeResult
+      {
+        background-color: rgb(240, 0, 0);
+        text-align:       center;
+        font-weight:      bold;
+      }
+      .PositiveResult
+      {
+        background-color: rgb(25, 165, 0);
+        text-align:       center;
+        font-weight:      bold;
+      }
+      .NoneResult
+      {
+        background-color: rgb(105, 105, 105);
+        text-align:       center;
+        font-weight:      bold;
+      }
+      .InconclusiveResult
+      {
+        background-color: rgb(255, 165, 0);
+        text-align:       center;
+        font-weight:      bold;
+      }
+      .ErrorResult
+      {
+        background-color: rgb(205, 0, 0);
+        text-align:       center;
+        font-weight:      bold;
+      }
+      
+      
+      
+      .Heading1
+      {
+        font-family: arial, sans-serif;
+        font-weight: bold;
+        font-size:   26px;
+      }
+      
+      .Heading2
+      {
+        font-family: arial, sans-serif;
+        font-weight: bold;
+        font-size:   20px;
+      }
+      
+      .Heading3
+      {
+        font-family:   arial, sans-serif;
+        font-weight:   bold;
+        font-size:     18px;
+        margin-bottom: 20px;
+        margin-top:    20px;
+      }
+      
+      .Heading4
+      {
+        font-family:   arial, sans-serif;
+        font-weight:   bold;
+        font-size:     16px;
+        margin-top:    10px;
+        margin-bottom: 10px;
+      }
+      
+      
+      img
+      {
+        Margin-bottom: 10px;
+        Margin-right:  10px;
+      }
+      
+      
+      p
+      {
+        Margin-bottom: 20px;
+      }
+      
+      
+      .DefaultTableBackground
+      {
+        background-color: rgb(229, 229, 229);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .NegativeResultBackground
+      {
+        background-color: rgb(240, 0, 0);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .PositiveResultBackground
+      {
+        background-color: rgb(25, 165, 0);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .WarningResultBackground
+      {
+        background-color: rgb(255, 255, 0);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .NoneResultBackground
+      {
+        background-color: rgb(105, 105, 105);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .InconclusiveResultBackground
+      {
+        background-color: rgb(255, 165, 0);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .ErrorResultBackground
+      {
+        background-color: rgb(205, 0, 0);
+        border-spacing:   0px;
+        padding:          0px;
+      }
+      
+      .TestGroupHeadingBackground
+      {
+        background-color: rgb(179, 179, 179);
+      }
+    
+      
+      .Indentation
+      {
+        margin-left:  20px;
+      }
+    </style>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+  </head>
+  <body>
+    <a name="TOP"></a>
+    <table class="HeadingTable">
+      <tr>
+        <td>
+          <big class="Heading1">Report: NVP</big>
+        </td>
+      </tr>
+    </table>
+    <center>
+      <table class="OverallResultTable">
+        <tr>
+          <td class="NegativeResult">Test failed</td>
+        </tr>
+      </table>
+    </center>
+    <a name="GeneralTestInfo"></a>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <div class="Heading2">General Test Information</div>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation">
+      <div class="Heading4">System Under Test</div>
+      <div class="Indentation">
+        <table>
+          <tr>
+            <td class="CellNoColor">DUT: </td>
+            <td class="CellNoColor">-</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">HW Info: </td>
+            <td class="CellNoColor">22/04.00</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Test Engineer</div>
+      <div class="Indentation">
+        <table>
+          <tr>
+            <td class="CellNoColor">Windows Login Name: </td>
+            <td class="CellNoColor">victor.popina</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Tester Name: </td>
+            <td class="CellNoColor">CGA</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Test Setup</div>
+      <div class="Indentation">
+        <table>
+          <tr>
+            <td class="CellNoColor">Version: </td>
+            <td class="CellNoColor">CANoe.CAN /pro 15.3.89 (SP3)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Configuration: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\BODY3_11.cfg</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Database BODY3 on BODY3: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTM_FL_FR_STAR_3_Ecu_Extract_2022_17a0_AR43.arxml (2024-01-29 10:28:35)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Diagnostic Description of RBTMFL174: </td>
+            <td class="CellNoColor">V090, en-US, S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTMFL174.cdd (06.09.04, 2023-11-27 16:10:19+01:00)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Diagnostic Description of RBTMFR174: </td>
+            <td class="CellNoColor">V010, en-US, S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTMFR174.cdd (06.09.04, 2023-11-27 16:10:19+01:00)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Test Module Name: </td>
+            <td class="CellNoColor">NVP</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Test Module File: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Tests\NVP.can</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Last modification of Test Module File: </td>
+            <td class="CellNoColor">2024-03-05, 15:09:47</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Windows Computer Name: </td>
+            <td class="CellNoColor">ART-OF-WL3544</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">CAPL DLL FIB_CANOE_DLL: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\HW_Modules\FIB\FIB_CANOE_DLL.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">CAPL DLL DebuggerFunctions: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\HW_Modules\IC5000\DebuggerFunctions.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module DAG_ZenzefiNodeLayer: </td>
+            <td class="CellNoColor">Security Manager ZenZefi Node Layer (Version 2.8.7.0), C:\ProgramData\Vector\Security Manager\DAG\Binaries\ZenzefiNodeLayer\CANoe_13.0.117\Windows-x64\ZenzefiNodeLayer.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module SecMgrCANoeClient: </td>
+            <td class="CellNoColor">Security Manager CANoe Node Layer Client (Version 2.8.7.0), C:\ProgramData\Vector\Security Manager\General\Binaries\SecMgrCANoeClient\CANoe_13.0.117\Windows-x64\SecMgrCANoeClient.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module AsrPDUIL: </td>
+            <td class="CellNoColor">CANoe AutoSAR PDU Interaction Layer NL (General OEM) Version 1.85.67 (Jul  1 2021 14:18:47) , C:\Program Files\Vector CANoe 15\Exec64\AsrPDUIL.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module AsrNM33: </td>
+            <td class="CellNoColor">AsrNM (Version 3.3.72 Windows 64-Bit), C:\Program Files\Vector CANoe 15\Exec64\AsrNM33.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module J1939TestServiceLibraryNL: </td>
+            <td class="CellNoColor">J1939 Test Service Library for CANoe, Version 15.3.89.0, C:\Program Files\Vector CANoe 15\Exec64\J1939TestServiceLibraryNL.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">CAN case ID: </td>
+            <td class="CellNoColor">RBE-COM-34</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Power supply ID: </td>
+            <td class="CellNoColor">RBE-PWR-018</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Motherboard: </td>
+            <td class="CellNoColor">-</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">SBC Board: </td>
+            <td class="CellNoColor">-</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">MCU: </td>
+            <td class="CellNoColor">-</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Hardware</div>
+      <div class="Indentation">
+        <div class="Heading4">CAN Channel Interfaces</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <th class="TableHeadingCell">Channel</th>
+              <th class="TableHeadingCell">Device</th>
+              <th class="TableHeadingCell">Serial number</th>
+              <th class="TableHeadingCell">Driver DLL version</th>
+              <th class="TableHeadingCell">Driver version</th>
+            </tr>
+            <tr>
+              <td class="NumberCell">1</td>
+              <td class="NumberCell">VN1611</td>
+              <td class="NumberCell">17431</td>
+              <td class="NumberCell">21.10.20</td>
+              <td class="NumberCell">20.30.14</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="Heading4">Logging and video recordings</div>
+      <div class="Indentation">
+        <table>
+          <th class="TableHeadingCell">Start Time</th>
+          <th class="TableHeadingCell">End Time</th>
+          <th class="TableHeadingCell">Logging/Video File</th>
+          <tr>
+            <td class="NumberCell">   3.205749</td>
+            <td class="NumberCell">Active at test end</td>
+            <td class="NumberCell" style="text-align:left">..\Logs\NVP\SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_5_15_10_00_2024.asc</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <a name="TestOverview"></a>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <div class="Heading2">Test Overview</div>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation">
+      <table class="DefaultTable">
+        <tr>
+          <td style="padding-right: 0.5em;" class="CellNoColor">Test begin: </td>
+          <td style="padding-right: 0.5em;" class="CellNoColor">2024-03-05 15:10:00</td>
+          <td class="CellNoColor">(logging timestamp    3.205749)</td>
+        </tr>
+        <tr>
+          <td style="padding-right: 0.5em;" class="CellNoColor">Test end: </td>
+          <td style="padding-right: 0.5em;" class="CellNoColor">2024-03-05 15:10:25</td>
+          <td class="CellNoColor" nowrap>(logging timestamp   27.674802)</td>
+        </tr>
+      </table>
+      <div class="Heading4">Statistics</div>
+      <div class="Indentation">
+        <table class="OverviewTable">
+          <tr>
+            <td class="DefineCell">Overall number of test cases </td>
+            <td class="NumberCell" width="60">2</td>
+            <td class="DefaultCell"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Executed test cases </td>
+            <td class="NumberCell">2</td>
+            <td class="DefaultCell">100% of all test cases</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Not executed test cases </td>
+            <td class="NumberCell">0</td>
+            <td class="DefaultCell">0% of all test cases</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Test cases passed </td>
+            <td class="NumberCellPositiveResult">1</td>
+            <td class="NumberCellPositiveResult">50% of executed test cases</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Test cases failed </td>
+            <td class="NumberCellNegativeResult">1</td>
+            <td class="NumberCellNegativeResult">50% of executed test cases</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Test Case Results</div>
+      <div class="Indentation">
+        <table class="OverviewTable">
+          <tr>
+            <td class="DefineCell">1</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <a href="#i__-757809536_9">InitTestModule</a>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">2</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <a href="#i__-757809536_30">SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_05_15_10_00_2024</a>
+            </td>
+            <td class="NegativeResultCell">
+              <a href="#i__-757809536_2413" onclick="showTC('2')">fail</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <a name="TestModuleInfo"></a>
+    <table class="SubHeadingTable">
+      <tr>
+        <td class="LinkCell">
+          <a class="Undecorated" id="lnk_" href="javascript:switchAll('',document.all['lnk_'].text)">[−]</a>
+        </td>
+        <td>
+          <div class="Heading2">Test Module Information</div>
+        </td>
+      </tr>
+    </table>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <big class="Heading2">Test Case Details</big>
+        </td>
+      </tr>
+    </table>
+    <table>
+      <tr>
+        <td class="LinkCell">
+          <a class="Undecorated" id="lnk_1" href="javascript:switchAll('1',document.all['lnk_1'].text)">[−]</a>
+        </td>
+        <td class="TestcaseHeadingPositiveResult">
+          <big class="Heading3">1 <a name="i__-757809536_9">InitTestModule</a>: Passed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_1">
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-03-05 15:10:00</td>
+            <td class="CellNoColor">(logging timestamp    3.205749)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-03-05 15:10:00</td>
+            <td class="CellNoColor" nowrap>(logging timestamp    3.205749)</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Indentation"></div>
+    </div>
+    <table>
+      <tr>
+        <td class="LinkCell">
+          <a class="Undecorated" id="lnk_2" href="javascript:switchAll('2',document.all['lnk_2'].text)">[−]</a>
+        </td>
+        <td class="TestcaseHeadingNegativeResult">
+          <big class="Heading3">2 <a name="i__-757809536_30">SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_05_15_10_00_2024</a>: Failed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_2">
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-03-05 15:10:00</td>
+            <td class="CellNoColor">(logging timestamp    3.205749)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-03-05 15:10:25</td>
+            <td class="CellNoColor" nowrap>(logging timestamp   27.674802)</td>
+          </tr>
+        </table>
+        <div class="Heading4">AUTOLIV ELECTRONICS document</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="DefaultCell">Nightly test: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Test type: </td>
+              <td class="DefaultCellBold">Requirement-Based test</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Regression Test: </td>
+              <td class="DefaultCellBold">Yes</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Fault injection method used: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Resource usage evaluation: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Priority: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Safety relevant: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+          </table>
+        </div>
+        <div class="Heading4">Test equipment</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="DefaultCell">Tester Name: </td>
+              <td class="DefaultCellBold">CGA</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">CAN case ID: </td>
+              <td class="DefaultCellBold">RBE-COM-34</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">SBC Board: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Power supply ID: </td>
+              <td class="DefaultCellBold">RBE-PWR-018</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Motherboard: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">MCU: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">DUT: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">HW Info: </td>
+              <td class="DefaultCellBold">22/04.00</td>
+            </tr>
+          </table>
+        </div>
+        <p><table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0005; ARCH_SW_NVP_0010; ARCH_SW_NVP_0013; ARCH_SW_NVP_0014; ARCH_SW_NVP_0018; ARCH_SW_NVP_0019; ARCH_SW_NVP_0023; ARCH_SW_NVP_0008; ARCH_SW_NVP_0009; ARCH_SW_NVP_00010; ARCH_SW_NVP_0022; ARCH_SW_NVP_0024; ARCH_SW_NVP_0025; ARCH_SW_NVP_0026; ARCH_SW_NVP_0027; ARCH_SW_NVP_0028; ARCH_SW_NVP_0029</th></tr></table></p>
+        <p><table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0005</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_TESTS_PARAM shall be configured to have the following parameters : - NVP_u32CheckMotorOrderMediumMaxDuration = 120 000 ms(4 bytes) - NVP_u32MotorCurrentMediumMaxDuration = 120 000 ms (4 bytes) - NVP_u32SWThermalProtectionValidationThrs = 160 000 AA(4 bytes) - NVP_u32SWThermalProtectionDeskillingThrs = 32 000 AA (4 bytes) - NVP_u16MotorCurrentHighResetTime = 300 ms (2 bytes) - NVP_u16MotorCurrentMediumResetTime = 1000 ms (2 bytes) - NVP_u16CheckMotorOrderHighMaxDuration = 2000 ms (2 bytes) - NVP_u16MotorCurrentHighMaxDuration = 1200 ms (2 bytes) - NVP_u16CheckMotorOrderHighResetTime = 100 ms (2 bytes) - NVP_u16CheckMotorOrderMediumResetTime = 100 ms (2 byte ) - NVP_u16CheckMotorOrderResetTime = 60 000 ms (2 bytes) - NVP_u16MotorCurrentResetTime = 60 000 (2 bytes) - NVP_u8MotorCurrentHighThrs = 25 A (1 byte) - NVP_u8MotorCurrentMediumThrs = 10 A (1 byte) - NVP_u8CheckMotorOrderHighThrs = 80% PWM (1 byte) - NVP_u8CheckMotorOrderMediumThrs = 20% PWM (1 byte) .</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0010</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>CALIB_BLOCK_ID_BFS_PRIO_PARAM will contain the priority for the belt cycles :{ 03 Pre-Safe level 1 (Strong tensioning) 03 Pre-Safe level 2 (Strong tensioning) 03 Pre-Safe level 3 (Strong tensioning) 03 Pre-Safe level 4 (Strong tensioning) 00 Pre-Safe level 5 (Strong tensioning) 00 Pre-Safe level 6 (Strong tensioning) 00 Pre-Safe level 7 (Strong tensioning) 00 Pre-Safe level 8 (Strong tensioning) 00 Pre-Safe level 9 (Strong tensioning) 00 Pre-Safe level 10 (Strong tensioning) 00 Pre-Safe level 11 (Strong tensioning) 00 Pre-Safe level 12 (Strong tensioning) 00 Pre-Safe level 13 (Strong tensioning) 00 Pre-Safe level 14 (Strong tensioning) 03 Curve 1 (Smooth tensioning) 00 Curve 2 (Smooth tensioning) 00 Curve 3 (Smooth tensioning) 00 Curve 4 (Smooth tensioning) 03 Haptic 1-1 (Warning 1) 02 Haptic 1-2 (Warning 1) 03 Haptic 2-1 (Warning 2) 02 Haptic 2-2 (Warning 2) 03 Haptic 3-1 (Warning 3) 02 Haptic 3-2 (Warning 3) 03 Haptic 4-1 (Warning 4) 02 Haptic 4-2 (Warning 4) 08 BSR 1 (Comfort) 00 BSR 2 (Comfort) 00 BSR 3 (Comfort) 04 Smooth Release 04 Hard Release 04 Backup Release 04 Start-up Release 00 ANG 00 AEE 00 'Unused 00 'Unused 00 'Unused </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0013</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Temperature compensaton tables should be stored: • CALIB_BLOCK_ID_WEIGHT_TENS0_TABLE • CALIB_BLOCK_ID_WEIGHT_TENS1_TABLE • CALIB_BLOCK_ID_WEIGHT_TENS2_TABLE • CALIB_BLOCK_ID_WEIGHT_TENS3_TABLE -40°C (0x0000) 1.75 (0x70) -25°C (0x0071) 1.234375 (0x4F) -5°C (0x0109) 1.09375 (0x46) 30°C (0x01FC)) 1.046875 (0x43) 55°C (0x02D0) 1 (0x40) 77°C (0x0377) 1.046875 (0x43) 85°C (0x03B4) 1.09375 (0x46) Note: Temp[°C] = Raw * 0.1318359375 - 40 Fact </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0014</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>EOL counters should be defined as follows: • NVP_u32ComfortCyclesEOLThrs =60 000 • NVP_u32LowForceEOLThrs = 10 000 • NVP_u32HighForceEOLThrs = 1 500 • NVP_u32MaxForceEOLThrs = 50. </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0018</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_VELOCITY_PID_PARAM shall be stored. </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0019</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Power degradation table shall be stored : CALIB_BLOCK_ID_POWER_DEGRADATION Voltage Factor 8.95V (0x22F6) 0.835 (0x6B) 9V (0x2328) 0.835 (0x6B) 9.6V (0x2580) 0.89 (0x72) 10.2V (0x27D8) 0.945 (0x79) 10.8V (0x2A30) 1 (0x80) 13V (0x32C8) 1 (0x80) Note: Voltage[mV] = Raw * 1mV Factor </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0023</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData shall be used to store the vehicle equipment default data { 1 byte - NVP_u8VehEquipFirstByte; 1 byte - NVP_u8VehEquipSecondByte; 1 byte - NVP_u8VehEquipThirdByte; 1 byte - NVP_u8VehEquipFourthByte; 2 byte - NVP_u16VehEquipmentUVAbort; 2 byte - NVP_u16VehEquipmentUV; 2 byte - NVP_u16VehEquipmentOVAbort; 2 byte - NVP_u16VehEquipmentOV; 4 byte - NVP_u32VehEquipPreSafeCycleAct; } </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0008</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The NVP configuration tool (excel file) shall allow specifying the EEPROM file version.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0009</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The NVP configuration tool (excel file) shall manage the EEPROM memory clustering (using watermarks).</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_00010</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The NVP configuration tool (excel file) shall allow specifying which blocks must be programmed.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0022</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>If Vehicle Equipment Configuration Data has not valid data the default data from CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData block will be used instead.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0024</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_CYCLE_DELAYS_MB shall be used with the following parameters: NVP_u16TimeoutPresafe5 = 0x1F4 NVP_u8PRESAFEAccelerationTimeout = 0x1E NVP_u8Haptic1AccelerationTimeout = 0x1E NVP_u8APIAccelerationTimeout = 0x1E NVP_u8AfterBuckle = 0x14 NVP_u8AfterMd = 0x02 NVP_u8PwtDelay = 0x14 NVP_u8BSR1AccelerationTimeout = 0x1E </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0025</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_HAPTIC_CONFIG_MB shall be used with the following parameters: NVP_u16DurationHaptic1 = 0x3E8 NVP_u16DurationHaptic2 = 0x3E8 NVP_u16DurationHaptic3 = 0x3E8 NVP_u16DurationHaptic4 = 0x3E8 NVP_u8HapticType = 0x00 NVP_BLOCK_ID_EOL_MAPPING_MB shall be used with the following parameters: NVP_uAssociatedCounter = 0x0111111100000000000000 NVP_u8AssociatedCounterBSR = 0x00 </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0026</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_EOL_MAPPING_MB shall be used with the following parameters: NVP_uAssociatedCounter = 0x0111111100000000000000 NVP_u8AssociatedCounterBSR = 0x00 </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0027</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>Based on structure NVP_stVehicleEquipmentData with parameters: • ReleaseOutOfMemory: • BSROutOfMemory • PreSafeOutOfMemory Blocks NVP_BLOCK_ID_STEP_0 – 144/ NVP_BLOCK_ID_CYCLE_0 – 34 / NVP_BLOCK_ID_CYCLE_DELAYS_MB / NVP_BLOCK_ID_HAPTIC_CONFIG_MB / NVP_BLOCK_ID_EOL_MAPPING_MB can be used from • EEPROM Varint coding services (0x0300; 0x0301; 0x0302) • ROM default , internal services (0xFD10) </td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0028</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>NVP_BLOCK_ID_CAN_INPUT_SIGNALS shall be used with: •	NVP_u8BeltSlkDecMode = 0x01 •	NVP_u8SteeringWheelConfig = 0x01</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_NVP_0029</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>System Context NVP_BLOCK_ID_SYSTEM_CONTEXT_0 will be saved with the following info: •	System Time •	DeficiencyLevel •	KL30 Lost •	Executed Cycle •	CPL Status •	SystemContextChecksum</td></tr></p>
+        <p></table></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\NVP\SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_5_15_10_00_2024.asc'>Log file: SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_5_15_10_00_2024.asc </A></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\NVP\SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_5_15_10_00_2024.blf'>Log file: SW_Int_NVP_ReadNVP_Parameters_01_Tue_Mar_5_15_10_00_2024.blf </A></p>
+      </div>
+      <div class="Indentation">
+        <table class="ScreenOnly">
+          <tbody>
+            <tr>
+              <td>
+                <a class="Undecorated" href="javascript:showTable('2_')">[expand test steps]</a>
+              </td>
+              <td width="2px"></td>
+              <td>
+                <a class="Undecorated" href="javascript:hideTable('2_')">[collapse test steps]</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="TestGroupHeadingBackground">
+        <tr>
+          <td>
+            <big class="Heading3">Main Part of Test Case</big>
+          </td>
+        </tr>
+      </table>
+      <div class="Indentation">
+        <table class="ResultTable">
+          <tr>
+            <th class="TableHeadingCell" width="1px">Timestamp</th>
+            <th class="TableHeadingCell" width="1px">Test Step</th>
+            <th class="TableHeadingCell" width="auto">Description</th>
+            <th class="TableHeadingCell" width="1px">Result</th>
+          </tr>
+          <tr>
+            <td class="DefineCell">   3.205749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Preconditions</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   3.205749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 1</td>
+            <td class="DefaultCellTestStep">Bench Initialization</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">1. RunPreTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.214749</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.600749</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.649749</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   5.759920</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_107" href="javascript:switchTable('2_i__-757809536_107')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_107">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   9.189816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_188" href="javascript:switchTable('2_i__-757809536_188')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Steps_library_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_188">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFD2A</td>
+                  <td class="DefaultCell">fd 2a </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  10.099769</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_269" href="javascript:switchTable('2_i__-757809536_269')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_269">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  12.119716</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_329" href="javascript:switchTable('2_i__-757809536_329')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/SoftReset/ER_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_329">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x51</td>
+                  <td class="DefaultCell">51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ResetType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  17.901127</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_410" href="javascript:switchTable('2_i__-757809536_410')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_410">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  19.921137</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">Enter [supplier] session request: Positive response received.</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  19.932988</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_481" href="javascript:switchTable('2_i__-757809536_481')">[−]</a>
+                    </td>
+                    <td>Check Software Version.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_481">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">0x17 0x1F 0x00 0x18 0x03 0x00 0x17 0x1F 0x00</td>
+                  <td class="DefaultCell">0x17 0x1F 0x00 0x18 0x03 0x00 0x17 0x1F 0x00</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  19.943204</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_533" href="javascript:switchTable('2_i__-757809536_533')">[−]</a>
+                    </td>
+                    <td>Check Software Version (0x22 0xFD 0x01).</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_533">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ER01861H.P83</td>
+                  <td class="DefaultCell">ER01861H.P83</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.501104</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0005;</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.501104</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 2</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32CheckMotorOrderMediumMaxDuration*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.506749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_613" href="javascript:switchTable('2_i__-757809536_613')">[−]</a>
+                    </td>
+                    <td>Variable equal to 120000 (0x0x1d4c0)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_613">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">120000</td>
+                  <td class="DefaultCell">120000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.506749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 3</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32MotorCurrentMediumMaxDuration*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.508749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_675" href="javascript:switchTable('2_i__-757809536_675')">[−]</a>
+                    </td>
+                    <td>Variable equal to 120000 (0x1d4c0)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_675">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">120000</td>
+                  <td class="DefaultCell">120000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.508749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 4</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32SWThermalProtectionValidationThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.509749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_737" href="javascript:switchTable('2_i__-757809536_737')">[−]</a>
+                    </td>
+                    <td>Variable equal to 160 000 (0x27100)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_737">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">160000</td>
+                  <td class="DefaultCell">160000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.509749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 5</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32SWThermalProtectionDeskillingThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.510749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_799" href="javascript:switchTable('2_i__-757809536_799')">[−]</a>
+                    </td>
+                    <td>Variable equal to 32 000 (0x7d00)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_799">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">32000</td>
+                  <td class="DefaultCell">32000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.510749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 6</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighResetTime*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.512749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_861" href="javascript:switchTable('2_i__-757809536_861')">[−]</a>
+                    </td>
+                    <td>Variable equal to 300 (0x12c)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_861">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">300</td>
+                  <td class="DefaultCell">300</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.512749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 7</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentMediumResetTime*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.514749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_923" href="javascript:switchTable('2_i__-757809536_923')">[−]</a>
+                    </td>
+                    <td>Variable equal to 1000 (0x3e8)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_923">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1000</td>
+                  <td class="DefaultCell">1000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.514749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 8</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderHighMaxDuration*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.516749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_985" href="javascript:switchTable('2_i__-757809536_985')">[−]</a>
+                    </td>
+                    <td>Variable equal to 2000 (0x7d0)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_985">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">2000</td>
+                  <td class="DefaultCell">2000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.516749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 9</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighMaxDuration*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.517749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1047" href="javascript:switchTable('2_i__-757809536_1047')">[−]</a>
+                    </td>
+                    <td>Variable equal to 1200 (0x4b0)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1047">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1200</td>
+                  <td class="DefaultCell">1200</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.517749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 10</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighMaxDuration*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.518749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1109" href="javascript:switchTable('2_i__-757809536_1109')">[−]</a>
+                    </td>
+                    <td>Variable equal to 100 (0x64)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1109">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">100 (0x64)</td>
+                  <td class="DefaultCell">100 (0x64)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.518749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 11</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderResetTime*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.519749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1171" href="javascript:switchTable('2_i__-757809536_1171')">[−]</a>
+                    </td>
+                    <td>Variable equal to 60 000 (0xea60)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1171">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">60000</td>
+                  <td class="DefaultCell">60000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.519749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 12</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8MotorCurrentHighThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.520749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1233" href="javascript:switchTable('2_i__-757809536_1233')">[−]</a>
+                    </td>
+                    <td>Variable equal to 25 (0x19)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1233">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">25 (0x19)</td>
+                  <td class="DefaultCell">25 (0x19)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.520749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 13</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8MotorCurrentMediumThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.522749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1295" href="javascript:switchTable('2_i__-757809536_1295')">[−]</a>
+                    </td>
+                    <td>Variable equal to 10 (0xa)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1295">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">10 (0x0A)</td>
+                  <td class="DefaultCell">10 (0x0A)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.522749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 14</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8CheckMotorOrderHighThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.524749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1357" href="javascript:switchTable('2_i__-757809536_1357')">[−]</a>
+                    </td>
+                    <td>Variable equal to 80 (0x50)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1357">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">80 (0x50)</td>
+                  <td class="DefaultCell">80 (0x50)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.524749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 15</td>
+            <td class="DefaultCellTestStep">Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8CheckMotorOrderMediumThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.525979</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1419" href="javascript:switchTable('2_i__-757809536_1419')">[−]</a>
+                    </td>
+                    <td>Variable equal to 20 (0x14)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1419">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">20 (0x14)</td>
+                  <td class="DefaultCell">20 (0x14)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.525979</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0010;</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.525979</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 16</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 1 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.527749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1492" href="javascript:switchTable('2_i__-757809536_1492')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1492">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.527749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 17</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 2 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.528749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1554" href="javascript:switchTable('2_i__-757809536_1554')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1554">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.528749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 18</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 3 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.529749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1616" href="javascript:switchTable('2_i__-757809536_1616')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1616">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.529749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 19</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 4 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.530749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1678" href="javascript:switchTable('2_i__-757809536_1678')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1678">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.530749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 20</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 5 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.532749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1740" href="javascript:switchTable('2_i__-757809536_1740')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1740">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.532749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 21</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 6 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.533749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1802" href="javascript:switchTable('2_i__-757809536_1802')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1802">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.533749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 22</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 7 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.534749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1864" href="javascript:switchTable('2_i__-757809536_1864')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1864">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.534749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 23</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 8 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.536003</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1926" href="javascript:switchTable('2_i__-757809536_1926')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1926">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.536003</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 24</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 9 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.537749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_1988" href="javascript:switchTable('2_i__-757809536_1988')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_1988">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.537749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 25</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 10 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.538749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2050" href="javascript:switchTable('2_i__-757809536_2050')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2050">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.538749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 26</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 11 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.539749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2112" href="javascript:switchTable('2_i__-757809536_2112')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2112">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.539749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 27</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 12 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.541749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2174" href="javascript:switchTable('2_i__-757809536_2174')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2174">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.541749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 28</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 13 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.543749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2236" href="javascript:switchTable('2_i__-757809536_2236')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2236">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.543749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 29</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Pre-Safe level 14 (Strong tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.544749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2298" href="javascript:switchTable('2_i__-757809536_2298')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2298">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.544749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 30</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 1 (Smooth tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.545979</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2360" href="javascript:switchTable('2_i__-757809536_2360')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2360">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.545979</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 31</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 2 (Smooth tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2413">
+            <td class="DefineCell">  20.547749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2422" href="javascript:switchTable('2_i__-757809536_2422')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2422">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.547749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 32</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 3 (Smooth tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2475">
+            <td class="DefineCell">  20.548749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2484" href="javascript:switchTable('2_i__-757809536_2484')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2484">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.548749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 33</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Curve 4 (Smooth tensioning)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2537">
+            <td class="DefineCell">  20.550749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2546" href="javascript:switchTable('2_i__-757809536_2546')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2546">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.550749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 34</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 1-1 (Warning 1)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.551775</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2608" href="javascript:switchTable('2_i__-757809536_2608')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2608">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.551775</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 35</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 1-2 (Warning 1)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2661">
+            <td class="DefineCell">  20.552749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2670" href="javascript:switchTable('2_i__-757809536_2670')">[−]</a>
+                    </td>
+                    <td>Variable equal to 03</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2670">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">2 (0x02)</td>
+                  <td class="DefaultCell">3 (0x03)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.552749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 36</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 2-1 (Warning 2)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2723">
+            <td class="DefineCell">  20.553749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2732" href="javascript:switchTable('2_i__-757809536_2732')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2732">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.553749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 37</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 2-2 (Warning 2)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2785">
+            <td class="DefineCell">  20.554749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2794" href="javascript:switchTable('2_i__-757809536_2794')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2794">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">2 (0x02)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.554749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 38</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 3-1 (Warning 3)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2847">
+            <td class="DefineCell">  20.556749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2856" href="javascript:switchTable('2_i__-757809536_2856')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2856">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.556749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 39</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 3-2 (Warning 3)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2909">
+            <td class="DefineCell">  20.557749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2918" href="javascript:switchTable('2_i__-757809536_2918')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2918">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">2 (0x02)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.557749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 40</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-1 (Warning 4)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_2971">
+            <td class="DefineCell">  20.559749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_2980" href="javascript:switchTable('2_i__-757809536_2980')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_2980">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.559749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 41</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-2 (Warning 4)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3033">
+            <td class="DefineCell">  20.560749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3042" href="javascript:switchTable('2_i__-757809536_3042')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3042">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">2 (0x02)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.560749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 42</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-1 (Warning 4)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3095">
+            <td class="DefineCell">  20.561749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3104" href="javascript:switchTable('2_i__-757809536_3104')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3104">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.561749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 43</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Haptic 4-2 (Warning 4)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3157">
+            <td class="DefineCell">  20.562749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3166" href="javascript:switchTable('2_i__-757809536_3166')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3166">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">2 (0x02)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.562749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 44</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  BSR 1 (Comfort)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.564749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3228" href="javascript:switchTable('2_i__-757809536_3228')">[−]</a>
+                    </td>
+                    <td>Variable equal to 8</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3228">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">8 (0x08)</td>
+                  <td class="DefaultCell">8 (0x08)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.564749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 45</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  BSR 2 (Comfort)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3281">
+            <td class="DefineCell">  20.565991</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3290" href="javascript:switchTable('2_i__-757809536_3290')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3290">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.565991</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 46</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  BSR 3 (Comfort)*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3343">
+            <td class="DefineCell">  20.567749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3352" href="javascript:switchTable('2_i__-757809536_3352')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3352">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">3 (0x03)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.567749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 47</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Smooth Release*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3405">
+            <td class="DefineCell">  20.568749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3414" href="javascript:switchTable('2_i__-757809536_3414')">[−]</a>
+                    </td>
+                    <td>Variable equal to 4</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3414">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                  <td class="DefaultCell">4 (0x04)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.568749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 48</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Hard Release*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3467">
+            <td class="DefineCell">  20.569749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3476" href="javascript:switchTable('2_i__-757809536_3476')">[−]</a>
+                    </td>
+                    <td>Variable equal to 4</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3476">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                  <td class="DefaultCell">4 (0x04)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.569749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 49</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Backup Release*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3529">
+            <td class="DefineCell">  20.570749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3538" href="javascript:switchTable('2_i__-757809536_3538')">[−]</a>
+                    </td>
+                    <td>Variable equal to 4</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3538">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                  <td class="DefaultCell">4 (0x04)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.570749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 50</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  Start-up Release*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_3591">
+            <td class="DefineCell">  20.572749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3600" href="javascript:switchTable('2_i__-757809536_3600')">[−]</a>
+                    </td>
+                    <td>Variable equal to 4</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3600">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                  <td class="DefaultCell">4 (0x04)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.572749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 51</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  ANG*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.574749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3662" href="javascript:switchTable('2_i__-757809536_3662')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3662">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">0 (0x00)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.574749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 52</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData -  AEE*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.575749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3724" href="javascript:switchTable('2_i__-757809536_3724')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3724">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">0 (0x00)</td>
+                  <td class="DefaultCell">0 (0x00)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.575749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0013; ARCH_SW_NVP_0014;</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.575749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 53</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  NVP_u32ComfortCyclesEOLThrs*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.576749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3797" href="javascript:switchTable('2_i__-757809536_3797')">[−]</a>
+                    </td>
+                    <td>Variable equal to 60000</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3797">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">60000</td>
+                  <td class="DefaultCell">60000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.576749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 54</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  NVP_u32LowForceEOLThrs *.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.577749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3859" href="javascript:switchTable('2_i__-757809536_3859')">[−]</a>
+                    </td>
+                    <td>Variable equal to 10000</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3859">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">10000</td>
+                  <td class="DefaultCell">10000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.577749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 55</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  NVP_u32HighForceEOLThrs *.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.578749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3921" href="javascript:switchTable('2_i__-757809536_3921')">[−]</a>
+                    </td>
+                    <td>Variable equal to 1500</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3921">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1500</td>
+                  <td class="DefaultCell">1500</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.578749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 56</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData -  u32MaxForceEOLThrs *.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.579749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_3983" href="javascript:switchTable('2_i__-757809536_3983')">[−]</a>
+                    </td>
+                    <td>Variable equal to 50</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_3983">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">50 (0x32)</td>
+                  <td class="DefaultCell">50 (0x32)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.579749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0018;</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.579749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 57</td>
+            <td class="DefaultCellTestStep">Read NVP_BLOCK_ID_VELOCITY_PID_PARAM_RamBlockData*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_4047">
+            <td class="DefineCell">  20.581749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4056" href="javascript:switchTable('2_i__-757809536_4056')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0x800FF144</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4056">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">32768000</td>
+                  <td class="DefaultCell">2148528452</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.581749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0019;</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.581749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 58</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Voltage - 8.95V*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.583749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4129" href="javascript:switchTable('2_i__-757809536_4129')">[−]</a>
+                    </td>
+                    <td>Variable equal to 8.95 (0x22F6)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4129">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">8950</td>
+                  <td class="DefaultCell">8950</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.583749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 59</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.835*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.584749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4191" href="javascript:switchTable('2_i__-757809536_4191')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0.835 (0x6B)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4191">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">107 (0x6B)</td>
+                  <td class="DefaultCell">107 (0x6B)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.584749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 60</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  9V*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.595749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4253" href="javascript:switchTable('2_i__-757809536_4253')">[−]</a>
+                    </td>
+                    <td>Variable equal to 9000</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4253">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">9000</td>
+                  <td class="DefaultCell">9000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.595749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 61</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.835*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.596749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4315" href="javascript:switchTable('2_i__-757809536_4315')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0.835 (0x6B)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4315">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">107 (0x6B)</td>
+                  <td class="DefaultCell">107 (0x6B)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.596749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 62</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  9.6V*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.598749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4377" href="javascript:switchTable('2_i__-757809536_4377')">[−]</a>
+                    </td>
+                    <td>Variable equal to 9.6</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4377">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">9600</td>
+                  <td class="DefaultCell">9600</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.598749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 63</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.89*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.599749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4439" href="javascript:switchTable('2_i__-757809536_4439')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0.89 (0x72)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4439">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">114 (0x72)</td>
+                  <td class="DefaultCell">114 (0x72)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.599749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 64</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  10.2V*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.600749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4501" href="javascript:switchTable('2_i__-757809536_4501')">[−]</a>
+                    </td>
+                    <td>Variable equal to 10.2</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4501">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">10200</td>
+                  <td class="DefaultCell">10200</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.600749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 65</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 0.945*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.601918</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4563" href="javascript:switchTable('2_i__-757809536_4563')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0.945 (0x79)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4563">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">121 (0x79)</td>
+                  <td class="DefaultCell">121 (0x79)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.601918</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 66</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  10.8V*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.602846</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4625" href="javascript:switchTable('2_i__-757809536_4625')">[−]</a>
+                    </td>
+                    <td>Variable equal to 10.8</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4625">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">10800</td>
+                  <td class="DefaultCell">10800</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.602846</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 67</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 1*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.604142</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4687" href="javascript:switchTable('2_i__-757809536_4687')">[−]</a>
+                    </td>
+                    <td>Variable equal to 1 (0x80)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4687">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">128 (0x80)</td>
+                  <td class="DefaultCell">128 (0x80)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.604142</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 68</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData -  13V*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.604958</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4749" href="javascript:switchTable('2_i__-757809536_4749')">[−]</a>
+                    </td>
+                    <td>Variable equal to 13</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4749">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">13000</td>
+                  <td class="DefaultCell">13000</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.604958</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 69</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData Factor - 1*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.605749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4811" href="javascript:switchTable('2_i__-757809536_4811')">[−]</a>
+                    </td>
+                    <td>Variable equal to 1 (0x80)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4811">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">128 (0x80)</td>
+                  <td class="DefaultCell">128 (0x80)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.605749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0023; ARCH_SW_NVP_0008; ARCH_SW_NVP_0009; ARCH_SW_NVP_00010; ARCH_SW_NVP_0022; ARCH_SW_NVP_0024; ARCH_SW_NVP_0025; ARCH_SW_NVP_0026; ARCH_SW_NVP_0027</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.605749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 70</td>
+            <td class="DefaultCellTestStep">Read CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.607749</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4884" href="javascript:switchTable('2_i__-757809536_4884')">[−]</a>
+                    </td>
+                    <td>Variable equal to 37 (0x25)</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4884">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">37 (0x25)</td>
+                  <td class="DefaultCell">37 (0x25)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.607749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_NVP_0028, ARCH_SW_NVP_0029</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.607749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 71</td>
+            <td class="DefaultCellTestStep">Read NVP_BLOCK_ID_CAN_INPUT_SIGNALS_RamBlockData*.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr id="i__-757809536_4948">
+            <td class="DefineCell">  20.609749</td>
+            <td class="NumberCellNegativeResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_4957" href="javascript:switchTable('2_i__-757809536_4957')">[−]</a>
+                    </td>
+                    <td>Variable equal to 0x01</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-757809536_4957">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">257 (0x101)</td>
+                  <td class="DefaultCell">1 (0x01)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.609749</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Postcondition</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  20.609749</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 72</td>
+            <td class="DefaultCellTestStep">Return ECU to default values</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">2. RunPostTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  20.618749</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  21.020749</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  21.081442</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  22.151675</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_5071" href="javascript:switchTable('2_i__-757809536_5071')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_5071">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  22.281211</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_5152" href="javascript:switchTable('2_i__-757809536_5152')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_5152">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  23.551176</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_5233" href="javascript:switchTable('2_i__-757809536_5233')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_5233">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  25.581107</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-757809536_5293" href="javascript:switchTable('2_i__-757809536_5293')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/SoftReset/ER_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-757809536_5293">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x51</td>
+                  <td class="DefaultCell">51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ResetType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <div class="Heading2">End of Report</div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

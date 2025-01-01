@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0121, ARCH_SW_CIL_0126, ARCH_SW_CIL_0139, ARCH_SW_CIL_0353, ARCH_SW_CIL_0184
+ARCH_SW_CIL_0121: If signal is received with value 8, then tensioning cycle 6 shall be requested.
+ARCH_SW_CIL_0126: If signal is received with value 8, then tensioning cycle 6 shall be requested.
+ARCH_SW_CIL_0139: If signal is received with value 8, then tensioning cycle 6 shall be requested.
+ARCH_SW_CIL_0353: Write Rte_CIL_psrCarAcceleration_b8IsCarAccelerationLow to permit the release cycle to be executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli at line cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL8.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles() under case I_C04_PRESF_LVL_V2_LVL8 at line '(void)Rte_Read_prrEnableCycle6_b8CycleValidity(&u8CycleValidityStatus);'.
+
+Action: ARCH_SW_CIL_0121, ARCH_SW_CIL_0126, ARCH_SW_CIL_0139
+
+	Step 6: Check if CPU stopped in function cil_TriggerProfiles() under case I_C04_PRESF_LVL_V2_LVL8 at line '(void)Rte_Read_prrEnableCycle6_b8CycleValidity(&u8CycleValidityStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint at the end of the function cil_RequestTensioning().
+
+	Step 8: Check if CPU stopped at the end of function cil_RequestTensioning. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0353, ARCH_SW_CIL_0184
+
+	Step 9: Check if variable Rte_CIL_psrCarAcceleration_b8IsCarAccelerationLow is KU8_FALSE 
+		Expected result:  KU8_FALSE.
+
+Postcondition
+
+	Step 10: Return ECU to default values

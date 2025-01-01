@@ -1,0 +1,462 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+    // Serial Port settings
+    int ComPort = 6;
+    int Baudrate = 9600;   
+    int Parity = 0;	
+    int Stopbit = 1;
+		int ByteSize = 8;
+  
+    // Maximum Current and Voltage settings
+		int MaxCurrent = 48;
+    int MaxVoltage = 20;
+  
+    //Power Supply Sintax  
+		char SintaxVoltage[20] = ":CHAN1:VOLT";
+		char SintaxReadVoltage[20] = ":CHAN1:MEAS:VOLT?";
+		char SintaxReadCurrent[20] = ":CHAN1:MEAS:CURR?";
+		char SintaxCurrent[20] = ":CHAN1:CURR";
+		char SintaxPowerOn[20] = ":OUTP:STAT 1";
+		char SintaxReadPowerState[20] = ":OUTP:STAT?";
+		char SintaxPowerOff[20] = ":OUTP:STAT 0";
+		char NewLine[10] = "\r\n";
+}
+
+
+void PowerOn()
+{
+  int SintaxLength;
+  byte SerialBuffer[50];
+  int iCount;
+  char tempSintaxPowerOn[20]="";
+  
+  strncpy(tempSintaxPowerOn,SintaxPowerOn,strlen(SintaxPowerOn)+1);
+   
+  if (1==rs232Open(ComPort))
+  {
+    rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+     
+    strncat(tempSintaxPowerOn,NewLine,strlen(tempSintaxPowerOn)+strlen(NewLine)+1);
+        
+    SintaxLength=strlen(tempSintaxPowerOn);
+    
+    for (iCount=0;iCount<SintaxLength;iCount++)
+      {
+        SerialBuffer[iCount]=tempSintaxPowerOn[iCount];
+      }
+
+    if ( 1==RS232Send(ComPort,SerialBuffer,SintaxLength) )
+      {
+        write("Power On request succesfully sent to the power supply");
+        testStepPass(iLevelOfDetailPass, "Power On request","Power On request succesfully sent to the power supply");
+      }
+    
+      else
+       {
+         write("Power On request sent to the power supply FAILED");
+        testStepFail(iLevelOfDetailFail, "Power On request","Power On request sent to the power supply FAILED");
+       }
+  }
+    else
+      {
+      testStepFail(iLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",ComPort);
+      }
+     
+  TestWaitForTimeout(200);
+  rs232Close(ComPort);
+}
+
+
+void PowerOff()
+{
+  int SintaxLength;
+  byte SerialBuffer[50];
+  int iCount;
+  char tempSintaxPowerOff[20]="";
+  
+  strncpy(tempSintaxPowerOff,SintaxPowerOff,strlen(SintaxPowerOff)+1);
+  
+  if (1==rs232Open(ComPort))
+  {
+    rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+    
+    strncat(tempSintaxPowerOff,NewLine,strlen(tempSintaxPowerOff)+strlen(NewLine)+1);
+    
+    SintaxLength=strlen(tempSintaxPowerOff);
+    
+    for (iCount=0;iCount<SintaxLength;iCount++)
+      {
+        SerialBuffer[iCount]=tempSintaxPowerOff[iCount];
+      }
+      
+    
+    if ( 1==RS232Send(ComPort,SerialBuffer,SintaxLength) )
+      {
+        write("Power Off request succesfully sent to the power supply");
+        testStepPass(iLevelOfDetailPass, "Power Off request","Power Off request succesfully sent to the power supply");
+      }
+    
+      else
+       {
+         write("Power Off request sent to the power supply FAILED");
+         testStepFail(iLevelOfDetailFail, "Power Off request","Power Off request sent to the power supply FAILED");
+       }
+   }
+   else 
+      {
+      testStepFail(iLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",ComPort);
+      }
+     
+  TestWaitForTimeout(200);
+  rs232Close(ComPort);
+}
+
+void MakePowerOffOn(int iTime)
+{
+  PowerOff();
+  TestWaitForTimeout(iTime);
+  PowerOn();
+}
+
+void SetVoltage(double iVoltage)
+{
+  int SintaxLength;
+  byte SerialBuffer[50];
+  int iCount;
+  char SapaceCharacter[2]=" ";
+  char Voltage[6];
+  char tempSintaxVoltage[20]="";
+  
+  strncpy(tempSintaxVoltage,SintaxVoltage,strlen(SintaxVoltage)+1);
+  
+  _gcvt(iVoltage, 5 ,Voltage);
+  
+  if (iVoltage<=MaxVoltage)
+    {
+    
+    if (1==rs232Open(ComPort))
+    {
+      rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+       
+      strncat(tempSintaxVoltage,SapaceCharacter,strlen(tempSintaxVoltage)+strlen(SapaceCharacter)+1);
+      strncat(tempSintaxVoltage,Voltage,strlen(tempSintaxVoltage)+strlen(Voltage)+1);
+      strncat(tempSintaxVoltage,NewLine,strlen(tempSintaxVoltage)+strlen(NewLine)+1);
+          
+      SintaxLength=strlen(tempSintaxVoltage);
+      
+      for (iCount=0;iCount<SintaxLength;iCount++)
+        {
+          SerialBuffer[iCount]=tempSintaxVoltage[iCount];
+        }
+        
+      
+      if ( 1==RS232Send(ComPort,SerialBuffer,SintaxLength) )
+        {
+          write("%s V request succesfully sent to the power supply",Voltage);
+          testStepPass(iLevelOfDetailPass, "Voltage set","%s V set request succesfully sent to the power supply",Voltage);
+        }
+      
+        else
+         {
+          write("%s V request FAILED to be sent to the power supply",Voltage);
+          testStepFail(iLevelOfDetailFail, "Voltage set","%s V set request FAILED to be sent to the power supply",Voltage);
+         }
+    }
+      else
+        {
+        testStepFail(iLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",ComPort);
+        }
+       
+    TestWaitForTimeout(200);
+    rs232Close(ComPort);
+    }
+  else
+  {
+    write("%d V request is higher then maximum allowed on power supply",iVoltage);
+    testStepFail(iLevelOfDetailFail, "Voltage set","%d V request is higher then maximum allowed on the power supply",iVoltage);
+  }
+}
+
+
+void SetCurrent(double iCurrent)
+{
+  int SintaxLength;
+  byte SerialBuffer[50];
+  int iCount;
+  char SapaceCharacter[2]=" ";
+  char Current[6];  
+  char tempSintaxCurrent[20]="";
+  
+  strncpy(tempSintaxCurrent,SintaxCurrent,strlen(SintaxCurrent)+1);
+  
+  _gcvt(iCurrent, 5 ,Current);
+  
+  if (iCurrent<=MaxCurrent)
+    {
+    if (1==rs232Open(ComPort))
+    {
+      rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+       
+      strncat(tempSintaxCurrent,SapaceCharacter,strlen(tempSintaxCurrent)+strlen(SapaceCharacter)+1);
+      strncat(tempSintaxCurrent,Current,strlen(tempSintaxCurrent)+strlen(Current)+1);
+      strncat(tempSintaxCurrent,NewLine,strlen(tempSintaxCurrent)+strlen(NewLine)+1);
+          
+      SintaxLength=strlen(tempSintaxCurrent);
+      
+      for (iCount=0;iCount<SintaxLength;iCount++)
+        {
+          SerialBuffer[iCount]=tempSintaxCurrent[iCount];
+        }
+        
+      
+      if ( 1==RS232Send(ComPort,SerialBuffer,SintaxLength) )
+        {
+          write("%s A request succesfully sent to the power supply",Current);
+          testStepPass(iLevelOfDetailPass, "Current set","%s A set request succesfully sent to the power supply",Current);
+        }
+      
+        else
+         {
+          write("%s A request FAILED to be sent to the power supply",Current);
+          testStepFail(iLevelOfDetailFail, "Current set","%s A set request FAILED to be sent to the power supply",Current);
+         }
+    }
+      else
+        {
+        testStepFail(iLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",ComPort);
+        }
+       
+    TestWaitForTimeout(200);
+    rs232Close(ComPort);
+    }
+    else
+  {
+    write("%d A request is higher then maximum allowed on power supply",iCurrent);
+    testStepFail(iLevelOfDetailFail, "Current set","%d A request is higher then maximum allowed on the power supply",iCurrent);
+  }
+    
+}
+
+void ReadPowerSupplyState()
+{
+  int SintaxLength;
+  byte SerialBufferSend[50];
+  byte SerialBufferRead[2];
+  int iCount;  
+  char cOutput[5] = "";
+  int iStatus;
+  char tempSintaxReadPowerState[20]="";
+  
+  strncpy(tempSintaxReadPowerState,SintaxReadPowerState,strlen(SintaxReadPowerState)+1);
+  
+  if (1==rs232Open(ComPort))
+  {
+    rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+     
+    strncat(tempSintaxReadPowerState,NewLine,strlen(tempSintaxReadPowerState)+strlen(NewLine)+1);
+        
+    SintaxLength=strlen(tempSintaxReadPowerState);
+    
+    for (iCount=0;iCount<SintaxLength;iCount++)
+      {
+        SerialBufferSend[iCount]=tempSintaxReadPowerState[iCount];
+      }
+      
+    
+    if ( 1==RS232Send(ComPort,SerialBufferSend,SintaxLength) )
+      
+      {
+        TestWaitForTimeout(200);
+       
+        if (1==rs232Receive(ComPort, SerialBufferRead, 2))
+        {
+           TestWaitForTimeout(200);  
+          
+           for (iCount=0;iCount<2;iCount++) 
+           cOutput[iCount]=SerialBufferRead[iCount];
+           str_replace(cOutput,"\n","");
+           
+         }
+        else
+         {
+          write("Read Power Suppy state FAILED");
+          testStepFail(iLevelOfDetailFail, "Power Suppy State","Read Power Suppy state FAILED");
+         }
+        
+      }
+    
+      else
+       {
+        write("Read Power Suppy state FAILED");
+        testStepFail(iLevelOfDetailFail, "Power Suppy State","Read Power Suppy state FAILED");
+       }
+  }
+    else
+      {
+      testStepFail(iLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",ComPort);
+      }
+     
+  TestWaitForTimeout(200);
+  rs232Close(ComPort);
+ // write("Power supply state is %s",cOutput);
+      
+  iStatus= _atoi64(cOutput);
+      
+  switch (iStatus)
+  {
+    case 1: write("Power supply state is on");
+            testStep("Power Suppy State","Power supply state is on");
+            
+    break;
+      
+    case 0: write("Power supply state is off");
+            testStep("Power Suppy State","Power supply state is off");
+    break;
+      
+    default: write("Error occured while reading power supply status");
+             testStepwarning("Power Suppy State","Error occured while reading power supply status");
+    break;
+  }
+  TestWaitForTimeout(200);
+  @sysvar::PowerSupply::sysPowerSupplyState=iStatus;
+      
+}
+void ReadVoltage()
+{
+  int SintaxLength;
+  byte SerialBufferSend[50];
+  byte SerialBufferRead[10];
+  int iCount;  
+  char cOutput[10] = "";
+  int iStatus;
+  char tempSintaxReadVoltage[20]="";
+  
+  strncpy(tempSintaxReadVoltage,SintaxReadVoltage,strlen(SintaxReadVoltage)+1);
+  
+  if (1==rs232Open(ComPort))
+  {
+    rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+     
+    strncat(tempSintaxReadVoltage,NewLine,strlen(tempSintaxReadVoltage)+strlen(NewLine)+1);
+        
+    SintaxLength=strlen(tempSintaxReadVoltage);
+    
+    for (iCount=0;iCount<SintaxLength;iCount++)
+      {
+        SerialBufferSend[iCount]=tempSintaxReadVoltage[iCount];
+      }
+      
+    
+    if ( 1==RS232Send(ComPort,SerialBufferSend,SintaxLength) )
+      
+      {
+        TestWaitForTimeout(200);
+       
+        if (1==rs232Receive(ComPort, SerialBufferRead, 10))
+        {
+           TestWaitForTimeout(200);  
+          
+           for (iCount=0;iCount<10;iCount++) 
+           cOutput[iCount]=SerialBufferRead[iCount];
+           str_replace(cOutput,"\n","");
+           
+         }
+        else
+         {
+          write("Read Power Suppy Voltage FAILED");
+          testStepFail(iLevelOfDetailFail, "Power Suppy Voltage","Read Power Suppy Voltage FAILED");
+         }
+        
+      }
+    
+      else
+       {
+        write("Read Power Suppy Voltage FAILED");
+        testStepFail(iLevelOfDetailFail, "Power Suppy Voltage","Read Power Suppy Voltage FAILED");
+       }
+  }
+    else
+      {
+      testStepFail(iLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",ComPort);
+      }
+     
+  TestWaitForTimeout(200);
+  rs232Close(ComPort);
+  write("Power supply Voltage is %s",cOutput);
+  sysSetVariableString("PowerSupply", "sysPowerSupplyVoltage", cOutput);
+  @sysvar::PowerSupply::sysVoltageDisplay = atodbl(cOutput);    
+}
+
+void ReadCurrent()
+{
+  int SintaxLength;
+  byte SerialBufferSend[50];
+  byte SerialBufferRead[10];
+  int iCount;  
+  char cOutput[10] = "";
+  int iStatus;
+  char tempSintaxReadCurrent[20]="";
+  
+  strncpy(tempSintaxReadCurrent,SintaxReadCurrent,strlen(SintaxReadCurrent)+1);
+  
+  if (1==rs232Open(ComPort))
+  {
+    rs232Configure(ComPort, Baudrate, ByteSize, Stopbit, Parity);
+     
+    strncat(tempSintaxReadCurrent,NewLine,strlen(tempSintaxReadCurrent)+strlen(NewLine)+1);
+        
+    SintaxLength=strlen(tempSintaxReadCurrent);
+    
+    for (iCount=0;iCount<SintaxLength;iCount++)
+      {
+        SerialBufferSend[iCount]=tempSintaxReadCurrent[iCount];
+      }
+      
+   
+    if ( 1==RS232Send(ComPort,SerialBufferSend,SintaxLength) )
+      
+      {
+        TestWaitForTimeout(200);
+       
+        if (1==rs232Receive(ComPort, SerialBufferRead, 10))
+        {
+           TestWaitForTimeout(200);  
+          
+           for (iCount=0;iCount<10;iCount++) 
+           cOutput[iCount]=SerialBufferRead[iCount];
+           str_replace(cOutput,"\n","");
+           
+         }
+        else
+         {
+          write("Read Power Suppy Current FAILED");
+          testStepFail("Power Suppy Current","Read Power Suppy Current FAILED");
+         }
+        
+      }
+    
+      else
+       {
+        write("Read Power Suppy Current FAILED");
+        testStepFail("Power Suppy Current","Read Power Suppy Current FAILED");
+       }
+  }
+    else
+      {
+      testStepFail("COM Port Failure","Can't open COM port: %d",ComPort);
+      }
+     
+  TestWaitForTimeout(200);
+  rs232Close(ComPort);
+  write("Power supply Current is %s",cOutput);
+  sysSetVariableString("PowerSupply", "sysPowerSupplyCurrent", cOutput);
+  @sysvar::PowerSupply::sysCurrentDisplay = atodbl(cOutput);
+  
+      
+}

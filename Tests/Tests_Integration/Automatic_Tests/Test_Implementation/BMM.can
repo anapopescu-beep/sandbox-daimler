@@ -1,0 +1,1133 @@
+/*@!Encoding:1252*/
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+ #include "..\Includes\SW_Modules\SW_Modules_Project\Project_Includes_Configuration.cin"
+}
+
+
+/*------------------------------------------------------------------------------
+                                    GLOBALS
+ ------------------------------------------------------------------------------*/
+/* To declare the constants used throurough the entire module, and global variables */
+variables
+{
+  int64 debugger_variable = 0;
+  int64 debuggerResultVariable = 0;
+  int64 debuggerResultVariableToCompare = 0;
+  int64 debuggerResultVariableToCompare1 = 0;
+  int64 debuggerResultVariableToCompare2 = 0;
+  byte bWriteStepsLibraryRequest[3] = {0x2E, 0xFD, 0x2A};
+
+}
+
+/*------------------------------------------------------------------------------
+                                REPORT INFO
+ ------------------------------------------------------------------------------*/
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation(CGA);
+  
+  strncpy(cLogPath, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",  elcount(cLogPath));
+}
+
+
+testcase SW_IT_BMM_runMainFunction_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0005");
+  AddRequirementInfo("ARCH_SW_BMM_0005", "Information from Hall effect sensor shall be managed periodically by BMM.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runMainFunction at line Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runMainFunction", 13);
+  
+  testWaitForTimeoutSilent(500);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0005");
+  testStep("STEP", "Check if CPU stopped at line Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+
+  testStep("STEP", "Set a breakpoint in function BMM_runMainFunction at line Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runMainFunction", 18);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at line Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_IT_BMM_runInit_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0010, ARCH_SW_BMM_0011");
+  AddRequirementInfo("ARCH_SW_BMM_0010", "Hall effect sensors HW component and the SW module itself has to be initialized.");
+  AddRequirementInfo("ARCH_SW_BMM_0011", "The  Port_SetPinModel function shall be called to Set pin P02.6 as ALT5 and  pin P02.7 as ALT5");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runInit at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_6, PORT_PIN_MODE_ALT5);.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runInit", 0);
+  
+  debugger_reset();
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0010, ARCH_SW_BMM_0011");
+  testStep("STEP", "Check if CPU stopped at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_6, PORT_PIN_MODE_ALT5);. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+
+  testStep("STEP", "Set a breakpoint in function BMM_runInit at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_7, PORT_PIN_MODE_ALT5);.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runInit", 3);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at line at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_7, PORT_PIN_MODE_ALT5);. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+
+  testStep("STEP", "Set a breakpoint in function BMM_runInit at line BMM_s16LowestPosition = KS16_ZERO;.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runInit", 36);
+  
+  debugger_run();
+
+  testStep("STEP", "Check if CPU stopped at line at line BMM_s16LowestPosition = KS16_ZERO;. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testStep("STEP", "Set a breakpoint in function BMM_runInit at line BMM_s16HighestPosition = KS16_ZERO;.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runInit", 37);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at line at line BMM_s16HighestPosition = KS16_ZERO;. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetPositionFromT0_mm_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0015, ARCH_SW_BMM_0020");
+  AddRequirementInfo("ARCH_SW_BMM_0015", "This module shall provide to the rest of the application the displacement of the belt in millimeters from its position recorded by the BMM at product startup."); // Duplicate
+  AddRequirementInfo("ARCH_SW_BMM_0020", "This module shall provide to the rest of the application the displacement of the belt in millimeters from its position recorded by the BMM at product startup."); 
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionFromT0_mm at line '*ps16BeltPosition_mm'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionFromT0_mm", 0);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0015");
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_mm'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+
+  testStep("STEP", "Evaluate variable ps16BeltPosition_mm.  --> KU8_ZERO (0x0)");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps16BeltPosition_mm)");
+  EvalManStepEqual("Variable is equal to 0x0", debuggerResultVariable, 0x0);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetPositionFromMinPos_mm_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0030");
+  AddRequirementInfo("ARCH_SW_BMM_0030", "This module shall provide to the rest of the application the displacement of the belt in millimeters from its minimum position (continuously monitored by the BMM).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionFromMinPos_mm at line '*ps16BeltPosition_mm'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionFromMinPos_mm", 13);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0030");
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_mm'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+
+  testStep("STEP", "Evaluate variable ps16BeltPosition_mm.  --> KU8_ZERO (0x0)");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps16BeltPosition_mm)");
+  EvalManStepEqual("Variable is equal to 0x0", debuggerResultVariable, 0x0);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetPositionRange_mm_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0040");
+  AddRequirementInfo("ARCH_SW_BMM_0040", "This module shall provide to the rest of the application the minimum and maximum displacement of the belt in millimeters observed since its initial position recorded at product startup (T0) by the BMM.");
+ //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+
+  EnterDiagnosticSession("development");
+  
+  testStep("STEP", "Activate Measurement Frame block 14.");
+  ActivateMeasurementFrame(14);
+  
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionRange_mm at line '*ps16BeltPosition_min_mm'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionRange_mm", 0);
+  
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_min_mm'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0040");
+  testStep("STEP", "Evaluate variable ps16BeltPosition_min_mm.  --> 0x76d8");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps16BeltPosition_min_mm)");
+  EvalManStepEqual("Variable is equal to 0x76d8", debuggerResultVariable, 0x76d8);
+  
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionRange_mm at line '*ps16BeltPosition_max_mm'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionRange_mm", 1);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_max_mm'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0040");
+  testStep("STEP", "Evaluate variable ps16BeltPosition_max_mm.  --> 0x7001");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps16BeltPosition_max_mm)");
+  EvalManStepEqual("Variable is equal to 0x7001", debuggerResultVariable, 0x7001);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_IT_BMM_runGetSpeed_deg_s_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0045, ARCH_SW_BMM_0347");
+  AddRequirementInfo("ARCH_SW_BMM_0045", "This module shall provide to the rest of the application the belt speed in degrees per seconds.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  EnterDiagnosticSession("development");
+  
+  testStep("STEP", "Activate Measurement Frame block 6.");
+  ActivateMeasurementFrame(6);
+  
+  testStep("STEP", "Set a breakpoint in function BMM_runGetSpeed_deg_s at line '*ps32BeltSpeed_deg_s = 0;'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetSpeed_deg_s", 12);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0045");
+  testStep("STEP", "Check if CPU stopped at line '*ps32BeltSpeed_deg_s'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testStep("STEP", "Evaluate variable ps32BeltSpeed_deg_s. --> ps32BeltSpeed_deg_s == KS32_ZERO");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps32BeltSpeed_deg_s)");
+  EvalManStepEqual("Variable is equal to KS32_ZERO", debuggerResultVariable, 0x00);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_IT_BMM_runGetSpeed_mm_s_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0048");
+  AddRequirementInfo("ARCH_SW_BMM_0048", "This module shall provide to the rest of the application the belt speed in millimeters per seconds.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetSpeed_mm_s at line '*ps32BeltSpeed_mm_s = 0;'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetSpeed_mm_s", 14);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0048");
+  testStep("STEP", "Check if CPU stopped at line '*ps32BeltSpeed_mm_s'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testStep("STEP", "Evaluate variable ps32BeltSpeed_mm_s.  --> 0x0");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps32BeltSpeed_mm_s)");
+  EvalManStepEqual("Variable is equal to 0x0", debuggerResultVariable, 0x0);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetSpeed_SingleEdge_deg_s_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0049");
+  AddRequirementInfo("ARCH_SW_BMM_0049", "This module shall provide to the rest of the application the belt speed in degrees per seconds dor a single edge period.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetSpeed_SingleEdge_deg_s at line '*ps32BeltSpeed_SE_deg_s = 0;'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetSpeed_SingleEdge_deg_s", 2);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0049");
+  testStep("STEP", "Check if CPU stopped at line '*ps32BeltSpeed_SE_deg_s'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Evaluate variable ps32BeltSpeed_SE_deg_s.  --> 0x0");
+  debuggerResultVariable = debugger_readLocalVariable("*(ps32BeltSpeed_SE_deg_s)");
+  EvalManStepEqual("Variable is equal to 0x0", debuggerResultVariable, 0x0);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetPyroActivationStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0057");
+  AddRequirementInfo("ARCH_SW_BMM_0057", "By default, the module shall return “NOT ACTIVATED” for the pyro firing status.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPyroActivationStatus at line '*(pb8PyroActivationStatus) = b8IsPyroActivated;'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPyroActivationStatus", 17);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0057");
+  testStep("STEP", "Check if CPU stopped at line '*pb8PyroActivationStatus'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Evaluate variable pb8PyroActivationStatus.  --> KB8_PYRO_DEVICE_NOT_ACTIVATED (0x55)");
+  debuggerResultVariable = debugger_readLocalVariable("*(pb8PyroActivationStatus)");
+  EvalManStepEqual("Variable is equal to 0x55", debuggerResultVariable, 0x55);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetPyroActivationStatus_02() 
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0058");
+  AddRequirementInfo("ARCH_SW_BMM_0058", "The BMM_runGetPyroActivationStatus function shall return ACTIVATED if the pyro firing event is validated using the HES signals.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPyroActivationStatus at line '*(pb8PyroActivationStatus) = b8IsPyroActivated;'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPyroActivationStatus", 17);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0058");
+  testStep("STEP", "Check if CPU stopped at line '*pb8PyroActivationStatus'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Evaluate variable pb8PyroActivationStatus.  --> 0x55");
+  debuggerResultVariable = debugger_readLocalVariable("*(pb8PyroActivationStatus)");
+  EvalManStepEqual("Variable is equal to 0x55", debuggerResultVariable, 0x55);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_CheckHallEffectSensor_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0340");
+  AddRequirementInfo("ARCH_SW_BMM_0340", "BMM shall check if the current consumption of the hall effect sensor is in the expected range.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_Autotest_CheckHallEffectSensor at line '*pu8TestResult = u8ResultOfAutoTest;'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_Autotest_CheckHallEffectSensor", 59);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0340");
+  testStep("STEP", "Check if CPU stopped at line '*pu8TestResult'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Evaluate variable pu8TestResult.  --> KU8_ATM_TEST_OK");
+  debuggerResultVariable = debugger_readLocalVariable("*(pu8TestResult)");
+  EvalManStepEqual("Variable is equal to 0x4", debuggerResultVariable, 0x01);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runDisableHBSMonitoring_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_1060");
+  AddRequirementInfo("ARCH_SW_BMM_1060", "This function shall deactivate the interrupt linked to the HES pulses signal.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function mmg_UpdateModeStatus_NoHallEffectSensor at line 'if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK != (ERH_KU8_AEC_QUALIFIED_STATUS_MASK & mmg_u8AECStatus))'.");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", 9);
+
+  testStep("STEP", "Check if CPU stopped at line 'if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK != (ERH_KU8_AEC_QUALIFIED_STATUS_MASK & mmg_u8AECStatus))'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Set variable mmg_u8AECStatus to KU8_ONE.");
+  debugger_writeLocalVariable("mmg_u8AECStatus", 0x01);
+  
+  testStep("STEP", "Set a breakpoint at line 'Rte_Call_pcl_HBSControl_DisableHBSMonitoring()' and run the debugger.");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", 38);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pcl_HBSControl_DisableHBSMonitoring()'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_1060");
+  testStep("STEP", "Step in function Rte_Call_pcl_HBSControl_DisableHBSMonitoring. --> BMM_runDisableHBSMonitoring,,app.elf");
+  debugger_stepIn();
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runEnableHBSMonitoring_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_1080");
+  AddRequirementInfo("ARCH_SW_BMM_1080", "This function shall activate the interrupt linked to the HES pulses signal.");
+ //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function mmg_UpdateModeStatus_NoHallEffectSensor at line 'if (KU8_TRUE == MMG_u8PrevHESModeStatus)'.");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", 15);
+  testStep("STEP", "Check if CPU stopped at line 'if (KU8_TRUE == MMG_u8PrevHESModeStatus)'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Set a variable MMG_u8PrevHESModeStatus to KU8_TRUE.");
+  debugger_writeGlobalVariable("uint8", "MMG_u8PrevHESModeStatus,,app.elf", 0, 0xAA);
+  
+  testStep("STEP", "Set a breakpoint at line 'Rte_Call_pcl_HBSControl_EnableHBSMonitoring()' and run the debugger.");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", 19);
+  
+  debugger_run();
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pcl_HBSControl_EnableHBSMonitoring()'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_1080");
+  testStep("STEP", "Step in function Rte_Call_pcl_HBSControl_EnableHBSMonitoring. --> BMM_runEnableHBSMonitoring,,app.elf");
+  debugger_stepIn();
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+
+testcase SW_IT_BMM_HES_TOUT_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_1200");
+  AddRequirementInfo("ARCH_SW_BMM_1200", "This function shall compute the timer overflow in order to detect a no movement state of the belt.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_A])'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_TOUT", 2);
+  
+  testCaseComment("Action: ARCH_SW_BMM_1200");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_A])''. --> CPU stopped at BP");
+  debugger_WaitUntilBPisReached(500);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_A])'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_TOUT", 10);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_1200");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_A])''. --> CPU stopped at BP");
+  debugger_WaitUntilBPisReached(500);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_RISING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_B])'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_TOUT", 18);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_1200");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_RISING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_B])''. --> CPU stopped at BP");
+  debugger_WaitUntilBPisReached(500);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_B])'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_TOUT", 26);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_1200");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_B])'. --> CPU stopped at BP");
+  debugger_WaitUntilBPisReached(500);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'stSingleEdgeData.u8TmrOvfl++;' under 'if (KU8_MAX > stSingleEdgeData.u8TmrOvfl)'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_TOUT", 36);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_1200");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'stSingleEdgeData.u8TmrOvfl++;' under 'if (KU8_MAX > stSingleEdgeData.u8TmrOvfl)'. --> CPU stopped at BP");
+  debugger_WaitUntilBPisReached(500);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetHBS_A_V_100ms_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0006, ARCH_SW_BMM_0345");
+  AddRequirementInfo("ARCH_SW_BMM_0006", "The AdcIf_runGetHBS_A_V_100ms function shall be called to get the value measured of Hall Effect Sensor A");
+  AddRequirementInfo("ARCH_SW_BMM_0345", "AdcIf_runGetHBS_A_V_100ms be called to get the measured value on the power supply");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runMainFunction at line 'Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runMainFunction", 13);
+
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0006, ARCH_SW_BMM_0345");
+  testStep("STEP", "Step in function 'Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);'. --> AdcIf_runGetHBS_A_V_100ms,,app.elf");
+  debugger_stepIn();
+ 
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetHBS_B_V_100ms_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0007, ARCH_SW_BMM_0346");
+  AddRequirementInfo("ARCH_SW_BMM_0007", "The AdcIf_runGetHBS_B_V_100ms function shall be called to get the value measured of Hall Effect Sensor B");
+  AddRequirementInfo("ARCH_SW_BMM_0346", "AdcIf_runGetHBS_B_V_100ms be called to get the measured value on the power supply");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runMainFunction at line 'Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runMainFunction", 18);
+
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0007, ARCH_SW_BMM_0346");
+  testStep("STEP", "Step in function 'Rte_Call_pclHBS_B_V_raw_Get_100ms(&bmm_u16FilteredHESBInputVoltage_lsb);'. --> AdcIf_runGetHBS_B_V_100ms,,app.elf");
+  debugger_stepIn();
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_BobbinSpeed_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0008");
+  AddRequirementInfo("ARCH_SW_BMM_0008", "NVP parameter NVP_u16CplBobbinSpeedThrs shall be used  in order to adapt the bobbin speed threshold from microseconds (NVP parameter format) to the timer scale.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runInit at line 'u16CplTimerCntThrs = (uint16)(((uint32)(CALIB_BLOCK_ID_ECPL_OTHER_PARAM_RomBlockData.NVP_u16CplBobbinSpeedThrs)'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runInit", 52);
+
+  debugger_reset();
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0008");
+  testStep("STEP", "Check if CPU stopped at line 'u16CplTimerCntThrs = (uint16)(((uint32)(CALIB_BLOCK_ID_ECPL_OTHER_PARAM_RomBlockData.NVP_u16CplBobbinSpeedThrs)'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_GetAecStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0348");
+  AddRequirementInfo("ARCH_SW_BMM_0348", "ERH_GetAecStatus shall be called to get the status ot specific aec.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_Autotest_CheckHallEffectSensor at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_Autotest_CheckHallEffectSensor", 18);
+  
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0348");
+  testStep("STEP", "Step in function 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'. --> ERH_runGetAecStatus,,app.elf");
+  debugger_stepIn();
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_HES_IT_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0053, ARCH_SW_BMM_0054, ARCH_SW_BMM_0055, ARCH_SW_BMM_0349, ARCH_SW_BMM_1100");
+  AddRequirementInfo("ARCH_SW_BMM_0053", "The module shall read the period of the HES A signal measured by the eTimer unit.");
+  AddRequirementInfo("ARCH_SW_BMM_0054", "The module shall read the period of the HES B signal measured by the eTimer unit.");
+  AddRequirementInfo("ARCH_SW_BMM_0055", "The module shall validate the “pyro firing” if 2 consecutive measured HES signal periods are below the period corresponding to the “low pyro firing” event.");
+  AddRequirementInfo("ARCH_SW_BMM_0349", "Dio_ReadChannel shall be called to read the level of HES A and HES B pins.");
+  AddRequirementInfo("ARCH_SW_BMM_1100", "This function shall manage the sensor A and B signals.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_IT at line 'u8StateA = DIO_HALL_A;'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_IT", 0);
+  
+  setSignal(Presf_Lvl_ST3, 1);
+  testWaitForTimeoutSilent(250);
+  setSignal(Presf_Lvl_ST3, 0);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0349, ARCH_SW_BMM_1100");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_IT at line 'u8StateA = DIO_HALL_A;'. --> CPU is Stopped");
+  
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in function OS_ISR_BMM_HES_IT at line 'u8StateB = DIO_HALL_B;' and run the debugger.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_IT", 1);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0349, ARCH_SW_BMM_1100");
+  testStep("STEP", "Check if CPU stopped in function OS_ISR_BMM_HES_IT at line 'u8StateB = DIO_HALL_B;'. --> CPU is Stopped");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in OS_ISR_BMM_HES_IT at the last line of the function.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_IT", 154);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at the last line of the function OS_ISR_BMM_HES_IT. --> CPU is Stopped");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_A] * HARD_TIMER_RANGE) + u16Capture)'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_IT", 33);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0053");
+  testStep("STEP", "Check if CPU stopped in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_A] * HARD_TIMER_RANGE) + u16Capture)'. --> CPU is Stopped");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_A] * HARD_TIMER_RANGE) + u16Capture)'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_IT", 90);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0054");
+  testStep("STEP", "Check if CPU stopped in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_B] * HARD_TIMER_RANGE) + u16Capture) '. --> CPU is Stopped");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  debugger_deleteAllBP();
+  
+  
+  testStep("STEP", "Set a breakpoint in OS_ISR_BMM_HES_IT at line '#if (BMM_ENABLE_PYRO_DETECTION == 1)'.");
+  debugger_setRelativeFunctionBpAtLine("OS_ISR_BMM_HES_IT", 127);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0055");
+  testStep("STEP", "Check if CPU stopped in OS_ISR_BMM_HES_IT at line '#if (BMM_ENABLE_PYRO_DETECTION == 1)'. --> CPU is Stopped");
+  debugger_waitUntilBPisReached(5000);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_IT_BMM_runGetPositionRange_deg_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0035");
+  AddRequirementInfo("ARCH_SW_BMM_0035", "This module shall provide to the rest of the application the minimum and maximum displacement of the belt in degrees observed since its initial position recorded at product startup (T0) by the BMM.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionRange_deg at line '*ps16BeltPosition_min_deg'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionRange_deg", 0);
+    
+  testCaseComment("Action: ARCH_SW_BMM_0035");
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_min_deg'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionRange_deg at line '*ps16BeltPosition_max_deg'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionRange_deg", 1);
+  
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_BMM_0035");
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_max_deg'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_runGetPositionFromMinPos_deg_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0025");
+  AddRequirementInfo("ARCH_SW_BMM_0025", "This module shall provide to the rest of the application the displacement of the belt in degrees from its minimum position (continuously monitored by the BMM).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+    
+  
+  testStep("STEP", "Set a breakpoint in function BMM_runGetPositionFromMinPos_deg at line '*ps16BeltPosition_deg'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_runGetPositionFromMinPos_deg", 0);
+  
+  testCaseComment("Action: ARCH_SW_BMM_0025");
+  testStep("STEP", "Check if CPU stopped at line '*ps16BeltPosition_deg'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+
+  testStep("STEP", "Evaluate variable ps16BeltPosition_deg."); 
+  debuggerResultVariable = debugger_readGlobalVariable("sin18", "ps16BeltPosition_deg,,app.elf", 0);
+  EvalManStepEqual("Variable is equal to 0x0", debuggerResultVariable, 0x0);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+
+testcase SW_IT_BMM_GetTestResult_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_BMM_0347");
+  AddRequirementInfo("ARCH_SW_BMM_0347", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+  testStep("STEP", "Set a breakpoint in function BMM_cbk_CheckHallEffectSensor  at line 'Rte_Call_pclCheckHallEffectSensor_AutotestCallback(&u8TestResult);'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_cbk_CheckHallEffectSensor", 4);
+  
+  
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pclCheckHallEffectSensor_AutotestCallback(&u8TestResult);'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  testStep("STEP", "Step in function Rte_Call_pclCheckHallEffectSensor_AutotestCallback. --> BMM_Autotest_CheckHallEffectSensor,,app.elf");
+  debugger_stepIn();
+  
+  debugger_deleteAllBP();
+  testStep("STEP", "Set a breakpoint in function BMM_Autotest_CheckHallEffectSensor at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'.");
+  debugger_setRelativeFunctionBpAtLine("BMM_Autotest_CheckHallEffectSensor", 18);
+  
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU stopped at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testCaseComment("Action: ARCH_SW_BMM_0347");
+  testStep("STEP", "Step in function Rte_Call_pclCheckHallEffectSensor_AutotestCallback.");
+  
+  debugger_stepIn();
+  
+  testStep("STEP", "Check if CPU stopped in function ERH_runGetAecStatus(). --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+

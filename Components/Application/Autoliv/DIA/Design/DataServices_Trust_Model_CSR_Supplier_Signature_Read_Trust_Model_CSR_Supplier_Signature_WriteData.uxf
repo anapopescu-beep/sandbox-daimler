@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>1438</w>
+      <h>944</h>
+    </coordinates>
+    <panel_attributes>title:DataServices_Trust_Model_CSR_Supplier_Signature_Read_Trust_Model_CSR_Supplier_Signature_WriteData
+Start
+If
+	[Data(0) &gt; 128u || Data &gt; 258u]
+	ErrorCode = DCM_E_REQUESTOUTOFRANGE
+	ret = E_NOT_OK
+
+	[u16DataLength = 258u]
+		If
+		[u16DataLength != DataLength]
+		ErrorCode = DCM_E_INCORRECTMESSAGELENGTHORINVALIDFORMAT
+		ret = E_NOT_OK
+	
+		ret = E_OK
+		
+	[ret == E_OK]
+	VStdMemCpy(&amp;u8CSRSupplierSignature[0], Data, DataLength)
+	
+		If
+		[DataLength &lt; 258u]
+		VStdMemSet(&amp;u8CSRSupplierSignature[CSR_SUPPLIER_SIGNATURE_BLOCK_SIZE], 0x00, CSR_SUPPLIER_SIGNATURE_BLOCK_SIZE - DataLength)
+	
+		[do nothing]
+
+		
+	ret = Rte_Call_NvMService_CSR_Supplier_Signature_WriteBlock(Data);
+	
+Return ret
+
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

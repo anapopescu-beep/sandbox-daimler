@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0103
+ARCH_SW_CIL_0103: When executed cycle is requested on another source, signal RBTMxy_SP_ActvClient_ST35 shall be 6, as long as profile and next cycle is executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runAppliToCAN() under line 'cil_ManageActiveClientRequestSource(u8ExecutedCycle,u8SelectedCycle);'.
+
+	Step 3: Check if CPU stopped in function CIL_runAppliToCAN() under line 'cil_ManageActiveClientRequestSource(u8ExecutedCycle,u8SelectedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManageActiveClientRequestSource() at line 'if (I_C04_RBTM_ACTVCLIENT_NONE == Rte_IrvRead_CIL_runAppliToCAN_u8RequestSource())'.
+
+	Step 5: Check if CPU stopped in function cil_ManageActiveClientRequestSource() at line 'if (I_C04_RBTM_ACTVCLIENT_NONE == Rte_IrvRead_CIL_runAppliToCAN_u8RequestSource())'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set variable Rte_Irv_CIL_u8RequestSource to I_C04_RBTM_ACTVCLIENT_OTHER.
+
+Action: ARCH_SW_CIL_0103
+
+	Step 7: Check if signal RBTMFL_SP_ActvClient_ST35 value is I_C04_RBTM_ACTVCLIENT_OTHER. 
+		Expected result:  RBTMFL_SP_ActvClient_ST35 is equal to I_C04_RBTM_ACTVCLIENT_OTHER
+
+Postcondition
+
+	Step 8: Return ECU to default values

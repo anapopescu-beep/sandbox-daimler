@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0010, ARCH_SW_BMM_0011
+ARCH_SW_BMM_0010: Hall effect sensors HW component and the SW module itself has to be initialized.
+ARCH_SW_BMM_0011: The  Port_SetPinModel function shall be called to Set pin P02.6 as ALT5 and  pin P02.7 as ALT5
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_runInit at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_6, PORT_PIN_MODE_ALT5);.
+
+Action: ARCH_SW_BMM_0010, ARCH_SW_BMM_0011
+
+	Step 3: Check if CPU stopped at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_6, PORT_PIN_MODE_ALT5);. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function BMM_runInit at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_7, PORT_PIN_MODE_ALT5);.
+
+	Step 5: Check if CPU stopped at line at line Port_SetPinMode(PortConf_PortContainer_2_PORT_2_PIN_7, PORT_PIN_MODE_ALT5);. 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function BMM_runInit at line BMM_s16LowestPosition = KS16_ZERO;.
+
+	Step 7: Check if CPU stopped at line at line BMM_s16LowestPosition = KS16_ZERO;. 
+		Expected result:  CPU stopped at BP
+
+	Step 8: Set a breakpoint in function BMM_runInit at line BMM_s16HighestPosition = KS16_ZERO;.
+
+	Step 9: Check if CPU stopped at line at line BMM_s16HighestPosition = KS16_ZERO;. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 10: Return ECU to default values

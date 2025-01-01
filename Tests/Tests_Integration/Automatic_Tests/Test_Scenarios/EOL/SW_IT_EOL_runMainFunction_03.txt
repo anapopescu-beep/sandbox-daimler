@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0003
+ARCH_SW_EOL_0003: The EOL_runMainFunction function shall update the comfort cycle counter when BSR profiles (cycles 26,27 and 28) and PRE-SAFE CURVE 1-4 profiles are executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE21.
+
+	Step 3: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE22.
+
+	Step 4: Set a breakpoint in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE22:.
+
+	Step 5: Check if CPU is stopped in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE22:.
+
+Action: ARCH_SW_EOL_0003
+
+	Step 6: Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();
+
+	Step 7: Step in eol_ManageCycleCounters function.
+
+	Step 8: Set a breakpoint in function eol_ManageCycleCounters at line 'if (KU8_NB_MONITORED_CYCLES > u8ExecutedCycleNumber)'.
+
+Action: ARCH_SW_EOL_0003
+
+	Step 9: Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_COMFORT_LEVEL:'.
+
+Postcondition
+
+	Step 10: Return ECU to default values

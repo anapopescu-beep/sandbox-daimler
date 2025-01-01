@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0197
+ARCH_SW_CIL_0197: Signal Bckl_Sw_FP_Stat_ST3 shall be evaluated (SNA/FLT) to set the specified autotest to OK/NOK.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Bckl_Sw_FP_Stat_ST3 to KU8_ZERO.
+
+	Step 3: Set a breakpoint in function CIL_Autotest_CheckImplausibleData_Buckle() at line *pu8TestResult = cil_u8ResultOfAutoTest;.
+
+Action: ARCH_SW_CIL_0197
+
+	Step 4: Check if CPU stopped at line *pu8TestResult = cil_u8ResultOfAutoTest;. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0197
+
+	Step 5: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_OK
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0655, ARCH_SW_DIA_0692; ARCH_SW_DIA_0693; ARCH_SW_DIA_0694; ARCH_SW_DIA_0695; ARCH_SW_DIA_0696
+ARCH_SW_DIA_0655: Service 0x22 (Read Data By Identifier) will be implemented for DiagCommonData Structure which is composed by the following DIDs: EF00 (ECU Extract Version) EF01 (Diagnostic Extract Version) EF03 (Standard Application SW Package Information) EF05 (Minimum SW Version) F100 (Active Diagnostic Information) F104 (ECU Name) F10D (DDS Package Release) F111 (MBC ECU Identification - Hardware Part Number) F121 (MBC ECU Identification - Software Logical Block Part Number(s)) F154 (Hardware Supplier Identification) F155 (Software Supplier Identification)
+ARCH_SW_DIA_0692: The Read MBC ECU Identification - Hardware Part Number shall be available in the following sessions: ⦁Default Session (0x01) ⦁Programming Session (0x02) ⦁Extended Session (0x03) ⦁Supplier Session/Development Session (0x7E)
+ARCH_SW_DIA_0693: The Read MBC ECU Identification - Hardware Part Number service shall be available under the following forms of Authentication: ⦁Supplier ⦁Development ENHANCED ⦁Production ⦁After-Sales ENHANCED ⦁After-Sales ⦁After-Sales BASIC ⦁Internal Diagnostic Test Tool ⦁ePTI Test Tool
+ARCH_SW_DIA_0694: DataIdentifier of the Read MBC ECU Identification - Hardware Part Number shall be: 0xF111
+ARCH_SW_DIA_0695: Response data length shall be 10 bytes long Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0696: Bytes #2-#3: DataIdentifier of the Read MBC ECU Identification - Hardware Part Number shall be: 0xF111 Bytes #4-#13: Hardware Part Number [ASCII coded]  
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0655, ARCH_SW_DIA_0692; ARCH_SW_DIA_0693; ARCH_SW_DIA_0694; ARCH_SW_DIA_0695; ARCH_SW_DIA_0696
+
+	Step 2: Send diag request for 22 F111 and check response 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 3: Return ECU to default values

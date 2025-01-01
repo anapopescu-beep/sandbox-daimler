@@ -1,0 +1,70 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0716, ARCH_SW_CIL_0759, ARCH_SW_CIL_0756
+ARCH_SW_CIL_0716: If selected, the content of the measurement frame - block #6 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0759: BMM_runGetSpeed_deg_s shall be called to get the seat belt speed in deg/s.
+ARCH_SW_CIL_0756: ATM_runGetTestResult shall be called to get the status of specific auto-tests.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 6.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block06_InfosToSend at line Rte_Call_pclBelt_S_GetSpeed_deg_s(&s32BobbinSpeed);.
+
+	Step 4: Set a breakpoint in function cil_Update_07Cx_Block06_InfosToSend at line Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_HALL_EFFECT_SENSORS,&u8HESTestResult);.
+
+Action: ARCH_SW_CIL_0759
+
+	Step 5: Check if CPU stopped at line Rte_Call_pclBelt_S_GetSpeed_deg_s(&s32BobbinSpeed);. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_CIL_0756
+
+	Step 6: Check if CPU stopped at line Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_HALL_EFFECT_SENSORS,&u8HESTestResult);. 
+		Expected result:  CPU stopped at BP
+
+	Step 7: Set a breakpoint at the last line of function cil_Update_07Cx_Block06_InfosToSend.
+
+Action: ARCH_SW_CIL_0716
+
+	Step 8: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0716
+
+	Step 9: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 and signal Meas_RBTM_FL_04_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0716
+
+	Step 10: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 and signal Meas_RBTM_FL_05_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0716
+
+	Step 11: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0716
+
+	Step 12: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0716
+
+	Step 13: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 and signal Meas_RBTM_FL_08_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Postcondition
+
+	Step 14: Return ECU to default values

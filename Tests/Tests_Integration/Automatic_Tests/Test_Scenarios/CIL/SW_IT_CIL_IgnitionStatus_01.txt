@@ -1,0 +1,30 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0422
+ARCH_SW_CIL_0422: Rte_Write_CIL_AC_CommunicationInteractionLayer_psrIgnitionStatus_b8TriggerIgnitionStatus will be written to TRUE to notify ERH that signal ISw_Stat_ST3 is set to ON.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli() at line 'Rte_Write_CIL_AC_CommunicationInteractionLayer_psrIgnitionStatus_b8TriggerIgnitionStatus(KU8_TRUE);'.
+
+	Step 3: Check if CPU stopped in function CIL_runCANToAppli() at line 'Rte_Write_CIL_AC_CommunicationInteractionLayer_psrIgnitionStatus_b8TriggerIgnitionStatus(KU8_TRUE);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0422
+
+	Step 4: Evaluate if Rte_CIL_psrIgnitionStatus_b8TriggerIgnitionStatus is equal to KU8_TRUE. 
+		Expected result:  Rte_CIL_psrIgnitionStatus_b8TriggerIgnitionStatus is equal to KU8_TRUE
+
+Postcondition
+
+	Step 5: Return ECU to default values

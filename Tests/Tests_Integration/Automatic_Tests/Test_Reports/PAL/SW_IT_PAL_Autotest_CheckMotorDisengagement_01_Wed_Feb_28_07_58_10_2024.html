@@ -1,0 +1,1498 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SW_IT_PAL_Autotest_CheckMotorDisengagement_01_Wed_Feb_28_07_58_10_2024</title>
+    <script type="text/javascript">
+      function showTimestamp(timestamp){top.LogFile.showTimestamp(timestamp);}
+    </script>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="extendedNavigation.css">
+  </head>
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td class="UpCell">
+            <a href="Frame_Report.html">Go up</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <tr>
+        <td class="TestcaseHeadingPositiveResult">
+          <big class="Heading3">2 <a name="i__227176624_42">SW_IT_PAL_Autotest_CheckMotorDisengagement_01_Wed_Feb_28_07_58_10_2024</a>: Passed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_2">
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-02-28 07:58:10</td>
+            <td class="CellNoColor">(logging timestamp    2.252220)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2024-02-28 07:59:02</td>
+            <td class="CellNoColor" nowrap>(logging timestamp   54.309337)</td>
+          </tr>
+        </table>
+        <div class="Heading4">AUTOLIV ELECTRONICS document</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="DefaultCell">Nightly test: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Test type: </td>
+              <td class="DefaultCellBold">Requirement-Based test</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Regression Test: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Fault injection method used: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Resource usage evaluation: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Priority: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Safety relevant: </td>
+              <td class="DefaultCellBold">No</td>
+            </tr>
+          </table>
+        </div>
+        <div class="Heading4">Test equipment</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="DefaultCell">Tester Name: </td>
+              <td class="DefaultCellBold">CGA</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">CAN case ID: </td>
+              <td class="DefaultCellBold">RBE-COM-34</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">SBC Board: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Power supply ID: </td>
+              <td class="DefaultCellBold">RBE-PWR-018</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">Motherboard: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">MCU: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">DUT: </td>
+              <td class="DefaultCellBold">-</td>
+            </tr>
+            <tr>
+              <td class="DefaultCell">HW Info: </td>
+              <td class="DefaultCellBold">22/04.00</td>
+            </tr>
+          </table>
+        </div>
+        <p><table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0380, ARCH_SW_PAL_0378, ARCH_SW_PAL_0379, ARCH_SW_PAL_0400, ARCH_SW_PAL_0401, ARCH_SW_PAL_0402, ARCH_SW_PAL_0403, ARCH_SW_PAL_0080, ARCH_SW_PAL_0085, ARCH_SW_PAL_0086</th></tr></table></p>
+        <p><table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0380</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The component shall check if the motor is coupled with the mechanic.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0378</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The current executed cycle shall be read from BFE.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0379</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0400</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PMP_runGetFilteredTemperature_deg shall be called to get the ECU temperature</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0401</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PMP_runGetBatteryVoltage_10ms shall be called to get the battery voltage</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0402</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PMP_runGetMotorResistance shall be called to get motor resistance</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0403</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PAL_runReadMotorCurrentInmA shall be called to get motor current.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0080</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The component shall provide the current in miliamps</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0085</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The component shall be able to read the current measured at the Vp motor pin</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0086</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The component shall be able to read the current measured at the Vn motor pin</td></tr></p>
+        <p></table></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_IT_PAL_Autotest_CheckMotorDisengagement_01_Wed_Feb_28_07_58_10_2024.asc'>Log file: SW_IT_PAL_Autotest_CheckMotorDisengagement_01_Wed_Feb_28_07_58_10_2024.asc </A></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_IT_PAL_Autotest_CheckMotorDisengagement_01_Wed_Feb_28_07_58_10_2024.blf'>Log file: SW_IT_PAL_Autotest_CheckMotorDisengagement_01_Wed_Feb_28_07_58_10_2024.blf </A></p>
+      </div>
+      <div class="Indentation">
+        <table class="ScreenOnly">
+          <tbody>
+            <tr>
+              <td>
+                <a class="Undecorated" href="javascript:showTable('2_')">[expand test steps]</a>
+              </td>
+              <td width="2px"></td>
+              <td>
+                <a class="Undecorated" href="javascript:hideTable('2_')">[collapse test steps]</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="TestGroupHeadingBackground">
+        <tr>
+          <td>
+            <big class="Heading3">Main Part of Test Case</big>
+          </td>
+        </tr>
+      </table>
+      <div class="Indentation">
+        <table class="ResultTable">
+          <tr>
+            <th class="TableHeadingCell" width="1px">Timestamp</th>
+            <th class="TableHeadingCell" width="1px">Test Step</th>
+            <th class="TableHeadingCell" width="auto">Description</th>
+            <th class="TableHeadingCell" width="1px">Result</th>
+          </tr>
+          <tr>
+            <td class="DefineCell">   2.252220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Preconditions</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   2.252220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 1</td>
+            <td class="DefaultCellTestStep">Bench Initialization</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">1. RunPreTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   2.330220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.086220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.243220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   5.372950</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_259" href="javascript:switchTable('2_i__227176624_259')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_259">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.792816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_370" href="javascript:switchTable('2_i__227176624_370')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Steps_library_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_370">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFD2A</td>
+                  <td class="DefaultCell">fd 2a </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   9.722795</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_481" href="javascript:switchTable('2_i__227176624_481')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_481">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  11.752775</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_561" href="javascript:switchTable('2_i__227176624_561')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/SoftReset/ER_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_561">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x51</td>
+                  <td class="DefaultCell">51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ResetType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  14.166510</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_764" href="javascript:switchTable('2_i__227176624_764')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_764">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  26.226183</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">Enter [supplier] session request: Positive response received.</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  26.237935</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_1083" href="javascript:switchTable('2_i__227176624_1083')">[−]</a>
+                    </td>
+                    <td>Check Software Version.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_1083">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">0x17 0x1F 0x00 0x18 0x03 0x00 0x17 0x1F 0x00</td>
+                  <td class="DefaultCell">0x17 0x1F 0x00 0x18 0x03 0x00 0x17 0x1F 0x00</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  26.248287</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_1135" href="javascript:switchTable('2_i__227176624_1135')">[−]</a>
+                    </td>
+                    <td>Check Software Version (0x22 0xFD 0x01).</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_1135">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ER01861H.P83</td>
+                  <td class="DefaultCell">ER01861H.P83</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  26.807175</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 2</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_cbk_CheckMotorDisengagement at line 'Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&amp;u8TestResult);'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  26.810220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_cbk_CheckMotorDisengagement at line offset 4</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  27.568220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  27.715220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  27.715220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_PAL_0380, ARCH_SW_PAL_0378</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  27.715220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 3</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_cbk_CheckMotorDisengagement() at line 'Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&amp;u8TestResult);'. --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.117220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.117220</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.578220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.578220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 4</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &amp;u8PreviousADCTestResult);'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.600220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 38</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.855220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.855220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 5</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &amp;u8PreviousADCTestResult);'. --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.885220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.885220</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.221220</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Run until return in function ATM_runGetTestResult.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.245220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function ATM_runGetTestResult at line offset 13</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.519220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.544220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.544220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 6</td>
+            <td class="DefaultCellTestStep">Write autotest result with KU8_ONE --&gt; Variable written with KU8_ONE</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.544220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">Variable *u8TestResult overwritten with value (0x01)</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.661220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.661220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 7</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&amp;u8ExecutedCycleNumber);'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.683220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 45</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.980220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.980220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 8</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&amp;u8ExecutedCycleNumber);'. --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.997220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  29.997220</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.259220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 9</td>
+            <td class="DefaultCellTestStep">Write Executed Cycle Number  with 0x1D --&gt; Variable written with 0x1D</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.259220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">Variable u8ExecutedCycleNumber overwritten with value (0x1D)</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.384220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.384220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 10</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclECU_T_GetFiltered_deg ( &amp;s16ECUInternalTemperature);'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.406220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 56</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.670220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.670220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 11</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement() at line 'Rte_Call_pclECU_T_GetFiltered_deg ( &amp;s16ECUInternalTemperature);'. --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.694220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.694220</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  30.996220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 12</td>
+            <td class="DefaultCellTestStep">Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.015220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PMP_runGetFilteredTemperature_deg at line offset 12</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.275220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.275220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 13</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PMP_runGetFilteredTemperature_deg(). --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.296220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.398220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.398220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 14</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'if((s16MotorPWMOrder &lt; NVP_BLOCK_ID_TESTS_PARAM_RamBlockData.NVP_s16MotorDisengagementMinPowerOrder)'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.426220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 65</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.732220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.732220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 15</td>
+            <td class="DefaultCellTestStep">Write vaiable s16MotorPWMOrder with value -770 --&gt; Variable written with -770</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.732220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">Variable s16MotorPWMOrder overwritten with value (0xFFFFFCFE)</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.861220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.861220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 16</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclKL30_V_Get_10ms ( &amp;u16KL30Voltage_mV);'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.882220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 71</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.178220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.178220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 17</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclKL30_V_Get_10ms ( &amp;u16KL30Voltage_mV);'. --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.204520</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.204520</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.502956</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 18</td>
+            <td class="DefaultCellTestStep">Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer --&gt; Variable read from ADC.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.531220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PMP_runGetBatteryVoltage_10ms at line offset 18</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.788220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.810732</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.899220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.899220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 19</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetMotorResistance --&gt; CPU is stopped at BP.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.927220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 85</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.228220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.228220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 20</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement(). --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.251324</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.251324</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.580220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 21</td>
+            <td class="DefaultCellTestStep">Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer --&gt; Variable read from ADC.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.603688</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PMP_runGetMotorResistance at line offset 17</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.854220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.878220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.963220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.963220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 22</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'if(s32SignedPhysicalMotorCurrent_mA &lt; KS32_ZERO)' after 'PAL_runReadMotorCurrentInmA(&amp;s32SignedPhysicalMotorCurrent_mA);'.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  33.979220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 107</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  34.105220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  34.105220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_PAL_0085</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  34.105220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 23</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement() at line 'if(s32SignedPhysicalMotorCurrent_mA &lt; KS32_ZERO)'. --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.149220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr id="i__227176624_2027">
+            <td class="DefineCell">  35.150220</td>
+            <td class="NumberCell">IC5000</td>
+            <td class="DefaultCell">BP already DELETED in function PAL_Autotest_CheckMotorDisengagement at line offset 99</td>
+            <td class="WarningCell">warning</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.150220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 24</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the autotest result --&gt; CPU is stopped at BP.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.154220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_Autotest_CheckMotorDisengagement at line offset 169</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.154220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.154220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 25</td>
+            <td class="DefaultCellTestStep">Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement(). --&gt; CPU stopped at BP</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_PAL_0379</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 26</td>
+            <td class="DefaultCellTestStep">Evaluate PreviousADCTestResult --&gt; Variable is equal to 0x01.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2117" href="javascript:switchTable('2_i__227176624_2117')">[−]</a>
+                    </td>
+                    <td>Variable is equal to 0x1</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_2117">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                  <td class="DefaultCell">1 (0x01)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 27</td>
+            <td class="DefaultCellTestStep">Evaluate ExecutedCycleNumber --&gt; Variable read.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2179" href="javascript:switchTable('2_i__227176624_2179')">[−]</a>
+                    </td>
+                    <td>Variable read.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_2179">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">-2 (0xFFFFFFFE)</td>
+                  <td class="DefaultCell">-2 (0xFFFFFFFE)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_PAL_0400</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 28</td>
+            <td class="DefaultCellTestStep">Evaluate ECUInternalTemperature --&gt; Variable is equal to *ps16InternalTemperature_deg data pointer.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2252" href="javascript:switchTable('2_i__227176624_2252')">[−]</a>
+                    </td>
+                    <td>Variable is equal to *ps16InternalTemperature_deg data pointer</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_2252">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">20 (0x14)</td>
+                  <td class="DefaultCell">20 (0x14)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_PAL_0401</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 29</td>
+            <td class="DefaultCellTestStep">Evaluate KL30Voltage_mV --&gt; Variable is equal to *pu16Voltage data pointer data pointer.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2325" href="javascript:switchTable('2_i__227176624_2325')">[−]</a>
+                    </td>
+                    <td>Variable is equal to *pu16Voltage data pointer data pointer.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_2325">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">12697</td>
+                  <td class="DefaultCell">12697</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Action: ARCH_SW_PAL_0402</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 30</td>
+            <td class="DefaultCellTestStep">Evaluate MotorResistance_mOhm --&gt; Variable is equal to *pu16Resistance_mOhm data pointer.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.635220</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2398" href="javascript:switchTable('2_i__227176624_2398')">[−]</a>
+                    </td>
+                    <td>Variable is equal to *pu16Resistance_mOhm data pointer.</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_2398">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">141 (0x8D)</td>
+                  <td class="DefaultCell">141 (0x8D)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.737220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.737220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 31</td>
+            <td class="DefaultCellTestStep">Set a breakpoint in function PAL_cbk_CheckMotorDisengagement after the return of the autotest result --&gt; CPU is stopped at BP.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.755220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">BP SET in function PAL_cbk_CheckMotorDisengagement at line offset 7</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  36.053220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  36.074220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">CPU stopped at BP</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  36.074220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 32</td>
+            <td class="DefaultCellTestStep">Read autotest result transmited from ATM --&gt; Variable is equal to KU8_ONE.</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  36.074220</td>
+            <td class="NumberCellPositiveResult"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2510" href="javascript:switchTable('2_i__227176624_2510')">[−]</a>
+                    </td>
+                    <td>Variable is equal to 0x1</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__227176624_2510">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Received</td>
+                  <td class="DefineCell">Expected</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">1 (0x01)</td>
+                  <td class="DefaultCell">1 (0x01)</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  36.074220</td>
+            <td class="DefaultCellBold"></td>
+            <td class="DefaultCellBold">Postcondition</td>
+            <td class="DefaultCellBold">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  36.074220</td>
+            <td class="DefaultCellTestStepCellBlueUnderline">STEP 33</td>
+            <td class="DefaultCellTestStep">Return ECU to default values</td>
+            <td class="DefaultCellTestStep">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">2. RunPostTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  36.169220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">All BP's deleted succesfully.s</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  37.028220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RESET command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  37.186220</td>
+            <td class="NumberCellPositiveResult">IC5000</td>
+            <td class="DefaultCell">RUN command success</td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  38.826527</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2664" href="javascript:switchTable('2_i__227176624_2664')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_2664">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  38.956584</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2765" href="javascript:switchTable('2_i__227176624_2765')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/Measurement_Frames_Configuration_Write/WDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_2765">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x6E</td>
+                  <td class="DefaultCell">6e </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xFEFF</td>
+                  <td class="DefaultCell">fe ff </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  40.107154</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2896" href="javascript:switchTable('2_i__227176624_2896')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/FaultMem_ClearGroup/CDI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_2896">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x54</td>
+                  <td class="DefaultCell">54 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">  42.136442</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__227176624_2976" href="javascript:switchTable('2_i__227176624_2976')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V090/SoftReset/ER_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__227176624_2976">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x51</td>
+                  <td class="DefaultCell">51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">ResetType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

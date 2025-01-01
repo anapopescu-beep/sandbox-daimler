@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0735; ARCH_SW_DIA_0736; ARCH_SW_DIA_0737; ARCH_SW_DIA_0738
+ARCH_SW_DIA_0735: Service 0x22 (Read Data By Identifier) will be implemented for DID F15B (Software Fingerprint)
+ARCH_SW_DIA_0736: The Read Software Fingerprint shall be available in the following sessions: ?Default Session (0x01) ?Programming Session (0x02) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0737: The Read Software Fingerprint service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0738: DataIdentifier of the Read Software Fingerprint shall be: 0xF15B
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_ReadFingerprint_Read_Software_Fingerprint_s_ReadData*.
+
+Action: ARCH_SW_DIA_0735; ARCH_SW_DIA_0736; ARCH_SW_DIA_0737; ARCH_SW_DIA_0738
+
+	Step 3: Send diag request for 22 F15B and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_ReadFingerprint_Read_Software_Fingerprint_s_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

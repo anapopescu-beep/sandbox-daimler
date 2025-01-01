@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0012, ARCH_SW_CIL_0019, ARCH_SW_CIL_0561
+ARCH_SW_CIL_0012: Signal RBTM_FL/FR_Disp_Rq_ST3 shall be written and send to CAN.
+ARCH_SW_CIL_0019: Value for signal RBTM_FL/FR_Disp_Rq_ST3 will be 1 = SRV_DISP_RQ for 3s after Rid0302 is requested or if a DTCS with warning indicator is qualified, otherwise will be set to 0 = IDLE.
+ARCH_SW_CIL_0561: Read Rte_DIA_psePresafeDisplay_b8TriggerPreSafeRequestStatus shall be read to get if Presafe display 0302 is requested and 3s have passed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_CIL_0019
+
+	Step 2: Request Rid0302.
+
+Action: ARCH_SW_CIL_0012, ARCH_SW_CIL_0019, ARCH_SW_CIL_0561
+
+	Step 3: Check if signal RBTM_FL_Disp_Rq_ST3 value is I_CO2_PRESF_DISP_RQ_SRV_DISP_RQ. 
+		Expected result:  1
+
+Postcondition
+
+	Step 4: Return ECU to default values

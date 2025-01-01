@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0102
+ARCH_SW_CIL_0102: When executed cycle is BSR 1, signal RBTMxy_SP_ActvClient_ST35 shall be 4, as long as profile and next cycle is executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BltSlckDec_Md_FL_Stat_ST3 to KU8_ONE.
+
+	Step 3: Set signal BltSlckDec_Md_FL_Stat_ST3 to KU8_ZERO.
+
+	Step 4: Set a breakpoint in function cil_ManageActiveClientRequestSource.
+
+Action: ARCH_SW_CIL_0102
+
+	Step 5: Check if signal RBTMFL_SP_ActvClient_ST35 value is I_C04_RBTM_ACTVCLIENT_BELTSLACK_REDUCTION 
+		Expected result:  4
+
+Postcondition
+
+	Step 6: Return ECU to default values

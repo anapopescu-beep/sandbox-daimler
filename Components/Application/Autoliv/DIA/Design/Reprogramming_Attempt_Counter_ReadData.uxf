@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>90</y>
+      <w>2016</w>
+      <h>709</h>
+    </coordinates>
+    <panel_attributes>title:DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_ReadData
+Start
+Rte_Call_NvMService_FblMetaData_GetErrorStatus()
+If
+	[FALSE == DiagMetaDataFblReadStatus]
+	Rte_Call_NvMService_FblMetaData_GetErrorStatus
+	If
+		[NVM_REQ_PENDING != errorStatus]
+		Rte_Call_NvMService_FblMetaData_SetDataIndex()
+		Rte_Call_NvMService_FblMetaData_ReadBlock()
+		DiagMetaDataFblReadStatus = TRUE
+	
+		Do nothing
+	Return RTE_E_DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_DCM_E_PENDING
+
+	If
+		[NVM_REQ_PENDING != errorStatus]
+		If
+			[NULL_PTR != Data]
+			Compute number of reprogramming attempts for bootloader block
+			Compute number of reprogramming attempts for application block
+			Return OK
+	
+			Return NOK
+			
+		EndIf
+		
+		Return RTE_E_DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_DCM_E_PENDING
+		
+	EndIf
+
+Return
+
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

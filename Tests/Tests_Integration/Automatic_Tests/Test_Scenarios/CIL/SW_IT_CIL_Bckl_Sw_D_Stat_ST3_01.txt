@@ -1,0 +1,50 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0078
+ARCH_SW_CIL_0078: If value for Bckl_Sw_D_Stat_ST3 is trasitioning from 1 to 0 and BSR is being executed than any profile activation on API-interface request will be inhibited for NVP_u8AfterBuckle* 5 time.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PT4_PTCoor_PT_Rdy_ST3 to RDY (0x1).
+
+	Step 3: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 4: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 5: Set a breakpoint in function CIL_runCANToAppli at line '(void)Rte_Write_psrCustomerSpecific_u8TriggerRequest(KU8_ONE);' under 'if(KU16_ZERO == (CIL_u16InhibitionStatus & KU16_CIL_BSR_INHIB_MASK) )'.
+
+Action: ARCH_SW_CIL_0078
+
+	Step 6: Check if CPU stopped in function CIL_runCANToAppli at line '(void)Rte_Write_psrCustomerSpecific_u8TriggerRequest(KU8_ONE);' under 'if(KU16_ZERO == (CIL_u16InhibitionStatus & KU16_CIL_BSR_INHIB_MASK) )'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 8: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_DelayBuckleSwitch);'.
+
+Action: ARCH_SW_CIL_0078
+
+	Step 10: Check if CPU stopped in function cil_ManageInputSignals() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_DelayBuckleSwitch);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0078
+
+	Step 11: Evaluate if variable cil_u16BuckleSwitchDelayCounter is equal to KU16_CIL_AFTER_BUCKLE_DELAY + KU8_ONE. 
+		Expected result:  KU16_CIL_AFTER_BUCKLE_DELAY + KU8_ONE
+
+Postcondition
+
+	Step 12: Return ECU to default values

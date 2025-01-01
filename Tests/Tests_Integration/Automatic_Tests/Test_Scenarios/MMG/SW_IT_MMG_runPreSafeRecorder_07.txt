@@ -1,0 +1,56 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0015, ARCH_SW_MMG_0016, ARCH_SW_MMG_0017
+ARCH_SW_MMG_0016: Buckle Switch State shall represent the 0-1 Bits of Byte 0 from Start and Stop Blocks and shall be saved with the following values: STAT_OK = 0 if the buckle state is buckled; STAT_NOT = 1 if the buckle state is unbuckled; STAT_FLT = 2 if the buckle state is fault; STAT_SNA = 3 if the signal is not available
+ARCH_SW_MMG_0017: Belt Hand Over State shall represent the 2-3 Bits of Byte 0 from Start and Stop Blocks and shall be saved with the following values: RETRACT = 0 if the belt hand over is retracted; OUT_OF_END = 1� if the belt hand over is out of end position; EXTEND = 2 if the belt hand over is extended; SNA = 3 if the signal is not available
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runPreSafeRecorder().
+
+	Step 3: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 4: Set signal BeltHdOvr_FL_Stat_ST3 to RETRACT.
+
+	Step 5: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 6: Check if CPU stopped in function MMG_runPreSafeRecorder(). 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start1BuckleSwitch = mmm_stPreSafeInputData.u8BuckleStateType;'.
+
+Action: ARCH_SW_MMG_0016, ARCH_SW_MMG_0015
+
+	Step 8: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start1BuckleSwitch = mmm_stPreSafeInputData.u8BuckleStateType;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0016
+
+	Step 9: Evaluate if variable mmm_stPreSafeInputData.u8BuckleStateType is equal to I_C02_BCKL_SW_STAT_OK. 
+		Expected result:  Variable mmg_stPreSafeStartData.Start1BuckleSwitch is equal to I_C02_BCKL_SW_STAT_OK
+
+	Step 10: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start1BeltHandOver = mmm_stPreSafeInputData.u8BeltHdOvStat;'.
+
+Action: ARCH_SW_MMG_0017
+
+	Step 11: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start1BeltHandOver = mmm_stPreSafeInputData.u8BeltHdOvStat;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0017
+
+	Step 12: Evaluate if variable mmm_stPreSafeInputData.u8BeltHdOvStat is equal to RETRACT (0). 
+		Expected result:  Variable mmm_stPreSafeInputData.u8BeltHdOvStat is equal to RETRACT
+
+Postcondition
+
+	Step 13: Return ECU to default values

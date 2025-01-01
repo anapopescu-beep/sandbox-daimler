@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0369
+ARCH_SW_PAL_0369: The component shall check if the power stage activation state is consistent with the order.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckCommandConsistency at line 'Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);'.
+
+	Step 3: Check if the CPU stopped at line 'Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);'.
+
+	Step 4: Step in function Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult). 
+		Expected result:  Stepped in PAL_Autotest_CheckCommandConsistency function
+
+	Step 5: Set a breakpoint at line '*pu8TestResult = u8ResultOfAutoTest;'.
+
+	Step 6: Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'.
+
+	Step 7: Overwrite autotest result with KU8_ATM_TEST_OK.
+
+	Step 8: Set a breakpoint in function PAL_cbk_CheckCommandConsistency after the return of the autotest result.
+
+Action: ARCH_SW_PAL_0369
+
+	Step 9: Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'.  
+		Expected result:  CPU stopped at BP
+
+	Step 10: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1 .
+
+Postcondition
+
+	Step 11: Return ECU to default values

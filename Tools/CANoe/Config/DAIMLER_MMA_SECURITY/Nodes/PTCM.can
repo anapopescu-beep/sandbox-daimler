@@ -1,0 +1,1540 @@
+includes
+{
+  // Import required CAPL include files
+  //--- begin generated part --- Block start #Hdr_Includes#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Includes#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_Includes#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  #include "..\CAPL\PDU-IL-KL30-Helper_CAN1.cin"
+  #include "..\CAPL\PDU-NM-Panel-Helper_CAN1.cin"
+  #include "..\CAPL\PDU-NM-ASR-Helper_CAN1.cin"
+  #include "..\CAPL\ARGTMgr.cin"
+  #include "..\CAPL\ARGT_CAN1.cin"
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Includes#; do not delete this line! Add application code below this line.
+}
+
+variables
+{
+  // Define global variables for this CAPL file
+
+  /*--- #GenHeader Begin# --- begin generated comment ---
+  | Generated on Monday, April 15, 2019, 12:43:46
+  | By ModelGenerator for Daimler 1.0.0.4, ModelGeneratorDaimlerDLL 1.2.0.40
+  | Package Daimler 3.2.8
+  | Target Bus: BODY3; Channel: CAN1; DB Cluster: BODY3;
+  | From Database: STAR_3_BODY3_CAN_2019_05a_AR43.arxml
+  | CANoe Version 11.0.81.0
+    --- #GenHeader End  # --- end generated comment --- */
+
+  char gECU[256] = "PTCM";
+  //--- begin generated part --- Block start #Hdr_GlobalVariables#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  // For AUTOSAR Global Time
+  const word cARGTCAN1_DomainIdx_0              = 0; // administrative handle [0 - cARGTMgr_DomainCount-1] (global parameter; unique over all busses)
+  const word cARGTCAN1_DomainID_0               = 0; // Global Time Domain ID (global parameter)
+  char cARGTCAN1_DomainName_0[256]              = "GTD_BODY3_0"; // Global Time Domain Name (global parameter)
+  const word cARGTCAN1_ChannelIdx_0             = 0; // administrative handle [0 - cARGTCAN1_MaxChannels-1] (bus local parameter)
+  const dword cARGTCAN1_CAN_ID_0                = 0x79; // CAN identifier of the Global Time message
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_GlobalVariables#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_GlobalVariables#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  char gCAN1BusName[256] = "BODY3";
+  int gCAN1Channel = 1; //// The channel the bus is attached to
+
+  long gCAN1DisturbanceMode;
+  long gCAN1DisturbanceCount;
+  long gCAN1DisturbanceValue;
+  long gCAN1DisturbanceContinueMode;
+  double gCAN1DisturbancePeriod;
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_GlobalVariables#; do not delete this line! Add application code below this line.
+}
+
+on preStart
+{
+  // Initialize CAPL includes and node's modules/DLLs
+  //--- begin generated part --- Block start #Hdr_OnInit#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnInit#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnInit#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  ILCAN1_OnInit();
+  NMCAN1_OnInit();
+  ARGTMgr_OnInit();
+  ARGTMgr_InitTimeDomain( cARGTCAN1_DomainIdx_0,
+    cARGTCAN1_DomainName_0,
+    cARGTCAN1_DomainID_0,
+    1750, // Sync Loss Timeout [ms]
+    0, // Sync Loss Threshold [ms]
+    0 /* Verbosity Level */ );
+  ARGTCAN1_OnInit();
+  ARGTCAN1_Init( cARGTCAN1_ChannelIdx_0,
+    cARGTCAN1_DomainIdx_0,
+    eARGTMgr_TimeSlave, // Role
+    eARGTMgr_CRC_PROTECTED, // TX CRC Mode
+    eARGTMgr_CRC_VALIDATED, // RX CRC Handling
+    gCAN1Channel,
+    cARGTCAN1_CAN_ID_0, // CAN ID
+    0, // Is CAN-FD frame?
+    0, // Baudrate switch for CAN-FD frame
+    0, // Extended Data Length switch for CAN-FD frame
+    500, // Sync period [ms]
+    200, // Sync confirmation timeout [ms]
+    40, // Follow-up offset [ms]
+    250, // Follow-up timeout [ms]
+    3, // Sequence Counter Jump Width [#]
+    0, // Hardware Correction Threshold [ms]
+    0 /* Verbosity Level */ );
+  ARGTCAN1_SetUserBytesLength( cARGTCAN1_ChannelIdx_0, 1);
+  ARGTCAN1_SetUserByte( cARGTCAN1_ChannelIdx_0, 0, 0);
+  SetBusContext(gILCAN1_BusContext);
+  ILSetOperationMode(0, @sysvar::IL::UBPlugNPlay);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnInit#; do not delete this line! Add application code below this line.
+}
+
+on start
+{
+  // Start CAPL includes and node's modules/DLLs
+  //--- begin generated part --- Block start #Hdr_OnStart#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnStart#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnStart#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  ILCAN1_OnStart();
+  NMCAN1_OnStart();
+  ARGTMgr_OnStart();
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnStart#; do not delete this line! Add application code below this line.
+}
+
+on preStop
+{
+  // Prepare stopping
+  //--- begin generated part --- Block start #Hdr_OnStopping#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnStopping#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnStopping#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnStopping#; do not delete this line! Add application code below this line.
+}
+
+on stopMeasurement
+{
+  // Stop actions
+  //--- begin generated part --- Block start #Hdr_OnStop#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnStop#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnStop#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnStop#; do not delete this line! Add application code below this line.
+}
+
+void StartSim(dword busContext, int busActive, int mode)
+{
+  // Called when ... due to ...
+  //   mode == 1: ILControlResume
+  //   mode == 2: ILControlStart
+  //   mode == 3: ILControlSimulationOn
+  //--- begin generated part --- Block start #Hdr_StartSim#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  dword lCAN1BusContext_ARGT;
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_StartSim#; do not delete this line! Add application code below this line.
+  //write("[%.6f %NODE_NAME%] StartSim(0x%X, %d, %d)", TimeNowNS()/1e9, busContext, busActive, mode);
+  //--- begin generated part --- Block start #Body_StartSim#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  lCAN1BusContext_ARGT = GetBusNameContext(gCAN1BusName);
+  if ((busContext == lCAN1BusContext_ARGT)) ARGTCAN1_Start(cARGTCAN1_ChannelIdx_0); // Simulation of AUTOSAR Global Time
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_StartSim#; do not delete this line! Add application code below this line.
+}
+
+void StopSim(dword busContext, int busActive, int mode)
+{
+  // Called when ... due to ...
+  //   mode == 1: ILControlWait
+  //   mode == 2: ILControlStop
+  //   mode == 3: ILControlSimulationOff
+  //--- begin generated part --- Block start #Hdr_StopSim#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  dword lCAN1BusContext_ARGT;
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_StopSim#; do not delete this line! Add application code below this line.
+  //write("[%.6f %NODE_NAME%] StopSim(0x%X, %d, %d)", TimeNowNS()/1e9, busContext, busActive, mode);
+  //--- begin generated part --- Block start #Body_StopSim#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  lCAN1BusContext_ARGT = GetBusNameContext(gCAN1BusName);
+  if ((busContext == lCAN1BusContext_ARGT)) ARGTCAN1_Stop(cARGTCAN1_ChannelIdx_0); // Simulation of AUTOSAR Global Time
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_StopSim#; do not delete this line! Add application code below this line.
+}
+
+on sysvar_update sysvar::IL::Klemme15
+{
+  // Handle system state variable
+  //--- begin generated part --- Block start #Hdr_KL15_Klemme15#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_KL15_Klemme15#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_KL15_Klemme15#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  ILCAN1_OnEnvKlemme15(@this);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_KL15_Klemme15#; do not delete this line! Add application code below this line.
+}
+
+on sysvar_update sysvar::IL::StartWithoutSending
+{
+  // Handle system state variable
+  //--- begin generated part --- Block start #Hdr_StartManner_StartWithoutSending#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_StartManner_StartWithoutSending#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_StartManner_StartWithoutSending#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  ILCAN1_OnEnvStartWithoutSending(@this);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_StartManner_StartWithoutSending#; do not delete this line! Add application code below this line.
+}
+
+on sysvar_update sysvar::IL::UBPlugNPlay
+{
+  // Handle system state variable
+  //--- begin generated part --- Block start #Hdr_UBOpMode_UBPlugNPlay#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_UBOpMode_UBPlugNPlay#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_UBOpMode_UBPlugNPlay#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  SetBusContext(gILCAN1_BusContext);
+  ILSetOperationMode(0, @this);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_UBOpMode_UBPlugNPlay#; do not delete this line! Add application code below this line.
+}
+
+dword applPDUILTxPending(dword busContext, dword shortId, dword longId, char name[], dword& aPDULength, byte data[])
+{
+  dword ret = 1;
+  //--- begin generated part --- Block start #Hdr_applPDUILTxPending#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_applPDUILTxPending#; do not delete this line! Add application code below this line.
+  //write("[%.6f %NODE_NAME%] applPDUILTxPending(0x%X, 0x%X, 0x%X, %s, %d, %d)", TimeNowNS()/1e9, busContext, shortId, longId, name, aPDULength, elcount(data));
+  //--- begin generated part --- Block start #Body_applPDUILTxPending#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_applPDUILTxPending#; do not delete this line! Add application code below this line.
+  return ret;
+}
+
+dword applPDUILStart(dword busContext, dword busActive, dword mode)
+{
+  dword ret = 1;
+  //--- begin generated part --- Block start #Hdr_applPDUILStart#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_applPDUILStart#; do not delete this line! Add application code below this line.
+  //write("[%.6f %NODE_NAME%] applPDUILStart(0x%X, %d, %d)", TimeNowNS()/1e9, busContext, busActive, mode);
+  //--- begin generated part --- Block start #Body_applPDUILStart#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_applPDUILStart#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Footer_applPDUILStart#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  StartSim(busContext, busActive, mode);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Footer_applPDUILStart#; do not delete this line! Add application code below this line.
+  return ret;
+}
+
+dword applPDUILStop(dword busContext, dword busActive, dword mode)
+{
+  dword ret = 1;
+  //--- begin generated part --- Block start #Hdr_applPDUILStop#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_applPDUILStop#; do not delete this line! Add application code below this line.
+  //write("[%.6f %NODE_NAME%] applPDUILStop(0x%X, %d, %d)", TimeNowNS()/1e9, busContext, busActive, mode);
+  //--- begin generated part --- Block start #Body_applPDUILStop#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  StopSim(busContext, busActive, mode);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_applPDUILStop#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Footer_applPDUILStop#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Footer_applPDUILStop#; do not delete this line! Add application code below this line.
+  return ret;
+}
+
+void Nm_NetworkStartInd()
+{
+  // Callback of CAN AUTOSAR NM DLL
+  dword lBusContext;
+  //--- begin generated part --- Block start #Hdr_Nm_NetworkStartInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Nm_NetworkStartInd#; do not delete this line! Add application code below this line.
+  lBusContext = GetBusContext();
+  //--- begin generated part --- Block start #Body_Nm_NetworkStartInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  if (lBusContext == gNMCAN1_BusContext) NMCAN1_IndNetworkStart();
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Nm_NetworkStartInd#; do not delete this line! Add application code below this line.
+  SetBusContext(lBusContext);
+}
+
+void Nm_NetworkModeInd()
+{
+  // Callback of CAN AUTOSAR NM DLL
+  dword lBusContext;
+  //--- begin generated part --- Block start #Hdr_Nm_NetworkModeInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Nm_NetworkModeInd#; do not delete this line! Add application code below this line.
+  lBusContext = GetBusContext();
+  //--- begin generated part --- Block start #Body_Nm_NetworkModeInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  if (lBusContext == gNMCAN1_BusContext) NMCAN1_IndNetworkMode();
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Nm_NetworkModeInd#; do not delete this line! Add application code below this line.
+  SetBusContext(lBusContext);
+}
+
+void Nm_NetworkTimeoutInd()
+{
+  // Callback of CAN AUTOSAR NM DLL
+  dword lBusContext;
+  //--- begin generated part --- Block start #Hdr_Nm_NetworkTimeoutInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Nm_NetworkTimeoutInd#; do not delete this line! Add application code below this line.
+  lBusContext = GetBusContext();
+  //--- begin generated part --- Block start #Body_Nm_NetworkTimeoutInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  if (lBusContext == gNMCAN1_BusContext) NMCAN1_IndNetworkTimeout();
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Nm_NetworkTimeoutInd#; do not delete this line! Add application code below this line.
+  SetBusContext(lBusContext);
+}
+
+void Nm_PrepareBusSleepModeInd()
+{
+  // Callback of CAN AUTOSAR NM DLL
+  dword lBusContext;
+  //--- begin generated part --- Block start #Hdr_Nm_PrepareBusSleepModeInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Nm_PrepareBusSleepModeInd#; do not delete this line! Add application code below this line.
+  lBusContext = GetBusContext();
+  //--- begin generated part --- Block start #Body_Nm_PrepareBusSleepModeInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  if (lBusContext == gNMCAN1_BusContext) NMCAN1_IndPrepareBusSleepMode();
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Nm_PrepareBusSleepModeInd#; do not delete this line! Add application code below this line.
+  SetBusContext(lBusContext);
+}
+
+void Nm_BusSleepModeInd()
+{
+  // Callback of CAN AUTOSAR NM DLL
+  dword lBusContext;
+  //--- begin generated part --- Block start #Hdr_Nm_BusSleepModeInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Nm_BusSleepModeInd#; do not delete this line! Add application code below this line.
+  lBusContext = GetBusContext();
+  //--- begin generated part --- Block start #Body_Nm_BusSleepModeInd#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  if (lBusContext == gNMCAN1_BusContext) NMCAN1_IndBusSleepMode();
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Nm_BusSleepModeInd#; do not delete this line! Add application code below this line.
+  SetBusContext(lBusContext);
+}
+
+void Nm_StateChangeNotification(long previousState, long currentState)
+{
+  // Callback of CAN AUTOSAR NM DLL
+  dword lBusContext;
+  //--- begin generated part --- Block start #Hdr_Nm_StateChangeNotification#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_Nm_StateChangeNotification#; do not delete this line! Add application code below this line.
+  lBusContext = GetBusContext();
+  //--- begin generated part --- Block start #Body_Nm_StateChangeNotification#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  if (lBusContext == gNMCAN1_BusContext) NMCAN1_IndStateChangeNotification(previousState, currentState);
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_Nm_StateChangeNotification#; do not delete this line! Add application code below this line.
+  SetBusContext(lBusContext);
+}
+
+void OnARGTMgr_StatusChanged(word timeDomainIndex, word domainID, enum ARGTMgr_Status status)
+{
+  //--- begin generated part --- Block start #Hdr_OnARGTMgr_StatusChanged#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnARGTMgr_StatusChanged#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnARGTMgr_StatusChanged#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnARGTMgr_StatusChanged#; do not delete this line! Add application code below this line.
+}
+
+void OnARGTMgr_SyncPoint(word timeDomainIndex, word domainID, byte dir, qword timeNs)
+{
+  //--- begin generated part --- Block start #Hdr_OnARGTMgr_SyncPoint#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnARGTMgr_SyncPoint#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnARGTMgr_SyncPoint#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnARGTMgr_SyncPoint#; do not delete this line! Add application code below this line.
+}
+
+void OnARGTMgr_TriggerSyncMessageOnGatewayMasterPorts(word timeDomainIndex, word domainID, qword currentGlobalTimeNs, byte userBytes[], word userBytesLength)
+{
+  //--- begin generated part --- Block start #Hdr_OnARGTMgr_TriggerSyncMessageOnGatewayMasterPorts#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnARGTMgr_TriggerSyncMessageOnGatewayMasterPorts#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnARGTMgr_TriggerSyncMessageOnGatewayMasterPorts#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  ARGTMgrCAN1_TriggerSyncMessageOnGatewayMasterPorts(timeDomainIndex, domainID, currentGlobalTimeNs, userBytes, userBytesLength); // Simulation of AUTOSAR Global Time
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnARGTMgr_TriggerSyncMessageOnGatewayMasterPorts#; do not delete this line! Add application code below this line.
+}
+
+void OnARGTMgr_ValidationError(word timeDomainIndex, word domainID, enum ARGTMgr_Validation validation)
+{
+  //--- begin generated part --- Block start #Hdr_OnARGTMgr_ValidationError#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Hdr_OnARGTMgr_ValidationError#; do not delete this line! Add application code below this line.
+  //--- begin generated part --- Block start #Body_OnARGTMgr_ValidationError#; do not delete this line and do not add application code in this code block!
+  /* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+  /* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+  //--- end generated part --- Block end #Body_OnARGTMgr_ValidationError#; do not delete this line! Add application code below this line.
+}
+
+//--- begin generated part --- Block start <#Helper_Functions#> do not delete this line and do not add application code in this code block!
+/* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+/* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+//--- end generated part --- Block end <#Helper_Functions#> do not delete this line! Add application code below this line.
+
+//--- begin generated part --- Block start <#SysVar_Handler#> do not delete this line and do not add application code in this code block!
+/* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::EnableNode
+{
+  ILCAN1_Enable(@this && @sysvar::IL_CAN1::enable_AllNodes);
+}
+
+on sysvar_update sysvar::IL_CAN1::enable_AllNodes
+{
+  ILCAN1_Enable(@this && @sysvar::IL_CAN1::NODES::N_PTCM::EnableNode);
+}
+
+on sysvar_update sysvar::NM_CAN1::NODES::N_PTCM::DeactivateNM
+{
+  if( @this == 1 || @sysvar::NM_CAN1::StateControl::DeactivateNM == 1)
+  {
+    NMCAN1_Enable(0);
+  }
+  else
+  {
+    NMCAN1_Enable(1);
+  }
+}
+
+on sysvar_update sysvar::NM_CAN1::StateControl::DeactivateNM
+{
+  if( @this == 1 || @sysvar::NM_CAN1::NODES::N_PTCM::DeactivateNM == 1)
+  {
+    NMCAN1_Enable(0);
+  }
+  else
+  {
+    NMCAN1_Enable(1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTimingMode
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::Develop8_Rs_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUAsrTXMode(BODY3::PTCM::Develop8_Rs_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITimingMode
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTimingMode == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::Develop8_Rs_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::SendOnce
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Develop8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Develop8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTimingMode
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::ECU_Stat_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUAsrTXMode(BODY3::PTCM::ECU_Stat_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITimingMode
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTimingMode == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::ECU_Stat_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::SendOnce
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ECU_Stat_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ECU_Stat_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTimingMode
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::Meas8_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUAsrTXMode(BODY3::PTCM::Meas8_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITimingMode
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTimingMode == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::Meas8_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Meas8_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::Meas8_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Meas8_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Meas8_PTCM_ST3, 0, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::Meas8_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::Meas8_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::SendOnce
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUEvent(BODY3::PTCM::Meas8_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::Meas8_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::Meas8_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTimingMode
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::PLG_Stat_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUAsrTXMode(BODY3::PTCM::PLG_Stat_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITimingMode
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTimingMode == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::PLG_Stat_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::PLG_Stat_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::PLG_Stat_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::PLG_Stat_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::PLG_Stat_ST3, 0, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::PLG_Stat_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::PLG_Stat_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::SendOnce
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUEvent(BODY3::PTCM::PLG_Stat_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::PLG_Stat_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::PLG_Stat_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTimingMode
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::ROE_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUAsrTXMode(BODY3::PTCM::ROE_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITimingMode
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTimingMode == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::ROE_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ROE_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::ROE_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ROE_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ROE_PTCM_ST3, 0, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::ROE_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::ROE_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::SendOnce
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUEvent(BODY3::PTCM::ROE_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::ROE_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::ROE_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTimingMode
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::XCP8_Rs_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUAsrTXMode(BODY3::PTCM::XCP8_Rs_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITimingMode
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTimingMode == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUAsrTXMode(BODY3::PTCM::XCP8_Rs_PTCM_ST3, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITimingMode, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingCyclic(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseCyclicPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseCyclicTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingCyclic(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueCyclicPeriod, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::SendOnce
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbTrueEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 1, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FITrueEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming
+{
+  if (@this == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+  else
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILResetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod
+{
+  if (@sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::DisturbFalseEventTiming == 1)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILSetPDUTimingEvent(BODY3::PTCM::XCP8_Rs_PTCM_ST3, 0, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventEnable, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepCount, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIFalseEventRepPeriod, @sysvar::IL_CAN1::NODES::N_PTCM::PDUS::XCP8_Rs_PTCM_ST3::TIMINGS::FIEventDebounceDelay, -1, 0);
+  }
+}
+
+on sysvar_update sysvar::NM_CAN1::NODES::N_PTCM::OpenNodePanel
+{
+  OpenNodePanel("BODY3::PTCM", 1);
+}
+
+on sysvar_update sysvar::NM_CAN1::StateControl::CloseNodePanels
+{
+  OpenNodePanel("BODY3::PTCM", 0);
+}
+
+/* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+//--- end generated part --- Block end <#SysVar_Handler#> do not delete this line! Add application code below this line.
+
+//--- begin generated part --- Block start <#MsgUpdateFcns#> do not delete this line and do not add application code in this code block!
+/* #ChannelStart# |CAN1| #BusStart# |BODY3| */
+on message CAN1.cARGTCAN1_CAN_ID_0
+{
+  // Reception of AUTOSAR Global Time
+  OnARGTCAN1_Message(this); // Handling of AUTOSAR Global Time
+}
+
+/* #ChannelEnd# |CAN1| #BusEnd# |BODY3| */
+//--- end generated part --- Block end <#MsgUpdateFcns#> do not delete this line! Add application code below this line.
+

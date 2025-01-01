@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0002, ARCH_SW_EOL_0018
+ARCH_SW_EOL_0002: The EOL_runMainFunction function shall update the low force cycle counter when HWA profiles (cycles 18, 20, 22 and 24) or tensioning cycles 0 and 1 are executed.
+ARCH_SW_EOL_0018: If the associated cycle counter configuration value is 1 then the low force counter will be incremented.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).
+
+	Step 3: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle0_b8CycleValidity(&u8CycleValidityStatus);.
+
+Action: ARCH_SW_EOL_0002
+
+	Step 4: Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();
+
+	Step 5: Step in eol_ManageCycleCounters function.
+
+	Step 6: Set a breakpoint in function eol_ManageCycleCounters at line 'if (KU8_NB_MONITORED_CYCLES > u8ExecutedCycleNumber)'.
+
+	Step 7: Set variable u8ExecutedCycleNumber to KU8_ONE.
+
+Action: ARCH_SW_EOL_0002, ARCH_SW_EOL_0018
+
+	Step 8: Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_LOW_FORCE_LEVEL:'.
+
+Action: ARCH_SW_EOL_0002
+
+	Step 9: Evaluate if u8PreSafeLvl variable is 1 
+		Expected result:  0x1
+
+Postcondition
+
+	Step 10: Return ECU to default values

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0041; ARCH_SW_DIA_0183; ARCH_SW_DIA_0184; ARCH_SW_DIA_0185; ARCH_SW_DIA_0186; ARCH_SW_DIA_0187
+ARCH_SW_DIA_0041: Service 0x3D will be implemented
+ARCH_SW_DIA_0183: Service shall be available in Development session.
+ARCH_SW_DIA_0184: MemoryIdentifier shall represent Address and Length format identifier .
+ARCH_SW_DIA_0185: MemoryAddress shall represent the address to write to
+ARCH_SW_DIA_0186: MemorySize shall represent the size to writte
+ARCH_SW_DIA_0187: MemoryData shall return data to be written with parameters above
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runSid23_WriteMemoryByAddress*.
+
+Action: ARCH_SW_DIA_0041; ARCH_SW_DIA_0183; ARCH_SW_DIA_0184; ARCH_SW_DIA_0185; ARCH_SW_DIA_0186; ARCH_SW_DIA_0187
+
+	Step 4: Send diag request for 3D and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runSid23_WriteMemoryByAddress was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

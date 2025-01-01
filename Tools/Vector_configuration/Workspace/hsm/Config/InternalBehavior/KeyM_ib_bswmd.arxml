@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00046.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="a4f98b55-8912-41c1-8203-cbbf06b2601e">
+          <SHORT-NAME>KeyM_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="a34b6a4b-9479-498e-8477-93658b6a72bd">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="b3674435-d9ae-44ec-b30b-2d3bb32c9a3e">
+                  <SHORT-NAME>KeyM</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/KeyM_ib_bswmd/BswModuleDescriptions/KeyM_MainFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/KeyM_ib_bswmd/BswModuleDescriptions/KeyM_MainBackgroundFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="fbca442e-5e99-4428-9246-2394efeb3828">
+                      <SHORT-NAME>Behavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="8e3cd108-cc03-46bd-812c-a903bfa03b5e">
+                          <SHORT-NAME>KEYM_EXCLUSIVE_AREA_0</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects workspace locking resources and global RAM variables. Therefore the critical section enclosed with KEYM_EXCLUSIVE_AREA_0 should never be interrupted by any other API. For more details, see DocTechRef or module header (KeyM.h).</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="68f7ba42-b66c-468b-981c-e72a52e888d4">
+                          <SHORT-NAME>KEYM_EXCLUSIVE_AREA_1</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects write accesses to Certificates, e.g. its copy operation, and its NvM Handling. Therefore the critical section enclosed with KEYM_EXCLUSIVE_AREA_1 should never be interrupted by any other KeyM API bringing in new certificate data or NvM callbacks. For more details, see DocTechRef or module header (KeyM.h).</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="2be54db7-6c41-49ed-bbf6-d87f2827a697">
+                          <SHORT-NAME>KeyM_MainFunction</SHORT-NAME>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/KeyM_ib_bswmd/BswModuleDescriptions/KeyM_MainFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                        <BSW-SCHEDULABLE-ENTITY UUID="799eba83-86dc-4954-9c60-69ad3c0ab87c">
+                          <SHORT-NAME>KeyM_MainBackgroundFunction</SHORT-NAME>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/KeyM_ib_bswmd/BswModuleDescriptions/KeyM_MainBackgroundFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="12af0287-b4f3-44d2-a10c-ab49c95c8860">
+                          <SHORT-NAME>KeyM_MainFunctionTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/KeyM_ib_bswmd/BswModuleDescriptions/KeyM/Behavior/KeyM_MainFunction</STARTS-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </BSW-TIMING-EVENT>
+                        <BSW-BACKGROUND-EVENT UUID="b4e59166-b213-4185-8aa6-8649039eea08">
+                          <SHORT-NAME>KeyM_MainBackgroundFunctionBackgroundEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/KeyM_ib_bswmd/BswModuleDescriptions/KeyM/Behavior/KeyM_MainBackgroundFunction</STARTS-ON-EVENT-REF>
+                        </BSW-BACKGROUND-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="b5e4f63c-5b49-4598-bdec-ca9cb28a7a76">
+                  <SHORT-NAME>KeyM_MainFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+                <BSW-MODULE-ENTRY UUID="5b3a4135-57c8-4db0-aee8-77e2972b8292">
+                  <SHORT-NAME>KeyM_MainBackgroundFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

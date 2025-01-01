@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0450, ARCH_SW_PAL_0457
+ARCH_SW_PAL_0450: The component shall have a main function.
+ARCH_SW_PAL_0457: The PAL_runMainFunction function shall allow the application to enable control for autotest for motor command.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).
+
+	Step 3: Set a breakpoint in function PAL_runMainFunction() at line 'switch (PAL_u8ModeState)'.
+
+Action: ARCH_SW_PAL_0450
+
+	Step 4: Check if CPU has stopped at line 'switch (PAL_u8ModeState)'. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Set a breakpoint at line 'PAL_u8ModeState = PAL_KU8_ACTIVATION_MODE_STATE;'.
+
+Action: ARCH_SW_PAL_0457
+
+	Step 6: Check if CPU has stopped at line 'PAL_u8ModeState = PAL_KU8_ACTIVATION_MODE_STATE;:'. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

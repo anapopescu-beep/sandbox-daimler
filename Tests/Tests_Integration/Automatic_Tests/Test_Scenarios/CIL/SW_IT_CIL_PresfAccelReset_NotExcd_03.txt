@@ -1,0 +1,52 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0255, ARCH_SW_CIL_0115
+ARCH_SW_CIL_0255: If PresfAccelReset_NotExcd_ST3 is '2' - Acceleration low (Release Allowed) for at lest NVP_u8Haptic1AccelerationTimeout * 10 ms than smooth release shall be executed (after each LEVEL 2 � hwa 1 cycle request on PRESAFE source configured with next cycle).
+ARCH_SW_CIL_0115: If PresfAccelReset_NotExcd_ST3 is '2' - Acceleration low (Release Allowed) for at lest NVP_u8PRESAFEAccelerationTimeout * 10 ms than smooth release shall be executed (after each PRESAFE cycle request on PRESAFE source (LEVEL 2 � HWA 1 is an exception) configured with next cycle).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 3: Check if CPU stopped at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();' and run.
+
+	Step 5: Check if CPU stopped at line 'cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function cil_ManageInhibitConditions() at line 'cil_u8AccelerationTimeout = ((uint16)(NVP_BLOCK_ID_CYCLE_DELAYS_MB_RamBlockData.NVP_u8Haptic1AccelerationTimeout));'.
+
+	Step 7: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL2.
+
+Action: ARCH_SW_CIL_0255
+
+	Step 8: Check if CPU stopped at line 'cil_u8AccelerationTimeout = ((uint16)(NVP_BLOCK_ID_CYCLE_DELAYS_MB_RamBlockData.NVP_u8Haptic1AccelerationTimeout));;'. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_AccLowInhibition);'.
+
+Action: ARCH_SW_CIL_0255
+
+	Step 10: Check if CPU stopped at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_AccLowInhibition);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0255, ARCH_SW_CIL_0115
+
+	Step 11: Evaluate if variable cil_u8AccLowCounter is equal to 0x1F. 
+		Expected result:  0x1F
+
+Postcondition
+
+	Step 12: Return ECU to default values

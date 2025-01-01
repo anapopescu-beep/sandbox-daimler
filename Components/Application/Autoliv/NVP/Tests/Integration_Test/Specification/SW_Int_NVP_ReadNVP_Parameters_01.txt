@@ -1,0 +1,166 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_NVP_0005; ARCH_SW_NVP_0010; ARCH_SW_NVP_0013; ARCH_SW_NVP_0014; ARCH_SW_NVP_0018; ARCH_SW_NVP_0019; ARCH_SW_NVP_0023; ARCH_SW_NVP_0008; ARCH_SW_NVP_0009; ARCH_SW_NVP_00010; ARCH_SW_NVP_0022;
+ARCH_SW_NVP_0005: NVP_BLOCK_ID_TESTS_PARAM shall be configured to have the following parameters : - NVP_u32CheckMotorOrderMediumMaxDuration = 120 000 ms(4 bytes) - NVP_u32MotorCurrentMediumMaxDuration = 120 000 ms (4 bytes) - NVP_u32SWThermalProtectionValidationThrs = 160 000 AA(4 bytes) - NVP_u32SWThermalProtectionDeskillingThrs = 32 000 AA (4 bytes) - NVP_u16MotorCurrentHighResetTime = 300 ms (2 bytes) - NVP_u16MotorCurrentMediumResetTime = 1000 ms (2 bytes) - NVP_u16CheckMotorOrderHighMaxDuration = 2000 ms (2 bytes) - NVP_u16MotorCurrentHighMaxDuration = 1200 ms (2 bytes) - NVP_u16CheckMotorOrderHighResetTime = 100 ms (2 bytes) - NVP_u16CheckMotorOrderMediumResetTime = 100 ms (2 byte ) - NVP_u16CheckMotorOrderResetTime = 60 000 ms (2 bytes) - NVP_u16MotorCurrentResetTime = 60 000 (2 bytes) - NVP_u8MotorCurrentHighThrs = 25 A (1 byte) - NVP_u8MotorCurrentMediumThrs = 10 A (1 byte) - NVP_u8CheckMotorOrderHighThrs = 80% PWM (1 byte) - NVP_u8CheckMotorOrderMediumThrs = 20% PWM (1 byte) .
+ARCH_SW_NVP_0010: CALIB_BLOCK_ID_BFS_PRIO_PARAM will contain the priority for the belt cycles :{ 03 Pre-Safe level 1 (Strong tensioning) 03 Pre-Safe level 2 (Strong tensioning) 03 Pre-Safe level 3 (Strong tensioning) 03 Pre-Safe level 4 (Strong tensioning) 00 Pre-Safe level 5 (Strong tensioning) 00 Pre-Safe level 6 (Strong tensioning) 00 Pre-Safe level 7 (Strong tensioning) 00 Pre-Safe level 8 (Strong tensioning) 00 Pre-Safe level 9 (Strong tensioning) 00 Pre-Safe level 10 (Strong tensioning) 00 Pre-Safe level 11 (Strong tensioning) 00 Pre-Safe level 12 (Strong tensioning) 00 Pre-Safe level 13 (Strong tensioning) 00 Pre-Safe level 14 (Strong tensioning) 03 Curve 1 (Smooth tensioning) 00 Curve 2 (Smooth tensioning) 00 Curve 3 (Smooth tensioning) 00 Curve 4 (Smooth tensioning) 03 Haptic 1-1 (Warning 1) 03 Haptic 1-2 (Warning 1) 00 Haptic 2-1 (Warning 2) 00 Haptic 2-2 (Warning 2) 00 Haptic 3-1 (Warning 3) 00 Haptic 3-2 (Warning 3) 00 Haptic 4-1 (Warning 4) 00 Haptic 4-2 (Warning 4) 08 BSR 1 (Comfort) 00 BSR 2 (Comfort) 00 BSR 3 (Comfort) 04 Smooth Release 04 Hard Release 04 Backup Release 04 Start-up Release 00 ANG 00 AEE 00 'Unused 00 'Unused 00 'Unused 
+ARCH_SW_NVP_0013: Temperature compensaton tables should be stored: � CALIB_BLOCK_ID_WEIGHT_TENS0_TABLE � CALIB_BLOCK_ID_WEIGHT_TENS1_TABLE � CALIB_BLOCK_ID_WEIGHT_TENS2_TABLE � CALIB_BLOCK_ID_WEIGHT_TENS3_TABLE -40�C (0x0000) 1.75 (0x70) -25�C (0x0071) 1.234375 (0x4F) -5�C (0x0109) 1.09375 (0x46) 30�C (0x01FC)) 1.046875 (0x43) 55�C (0x02D0) 1 (0x40) 77�C (0x0377) 1.046875 (0x43) 85�C (0x03B4) 1.09375 (0x46) Note: Temp[�C] = Raw * 0.1318359375 - 40 Fact 
+ARCH_SW_NVP_0014: EOL counters should be defined as follows: � NVP_u32ComfortCyclesEOLThrs =60 000 � NVP_u32LowForceEOLThrs = 10 000 � NVP_u32HighForceEOLThrs = 1 500 � NVP_u32MaxForceEOLThrs = 50. 
+ARCH_SW_NVP_0018: NVP_BLOCK_ID_VELOCITY_PID_PARAM shall be stored. 
+ARCH_SW_NVP_0019: Power degradation table shall be stored : CALIB_BLOCK_ID_POWER_DEGRADATION Voltage Factor 8.95V (0x22F6) 0.835 (0x6B) 9V (0x2328) 0.835 (0x6B) 9.6V (0x2580) 0.89 (0x72) 10.2V (0x27D8) 0.945 (0x79) 10.8V (0x2A30) 1 (0x80) 13V (0x32C8) 1 (0x80) Note: Voltage[mV] = Raw * 1mV Factor 
+ARCH_SW_NVP_0023: CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData shall be used to store the vehicle equipment default data { 1 byte - NVP_u8VehEquipFirstByte; 1 byte - NVP_u8VehEquipSecondByte; 1 byte - NVP_u8VehEquipThirdByte; 1 byte - NVP_u8VehEquipFourthByte; 2 byte - NVP_u16VehEquipmentUVAbort; 2 byte - NVP_u16VehEquipmentUV; 2 byte - NVP_u16VehEquipmentOVAbort; 2 byte - NVP_u16VehEquipmentOV; 4 byte - NVP_u32VehEquipPreSafeCycleAct; } 
+ARCH_SW_NVP_0008: The NVP configuration tool (excel file) shall allow specifying the EEPROM file version.
+ARCH_SW_NVP_0009: The NVP configuration tool (excel file) shall manage the EEPROM memory clustering (using watermarks).
+ARCH_SW_NVP_00010: The NVP configuration tool (excel file) shall allow specifying which blocks must be programmed.
+ARCH_SW_NVP_0022: If Vehicle Equipment Configuration Data has not valid data the default data from CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData block will be used instead.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_NVP_0005;
+
+	Step 2: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32CheckMotorOrderMediumMaxDuration*.
+
+	Step 3: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32MotorCurrentMediumMaxDuration,,app.elf*.
+
+	Step 4: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32SWThermalProtectionValidationThrs,,app.elf*.
+
+	Step 5: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u32SWThermalProtectionDeskillingThrs,,app.elf*.
+
+	Step 6: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentHighResetTime,,app.elf*.
+
+	Step 7: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16MotorCurrentMediumResetTime,,app.elf*.
+
+	Step 8: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderHighMaxDuration,,app.elf*.
+
+	Step 9: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderHighResetTime,,app.elf*.
+
+	Step 10: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u16CheckMotorOrderResetTime,,app.elf*.
+
+	Step 11: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8MotorCurrentHighThrs,,app.elf*.
+
+	Step 12: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8MotorCurrentMediumThrs,,app.elf*.
+
+	Step 13: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8CheckMotorOrderHighThrs,,app.elf*.
+
+	Step 14: Read (NVP_BLOCK_ID_TESTS_PARAM_RamBlockData).NVP_u8CheckMotorOrderMediumThrs,,app.elf*.
+
+Action: ARCH_SW_NVP_0010;
+
+	Step 15: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 1 (Strong tensioning)*.
+
+	Step 16: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 2 (Strong tensioning)*.
+
+	Step 17: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 3 (Strong tensioning)*.
+
+	Step 18: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 4 (Strong tensioning)*.
+
+	Step 19: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 5 (Strong tensioning)*.
+
+	Step 20: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 6 (Strong tensioning)*.
+
+	Step 21: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 7 (Strong tensioning)*.
+
+	Step 22: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 8 (Strong tensioning)*.
+
+	Step 23: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 9 (Strong tensioning)*.
+
+	Step 24: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 10 (Strong tensioning)*.
+
+	Step 25: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 11 (Strong tensioning)*.
+
+	Step 26: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 12 (Strong tensioning)*.
+
+	Step 27: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 13 (Strong tensioning)*.
+
+	Step 28: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Pre-Safe level 14 (Strong tensioning)*.
+
+	Step 29: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Curve 1 (Smooth tensioning)*.
+
+	Step 30: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Curve 2 (Smooth tensioning)*.
+
+	Step 31: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Curve 3 (Smooth tensioning)*.
+
+	Step 32: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Curve 4 (Smooth tensioning)*.
+
+	Step 33: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 1-1 (Warning 1)*.
+
+	Step 34: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 1-2 (Warning 1)*.
+
+	Step 35: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 2-1 (Warning 2)*.
+
+	Step 36: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 2-2 (Warning 2)*.
+
+	Step 37: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 3-1 (Warning 3)*.
+
+	Step 38: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 3-2 (Warning 3)*.
+
+	Step 39: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 4-1 (Warning 4)*.
+
+	Step 40: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 4-2 (Warning 4)*.
+
+	Step 41: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 4-1 (Warning 4)*.
+
+	Step 42: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Haptic 4-2 (Warning 4)*.
+
+	Step 43: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - BSR 1 (Comfort)*.
+
+	Step 44: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - BSR 2 (Comfort)*.
+
+	Step 45: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - BSR 3 (Comfort)*.
+
+	Step 46: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Smooth Release*.
+
+	Step 47: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Hard Release*.
+
+	Step 48: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Backup Release*.
+
+	Step 49: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - Start-up Release*.
+
+	Step 50: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - ANG*.
+
+	Step 51: Read CALIB_BLOCK_ID_BFS_PRIO_PARAM_RomBlockData,,app.elf - AEE*.
+
+Action: ARCH_SW_NVP_0013; ARCH_SW_NVP_0014;
+
+	Step 52: Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf - NVP_u32ComfortCyclesEOLThrs*.
+
+	Step 53: Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf - NVP_u32LowForceEOLThrs *.
+
+	Step 54: Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf - NVP_u32HighForceEOLThrs *.
+
+	Step 55: Read CALIB_BLOCK_ID_EOL_PARAM_RomBlockData,,app.elf - u32MaxForceEOLThrs *.
+
+Action: ARCH_SW_NVP_0018;
+
+	Step 56: Read NVP_BLOCK_ID_VELOCITY_PID_PARAM_RamBlockData,,app.elf*.
+
+Action: ARCH_SW_NVP_0019;
+
+	Step 57: Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf - 8.95V*.
+
+	Step 58: Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf - 9V*.
+
+	Step 59: Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf - 9.6V*.
+
+	Step 60: Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf - 10.2V*.
+
+	Step 61: Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf - 10.8V*.
+
+	Step 62: Read CALIB_BLOCK_ID_POWER_DEGRADATION_RomBlockData,,app.elf - 13V*.
+
+Action: ARCH_SW_NVP_0023; ARCH_SW_NVP_0008; ARCH_SW_NVP_0009; ARCH_SW_NVP_00010; ARCH_SW_NVP_0022;
+
+	Step 63: Read CALIB_BLOCK_ID_VEHICLE_EQUIPMENT_RomBlockData,,app.elf*.
+
+Postcondition
+
+	Step 64: Return ECU to default values

@@ -1,0 +1,51 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0074, ARCH_SW_ERH_0075, ARCH_SW_ERH_0076, ARCH_SW_ERH_0077
+ARCH_SW_ERH_0074: The erh_CheckAecId function shall be called to check the validity of all AEC identifiers and to get the counter index and the status array of each AEC.
+ARCH_SW_ERH_0075: The NvM_SetRamBlockStatus interface shall be called to notify NVM that AEC status block shall be stored in NVM by the next call of NvM_WriteAll function.
+ARCH_SW_ERH_0076: NvM_WriteBlock shall be called to copy the data of the RAM block to its corresponding NVM block.
+ARCH_SW_ERH_0077: Rte_Write_psrAECsBlockStatus_b8NVMBlockStatus shall be called to write the updated AECs block in NVM.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_ResetAllAECStatus() at line '(void) erh_CheckAecId(u8AECIndex, &u8OutputIndex, &stAecData);'.
+
+	Step 3: Send diagnostic request 14 FF FF FF.
+
+	Step 4: Check if CPU stopped in function ERH_ResetAllAECStatus() at line '(void) erh_CheckAecId(u8AECIndex, &u8OutputIndex, &stAecData);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Set a breakpoint in function ERH_ResetAllAECStatus() at line 'Rte_Call_pclNvmServicesAecBlock_GetErrorStatus(&u8NvmBlockStatus);'.
+
+Action: ARCH_SW_ERH_0074
+
+	Step 6: Check if CPU stopped in function erh_CheckAecId() at line 'if ((ERH_KU8_UNDEFINED_AEC_CFG < cu8AecId)'. 
+		Expected result:  CPU stopped at BP
+
+	Step 7: Set a breakpoint in function ERH_ResetAllAECStatus() at line 'Rte_Call_pclNvmServicesAecBlock_GetErrorStatus(&u8NvmBlockStatus);'.
+
+Action: ARCH_SW_ERH_0075
+
+	Step 8: Check if CPU stopped in function ERH_ResetAllAECStatus() at line 'Rte_Call_pclNvmServicesAecBlock_GetErrorStatus(&u8NvmBlockStatus);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 9: Set a breakpoint in function ERH_ResetAllAECStatus() at line 'Result = Rte_Call_pclNvmServicesAecBlock_WriteBlock(&NVP_BLOCK_ID_AEC_STATUS_RamBlockData);'.
+
+Action: ARCH_SW_ERH_0076, ARCH_SW_ERH_0077
+
+	Step 10: Check if CPU stopped in function ERH_ResetAllAECStatus() at line 'Result = Rte_Call_pclNvmServicesAecBlock_WriteBlock(&NVP_BLOCK_ID_AEC_STATUS_RamBlockData);'. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 11: Return ECU to default values

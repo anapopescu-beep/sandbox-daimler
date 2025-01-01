@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0755; ARCH_SW_DIA_0761; ARCH_SW_DIA_0762
+ARCH_SW_DIA_0755: Service 0x31 (Routine Control) 0x31 01 Start 0x31 02 Stop 0x31 03 Request Results for RID 0x0245 (Synchronize to Non-volatile Memory) will be implemented 
+ARCH_SW_DIA_0761: Routine Request Results 0x03 shall be available in the following diagnostic sessions: ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) Routine Stop requires the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales STANDARD  
+ARCH_SW_DIA_0762: RID specific Routine Result shall be represented by the following: ?0x00 - Terminated successful. ?0x01 - Routine still running. ?0x02 - Stopped without result 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *Synchronize_to_Non_volatile_Memory_RequestResults*.
+
+	Step 4: Send diag request for RID 02 45 Start 
+		Expected result:  Request Sent.
+
+	Step 5: Send diag request for RID 02 45 Request Results 
+		Expected result:  Timeout error.
+
+Action: ARCH_SW_DIA_0755; ARCH_SW_DIA_0761; ARCH_SW_DIA_0762
+
+	Step 6: Check if breakpoint from function Synchronize_to_Non_volatile_Memory_RequestResults was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 7: Return ECU to default values

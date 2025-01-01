@@ -1,0 +1,37 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *             File:  SchM_BswModuleDescriptions_30_vHsm_Hal.h
+ *           Config:  vHsmConfig.dpa
+ *      ECU-Project:  vHsmConfig
+ *
+ *        Generator:  MICROSAR RTE Generator Version 4.28.0
+ *                    RTE Core Version 1.28.0
+ *          License:  CBD2200336
+ *
+ *      Description:  Header of BSW Scheduler for BSW Module <BswModuleDescriptions_30_vHsm_Hal>
+ *********************************************************************************************************************/
+#ifndef SCHM_BSWMODULEDESCRIPTIONS_30_VHSM_HAL_H
+# define SCHM_BSWMODULEDESCRIPTIONS_30_VHSM_HAL_H
+
+# ifdef __cplusplus
+extern "C" {
+# endif  /* __cplusplus */
+
+# include "SchM_BswModuleDescriptions_30_vHsm_Hal_Type.h"
+
+
+# ifdef __cplusplus
+} /* extern "C" */
+# endif  /* __cplusplus */
+
+#endif /* SCHM_BSWMODULEDESCRIPTIONS_30_VHSM_HAL_H */

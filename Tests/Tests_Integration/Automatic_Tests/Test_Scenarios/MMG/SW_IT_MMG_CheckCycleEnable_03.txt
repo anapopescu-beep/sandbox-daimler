@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0312
+ARCH_SW_MMG_0312: If a cycle has Week or YEAR equal to 0xFF then cycle is invalid.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init() at line 'mmg_CheckCycleEnable();'.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line 'mmg_CheckCycleEnable();'.
+
+	Step 4: Step in function mmg_CheckCycleEnable().
+
+	Step 5: Set a breakpoint in function mmg_CheckCycleEnable() at line '(KU8_MAX != NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[(uint16)(KU8_BELT_FUNCTION_00 * KU8_NVP_CYCLE_SIZE)] )'.
+
+Action: ARCH_SW_MMG_0312
+
+	Step 6: Check if CPU stopped in function mmg_CheckCycleEnable() at line '(KU8_MAX != NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[(uint16)(KU8_BELT_FUNCTION_00 * KU8_NVP_CYCLE_SIZE)] )'.
+
+	Step 7: Set variable NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[u16Step0] to KU8_MAX.
+
+Action: ARCH_SW_MMG_0312
+
+	Step 8: Check if function mmg_CheckIfCycleStepIsvalid() returns B_FALSE. 
+		Expected result:  B_FALSE
+
+Postcondition
+
+	Step 9: Return ECU to default values

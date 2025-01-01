@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0200
+ARCH_SW_MMG_0200: ATM_runGetLastCriticalAutotestId shall be called to get last critical autotest ID.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus() at line 'mmg_UpdateModeStatus_CriticalAutotestsNok();'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus() at line 'mmg_UpdateModeStatus_CriticalAutotestsNok();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set variable MMG_u32ModesStatus to MMG_KU32_MASK_CRITICAL_AT_NOK.
+
+	Step 5: Set a breakpoint in function mmg_UpdateModeStatus_CriticalAutotestsNok at line 'Rte_Call_pclAutotestServices_GetLastCriticalAutotestID(&u8AutoTestId);'.
+
+	Step 6: Check if CPU stopped in function mmg_UpdateModeStatus_CriticalAutotestsNok at line 'Rte_Call_pclAutotestServices_GetLastCriticalAutotestID(&u8AutoTestId);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0200
+
+	Step 7: Step in Rte_Call_pclAutotestServices_GetLastCriticalAutotestID(). 
+		Expected result:  Stepped in function ATM_runGetLastCriticalAutotestId
+
+Postcondition
+
+	Step 8: Return ECU to default values

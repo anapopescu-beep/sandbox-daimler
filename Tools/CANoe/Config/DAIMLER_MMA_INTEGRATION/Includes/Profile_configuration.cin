@@ -1,0 +1,183 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  //Tensioning cycle identification on Measurement Frame
+  byte bAllCycleMeasurement[5] = {0xFF,0x00,0x01,0x02,0x03}; //R1.1 update
+  
+  //Tensioning cycle identification on Status Frame
+  byte bAllCycleStatusFrame[3] = {0x00, 0x01, 0x02};
+  byte bSignalNotAvailable = 0x03;
+  
+  // Definition of all cycles.
+  char cAllCycles[5][20] = { "OFF", "STAGE1", "STAGE2", "SOFT_RELEASE","STARTUP"};
+  
+  //Tensioning cycle code for launching via CAN.
+  byte bAllCycleLaunchCode[3] = {0x00, 0x01, 0x02};
+  
+  // Definition of all cycles.
+  char cAllCycleLaunchName[3][20] = {"NOLVL", "LVL1", "LVL2"};
+
+  
+
+  
+  
+  
+  
+  
+  
+  
+//  // TENSIONING PROFILES DEFINITION
+//  // Tensioning profile array
+//  char cTensioningProfile[19][12]={"PRECRASH_0","PRECRASH_1","PRECRASH_2","PRECRASH_3","PRECRASH_4","PRECRASH_5", "PRECRASH_6","PRECRASH_7","PRECRASH_8","PRECRASH_9","PRECRASH_10","PRECRASH_11","PRECRASH_12", "PRECRASH_13","PRECRASH_14","PRECRASH_15", "PRECRASH_16", "PRECRASH_17", "PRECRASH_18"}; //P30 update
+//
+//
+//  // RELEASE PROFILES DEFINITION
+//  // Release profile array
+//  char cReleaseProfile[3][32]={"HARD_RELEASE","SOFT_RELEASE","BACKUP_SOFT_RELEASE"};
+//
+//
+//
+//  // BSR PROFILES DEFINITION
+//  // Bsr profile array
+//  char cBSRProfile[2][4]={"BSR","P2P"}; //P25 update
+//
+//
+//  // START-UP PROFILE DEFINITION
+//  // Start-Up profile 
+//  char cStartUpProfile[8]="STARTUP";
+//
+//
+//  // BPA PROFILES DEFINITION
+//  // BPA profile
+//  char cBPAProfile[2][5]={"BPDO","BPDC"};
+//
+//
+//  // PRODUCTION CYCLE PROFILE DEFINITION
+//  // !!!!!     PRODUCTION_CYCLE_1= ANG_PROCESS ; PRODUCTION_CYCLE_2= AEE_PROCESS 
+//  // Production cycle profile array
+//  char cProductionProfiles[2][12]={"AEE_PROCESS","ANG_PROCESS"}; 
+//
+//
+//  // HAPTIC WARNING CYCLE PROFILE DEFINITION
+//  // Haptic Warning cycle profile array
+//  char cHapticWarningProfiles[2][17]={"HAPTIC_WARNING_0","HAPTIC_WARNING_1"};
+//
+//  // Emergency braking releasing sequence after eCPL pyro detection CYCLE PROFILE DEFINITION
+//  // ECPL cycle profile array
+//  char cECPLProfiles[5]="ECPL";
+
+  const NOLVL              = 0x00;
+  const PRE_SAFE_1         = 0x01; // Low Force  (LVL1).
+  const HAPTIC_WARNING1    = 0x02; // Low Force  (LVL2).
+  const HAPTIC_WARNING1_P1 = 0x16; // Phase 1 of Haptic Warning 0.
+  const PRE_SAFE_2         = 0x03; // Low Force  (LVL3).
+  const PRE_SAFE_3         = 0x04; // Low Force  (LVL4).
+  const PRE_SAFE_4         = 0x05; // High Force (LVL5).
+  
+  const BSR_1           = 0x13;
+  
+  const START_UP        = 0x19;
+  const HARD_RELEASE    = 0x1A;
+  const SOFT_RELEASE    = 0x1B;
+
+  
+  const Low     = 0x00;
+  const High    = 0x01;
+  const Comfort = 0x02;
+  
+  struct Cycle_Characteristics {
+    byte SF_ID;
+    byte MF_ID;
+    byte Launch_ID;
+    char Launch_Name[50];
+    char SF_Name[50];
+    char MF_Name[50];
+  } CYCLE[double,31];
+  
+//*********************************************************************************************
+}
+void InitCycleParameters()
+{
+  CYCLE[NOLVL]        .MF_ID       = 0xFF;
+  CYCLE[NOLVL]        .SF_ID       = 0x00;
+  CYCLE[NOLVL]        .Launch_ID   = 0x00;
+  strncpy(CYCLE[NOLVL].Launch_Name, "OFF"  , 50);
+  strncpy(CYCLE[NOLVL].SF_Name    , "OFF"  , 50);
+  strncpy(CYCLE[NOLVL].MF_Name    , "NOLVL", 50);
+  
+  CYCLE[PRE_SAFE_1]        .MF_ID       = 0x00;
+  CYCLE[PRE_SAFE_1]        .SF_ID       = 0x01;
+  CYCLE[PRE_SAFE_1]        .Launch_ID   = 0x01;
+  strncpy(CYCLE[PRE_SAFE_1].Launch_Name, "PRE-SAFE 1", 50);
+  strncpy(CYCLE[PRE_SAFE_1].SF_Name    , "STAGE1"    , 50);
+  strncpy(CYCLE[PRE_SAFE_1].MF_Name    , "LVL1"      , 50);
+  
+  CYCLE[HAPTIC_WARNING1]        .MF_ID       = 0x15;
+  CYCLE[HAPTIC_WARNING1]        .SF_ID       = 0x15;
+  CYCLE[HAPTIC_WARNING1]        .Launch_ID   = 0x02;
+  strncpy(CYCLE[HAPTIC_WARNING1].Launch_Name, "HAPTIC WARNING 0 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1].SF_Name    , "HAPTIC WARNING 0 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1].MF_Name    , "LVL2"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING1_P1]        .MF_ID       = 0x16;
+  CYCLE[HAPTIC_WARNING1_P1]        .SF_ID       = 0x16;
+  CYCLE[HAPTIC_WARNING1_P1]        .Launch_ID   = 0x02;
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].Launch_Name, "HAPTIC WARNING 0 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].SF_Name    , "HAPTIC WARNING 0 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].MF_Name    , "LVL2"                    , 50);
+  
+  CYCLE[PRE_SAFE_2]        .MF_ID       = 0x01;
+  CYCLE[PRE_SAFE_2]        .SF_ID       = 0x02;
+  CYCLE[PRE_SAFE_2]        .Launch_ID   = 0x03;
+  strncpy(CYCLE[PRE_SAFE_2].Launch_Name, "PRE-SAFE 2", 50);
+  strncpy(CYCLE[PRE_SAFE_2].SF_Name    , "STAGE2"    , 50);
+  strncpy(CYCLE[PRE_SAFE_2].MF_Name    , "LVL3"      , 50);
+  
+  CYCLE[PRE_SAFE_3]        .MF_ID       = 0x02;
+  CYCLE[PRE_SAFE_3]        .SF_ID       = 0x03;
+  CYCLE[PRE_SAFE_3]        .Launch_ID   = 0x04;
+  strncpy(CYCLE[PRE_SAFE_3].Launch_Name, "PRE-SAFE 3", 50);
+  strncpy(CYCLE[PRE_SAFE_3].SF_Name    , "STAGE3"    , 50);
+  strncpy(CYCLE[PRE_SAFE_3].MF_Name    , "LVL4"      , 50);
+  
+  CYCLE[PRE_SAFE_4]        .MF_ID       = 0x03;
+  CYCLE[PRE_SAFE_4]        .SF_ID       = 0x04;
+  CYCLE[PRE_SAFE_4]        .Launch_ID   = 0x05;
+  strncpy(CYCLE[PRE_SAFE_4].Launch_Name, "PRE-SAFE 4", 50);
+  strncpy(CYCLE[PRE_SAFE_4].SF_Name    , "STAGE4"    , 50);
+  strncpy(CYCLE[PRE_SAFE_4].MF_Name    , "LVL5"      , 50);
+  
+  CYCLE[BSR_1]        .MF_ID       = 0x12;
+  CYCLE[BSR_1]        .SF_ID       = 0x13;
+//CYCLE[BSR1]        .Launch_ID    = ; // Unbuckle - Buckle
+  strncpy(CYCLE[BSR_1].Launch_Name, "BSR 1" , 50);
+  strncpy(CYCLE[BSR_1].SF_Name    , "BSR 1" , 50);
+  strncpy(CYCLE[BSR_1].MF_Name    , "BSR 1" , 50);
+  
+  CYCLE[SOFT_RELEASE]        .MF_ID       = 0x1B;
+  CYCLE[SOFT_RELEASE]        .SF_ID       = 0x1B;
+//CYCLE[SOFT_RELEASE]        .Launch_ID   = 0x1B;
+  strncpy(CYCLE[SOFT_RELEASE].Launch_Name, "SMOOTH-RELEASE", 50);
+  strncpy(CYCLE[SOFT_RELEASE].SF_Name    , "SMOOTH-RELEASE", 50);
+  strncpy(CYCLE[SOFT_RELEASE].MF_Name    , "SMOOTH-RELEASE", 50);
+  
+  CYCLE[START_UP]        .MF_ID       = 0x19;
+  CYCLE[START_UP]        .SF_ID       = 0x19;
+  CYCLE[START_UP]        .Launch_ID   = 0x19;
+  strncpy(CYCLE[START_UP].Launch_Name, "START-UP", 50);
+  strncpy(CYCLE[START_UP].SF_Name    , "START-UP", 50);
+  strncpy(CYCLE[START_UP].MF_Name    , "START-UP", 50);
+  
+  CYCLE[HARD_RELEASE]        .MF_ID       = 0x1A;
+  CYCLE[HARD_RELEASE]        .SF_ID       = 0x1A;
+//CYCLE[SOFT_RELEASE]        .Launch_ID   = 0x1A;
+  strncpy(CYCLE[HARD_RELEASE].Launch_Name, "HARD_RELEASE", 50);
+  strncpy(CYCLE[HARD_RELEASE].SF_Name    , "HARD_RELEASE", 50);
+  strncpy(CYCLE[HARD_RELEASE].MF_Name    , "HARD_RELEASE", 50);
+}
+

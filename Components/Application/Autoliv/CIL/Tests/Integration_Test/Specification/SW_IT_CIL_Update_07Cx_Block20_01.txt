@@ -1,0 +1,54 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0729, ARCH_SW_CIL_0770
+ARCH_SW_CIL_0729: If selected, the content of the measurement frame - block #20 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0770: PMP_runGetDeficiencyLevel shall be called to get the calculated deficiency level.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 20.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block20_InfosToSend at line (void)Rte_Call_pclMotor_T_GetDeficiencyLevel(&u32DeficiencyLevel);.
+
+Action: ARCH_SW_CIL_0770
+
+	Step 4: Set a breakpoint in function Rte_Call_pclMotor_T_GetDeficiencyLevel(&u32DeficiencyLevel);. 
+		Expected result:  PMP_runGetDeficiencyLevel,,app.elf
+
+	Step 5: Set a breakpoint at the last line of function cil_Update_07Cx_Block20_InfosToSend.
+
+	Step 6: Read variable u32DeficiencyLevel.
+
+Action: ARCH_SW_CIL_0729
+
+	Step 7: Read variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02. 
+		Expected result:  0
+
+Action: ARCH_SW_CIL_0729
+
+	Step 8: Read variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03. 
+		Expected result:  0
+
+Action: ARCH_SW_CIL_0729
+
+	Step 9: Read variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04. 
+		Expected result:  0
+
+Action: ARCH_SW_CIL_0729
+
+	Step 10: Read variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05. 
+		Expected result:  0
+
+Postcondition
+
+	Step 11: Return ECU to default values

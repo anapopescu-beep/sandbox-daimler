@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0011; ARCH_SW_DIA_0076; ARCH_SW_DIA_0077; ARCH_SW_DIA_0366; ARCH_SW_DIA_0367; ARCH_SW_NVP_0004
+ARCH_SW_DIA_0011: Service 0x22 will be implemented for DID 0244.
+ARCH_SW_DIA_0076: Service should be available in Default, Extended and Development Session.
+ARCH_SW_DIA_0077: NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData will be read.
+ARCH_SW_DIA_0366: Bytes 0-1 shall return the �request counter� value.
+ARCH_SW_DIA_0367: Bytes 6-7 shall return the �Max Force counter� value.
+ARCH_SW_NVP_0004: NVP_BLOCK_ID_EXECUTION_COUNTERS block shall be configured. Parameter NVP_au32ExecutedCycleCounters should have 20 bytes and should store executed cycle counter. 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0011; ARCH_SW_DIA_0076; ARCH_SW_DIA_0077; ARCH_SW_DIA_0366; ARCH_SW_DIA_0367; ARCH_SW_NVP_0004
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDid0244_PreSafeCounterRead*.
+
+	Step 4: Send diag request for 22 0244 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Check if breakpoint from function DIA_runDid0244_PreSafeCounterRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Read first byte of NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 7: Read last byte of NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 autosar_4-2-2.xsd">
+<AR-PACKAGES>
+    <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="155abf9b-b29d-4817-8854-f39d153e94b1">
+      <SHORT-NAME>AUTOLIV</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="1adc67de-eb15-4d53-aaba-ac9ae7099e3b">
+          <SHORT-NAME>SoftwareComponents</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="cceae24b-8002-4f5d-85bf-ec55eeb7a1a1">
+              <SHORT-NAME>PRO</SHORT-NAME>
+              <ELEMENTS>
+                <APPLICATION-SW-COMPONENT-TYPE T="2017-01-04T08:25:38+01:00" UUID="578e56b7-1b2b-42a1-9985-2b61dbeac322">
+                  <SHORT-NAME>PRO_AC_ProductionCycles</SHORT-NAME>
+                  <CATEGORY>SWC</CATEGORY>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR T="2017-01-04T08:25:38+01:00" UUID="4b98062e-dc77-4073-8ec7-205475951937">
+                      <SHORT-NAME>PRO_IB_ProductionCycles</SHORT-NAME>
+                      <CONSTANT-VALUE-MAPPING-REFS>
+                        <CONSTANT-VALUE-MAPPING-REF DEST="CONSTANT-SPECIFICATION-MAPPING-SET">/AUTOLIV/GlobalDictionary/Constants/ConstantsMappingSet_PP4G</CONSTANT-VALUE-MAPPING-REF>
+                      </CONSTANT-VALUE-MAPPING-REFS>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/AUTOLIV/GlobalDictionary/DataTypeMappingSet/DataTypeMappingSet_PP4G</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EVENTS>
+                        <TIMING-EVENT T="2017-01-04T08:25:38+01:00" UUID="efe3ed97-dbc3-4d4b-8285-f5eb0b0e547b">
+                          <SHORT-NAME>PRO_evProductionCycles</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/PRO_IB_ProductionCycles/PRO_runProductionCycles</START-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </TIMING-EVENT>
+                      </EVENTS>
+                      <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY T="2017-04-24T16:32:21+02:00" UUID="529fdecc-6811-4cce-9847-72f20deb0129">
+                          <SHORT-NAME>PRO_runProductionCycles</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                          <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="34c1e4bd-feb2-4ea8-b94d-da6efcc0933b">
+                              <SHORT-NAME>DRP_prrExecutedCycle_u8CycleNumber</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/prrExecutedCycle</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCycleNumber/u8CycleNumber</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                          <DATA-SEND-POINTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="df7e4032-6bd3-4b04-87c5-4bca29a363da">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO1_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO1</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="691cb2ae-759a-4a3f-94bb-254cda7d1d59">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO1_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO1</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="e3ee0743-ffc4-4e43-bc61-6bf9902bb3d6">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO2_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO2</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="c82b1d4a-add5-4429-bd89-6bb80e526f0c">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO2_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO2</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="d09dfae7-2b0f-48dd-b577-fd01ff60be70">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO2_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO2</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="c4449307-b2c1-4249-9dad-61b5ef3efad9">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO2_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO2</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="7fb1ff66-c4d3-447f-b204-a2d4972cd4cc">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO1_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO1</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="4aa6f6c5-e714-4302-bc02-b616e8e2eaf6">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO1_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO1</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="936fc0dc-0d5e-4a74-b334-9764a394c33c">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO1_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO1</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="a832c629-da09-4069-96b8-92212d3d39d5">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PRO2_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/psrAlgo_Flags_PRO2</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-SEND-POINTS>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="0bd751e6-5fc9-4e4b-ad30-d8f2aba6f5a8">
+                              <SHORT-NAME>SSCP_pclDiagRequestCycle_GetDiagRequestCycle</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/pclDiagRequestCycle</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsDiagRequestCycle/GetDiagRequestCycle</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="5017ea80-664c-42dc-9150-4ad54e84eb98">
+                              <SHORT-NAME>SSCP_pclTestResult_GetTestResult</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/pclAutotestServices</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsAutotestServices/GetTestResult</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="4575ceb1-c250-47f8-92ec-9973764e3d93">
+                              <SHORT-NAME>SSCP_pclModeManagement_CheckModeStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/pclModeManagement</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsModeManagement/CheckModeStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="c418536e-f1df-4252-90ab-93bcb0404783">
+                              <SHORT-NAME>SSCP_pclDiagRequestCycle_ClearDiagRequestCycle</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/pclDiagRequestCycle</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsDiagRequestCycle/ClearDiagRequestCycle</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-24T16:32:21+02:00" UUID="a2789e8a-b492-47c9-80ce-08685323393a">
+                              <SHORT-NAME>scp_GetEventStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/pclEvtInfoBatPwrUnderVoltageDuringTens</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-24T16:32:21+02:00" UUID="42351c7b-f3ce-410d-bb10-d855bceeb010">
+                              <SHORT-NAME>scp_GetEventStatus1</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/pclEvtInfoBatPwrOverVoltage</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>PRO_runProductionCycles</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </APPLICATION-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION T="2017-01-04T08:25:38+01:00" UUID="9fa14fc1-433a-46d3-a6ee-3497934e827b">
+                  <SHORT-NAME>PRO_impProductionCycles</SHORT-NAME>
+                  <CODE-DESCRIPTORS>
+                    <CODE T="2017-01-04T08:25:38+01:00" UUID="db2b91c9-55d5-4a2f-990e-061347a12f5b">
+                      <SHORT-NAME>PRO_Impl_Code</SHORT-NAME>
+                      <ARTIFACT-DESCRIPTORS>
+                        <AUTOSAR-ENGINEERING-OBJECT>
+                          <SHORT-LABEL>PRO_Impl_Code_CodeDesc</SHORT-LABEL>
+                          <CATEGORY>SWSRC</CATEGORY>
+                        </AUTOSAR-ENGINEERING-OBJECT>
+                      </ARTIFACT-DESCRIPTORS>
+                    </CODE>
+                  </CODE-DESCRIPTORS>
+                  <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+                  <RESOURCE-CONSUMPTION T="2016-06-03T15:11:08+02:00" UUID="DCE:d9267cae-9206-4203-9394-9f823c9cb8c2">
+                    <SHORT-NAME>PRO_Impl_ResCons</SHORT-NAME>
+                    <MEMORY-SECTIONS>
+                      <MEMORY-SECTION T="2017-02-07T16:26:12+01:00" UUID="DCE:8821390b-cc11-4039-93e5-c4444965792d">
+                        <SHORT-NAME>CODE</SHORT-NAME>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:26:16+01:00" UUID="DCE:90c52860-f538-40ff-b4fa-78f9e4a5d83d">
+                        <SHORT-NAME>CONST_8</SHORT-NAME>
+                        <ALIGNMENT>8</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CONST</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:26:20+01:00" UUID="DCE:c8ed3cd4-b876-4d1a-9662-5e918f40e3ac">
+                        <SHORT-NAME>VAR_INIT_8</SHORT-NAME>
+                        <ALIGNMENT>8</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:26:24+01:00" UUID="DCE:0a5e24fc-c2be-4b31-9c67-2f687aa6afdb">
+                        <SHORT-NAME>VAR_INIT_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:26:28+01:00" UUID="DCE:b446cf01-16e6-4cfd-9987-83d5bebaf04e">
+                        <SHORT-NAME>VAR_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                    </MEMORY-SECTIONS>
+                  </RESOURCE-CONSUMPTION>
+                  <SW-VERSION>1.0.0</SW-VERSION>
+                  <VENDOR-ID>0</VENDOR-ID>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/AUTOLIV/SoftwareComponents/PRO/PRO_AC_ProductionCycles/PRO_IB_ProductionCycles</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

@@ -1,0 +1,64 @@
+====================================================================================
+		HOW TO USE WARNING PARSER SCRIPT
+		
+	Author: Ardeleanu Lucian
+	Copyright 2021, Autoliv Electronic
+	Version 1.0 
+	Email: lucian.ardeleanu@autoliv.com
+	Status: Released
+====================================================================================
+
+
+
+Warning Parser script is a script used to parse errors from a specific compiler ( Cosmic, IAR, TASKING ) and to generate csv files and plots in png files with statistics from parsed warnings. If this script works correctly, you should see in output path 4 generated files, 2 csv files and 2 png files. 
+
+Output Description: 
+
+	global_warning_stats.csv  - This file  will contain a global statistic data ( a total number of founded warnings per run ). If this file exists already, it will be updated with new values. If this file has not being found in Output folder, it will be created. 
+	
+	module_warning_stats.csv - This file will be generated every time this script runs. It will contain warnings found in .warn files per every module. 
+	
+	Compiler_Warnings_per_Module.png - This file will be generated every time this script runs. This file will be generated based on module_warning_stats.csv. 
+	
+	Compiler_Warnings_per_Build_Number.png - This file will be generated every time this script runs. This file will be generated based on global_warning_stats.csv. 
+
+Arguments of this script are: 
+
+Example of Warning Parser Call:  
+warning_parser.exe -w=S:\Tools\Build_Env\Workspace\Outputs\bm\Err\ -s=S:\Components\BM\*\ -l=-1 -b=1 -d=13.12.2021 -o=C:\pycharm_projects\Warning_parser\output
+
+Arguments explanation: 
+
+	-w - Path to Err folder to be parsed. For example: -w=S:\Tools\Build_Env\Workspace\Outputs\bm\Err\. ! PAY ATTENTION TO KEEP A "\" CHARACTER AFTER LAST FOLDER FROM PATH. This argument is mandatory. 
+	
+	-s - Path to Components folder. This argument is used to find source file of generated warning file. For example: -s=S:\Components\BM\*\ ! PAY ATTENTION TO ADD AT FINAL PATH "\*\" DIRECTORY. This argument is mandatory. 
+
+	-l - Depth of source code directory. Generally, set it to -1. This argument is mandatory. 
+	
+	-o - Ouput path to a folder where to generate files. For example: -o=C:\pycharm_projects\Warning_parser\output. This argument is mandatory. 
+	
+	-b - Build Number. This argument is optional. 
+	
+	-d - Build Date.  This argument is optional. 
+	
+Script notes: 
+
+	1. If arguments Build Number and Build Date are not given to script, no .png graphics will be generated. Thus, in order to generate graphics, you must give a date and a build number.
+
+	2. If you compile files from S: drive ( If you run a make-all release from S: drive ) then you should give arguments from S: drive. If you compile files from C: drive, then write arguments from C: drive. Otherwise, components cannot be found.
+	
+	3. This script goal's was to be used, first of all, with Jenkins Server. So, this script was tested succesfully on Jenkins server on AUDI_TR6_Release Project and JLR_MLA Project. 
+
+Script Updates from last versions: 
+
+	Last update supports now automatic compiler detection, witch removes needed to have an argument for Compiler. 
+
+Future Implementation: 
+	
+	Find automatically Components folder from .warn files so needed for an argument to components folder should not be a necesitty. 
+	
+	
+	
+	
+	
+

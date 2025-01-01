@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0008; ARCH_SW_DIA_0056; ARCH_SW_NVP_0001; ARCH_SW_DIA_1020
+ARCH_SW_DIA_0008: Service 0x2E will be implemented for DID 0340.
+ARCH_SW_DIA_0056: Response data will corespond to: Unique Seatbelt Serial number, data contained in BELT_ASSEMBLY_MANUF_DATE_AND_SN NVM block. Note edit: block will be written using the 0x2E Write Service.
+ARCH_SW_NVP_0001: NVP_BLOCK_ID_BELT_ASSEMBLY_MANUF_DATE_AND_SN block shall be configured. Parameter NVP_au8AssemblySerialNumber should have 28 bytes and should store belt assembly Serial Number written at ANG (default values 0xFF).
+ARCH_SW_DIA_1020: Service 0x2E (Write Data By Identifier) will be implemented for DID 0340 (Seat Belt Serial Number).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter default or extended session.
+
+	Step 3: Set breakpoint in function *DIA_runDid0340_UniqueSeatbeltSerialNumberWrite*.
+
+Action: ARCH_SW_DIA_0008; ARCH_SW_DIA_0056; ARCH_SW_NVP_0001; ARCH_SW_DIA_1020
+
+	Step 4: Send diag request for 2E 0340 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDid0340_UniqueSeatbeltSerialNumberWrite was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Write first byte of NVP_BLOCK_ID_BELT_ASSEMBLY_MANUF_DATE_AND_SN_RamBlockData 
+		Expected result:  Variable overwritten with 0x1.
+
+	Step 7: Send diag request for 2E 0340 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 8: Return ECU to default values

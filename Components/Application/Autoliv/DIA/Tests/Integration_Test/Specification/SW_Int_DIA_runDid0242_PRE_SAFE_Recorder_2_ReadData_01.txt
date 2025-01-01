@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0250; ARCH_SW_DIA_0256; ARCH_SW_DIA_0257, ARCH_SW_NVP_0016
+ARCH_SW_DIA_0250: Service 0x22 (Read Data By Identifier) & 0x2E (Write Data By Identifier) for DID 0x0242 will be implemented.
+ARCH_SW_DIA_0256: Service shall be available in Default session, Extended session
+ARCH_SW_DIA_0257: Service shall be available in the following forms of Authentication: Development ENHANCED, Production After-Sales ENHANCED, After-Sales After-Sales BASIC, Internal Diagnostic Test Tool, ePTI Test Tool
+ARCH_SW_NVP_0016: NVP_BLOCK_ID_PRE_SAFE_RECORDER_2 should be defined.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0242_PRE_SAFE_Recorder_2_ReadData*.
+
+Action: ARCH_SW_DIA_0250; ARCH_SW_DIA_0256; ARCH_SW_DIA_0257, ARCH_SW_NVP_0016
+
+	Step 3: Send diag request for 22 0242 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDid0242_PRE_SAFE_Recorder_2_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate NVP_BLOCK_ID_PRE_SAFE_RECORDER_2_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

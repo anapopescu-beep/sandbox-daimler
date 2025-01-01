@@ -1,0 +1,129 @@
+/***********************************AUTOLIV ELECTRONICS document********************************
+Test case ID: QUALIF_TEST_TF_H_664_HB_N_I_Rel_Periodicity
+Result Test:
+************************************************************************************************
+Requirement under test: ALV_EXT_TF_H_664
+Description of the requirement:
+The [HB_N_I_ten] signal shall be a 10ms sampled filtered value.
+************************************************************************************************
+Equipment: PowerSupply, CanCaseXL, MockUp, IC5000 debugger
+Test Notes: 
+Full Automation: Yes
+Global Result Assignment: Neeva
+************************************************************************************************/
+/********************************************************************************/
+/*                             Format test script                               */
+/********************************************************************************/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+ CALL(/../../ProjectLib_Development/SBE_Configuration.ts);
+ CALL(/../../ProjectLib_Development/INTEG_LIB/PP4G_LIB_INTEG_OS.ts);
+ CALL(Config/QUALIF_TESTCFG_TF_H_664_HB_N_I_Rel_Periodicity.ts);
+
+ /*------------------------------------------------------------------------------
+                                CONSTANTS
+ ------------------------------------------------------------------------------*/
+const cTEST_OK = true;// Constant for the tests
+const cTEST_NOK = false;
+const cENV_NON_INITIALIZED = "NO_INIT";// Mandatory constant
+const cENV_NOK = false;// Mandatory constant
+const cException_Catched = true;// MANDATORY CONSTANT FOR ALL TEST SCRIPTS
+var CFGc_NumberOfData = 1;
+var numberOfTickInit; 
+var numberOfTick;
+var periodicity;
+var ExperyPoint;
+var addressBP1;
+var addressBP2;
+var bIsBPset: Boolean = false;
+var sintBPTimeout: Number = 5000;
+var bBreakPointResult: Boolean = false;
+/*------------------------------------------------------------------------------
+                                GLOBAL VARIABLES
+ ------------------------------------------------------------------------------*/
+
+/* Variable used to check the test initialization phase */
+var vRetFunction = null; 
+/* Boolean used to check if the test is succesful */
+var bRetFunction: Boolean = false;
+
+
+/*------------------------------------------------------------------------------
+                                    Core Test
+------------------------------------------------------------------------------*/
+
+try
+{
+   /*------------------------------------------------------------------------------
+                           INITIALIZATION ENVIRONMENT
+   ------------------------------------------------------------------------------*/
+   /**** This function is parametrable see PP4G LIBRARY (ISYSTEMAPI.ts) *********/
+
+   /****** WARNING : check optionnal parameter of the next function :it's very IMPORTANT ***********/
+   vRetFunction = SwDevLib_InitBenchEnvironmentAndPowerSupply(CFGc_FlashMode, CFGc_ResetMode, CFGc_RunMode, CFGc_MinCurrentToRunTest);
+   if(vRetFunction != cENV_NON_INITIALIZED && vRetFunction != cENV_NOK)
+   {
+      /*------------------------------------------------------------------------------
+                                 EXECUTION TEST
+      ------------------------------------------------------------------------------*/
+            debugger_run();
+
+            CommentStep("Wait ECU to wake up");
+            Wait(5000);
+
+            debugger_stop();
+
+             /* Set a breakpoint in the tested function */
+             addressBP1 = debugger_setRelativeFunctionBpAtLine(CFGc_FunctionToTest1,sintOffsetBP1)[3] 
+             RESULT.ExpectTestResult("Run application", debugger_run(), true);
+             RESULT.ExpectTestResult("Wait until return is reached", debugger_waitWhileRunning(4000), true);
+             RESULT.ExpectTestResult("The function  pal_bIsPowerStageInSelfProtection is reached", debugger_isCPUStoppedAtAddress(addressBP1), true);
+            
+             numberOfTickInit = debugger_readMemory(CFGc_NumberCounterAddress, CFGc_NumberOfData, "int");
+
+             /*RESULT.ExpectTestResult("Remove all breakpoint ", debugger_deleteAllBreakpoints(), true);*/
+            
+             RESULT.ExpectTestResult("Run application", debugger_run(), true);
+             RESULT.ExpectTestResult("Wait until return is reached", debugger_waitWhileRunning(4000), true);
+
+             /* Check if the debugger is stopped on the correct function */
+             RESULT.ExpectTestResult("The function pal_bIsPowerStageInSelfProtection is reached", debugger_isCPUStoppedAtAddress(addressBP1), true);
+  
+             numberOfTick = debugger_readMemory(CFGc_NumberCounterAddress, CFGc_NumberOfData, "int");
+               
+             periodicity = (numberOfTick - numberOfTickInit);
+             /* The function is called after 10ms (400 000 ticks) */ 
+             RESULT.ExpectTestResult("Periodicity of measurement : Function called after 10ms ? ",periodicity,CFGc_Periodicity); 
+
+             RESULT.ExpectTestResult("Remove all breakpoint ", debugger_deleteAllBreakpoints(), true);
+      /*------------------------------------------------------------------------------
+                              DEINITIALIZATION ENVIRONMENT
+      ------------------------------------------------------------------------------*/
+      RESULT.ExpectTestResult("Reset the debugger",
+			debugger_reset(),
+			cTEST_OK
+			);
+
+         RESULT.ExpectTestResult("Close environment test",
+         winIDEAWorkspace_closeDiscard(),
+           cTEST_OK
+      );
+    }
+   else
+   {
+      winIDEAWorkspace_closeDiscard();
+   }
+}
+catch(exError)
+{
+   RESULT.ExpectTestResult("Test failed about exception occurs :"+exError,
+      cException_Catched,
+      false
+   );
+
+   RESULT.ExpectTestResult("Close environment test",
+      winIDEAWorkspace_closeDiscard(),
+      cTEST_OK
+   );
+}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>5</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>85</x>
+      <y>130</y>
+      <w>732</w>
+      <h>546</h>
+    </coordinates>
+    <panel_attributes>title:cil_Update_07Cx_InfosToSend
+Start
+
+Set coresponding MF blocks on u32CILMFSelectedBlocks variable
+
+Check if there are activated blocks
+If
+	[TRUE]
+	Do
+	Check if next block is a valid block
+	If
+		[TRUE]
+		cil_u32MeasureNextBlockToSendMask = NEXT_BLOCK(cil_u32MeasureNextBlockToSendMask)
+		Increment cil_u8MeasureNextBlockToSend
+
+		[FALSE]
+		Set next block as first block
+		cil_u32MeasureNextBlockToSendMask = U32_BLOCK_MASK(CU8_BLOCK_ID_01);
+	EndIf
+	while(There are no more blocks to be sent)	
+	Check if block encoding function is implemented
+	If
+		[TRUE]
+		Call corresponding block to send data
+		Set bIsUpdated to TRUE
+
+		[FALSE]
+		Call cil_Update_07Cx_IncorrectBlock_InfosToSend function
+		Set bIsUpdated to TRUE
+	EndIf
+		
+	[FALSE]
+	Set bIsUpdated to FALSE
+	
+EndIf
+
+return bIsUpdated
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

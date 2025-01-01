@@ -1,0 +1,1129 @@
+/*@!Encoding:1252*/
+includes
+{
+
+}
+
+variables
+{
+  char cPanelName[4] = "FIB";
+  char cDisplayStatus[200];
+  char cOutput_View[400];
+  int iOutput_ViewIndex = 0;
+  int iFIBChannelsExpected = 30;
+  int iSelectedBoard = 0;
+  int WARM_RESET_CHANNEL = 30;
+  
+  char cActiveChannelControl[20]; // Panel button control name.
+  char cActiveChannelIDTag[20];   // Panel ID column name.
+  int iActiveChannelID = 0;
+  int iPreviousActiveChannelID = 0;
+  long lDisplayStatusColor;
+  
+  char cFIBResponse[500];
+  byte bResult;
+  
+  msTimer FIBLogFaults_Timer[50];
+  msTimer FIBLogShorts_Timer[50];
+  msTimer FIBLogInversions_Timer[50];
+  msTimer FIBRemoveFault;
+  
+  msTimer Channel_Short_Timer[50];
+  msTimer Channel_Inversion_Timer[50];
+  
+  long PASS_Color;
+  long WARNING_Color;
+  long FAIL_Color;
+  long WHITE_Color;
+}
+
+// Connects to FIB.
+on preStart
+{ 
+    int i;
+  
+    PASS_Color = makeRGB(0,255,0);      // Lime.
+    WARNING_Color = makeRGB(255,255,0); // Yellow.
+    FAIL_Color = makeRGB(255,0,0);      // Red.
+    WHITE_Color = makeRGB(255,255,255); // White.
+  
+    strncpy(cDisplayStatus, "", 1);
+    lDisplayStatusColor = makeRGB(255,255,255);
+  
+    if(FIB_Connect() == 0)
+    {      
+      @sysvar::FIB::sysFIBChannelCount = FIB_GetChannelCount();
+      if (@sysvar::FIB::sysFIBChannelCount == 0)
+      {
+        strncpy(cDisplayStatus, "Failed attempt to communicate with mastercard", elcount(cDisplayStatus));
+        
+        @sysvar::FIB::FIB_Connection_Status = -1;
+        lDisplayStatusColor = makeRGB(255,0,0);
+      }
+      else if(@sysvar::FIB::sysFIBChannelCount < iFIBChannelsExpected)
+      {
+        snprintf(cDisplayStatus, elcount(cDisplayStatus), "FIB Channels:%i, Expected:%i", @sysvar::FIB::sysFIBChannelCount, iFIBChannelsExpected);
+        @sysvar::FIB::FIB_Connection_Status = -2;
+        lDisplayStatusColor = makeRGB(255,255,0);
+      }
+      else
+      {
+        snprintf(cDisplayStatus, elcount(cDisplayStatus), "OK. FIB Channel Count: %i", @sysvar::FIB::sysFIBChannelCount);
+        @sysvar::FIB::FIB_Connection_Status = 1;
+      } 
+    }
+    else
+    {  
+      strncpy(cDisplayStatus, "FIB connection failed.", elcount(cDisplayStatus));
+      @sysvar::FIB::FIB_Connection_Status = -1;
+      lDisplayStatusColor = makeRGB(255,0,0);
+    }
+    sysSetVariableString(sysvar::FIB::FIB_Connection_Status_String, cDisplayStatus);
+}
+
+on timer FIBRemoveFault
+{
+   //
+}
+
+// "setControlBackColor" does not work "on preStart".
+on start 
+{
+  int i;
+  char cChannelLedControl[20];
+  
+  SetPictureBoxImage(cPanelName, "Voltage Input", "\\Images\\Voltage_symbol.png");
+  SetPictureBoxImage(cPanelName, "Time Input 1", "\\Images\\Time_symbol.png");
+  SetPictureBoxImage(cPanelName, "Time Input 2", "\\Images\\Time_symbol.png");
+  
+  for(i = 1; i <=  @sysvar::FIB::sysFIBChannelCount; i++)
+  {
+    if(i != WARM_RESET_CHANNEL)
+    {
+       FIB_RemoveFault(i);
+    }
+   setTimer(FIBRemoveFault, 10);
+  }
+
+  
+  setControlBackColor(cPanelName, "FIB_CONNECTION_STATUS", lDisplayStatusColor);
+  if(lDisplayStatusColor == makeRGB(255,255,255)) // If Green then FIB connection is succesfull.
+  {
+    for(i = 1; i <= @sysvar::FIB::sysFIBChannelCount; i++) // Set channel LED to green (ready).
+    {
+      @sysvar::FIB::FIB_Channel_Status_LED[i] = 0;
+    } 
+  }
+}
+
+// Closes connection to FIB.
+on preStop
+{
+  int i;
+  
+  if (@sysvar::FIB::FIB_Connection_Status != -1)
+  {
+    for(i = 1; i <= @sysvar::FIB::sysFIBChannelCount; i++)
+    {
+      if(i != WARM_RESET_CHANNEL)
+      {
+         FIB_RemoveFault(i);
+      }
+    }
+    
+    if(FIB_Disconnect() == 0)
+    {
+      strncpy(cDisplayStatus, "FIB succesfully disconnected.", elcount(cDisplayStatus));
+      @sysvar::FIB::FIB_Connection_Status = 0;
+      setControlBackColor(cPanelName, "FIB_CONNECTION_STATUS", makeRGB(255,255,255));
+      
+      for(i = 1; i <= @sysvar::FIB::sysFIBChannelCount; i++)
+      {
+        @sysvar::FIB::FIB_Channel_Status_LED[i] = -99;
+      }
+    }
+    else
+    {
+      strncpy(cDisplayStatus, "Error when disconnecting FIB.", elcount(cDisplayStatus));
+      @sysvar::FIB::FIB_Connection_Status = -1;
+      setControlBackColor(cPanelName, "FIB_CONNECTION_STATUS", makeRGB(255,0,0));
+    }
+    
+    sysSetVariableString(sysvar::FIB::FIB_Connection_Status_String, cDisplayStatus);
+  }
+  
+  SetButton_Unpressed(iActiveChannelID);
+}
+
+
+// FIB channel button handling.
+// Previous pressed button is always unpressed.
+on sysvar_update (FIB::FIB_Channel_1_Active | FIB::FIB_Channel_2_Active | FIB::FIB_Channel_3_Active | FIB::FIB_Channel_4_Active | FIB::FIB_Channel_5_Active
+                | FIB::FIB_Channel_6_Active | FIB::FIB_Channel_7_Active | FIB::FIB_Channel_8_Active | FIB::FIB_Channel_9_Active | FIB::FIB_Channel_10_Active
+                | FIB::FIB_Channel_11_Active | FIB::FIB_Channel_12_Active | FIB::FIB_Channel_13_Active | FIB::FIB_Channel_14_Active | FIB::FIB_Channel_15_Active
+                | FIB::FIB_Channel_16_Active | FIB::FIB_Channel_17_Active | FIB::FIB_Channel_18_Active | FIB::FIB_Channel_19_Active | FIB::FIB_Channel_20_Active
+                | FIB::FIB_Channel_21_Active | FIB::FIB_Channel_22_Active | FIB::FIB_Channel_23_Active | FIB::FIB_Channel_24_Active | FIB::FIB_Channel_25_Active
+                | FIB::FIB_Channel_26_Active | FIB::FIB_Channel_27_Active | FIB::FIB_Channel_28_Active | FIB::FIB_Channel_29_Active | FIB::FIB_Channel_30_Active)
+{
+  // Get channel button name.
+  strncpy(cActiveChannelControl, "", 1);
+  snprintf(cActiveChannelControl, elcount(cActiveChannelControl), "CHANNEL_%i_CHECKBOX", @this);
+  str_replace_regex(cActiveChannelControl, " ", "");
+    
+  // Get channel tag name.
+  strncpy(cActiveChannelIDTag, "", 1);
+  snprintf(cActiveChannelIDTag, elcount(cActiveChannelIDTag), "CH_%i_ID", @this);
+  str_replace_regex(cActiveChannelIDTag, " ", "");
+  
+  if(@this >= 1)
+  {  
+    // Set channel button color.
+    SetControlBackColor(cPanelName, cActiveChannelControl, MakeRGB(103,191,223)); // or (173,216,230)
+    
+    // Set channel tag color.
+    SetControlBackColor(cPanelName, cActiveChannelIDTag, MakeRGB(103,191,223));
+  
+    if (iActiveChannelID == 0)
+    {
+      iPreviousActiveChannelID = @this;
+    }
+    else
+    {
+      iPreviousActiveChannelID = iActiveChannelID; // Previous value neccessary due to updates running in parallel.
+    }
+    
+    iActiveChannelID = @this;
+    
+    if((iPreviousActiveChannelID != 0) && (iPreviousActiveChannelID != @this))
+    {        
+      SetButton_Unpressed(iPreviousActiveChannelID);
+    }
+    
+    iSelectedBoard = @this % 10 == 0 ? (@this / 10) : (@this / 10 + 1);  
+  }
+  else
+  {
+    // Get channel button name.
+    strncpy(cActiveChannelControl, "", 1);
+    snprintf(cActiveChannelControl, elcount(cActiveChannelControl), "CHANNEL_%i_CHECKBOX", iPreviousActiveChannelID);
+    str_replace_regex(cActiveChannelControl, " ", "");
+    
+    SetControlBackColor(cPanelName, cActiveChannelControl, MakeRGB(227,227,227));
+    
+     // Get channel tag name.
+    strncpy(cActiveChannelIDTag, "", 1);
+    snprintf(cActiveChannelIDTag, elcount(cActiveChannelIDTag), "CH_%i_ID", iPreviousActiveChannelID);
+    str_replace_regex(cActiveChannelIDTag, " ", "");   
+    
+    SetControlBackColor(cPanelName, cActiveChannelIDTag, MakeRGB(255,255,255));
+        
+    if(iPreviousActiveChannelID == iActiveChannelID)
+    {
+      iActiveChannelID = 0;
+      iSelectedBoard = 0;
+    }
+    else
+    {
+      iPreviousActiveChannelID = iActiveChannelID; // Used when Button is disabled by pressing another button.
+    }
+  }
+}
+
+// Set button to off state (0).
+void SetButton_Unpressed(int iPreviousActiveChannelID)
+{
+  switch(iPreviousActiveChannelID)
+  {
+    case 1: @FIB::FIB_Channel_1_Active = 0;
+     break;
+    case 2: @FIB::FIB_Channel_2_Active = 0;
+      break;
+    case 3: @FIB::FIB_Channel_3_Active = 0;
+      break;
+    case 4: @FIB::FIB_Channel_4_Active = 0;
+      break;
+    case 5: @FIB::FIB_Channel_5_Active = 0;
+      break;
+    case 6: @FIB::FIB_Channel_6_Active = 0;
+      break;
+    case 7: @FIB::FIB_Channel_7_Active = 0;
+      break;
+    case 8: @FIB::FIB_Channel_8_Active = 0;
+      break;
+    case 9: @FIB::FIB_Channel_9_Active = 0;
+      break;
+    case 10: @FIB::FIB_Channel_10_Active = 0;
+      break;
+    case 11: @FIB::FIB_Channel_11_Active = 0;
+      break;
+    case 12: @FIB::FIB_Channel_12_Active = 0;
+      break;
+    case 13: @FIB::FIB_Channel_13_Active = 0;
+      break;
+    case 14: @FIB::FIB_Channel_14_Active = 0;
+      break;
+    case 15: @FIB::FIB_Channel_15_Active = 0;
+      break;
+    case 16: @FIB::FIB_Channel_16_Active = 0;
+      break;
+    case 17: @FIB::FIB_Channel_17_Active = 0;
+      break;
+    case 18: @FIB::FIB_Channel_18_Active = 0;
+      break;
+    case 19: @FIB::FIB_Channel_19_Active = 0;
+      break;
+    case 20: @FIB::FIB_Channel_20_Active = 0;
+      break;
+    case 21: @FIB::FIB_Channel_21_Active = 0;
+      break;
+    case 22: @FIB::FIB_Channel_22_Active = 0;
+      break;
+    case 23: @FIB::FIB_Channel_23_Active = 0;
+      break;
+    case 24: @FIB::FIB_Channel_24_Active = 0;
+      break;
+    case 25: @FIB::FIB_Channel_25_Active = 0;
+      break;
+    case 26: @FIB::FIB_Channel_26_Active = 0;
+      break;
+    case 27: @FIB::FIB_Channel_27_Active = 0;
+      break;
+    case 28: @FIB::FIB_Channel_28_Active = 0;
+      break;
+    case 29: @FIB::FIB_Channel_29_Active = 0;
+      break;
+    case 30: @FIB::FIB_Channel_30_Active = 0;
+      break;
+   default:
+      break;
+  }
+}
+
+// Remove fault based on panel input.
+void RemoveFault_Panel()
+{  
+  bResult = 0x00;
+  strncpy(cFIBResponse, "", elcount(cFIBResponse));
+  
+  // Check for correct FIB channel value.
+  if((iActiveChannelID < 1) || (iActiveChannelID > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iActiveChannelID, @sysvar::FIB::sysFIBChannelCount);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if(FIB_GetChannelShortStatus(iActiveChannelID) != 0) // Check for channel short.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Channel short is applied on channel %i. --> Use RemoveChannelShort instead!", iActiveChannelID);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if(FIB_GetChannelInversionStatus(iActiveChannelID) != 0) // Check for channel inversion.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Channel inversion is applied on channel %i. --> Use RemoveChannelInversion instead!", iActiveChannelID);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else
+  {
+    bResult = FIB_RemoveFault(iActiveChannelID);
+
+    // Check for FIB positive response.
+    if(bResult == 0xE4) 
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Remove fault performed OK on channel %i", iActiveChannelID);
+      
+      FIB_Output_View(PASS_Color, cFIBResponse);
+      @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 0; // set panel LED Color to Lime.
+    }
+    else
+    {
+     InterpretFIBErrorCode(bResult, cFIBResponse);
+     snprintf(cFIBResponse, elcount(cFIBResponse), "Remove fault on channel %i error: %s", iActiveChannelID, cFIBResponse);
+      
+     FIB_Output_View(FAIL_Color, cFIBResponse);
+     @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 1; // set panel LED Color to Orange.
+    }
+  }
+}
+
+// Set DAC voltage based on panel input.
+void SetDACVoltage_Panel(int iChannelNumber)
+{
+  bResult = 0x00;
+  strncpy(cFIBResponse, "", elcount(cFIBResponse));
+  
+  // Check for correct FIB channel value.
+  if((iChannelNumber < 1) || (iChannelNumber > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannelNumber, @sysvar::FIB::sysFIBChannelCount);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }                                       
+  else if((@FIB::FIB_Input_Voltage < 0) || (@FIB::FIB_Input_Voltage > 4990)) // Check for valid voltage value.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong voltage value: %i. It should be set between 0 and 4990mV!", @FIB::FIB_Input_Voltage);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else
+  {
+    bResult = FIB_SetDACVoltage(iChannelNumber, @FIB::FIB_Input_Voltage);
+
+    // Check for FIB positive response.
+    if(bResult == 0xE4) 
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Set DAC voltage to %i mV performed OK on channel %i",  @FIB::FIB_Input_Voltage, iChannelNumber);
+      FIB_Output_View(WHITE_Color, cFIBResponse);
+    }
+    else
+    {
+     InterpretFIBErrorCode(bResult, cFIBResponse);
+     snprintf(cFIBResponse, elcount(cFIBResponse), "Set DAC voltage on channel %i error: %s", @FIB::FIB_Input_Voltage, cFIBResponse);
+     FIB_Output_View(WARNING_Color, cFIBResponse);
+    }     
+  }
+}
+
+// Perform leakage based on panel input.
+void PerformLeakage_Panel(int iResource, char cResource[])
+{
+  bResult = 0x00;
+  strncpy(cFIBResponse, "", elcount(cFIBResponse));
+  
+  // Check for correct FIB channel value.
+  if((iActiveChannelID < 1) || (iActiveChannelID > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i.", iActiveChannelID, @sysvar::FIB::sysFIBChannelCount);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if(FIB_GetChannelShortStatus(iActiveChannelID) != 0) // Check for channel short.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", iActiveChannelID);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if(FIB_GetChannelInversionStatus(iActiveChannelID) != 0) // Check for channel inversion.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", iActiveChannelID);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else
+  {
+    if(@FIB::FIB_Input_Fault_Duration > 0)
+    {
+      bResult = FIB_PerformLeakage(iActiveChannelID, 0, iResource, @FIB::FIB_Input_Fault_Duration); // Amplification set to 0 --> not used for extended platform.
+    }
+    else
+    {
+      bResult = FIB_PerformLeakage(iActiveChannelID, 0, iResource); // Amplification set to 0 --> not used for extended platform.
+    }
+
+    // Check for FIB positive response.
+    if(bResult == 0xE4) 
+    {
+      if(@FIB::FIB_Input_Fault_Duration > 0)
+       {
+         snprintf(cFIBResponse, elcount(cFIBResponse), "Short to %s performed OK on channel %i for %i ms", cResource, iActiveChannelID, @FIB::FIB_Input_Fault_Duration);
+         setTimer(FIBLogFaults_Timer[iActiveChannelID], @FIB::FIB_Input_Fault_Duration);
+      }
+      else
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Short to %s performed OK on channel %i", cResource, iActiveChannelID);
+      }
+      
+      FIB_Output_View(PASS_Color, cFIBResponse);     
+      @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 2; // set panel LED Color to Red.
+    }
+    else
+    {
+      InterpretFIBErrorCode(bResult, cFIBResponse);
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short to %s on channel %i error: %s", cResource, iActiveChannelID, cFIBResponse);
+      FIB_Output_View(FAIL_Color, cFIBResponse);
+      
+      @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 1; // set panel LED Color to Orange.
+    }
+  }
+}
+
+// Open circuit based on panel input.
+void OpenCircuit_Panel()
+{
+  bResult = 0x00;
+  strncpy(cFIBResponse, "", elcount(cFIBResponse));
+
+   // Check for correct FIB channel value.
+  if((iActiveChannelID < 1) || (iActiveChannelID > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iActiveChannelID, @sysvar::FIB::sysFIBChannelCount);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if(FIB_GetChannelShortStatus(iActiveChannelID) != 0) // Check for channel short.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", iActiveChannelID);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if(FIB_GetChannelInversionStatus(iActiveChannelID) != 0)  // Check for channel inversion.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", iActiveChannelID);  
+    FIB_Output_View(WARNING_Color, cFIBResponse);  
+  }
+  else
+  {
+    if(@FIB::FIB_Input_Fault_Duration > 0)
+    {
+      bResult = FIB_OpenCircuit(iActiveChannelID, @FIB::FIB_Input_Fault_Duration);
+    }
+    else
+    {
+      bResult = FIB_OpenCircuit(iActiveChannelID);
+    }
+     // Check for FIB positive response.
+    if(bResult == 0xE4)
+    {
+     if(@FIB::FIB_Input_Fault_Duration > 0)
+     {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Open Circuit performed OK on channel %i for %i ms", iActiveChannelID, @FIB::FIB_Input_Fault_Duration);
+      setTimer(FIBLogFaults_Timer[iActiveChannelID], @FIB::FIB_Input_Fault_Duration);
+     }
+     else
+     {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Open Circuit performed OK on channel %i", iActiveChannelID);
+     }
+    
+     FIB_Output_View(PASS_Color, cFIBResponse);
+     @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 2; // set panel LED Color to RED (Active).
+    }
+    else
+    {
+     InterpretFIBErrorCode(bResult, cFIBResponse);
+     snprintf(cFIBResponse, elcount(cFIBResponse), "Open Circuit on channel %i error: %s", iActiveChannelID, cFIBResponse);
+      
+     FIB_Output_View(FAIL_Color, cFIBResponse);
+     @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 1; // set panel LED Color to Orange.
+    }
+  }
+}
+
+// Handler for ShortToVCC, ShotToVBAT, ShortToDAC, ShortToGND, OpenCircuit and RemoveFault panel buttons.
+on sysvar_update FIB::FIB_PerformLeakage_Button
+{
+  stack char cFIBResponse[500];
+  stack char cResource[10];
+  bResult = 0x00;
+  
+  if((iActiveChannelID == 0) && (@this != -1))
+  {
+    FIB_Output_View(WARNING_Color, "Please select a channel before performing an action.");
+  }
+  else
+  {
+    if(@this == -2) // Remove fault.
+    {
+      RemoveFault_Panel();
+    }
+    else if(@this == -1)
+    {
+      // Button mouse up --> Do nothing.
+    }     
+    else if (@this == 5) // Open Circuit.
+    {
+      OpenCircuit_Panel();
+    }
+    else if((@this >= 0) && (@this <= 4))
+    {
+      switch(@this)
+      {
+        case 0: strncpy(cResource, "VBAT", elcount(cResource));
+          break;
+        case 1: strncpy(cResource, "VCC", elcount(cResource));
+          break;
+        case 2: strncpy(cResource, "GND", elcount(cResource));
+          break;
+        case 3: {
+                  SetDACVoltage_Panel(iActiveChannelID);
+                  strncpy(cResource, "DAC", elcount(cResource));
+                }
+          break;
+        case 4: strncpy(cResource, "ARBITRARY", elcount(cResource));
+          break;
+      }
+
+      if((bResult == 0xE4) | (strncmp(cResource, "DAC", elcount(cResource) != 0)))
+      {
+        PerformLeakage_Panel(@this, cResource);     
+      }
+      else
+      {
+        // Error occured when setting DAC voltage. No leakage is performed.
+      }
+    }
+    else
+    {
+     // Wrong input. 
+    }
+  }
+}
+
+// Handler for Channel Inversion, Channel Short, Remove Channel Short and Remove Channel Inversion buttons.
+on sysvar_update FIB::FIB_Channel_Inversion_Short_Buttons
+{
+  stack char cFIBResponse[500];
+  stack char cLEDControlName[10];
+  stack int iLocalChannel_1;
+  stack int iLocalChannel_2;
+  stack int iChannel_1_converted = 0;
+  stack int iChannel_2_converted = 0;
+  stack int i = 0;
+  
+  stack int iLowerIndex = -1;
+  stack int iUpperIndex = -1;
+  
+  int iAllowedChannel_1[3] = {1, 3, 5};
+  int iAllowedChannel_2[3] = {2, 4, 6};
+  
+  if(@this == 0)
+    {
+      // Button mouse up --> Do nothing.
+    } 
+  else if((@FIB::FIB_Channel_Inversion_Short_Input[0] < 1) || (@FIB::FIB_Channel_Inversion_Short_Input[0] > @sysvar::FIB::sysFIBChannelCount)) // Check for correct FIB channel value.
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", @FIB::FIB_Channel_Inversion_Short_Input[0], @sysvar::FIB::sysFIBChannelCount);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else if((@FIB::FIB_Channel_Inversion_Short_Input[1] < 1) || (@FIB::FIB_Channel_Inversion_Short_Input[1] > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", @FIB::FIB_Channel_Inversion_Short_Input[1], @sysvar::FIB::sysFIBChannelCount);
+    FIB_Output_View(WARNING_Color, cFIBResponse);
+  }
+  else
+  {
+    if(@FIB::FIB_Channel_Inversion_Short_Input[0] < @FIB::FIB_Channel_Inversion_Short_Input[1])
+    {
+      iLocalChannel_1 = @FIB::FIB_Channel_Inversion_Short_Input[0];
+      iLocalChannel_2 = @FIB::FIB_Channel_Inversion_Short_Input[1];
+    }
+    else
+    {
+      iLocalChannel_1 = @FIB::FIB_Channel_Inversion_Short_Input[1];
+      iLocalChannel_2 = @FIB::FIB_Channel_Inversion_Short_Input[0];
+    }
+  
+    if((iLocalChannel_2 - iLocalChannel_1) != 1)
+    {
+     snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+     FIB_Output_View(WARNING_Color, cFIBResponse);
+    }
+    else
+    {
+      iChannel_1_converted = iLocalChannel_1 % 10;
+      iChannel_2_converted = iLocalChannel_2 % 10;
+      
+      for (i = 0; i < elcount(iAllowedChannel_1); i++)
+      {
+        if(iAllowedChannel_1[i] ==  iChannel_1_converted)
+        {
+          iLowerIndex = i;
+        }
+        if(iAllowedChannel_2[i] ==  iChannel_2_converted)
+        {
+          iUpperIndex = i;
+        }
+      }
+        
+      if((iLowerIndex == -1) | (iUpperIndex == -1))
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+        FIB_Output_View(WARNING_Color, cFIBResponse);
+      }
+      else if(iLowerIndex != iUpperIndex)
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+        FIB_Output_View(WARNING_Color, cFIBResponse);
+      }
+      else if(FIB_GetChannelFaultStatus(@FIB::FIB_Channel_Inversion_Short_Input[0]) != 0) // Check for channel fault.
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> You can't remove it!", @FIB::FIB_Channel_Inversion_Short_Input[0]);
+        FIB_Output_View(WARNING_Color, cFIBResponse);
+      }
+      else if(FIB_GetChannelFaultStatus(@FIB::FIB_Channel_Inversion_Short_Input[1]) != 0)
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> You can't remove it!", @FIB::FIB_Channel_Inversion_Short_Input[1]);
+        FIB_Output_View(WARNING_Color, cFIBResponse);
+      }
+      else
+      {
+        switch(@this)
+        {
+         case 1:  // Channel short.
+          {
+            // Check for channel inversion.
+            if(FIB_GetChannelInversionStatus(@FIB::FIB_Channel_Inversion_Short_Input[0]) != 0)
+            {
+              snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", @FIB::FIB_Channel_Inversion_Short_Input[0]);
+              FIB_Output_View(WARNING_Color, cFIBResponse);
+            }           
+            else if(FIB_GetChannelInversionStatus(@FIB::FIB_Channel_Inversion_Short_Input[1]) != 0)
+            {
+              snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", @FIB::FIB_Channel_Inversion_Short_Input[1]);
+              FIB_Output_View(WARNING_Color, cFIBResponse); 
+            }
+            else
+            {
+               if(@FIB::FIB_Inversion_Short_Duration > 0)
+               {
+                 bResult = FIB_PerformChannelShort(iLocalChannel_2, @FIB::FIB_Inversion_Short_Duration);
+
+                 setTimer(FIBLogShorts_Timer[iLocalChannel_2], @FIB::FIB_Inversion_Short_Duration);
+               }
+               else
+               {
+                 bResult = FIB_PerformChannelShort(iLocalChannel_2);
+               } 
+            
+              // Set LEDs for channel short.
+              snprintf(cLEDControlName, elcount(cLEDControlName), "CH_%i_%i", iLocalChannel_1, iLocalChannel_2);  
+              SetControlVisibility(cPanelName, cLEDControlName, 1);
+              SetControlVisibility(cPanelName, "Channel_Short_LED", 1);
+              
+              // Check for FIB positive response.
+              if(bResult == 0xE4) 
+              {
+                if(@FIB::FIB_Inversion_Short_Duration > 0)
+                 {
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i for %i ms performed OK.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1], @FIB::FIB_Inversion_Short_Duration);
+                }
+                else
+                {
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i performed OK.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+                }
+                
+                FIB_Output_View(PASS_Color, cFIBResponse);     
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 2; // set panel LED Color to Red.
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 2;
+                
+                @FIB::FIB_Short_Inversion_LED[0] = iLocalChannel_2;
+                @FIB::FIB_Short_Inversion_LED[iLocalChannel_1] = iLocalChannel_2;
+              }
+              else
+              {
+                InterpretFIBErrorCode(bResult, cFIBResponse);
+                snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i error %s", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1], cFIBResponse);
+                FIB_Output_View(FAIL_Color, cFIBResponse);
+                
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 1; // set panel LED Color to Orange
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 1;            
+                @FIB::FIB_Short_Inversion_LED[0] = 0;
+                @FIB::FIB_Short_Inversion_LED[iLocalChannel_1] = 0;
+              }
+            }
+          }
+          break;
+         case -1: // Remove channel short.
+            {
+              // Check for channel inversion.
+              if(FIB_GetChannelInversionStatus(@FIB::FIB_Channel_Inversion_Short_Input[0]) != 0)
+              {
+                snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> You can't remove it!", @FIB::FIB_Channel_Inversion_Short_Input[0]);
+                FIB_Output_View(WARNING_Color, cFIBResponse); 
+              }             
+              else if(FIB_GetChannelInversionStatus(@FIB::FIB_Channel_Inversion_Short_Input[1]) != 0)
+              {
+                snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> You can't remove it!", @FIB::FIB_Channel_Inversion_Short_Input[1]);
+                FIB_Output_View(WARNING_Color, cFIBResponse);
+              }
+              else
+              {
+                bResult = FIB_RemoveChannelShort(iLocalChannel_2);
+                
+                // Check for FIB positive response.
+                if(bResult == 0xE4)
+                {
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Remove short between channels %i and %i performed OK.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+                  
+                  FIB_Output_View(PASS_Color, cFIBResponse);     
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 0; // set panel LED Color to Red.
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 0;
+                  
+                  
+                  snprintf(cLEDControlName, elcount(cLEDControlName), "CH_%i_%i", iLocalChannel_1, iLocalChannel_2);
+                  SetControlVisibility(cPanelName, cLEDControlName, 0);
+                  SetControlVisibility(cPanelName, "Channel_Short_LED", 0);
+                }
+                else
+                {
+                  InterpretFIBErrorCode(bResult, cFIBResponse);
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Remove short between channels %i and %i error %s", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1], cFIBResponse);
+                  FIB_Output_View(FAIL_Color, cFIBResponse);
+                  
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 1; // set panel LED Color to Orange
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 1;
+                  @FIB::FIB_Short_Inversion_LED[0] = 0;
+                  @FIB::FIB_Short_Inversion_LED[iLocalChannel_1] = 0;
+                }      
+              }
+            }
+          break;
+         case 2:  // Channel inversion.
+          {
+             // Check for channel short.
+            if(FIB_GetChannelShortStatus(@FIB::FIB_Channel_Inversion_Short_Input[0]) != 0)
+            {
+              snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", @FIB::FIB_Channel_Inversion_Short_Input[0]);
+              FIB_Output_View(WARNING_Color, cFIBResponse);
+            }           
+            else if(FIB_GetChannelShortStatus(@FIB::FIB_Channel_Inversion_Short_Input[1]) != 0)
+            {
+              snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", @FIB::FIB_Channel_Inversion_Short_Input[1]);
+              FIB_Output_View(WARNING_Color, cFIBResponse);
+            }
+            else
+            {              
+              if(@FIB::FIB_Inversion_Short_Duration > 0)
+              {
+                bResult = FIB_PerformChannelInversion(iLocalChannel_1, @FIB::FIB_Inversion_Short_Duration);
+                setTimer(FIBLogInversions_Timer[iLocalChannel_1], @FIB::FIB_Inversion_Short_Duration);
+              }
+              else
+              {
+                bResult = FIB_PerformChannelInversion(iLocalChannel_1);
+              }
+              
+              // Set LEDs for channel inversion.
+              snprintf(cLEDControlName, elcount(cLEDControlName), "CH_%i_%i", iLocalChannel_1, iLocalChannel_2);
+              SetControlVisibility(cPanelName, cLEDControlName, 1);
+              SetControlVisibility(cPanelName, "Channel_Inversion_LED", 1);
+                
+              // Check for FIB positive response.
+              if(bResult == 0xE4) 
+              {
+                if(@FIB::FIB_Inversion_Short_Duration > 0)
+                {
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Inversion between channels %i and %i for %i ms performed OK.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1], @FIB::FIB_Inversion_Short_Duration);
+                }
+                else
+                {
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Inversion between channels %i and %i performed OK.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+                }
+                
+                FIB_Output_View(PASS_Color, cFIBResponse);     
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 2; // set panel LED Color to Red.
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 2;
+                
+
+                @FIB::FIB_Short_Inversion_LED[49] = iLocalChannel_1;
+                @FIB::FIB_Short_Inversion_LED[iLocalChannel_1] = iLocalChannel_1;
+              }
+              else
+              {
+                InterpretFIBErrorCode(bResult, cFIBResponse);
+                snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i error %s", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1], cFIBResponse);
+                FIB_Output_View(FAIL_Color, cFIBResponse);
+                
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 1; // set panel LED Color to Orange
+                @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 1;            
+                @FIB::FIB_Short_Inversion_LED[49] = 0;
+                @FIB::FIB_Short_Inversion_LED[iLocalChannel_1] = 0;
+              }
+            }  
+          }
+          break;
+         case -2: // Remove channel inversion.
+          {
+              // Check for channel short.
+              if(FIB_GetChannelShortStatus(@FIB::FIB_Channel_Inversion_Short_Input[0]) != 0)
+              {
+                snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> You can't remove it!", @FIB::FIB_Channel_Inversion_Short_Input[0]);
+                FIB_Output_View(WARNING_Color, cFIBResponse); 
+              }             
+              else if(FIB_GetChannelShortStatus(@FIB::FIB_Channel_Inversion_Short_Input[1]) != 0)
+              {
+                snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> You can't remove it!", @FIB::FIB_Channel_Inversion_Short_Input[1]);
+                FIB_Output_View(WARNING_Color, cFIBResponse);
+              }
+              else
+              {             
+                bResult = FIB_RemoveChannelInversion(iLocalChannel_1);
+                
+                // Check for FIB positive response.
+                if(bResult == 0xE4) 
+                {
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Remove inversion between channels %i and %i performed OK.", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1]);
+                  
+                  FIB_Output_View(PASS_Color, cFIBResponse);     
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 0; // set panel LED Color to Red.
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 0;
+                  
+                  
+                  snprintf(cLEDControlName, elcount(cLEDControlName), "CH_%i_%i", iLocalChannel_1, iLocalChannel_2);
+                  SetControlVisibility(cPanelName, cLEDControlName, 0);
+                  SetControlVisibility(cPanelName, "Channel_Inversion_LED", 0);
+                }
+                else
+                {
+                  InterpretFIBErrorCode(bResult, cFIBResponse);
+                  snprintf(cFIBResponse, elcount(cFIBResponse), "Remove inversion between channels %i and %i error %s", @FIB::FIB_Channel_Inversion_Short_Input[0], @FIB::FIB_Channel_Inversion_Short_Input[1], cFIBResponse);
+                  FIB_Output_View(FAIL_Color, cFIBResponse);
+                  
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[0]] = 1; // set panel LED Color to Orange
+                  @FIB::FIB_Channel_Status_LED[@FIB::FIB_Channel_Inversion_Short_Input[1]] = 1;
+                  @FIB::FIB_Short_Inversion_LED[49] = 0;
+                  @FIB::FIB_Short_Inversion_LED[iLocalChannel_1] = 0;
+                } 
+              }               
+          }
+          break;
+         default:
+          break;   
+        }
+     } 
+    }
+  }
+}
+
+// Handler for Restart Channel button.
+on sysvar_update FIB::FIB_Restart_Board
+{
+  int i;
+  bResult = 0x00;
+  
+  if((iActiveChannelID == 0) && (@this != -1))
+  {
+    FIB_Output_View(WARNING_Color, "Please select a channel before performing an action.");
+  }
+  else
+  { 
+    if (@this == -1)
+    {
+     // Button mouse up --> Do nothing.
+    }
+    else
+    {     
+      // Check for correct FIB channel value.
+      if((iSelectedBoard > (@sysvar::FIB::sysFIBChannelCount / 10)) | (iSelectedBoard < 1))
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong board value. It should be set between 1 and %i", (@sysvar::FIB::sysFIBChannelCount / 10));
+        FIB_Output_View(WARNING_Color, cFIBResponse);
+      }
+      else
+      {
+       bResult = FIB_RestartBoard(iSelectedBoard);
+      }
+      
+       // Check for FIB positive response.
+      if(bResult == 0xE4) 
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Restart board %i performed OK", iSelectedBoard);
+        FIB_Output_View(PASS_Color, cFIBResponse);
+        
+        for(i = 0; i <= 9; i++)
+        {
+           @FIB::FIB_Channel_Status_LED[(iSelectedBoard * 10) - 9 + i] = 0; // set panel LED Color to Lime.
+           FIB_SetChannelFaultStatus((iSelectedBoard * 10) - 9 + i, 0);
+           FIB_SetChannelInversionStatus((iSelectedBoard * 10) - 9 + i, 0);
+           FIB_SetChannelShortStatus((iSelectedBoard * 10) - 9 + i, 0);
+        }
+      }
+      else
+      {
+        InterpretFIBErrorCode(bResult, cFIBResponse);
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Restart board %i encountered an error: %s", iSelectedBoard, cFIBResponse);
+        FIB_Output_View(FAIL_Color, cFIBResponse);
+        @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 1; // set panel LED Color to Orange.
+      }
+    }
+  }
+}
+
+// Handler for Reset Channel button.
+on sysvar_update FIB::FIB_Reset_Channel
+{ 
+  bResult = 0x00;
+  
+  if((iActiveChannelID == 0) && (@this != -1))
+  {
+    FIB_Output_View(WARNING_Color, "Please select a channel before performing an action.");
+  }
+  else
+  {
+    if (@this == -1)
+    {
+     // Button mouse up --> Do nothing.
+    }
+    else
+    {
+      // Check for correct FIB channel value.
+      if((iActiveChannelID < 1) || (iActiveChannelID > @sysvar::FIB::sysFIBChannelCount))
+      {
+        snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iActiveChannelID, @sysvar::FIB::sysFIBChannelCount);
+        FIB_Output_View(WARNING_Color, cFIBResponse);
+      }
+      else
+      {          
+        bResult = FIB_ResetChannel(iActiveChannelID);
+        
+        // Check for FIB positive response.
+        if(bResult == 0xE4) 
+        {
+          snprintf(cFIBResponse, elcount(cFIBResponse), "Reset performed OK on channel %i", iActiveChannelID);
+          FIB_Output_View(PASS_Color, cFIBResponse);
+          // @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 0; // set panel LED Color to Lime. // Reset channel does not remove fault(?)
+        }
+        else
+        {
+          InterpretFIBErrorCode(bResult, cFIBResponse);
+          snprintf(cFIBResponse, elcount(cFIBResponse), "Reset channel %i encountered an error: %s", iActiveChannelID, cFIBResponse);
+          FIB_Output_View(FAIL_Color, cFIBResponse);
+          @FIB::FIB_Channel_Status_LED[iActiveChannelID] = 1; // set panel LED Color to Orange.
+        }
+      }
+    }
+  }
+}
+
+// Writes output to FIB panel.
+void FIB_Output_View(long lRGB_CODE, char cInputText[])
+{
+  strncpy(cOutput_View, "", 1);
+  snprintf(cOutput_View, elcount(cOutput_View), ". %s", cInputText);
+  
+  SetControlBackColor(cPanelName, "OUTPUT_VIEW",lRGB_CODE);
+  iOutput_ViewIndex = iOutput_ViewIndex + 1;
+  
+  putValueToControl(cPanelName, "OUTPUT_VIEW", iOutput_ViewIndex, 1);
+  putValueToControl(cPanelName, "OUTPUT_VIEW", cOutput_View);
+  
+  // Set color back to white.
+  SetControlBackColor(cPanelName, "OUTPUT_VIEW", makeRGB(255,255,255));
+}
+
+void InterpretFIBErrorCode(byte bResponse, char ErrorText[])
+{
+  snprintf(ErrorText, elcount(ErrorText), "0x%X: ", bResponse);
+  switch(bResponse)
+  {
+    case 0x00: strncat(ErrorText, "Unknown error.", elcount(ErrorText));
+      break;
+    case 0xE0: strncat(ErrorText, "Checksum error", elcount(ErrorText));
+      break;
+    case 0xE1: strncat(ErrorText, "Address error", elcount(ErrorText));
+      break;
+    case 0xE2: strncat(ErrorText, "Unknown command", elcount(ErrorText));
+      break;
+    case 0xE3: strncat(ErrorText, "Wrong parameter", elcount(ErrorText));
+      break;
+    case 0xE6: strncat(ErrorText, "Hardware error", elcount(ErrorText));
+      break;
+    case 0xE7: strncat(ErrorText, "Leak overcurrent", elcount(ErrorText));
+      break;
+    case 0xE8: strncat(ErrorText, "Hardware error", elcount(ErrorText));
+      break;
+    case 0xE9: strncat(ErrorText, "Trig en oc", elcount(ErrorText));
+      break;
+    case 0xEA: strncat(ErrorText, "Trig en oc", elcount(ErrorText));
+      break;
+    case 0xEB: strncat(ErrorText, "Wrong channel number", elcount(ErrorText));
+      break;
+    case 0xEC: strncat(ErrorText, "Unconfigured channel", elcount(ErrorText));
+      break;
+    case 0xED: strncat(ErrorText, "Command not implemented", elcount(ErrorText));
+      break;
+    case 0xEE: strncat(ErrorText, "Unknown state", elcount(ErrorText));
+      break;
+    case 0xEF: strncat(ErrorText, "Abdsa not armed", elcount(ErrorText));
+      break;
+    case 0xFF: strncat(ErrorText, "Card configuration error. Please restart system!", elcount(ErrorText));
+      break;
+    default: strncat(ErrorText, "No data to read!", elcount(ErrorText));
+      break;
+  }
+}
+
+// When the input timer is elapsed, this event sets iFIBLogFaults(TimerIndex) variable from .dll to "false".
+// Used for ShortToDAC, ShortToVCC, ShortToVBAT, ShortToGND, OpenCircuit, ShortToArbitrary
+// TimerIndex = FIB channel ID.
+on timer FIBLogFaults_Timer (dword TimerIndex)
+{
+  FIB_SetChannelFaultStatus(TimerIndex, 0);
+  if(@FIB::FIB_Trigger_Channel_Fault_Update < 1)
+  {
+   @FIB::FIB_Channel_Status_LED[TimerIndex] = 0;   // set panel LED Color to Lime.
+  }
+  else
+  {
+    @FIB::FIB_Trigger_Channel_Fault_Update = 0;
+  }
+}
+
+// When the input timer is elapsed, this event sets iFIBLogShorts(TimerIndex) and FIBLogShorts(TimerIndex - 1) variable from .dll to "false".
+// Used for channel short.
+// TimerIndex = FIB channel ID.
+on timer FIBLogShorts_Timer (dword TimerIndex)
+{
+  stack char cLEDControlName[10];
+  
+  FIB_SetChannelShortStatus(TimerIndex, 0);
+  FIB_SetChannelShortStatus(TimerIndex - 1, 0);
+  
+  if(@FIB::FIB_Trigger_Channel_Short_Update < 1)
+  {
+   @FIB::FIB_Channel_Status_LED[TimerIndex] = 0;   // set panel LED Color to Lime.
+   @FIB::FIB_Channel_Status_LED[TimerIndex - 1] = 0;   // set panel LED Color to Lime.
+    
+   snprintf(cLEDControlName, elcount(cLEDControlName), "CH_%i_%i", TimerIndex - 1 , TimerIndex);
+   SetControlVisibility(cPanelName, cLEDControlName, 0);
+    
+   SetControlVisibility(cPanelName, "Channel_Short_LED", 0);
+  }
+  else
+  {
+    @FIB::FIB_Trigger_Channel_Short_Update = 0;
+  }
+}
+
+// When the input timer is elapsed, this event sets iFIBLogInversions(TimerIndex) and iFIBLogInversions(TimerIndex - 1) variable from .dll to "false".
+// Used for channel inversion.
+// TimerIndex = FIB channel ID.
+on timer FIBLogInversions_Timer (dword TimerIndex)
+{
+  stack char cLEDControlName[10];
+  
+  FIB_SetChannelInversionStatus(TimerIndex, 0);
+  FIB_SetChannelInversionStatus(TimerIndex + 1, 0);
+  
+  if(@FIB::FIB_Trigger_Channel_Inversion_Update < 1)
+  {
+   @FIB::FIB_Channel_Status_LED[TimerIndex] = 0;   // set panel LED Color to Lime.
+   @FIB::FIB_Channel_Status_LED[TimerIndex + 1] = 0;   // set panel LED Color to Lime.
+    
+   snprintf(cLEDControlName, elcount(cLEDControlName), "CH_%i_%i", TimerIndex, TimerIndex + 1);
+   SetControlVisibility(cPanelName, cLEDControlName, 0);
+    
+   SetControlVisibility(cPanelName, "Channel_Inversion_LED", 0);
+  }
+  else
+  {
+    @FIB::FIB_Trigger_Channel_Inversion_Update = 0;
+  }
+}
+
+// Triggered by FIB_Control.cin
+on sysvar_update FIB::FIB_Trigger_Channel_Short_Update
+{
+  if(@this > 0)
+  {
+    setTimer(FIBLogShorts_Timer[@this], @FIB::FIB_Short_Duration);
+  }
+}
+
+// Triggered by FIB_Control.cin
+on sysvar_update FIB::FIB_Trigger_Channel_Fault_Update
+{
+  if(@this > 0)
+  {
+    setTimer(FIBLogFaults_Timer[@this], @FIB::FIB_Fault_Duration);
+  }
+}
+
+// Triggered by FIB_Control.cin
+on sysvar_update FIB::FIB_Trigger_Channel_Inversion_Update
+{
+  if(@this > 0)
+  {
+    setTimer(FIBLogInversions_Timer[@this], @FIB::FIB_Inversion_Duration);
+  }
+}

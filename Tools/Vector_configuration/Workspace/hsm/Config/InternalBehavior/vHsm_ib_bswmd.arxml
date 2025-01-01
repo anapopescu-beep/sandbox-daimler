@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_4-0-3.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="74989c67-77b0-4f98-bbf2-276d0f5dc1ce">
+          <SHORT-NAME>vHsm_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="00990659-5df5-4bba-a336-2198b9df9cfa">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="0239ae7b-dbe8-45da-903e-0f0020b1ae62">
+                  <SHORT-NAME>vHsm</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm_MainFunction_vHsmSchedulableEntities_HighPrio</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm_MainFunction_vHsmSchedulableEntities_Unmapped</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm_MainFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="85f217b8-5ea3-43ff-b0bc-311ba12e5b46">
+                      <SHORT-NAME>vHsmBehavior</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="97ec7d87-b126-415f-ac77-ad45d14d6011">
+                          <SHORT-NAME>VHSM_EXCLUSIVE_AREA_0</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects deserialized driver object locking resources. Therefore the critical section enclosed with VHSM_EXCLUSIVE_AREA_0 should never be interrupted by any other API. For more details, see DocTechRef.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="ec1f0975-1d84-4a3f-a45a-31f9d7014caf">
+                          <SHORT-NAME>VHSM_EXCLUSIVE_AREA_1</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects from interrupts while running from RAM. Therefore the critical section enclosed with VHSM_EXCLUSIVE_AREA_1 should never be interrupted by any ISR except when special measures are taken that an ISR does not lead to code flash access e.g. by mapping the vector table and ISRs to RAM.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="6b93271f-d37f-4dfd-b89a-711b64e3eedd">
+                          <SHORT-NAME>vHsm_MainFunction_vHsmSchedulableEntities_HighPrio</SHORT-NAME>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm_MainFunction_vHsmSchedulableEntities_HighPrio</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                        <BSW-SCHEDULABLE-ENTITY UUID="73407089-6bf6-4c39-ac9f-4f0e707127cc">
+                          <SHORT-NAME>vHsm_MainFunction_vHsmSchedulableEntities_Unmapped</SHORT-NAME>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm_MainFunction_vHsmSchedulableEntities_Unmapped</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                        <BSW-SCHEDULABLE-ENTITY UUID="59e9fa88-2eeb-442f-8487-1f3969bb743d">
+                          <SHORT-NAME>vHsm_MainFunction</SHORT-NAME>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm_MainFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-TIMING-EVENT UUID="3b48cca3-a600-4160-93c6-8a19a53eaba6">
+                          <SHORT-NAME>vHsm_MainFunction_vHsmSchedulableEntities_HighPrioTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm/vHsmBehavior/vHsm_MainFunction_vHsmSchedulableEntities_HighPrio</STARTS-ON-EVENT-REF>
+                          <PERIOD>1000</PERIOD>
+                        </BSW-TIMING-EVENT>
+                        <BSW-TIMING-EVENT UUID="02b70c3b-b251-420f-a75a-132581fc8677">
+                          <SHORT-NAME>vHsm_MainFunction_vHsmSchedulableEntities_UnmappedTimingEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm/vHsmBehavior/vHsm_MainFunction_vHsmSchedulableEntities_Unmapped</STARTS-ON-EVENT-REF>
+                          <PERIOD>1000</PERIOD>
+                        </BSW-TIMING-EVENT>
+                        <BSW-BACKGROUND-EVENT UUID="fcec64b8-310d-4ce6-b090-fe77329ce1c8">
+                          <SHORT-NAME>vHsm_MainFunctionBackgroundEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/vHsm_ib_bswmd/BswModuleDescriptions/vHsm/vHsmBehavior/vHsm_MainFunction</STARTS-ON-EVENT-REF>
+                        </BSW-BACKGROUND-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="a6f4d580-6c0d-46ce-ba6f-e840413aaef5">
+                  <SHORT-NAME>vHsm_MainFunction_vHsmSchedulableEntities_HighPrio</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+                <BSW-MODULE-ENTRY UUID="a3d95796-5b3a-44ea-899f-114268408ea5">
+                  <SHORT-NAME>vHsm_MainFunction_vHsmSchedulableEntities_Unmapped</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+                <BSW-MODULE-ENTRY UUID="c13868f4-e289-47cb-afd3-52ad8aa2dd67">
+                  <SHORT-NAME>vHsm_MainFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

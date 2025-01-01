@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_9014, ARCH_SW_PMP_9009, ARCH_SW_PMP_0265
+ARCH_SW_PMP_9014: PMP shall provide the corrected temperature of the ECU.
+ARCH_SW_PMP_9009: The AdcIf_runGetMcu_T_10ms function shall be called to get the sampled value of the unfiltered ECU temperature from the ADC.
+ARCH_SW_PMP_0265: The PMP_GetCorrectedTemperature function shall be called to get the sampled value of the temperature (measured at MCU level).
+ARCH_SW_PMP_0260: PMP shall provide the filtered temperature to the rest of the application.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_9014
+
+	Step 2: Set a breakpoint in function BFE_runScheduleStep at the RTE Call for PMP_runGetFilteredTemperature function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0265
+
+	Step 3: Set a breakpoint in function PMP_runGetFilteredTemperature at the pmp_GetCorrectedTemperature function call 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_9009
+
+	Step 4: Set a breakpoint in function AdcIf_runGetMcu_T_10ms in order to check if function was called 
+		Expected result:  BP reached.
+
+	Step 5: Set a breakpoint in function BFE_runScheduleStep after the RTE Call for PMP_runGetFilteredTemperature function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0260
+
+	Step 6: Evaluate local variable pu16FilteredTemperature_a 
+		Expected result:  Variable is read
+
+Postcondition
+
+	Step 7: Return ECU to default values

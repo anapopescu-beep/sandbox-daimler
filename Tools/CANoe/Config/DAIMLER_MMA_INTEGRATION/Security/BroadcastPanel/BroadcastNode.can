@@ -1,0 +1,237 @@
+/*@!Encoding:1252*/
+includes
+{
+
+}
+
+variables
+{
+    char apId_Auth[17] = "AUTHENTIFICATION";
+    char apId_SecTickCount[17] = "SECUREDTICKCOUNT";
+    char apId_CARSecret[10] = "CARSECRET";
+    char apId_VIN[11] = "SECUREDVIN";
+    char apId_RTOffset[15] = "REALTIMEOFFSET";
+  
+    byte payloadRTOffset[12];
+  
+    byte payload[20]; // array for Auth Broadcast
+    dword payloadlength = 20;
+  
+    byte payloadSecTickCount[6];
+  
+    byte payloadVIN[17];
+    
+    byte payloadCarSecret[32];
+    byte defaultSecret[32] = {0x55,0x77,0x65,0x4d,0x61,0x72,0x74,0x69,0x6e,0x4a,0x75,0x6c,0x69,0x61,0x6e,0x41,0x6e,0x64,0x72,0x65,0x61,0x73,0x4d,0x61,0x72,0x6b,0x75,0x73,0x32,0x30,0x31,0x36};
+   // byte specificSecret[32] = {0xfc,0xdc,0xad,0x6d,0x27,0xfc,0xe8,0xf8,0x2e,0xa0,0x2c,0x64,0x9d,0xa8,0xd7,0x23,0x6c,0x58,0x4c,0x72,0x70,0x3b,0x2f,0x02,0x20,0x41,0xbd,0x32,0x74,0x04,0x0e,0x2c}; //for testing
+    byte specificSecret[32] = {0xD5,0x9C,0x03,0x44,0x6A,0x89,0x85,0x2E,0xBD,0x51,0x8B,0xD0,0x57,0xB0,0xC6,0x5E,0xFE,0xB0,0xCE,0x3C,0x45,0x7D,0xEB,0x9D,0x22,0xC7,0xD5,0x4D,0xFF,0x39,0x95,0x43};
+    char broadcastNodeName[50] = "Node";
+    char broadcastNetworkName[50] = "Network";
+  
+    float broadcastStartTime;
+    int broadcastTxActive = 0;
+}
+
+
+
+on preStart
+{
+  int ret;
+  
+  sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNode,broadcastNodeName,50);
+  sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNetwork,broadcastNetworkName,50);
+  ret = SecurityLocalStartControlSimulationNode(broadcastNodeName,broadcastNetworkName,2); // enable this node for security calls
+  if( ret != 1)
+    write("Error: %i = SecurityLocalStartControlSimulationNode(%s,%s,2)",ret,broadcastNodeName,broadcastNetworkName);
+}
+
+
+// Sends the Auth broadcast with sysvar trigger
+on sysvar_update sysvar::AuthBroadcast::TriggerAuthBroadcast
+{
+  byte serialNumberDiagCert[16]; 
+  byte serialNumberBackend[2];
+  int i;
+  long copiedBytes = 0;
+  long ret;
+  
+  if( @this == 1)
+  {
+    ret = sysGetVariableData("AuthBroadcast","Auth_SerialBackend", serialNumberBackend, copiedBytes); // get value from Panel
+    ret = sysGetVariableData("AuthBroadcast","Auth_SerialDiagCert", serialNumberDiagCert, copiedBytes); // get value from Panel
+    
+    payload[0] = @sysvar::AuthBroadcast::Auth_DiagChannel;  /* diagchannel */
+    payload[1] = @sysvar::AuthBroadcast::Auth_UserRole;     /* user role */
+    for(i=2; i<18;i++)  /* Serial Number of Diagnostic Authentication Certificate , 16 byte */
+      payload[i] = serialNumberDiagCert[i-2];
+    payload[18]= serialNumberBackend[0]; /*Serial Number of Backend CA Certificate, 2 byte */
+    payload[19]= serialNumberBackend[1];
+    
+    broadcastStartTime = TimeNowNS();
+
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNode,broadcastNodeName,50);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNetwork,broadcastNetworkName,50);
+    ret = SecurityOfNodeTransmitApplicationProtocol(broadcastNodeName,broadcastNetworkName,apId_Auth,payload,payloadlength);
+    write("%7.5f %NODE_NAME%: %s Broadcast for node %s started: User Role=%x ret=%i",TimeNowNS() / 1000000000.0, apId_Auth,broadcastNodeName, payload[1],ret);
+    broadcastTxActive = 1;
+  }
+}
+
+
+// callback after broadcast transmission
+void OnSecurityOfNodeApplicationProtocolTxFinished(char nodeName[], char networkName[], char applicationProtocolName[], long result)
+{
+  char stringBuf[100];
+  float broadcastDuration;
+  
+  if( broadcastTxActive == 1)
+  {
+    broadcastDuration = TimeNowNS() - broadcastStartTime;
+    if( strncmp(applicationProtocolName,apId_Auth,16)==0)
+    {
+      snprintf(stringBuf,elcount(stringBuf),"%7.5f %s: %s Broadcast finished: Result=%i User Role=%x Duration = %f s",TimeNowNS() / 1000000000.0,nodeName, applicationProtocolName,result,payload[1],broadcastDuration/1000000000.0);
+      write("%s", stringBuf);
+      putValueToControl("Broadcast","OutputAuthBroadcast",stringBuf);
+    }
+    else if(strncmp(applicationProtocolName,apId_SecTickCount,16)==0 )
+    {
+      snprintf(stringBuf,elcount(stringBuf),"%7.5f %s: %s Broadcast finished: Result=%i byte[5]=%x Duration = %f s",TimeNowNS() / 1000000000.0,nodeName, applicationProtocolName,result,payloadSecTickCount[5], broadcastDuration/1000000000.0);
+      write("%s", stringBuf);
+      putValueToControl("Broadcast","OutputSecTickCountBroadcast",stringBuf);
+      
+    }
+    else if(strncmp(applicationProtocolName,apId_CARSecret,10) == 0)
+    {
+      snprintf(stringBuf,elcount(stringBuf),"%7.5f %s: %s Broadcast finished: Result=%i byte[0]=%x Duration = %f s",TimeNowNS() / 1000000000.0,nodeName, applicationProtocolName,result,payloadCarSecret[0],broadcastDuration/1000000000.0);
+      write("%s", stringBuf);
+      putValueToControl("Broadcast","OutputCARSecretBroadcast",stringBuf);
+    }
+    else if(strncmp(applicationProtocolName,apId_VIN,11) == 0)
+    {
+      snprintf(stringBuf,elcount(stringBuf),"%7.5f %s: %s Broadcast finished: Result=%i byte[0]=%x Duration = %f s",TimeNowNS() / 1000000000.0,nodeName, applicationProtocolName,result,payloadVIN[0],broadcastDuration/1000000000.0);
+      write("%s", stringBuf);
+      putValueToControl("Broadcast","OutputSecuredVINBroadcast",stringBuf);
+    }
+    else if (strncmp(applicationProtocolName,apId_RTOffset,15) == 0)
+    {
+      snprintf(stringBuf,elcount(stringBuf),"%7.5f %s: %s Broadcast finished: Result=%i byte[4]=%x Duration = %f s",TimeNowNS() / 1000000000.0,nodeName, applicationProtocolName,result,payloadRTOffset[4],broadcastDuration/1000000000.0);
+      write("%s", stringBuf);
+      putValueToControl("Broadcast","OutputSecuredRTOffsetBroadcast",stringBuf);
+      
+    }
+    broadcastTxActive = 0;
+  }
+}
+
+// Send SecuredTickCount broadcast with sysvar trigger
+on sysvar_update sysvar::SecTickCountBroadcast::TriggerSecTickCountBroadcast
+{
+  int ret; 
+  if(@this == 1)
+  {
+    CopyFreshnessToBroadcast(payloadSecTickCount,@sysvar::SecTickCountBroadcast::TickCount);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNode,broadcastNodeName,50);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNetwork,broadcastNetworkName,50);
+    
+    broadcastStartTime = TimeNowNS();
+    ret = SecurityOfNodeTransmitApplicationProtocol(broadcastNodeName,broadcastNetworkName,apId_SecTickCount,payloadSecTickCount,elcount(payloadSecTickCount));
+    write("%7.5f %NODE_NAME%: %s Broadcast for node %s started: ret=%i",TimeNowNS() / 1000000000.0, apId_SecTickCount,broadcastNodeName, ret);
+    broadcastTxActive = 1;
+  }
+}
+
+// Splits tick count value into broadcast byte array
+int CopyFreshnessToBroadcast(byte array[], qword freshness)
+{
+  if( elCount(array) < 6 )
+    return -1; 
+
+  array[0] =  0x80;
+  array[1] = (freshness >> 32) & 0xFF;
+  array[2] = (freshness >> 24) & 0xFF;
+  array[3] = (freshness >> 16) & 0xFF;
+  array[4] = (freshness >> 8) & 0xFF;
+  array[5] = freshness & 0xFF;  
+  
+  return 0;
+}
+
+// Send CAR Secret broadcast with sysvar trigger
+on sysvar_update sysvar::CARSecretBroadcast::TriggerCARSecretBroadcast
+{
+  int ret;
+  long copiedBytes = 0;
+  
+  if(@this == 1)
+  {
+    ret = sysGetVariableData("CARSecretBroadcast","CARSecret", payloadCarSecret, copiedBytes);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNode,broadcastNodeName,50);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNetwork,broadcastNetworkName,50);
+    
+    broadcastStartTime = TimeNowNS();   
+    ret = SecurityOfNodeTransmitApplicationProtocol(broadcastNodeName,broadcastNetworkName,apId_CARSecret,payloadCarSecret,elcount(payloadCarSecret));
+    write("%7.5f %NODE_NAME%: %s Broadcast for node %s started: byte0=0x%x ret=%i",TimeNowNS() / 1000000000.0, apId_CARSecret,broadcastNodeName, payloadCarSecret[0],ret);
+    broadcastTxActive = 1;
+  }
+}
+
+// Resets broadcast secret to default secret
+on sysvar_update sysvar::CARSecretBroadcast::Button_ResetToDefaultSecret
+{
+  if( @this == 1)
+    sysSetVariableData("CARSecretBroadcast","CARSecret",defaultSecret,32);
+}
+
+on sysvar_update sysvar::CARSecretBroadcast::Button_ResetToSpecificSecret
+{
+  if( @this == 1)
+    sysSetVariableData("CARSecretBroadcast","CARSecret",specificSecret,32);
+}
+
+// Send Secured VIN broadcast with sysvar trigger
+on sysvar_update sysvar::SecuredVINBroadcast::TriggerSecuredVINBroadcast
+{
+  int ret;
+  long copiedBytes = 0;
+  
+  if(@this == 1)
+  {
+    ret = sysGetVariableData("SecuredVINBroadcast","VIN", payloadVIN, copiedBytes);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNode,broadcastNodeName,50);
+    sysGetVariableString(sysvar::BroadcastGlobal::BroadcastSenderNetwork,broadcastNetworkName,50);
+    
+    broadcastStartTime = TimeNowNS();   
+    ret = SecurityOfNodeTransmitApplicationProtocol(broadcastNodeName,broadcastNetworkName,apId_VIN,payloadVIN,elcount(payloadVIN));
+    write("%7.5f %NODE_NAME%: %s Broadcast for node %s started: byte0=0x%x ret=%i",TimeNowNS() / 1000000000.0, apId_VIN,broadcastNodeName, payloadVIN[0],ret); 
+    broadcastTxActive = 1;
+  }
+}
+
+
+// Send real time offset broadast
+on sysvar_update sysvar::RTOffsetBroadcast::TriggerRTOffsetBroadcast
+{
+  int ret;
+  
+  if(@this == 1)
+  {
+    payloadRTOffset[0] = (@sysvar::RTOffsetBroadcast::Year >> 8) & 0xFF;
+    payloadRTOffset[1] = @sysvar::RTOffsetBroadcast::Year & 0xFF;
+    payloadRTOffset[2] = @sysvar::RTOffsetBroadcast::Month;
+    payloadRTOffset[3] = @sysvar::RTOffsetBroadcast::Day;
+    payloadRTOffset[4] = @sysvar::RTOffsetBroadcast::Hour;
+    payloadRTOffset[5] = @sysvar::RTOffsetBroadcast::Minute;
+    payloadRTOffset[6] = @sysvar::RTOffsetBroadcast::Second;
+    payloadRTOffset[7] =  (@sysvar::RTOffsetBroadcast::TickCount >> 32) & 0xFF;
+    payloadRTOffset[8] =  (@sysvar::RTOffsetBroadcast::TickCount >> 24) & 0xFF;
+    payloadRTOffset[9] =  (@sysvar::RTOffsetBroadcast::TickCount >> 16) & 0xFF;
+    payloadRTOffset[10] = (@sysvar::RTOffsetBroadcast::TickCount >> 8)  & 0xFF;
+    payloadRTOffset[11] = @sysvar::RTOffsetBroadcast::TickCount & 0xFF;
+    
+    broadcastStartTime = TimeNowNS();  
+    ret = SecurityOfNodeTransmitApplicationProtocol(broadcastNodeName,broadcastNetworkName,apId_RTOffset,payloadRTOffset,elcount(payloadRTOffset));
+    write("%7.5f %NODE_NAME%: %s Broadcast for node %s started: byte4=%i ret=%i",TimeNowNS() / 1000000000.0, apId_RTOffset,broadcastNodeName, payloadRTOffset[4],ret); 
+    broadcastTxActive = 1;
+  }
+}
+

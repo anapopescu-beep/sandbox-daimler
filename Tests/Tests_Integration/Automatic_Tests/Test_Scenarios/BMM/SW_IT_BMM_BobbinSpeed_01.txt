@@ -1,0 +1,27 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0008
+ARCH_SW_BMM_0008: NVP parameter NVP_u16CplBobbinSpeedThrs shall be used  in order to adapt the bobbin speed threshold from microseconds (NVP parameter format) to the timer scale.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_runInit at line 'u16CplTimerCntThrs = (uint16)(((uint32)(CALIB_BLOCK_ID_ECPL_OTHER_PARAM_RomBlockData.NVP_u16CplBobbinSpeedThrs)'.
+
+Action: ARCH_SW_BMM_0008
+
+	Step 3: Check if CPU stopped at line 'u16CplTimerCntThrs = (uint16)(((uint32)(CALIB_BLOCK_ID_ECPL_OTHER_PARAM_RomBlockData.NVP_u16CplBobbinSpeedThrs)'. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 4: Return ECU to default values

@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0209
+ARCH_SW_MMG_0209: Rte_Write_MMG_AC_ModeManagement_AvailabilityDataHandler_AvailabilityDataCategory shall be called to send the AvailabilityDataCategory towards DiagFunction.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_AvailabilityDataStatus();.
+
+	Step 3: Set a breakpoint in function mmg_AvailabilityDataStatus at line if (u8oldAvailabilityDataCategory != u8newAvailabilityDataCategory).
+
+	Step 4: Step in function mmg_AvailabilityDataStatus.
+
+	Step 5: Set local variable u8newAvailabilityDataCategory to KU8_ZERO.
+
+Action: ARCH_SW_MMG_0209
+
+	Step 6: Set a breakpoint at line Rte_Write_AvailabilityDataHandler_AvailabilityDataCategory(u8newAvailabilityDataCategory);. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

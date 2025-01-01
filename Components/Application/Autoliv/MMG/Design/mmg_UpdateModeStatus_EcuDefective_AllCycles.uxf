@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>11</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>330</x>
+      <y>154</y>
+      <w>802</w>
+      <h>785</h>
+    </coordinates>
+    <panel_attributes>title:mmg_UpdateModeStatus_EcuDefective_AllCycles
+Start
+
+Get AEC group status
+Get Pyro activation status
+Verify if ECU defective AEC is qualified or Pyro is active
+If
+	[AEC qualified or Pyro is active]
+	Set u8ModeStatusIsOk FALSE
+		
+	[False]
+EndIf
+
+Check if u8ModeStatusIsOk is TRUE
+If
+	[Mode status is TRUE]
+	Unset ECU_DEFECT_ALL_CYCLES system context
+	
+	[Mode status is FALSE]
+	Set ECU_DEFECT_ALL_CYCLES system context
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

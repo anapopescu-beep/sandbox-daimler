@@ -1,0 +1,75 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0303, ARCH_SW_MMG_0304, ARCH_SW_MMG_0305, ARCH_SW_MMG_0306, ARCH_SW_MMG_0307, ARCH_SW_MMG_0308, ARCH_SW_MMG_0309
+ARCH_SW_MMG_0303: NvM_GetErrorStatus shall be called in order to get the error status for each block.
+ARCH_SW_MMG_0304: NvM_WriteBlock shall be called in order to write updated blocks.
+ARCH_SW_MMG_0305: Rte_IsUpdated_prrExecutionCountersBlockStatus_b8NVMBlockStatus shall be called to get the updated block status for execution counters.
+ARCH_SW_MMG_0306: Rte_IsUpdated_prrCANInputBlockStatus_b8NVMBlockStatus shall be called to get the updated block status for CAN input signals.
+ARCH_SW_MMG_0307: Rte_IsUpdated_prrAECsBlockStatus_b8NVMBlockStatus shall be called to get the updated block status for AECs.
+ARCH_SW_MMG_0308: Rte_IrvRead_MMG_runUpdateNVMBlocks_b8PreSafeRecorder1Update shall be called to get the updated block status for PreSafeRecorder1.
+ARCH_SW_MMG_0309: Rte_IrvRead_MMG_runUpdateNVMBlocks_b8PreSafeRecorder2Update shall be called to get the updated block status for PreSafeRecorder2.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line 'if(KU8_ONE == Rte_IsUpdated_prrExecutionCountersBlockStatus_b8NVMBlockStatus())'.
+
+Action: ARCH_SW_MMG_0305
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line 'if(KU8_ONE == Rte_IsUpdated_prrExecutionCountersBlockStatus_b8NVMBlockStatus())'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line 'Rte_Call_pclNvmServicesExecutionCounters_WriteBlock(&NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData);'.
+
+Action: ARCH_SW_MMG_0304
+
+	Step 5: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line 'Rte_Call_pclNvmServicesExecutionCounters_WriteBlock(&NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData);'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line 'if(KU8_ONE == Rte_IsUpdated_prrCANInputBlockStatus_b8NVMBlockStatus())'.
+
+Action: ARCH_SW_MMG_0306
+
+	Step 7: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line 'if(KU8_ONE == Rte_IsUpdated_prrCANInputBlockStatus_b8NVMBlockStatus())'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line '(void)Rte_Call_pclNvmServicesCANInputSignals_GetErrorStatus(&errorStatus);'.
+
+Action: ARCH_SW_MMG_0303
+
+	Step 9: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line '(void)Rte_Call_pclNvmServicesCANInputSignals_GetErrorStatus(&errorStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line '	if(KU8_ONE == Rte_IsUpdated_prrAECsBlockStatus_b8NVMBlockStatus())'.
+
+Action: ARCH_SW_MMG_0307
+
+	Step 11: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line '	if(KU8_ONE == Rte_IsUpdated_prrAECsBlockStatus_b8NVMBlockStatus())'. 
+		Expected result:  CPU is Stopped
+
+	Step 12: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line '	u8RecorderUpdateStatus = Rte_IrvRead_MMG_runUpdateNVMBlocks_b8PreSafeRecorder1Update();'.
+
+Action: ARCH_SW_MMG_0308
+
+	Step 13: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line '	u8RecorderUpdateStatus = Rte_IrvRead_MMG_runUpdateNVMBlocks_b8PreSafeRecorder1Update();'. 
+		Expected result:  CPU is Stopped
+
+	Step 14: Set a breakpoint in function MMG_runUpdateNVMBlocks() at line '	u8RecorderUpdateStatus = Rte_IrvRead_MMG_runUpdateNVMBlocks_b8PreSafeRecorder1Update();'.
+
+Action: ARCH_SW_MMG_0309
+
+	Step 15: Check if CPU stopped in function MMG_runUpdateNVMBlocks() at line '	u8RecorderUpdateStatus = Rte_IrvRead_MMG_runUpdateNVMBlocks_b8PreSafeRecorder1Update();'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 16: Return ECU to default values

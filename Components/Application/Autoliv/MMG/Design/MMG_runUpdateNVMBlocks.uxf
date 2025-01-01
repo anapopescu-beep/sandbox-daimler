@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>456</x>
+      <y>0</y>
+      <w>860</w>
+      <h>2413</h>
+    </coordinates>
+    <panel_attributes>title:MMG_runUpdateNVMBlocks
+Start
+
+Check if ExecutionCounters block status is updated
+If
+	[TRUE]
+	Get error status
+	Check error status is not NVM_REQ_PENDING
+	If
+		[TRUE]
+		NvmServicesExecutionCounters_WriteBlock(&amp;NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData)
+		Read Block status
+
+		[FALSE]
+		Nothing
+		
+	EndIf
+	
+	[FALSE]
+	Nothing
+	
+EndIf
+
+Check If CANInputBlockStatus is updated
+If
+	[TRUE]
+	Get error status
+	Check error status is not NVM_REQ_PENDING
+	If
+		[TRUE]
+		NvmServicesCANInputSignals_WriteBlock(&amp;NVP_BLOCK_ID_CAN_INPUT_SIGNALS_RamBlockData)
+		Read Block status
+		
+		[FALSE]
+		Nothing
+	EndIf
+			
+	[FALSE]
+	Nothing
+	
+EndIf
+
+Check If AECsBlockStatus is updated
+If
+	[TRUE]
+	Get error status
+	Check error status is not NVM_REQ_PENDING
+	If
+		[TRUE]
+		NvmServicesAECStatus_WriteBlock(&amp;NVP_BLOCK_ID_AEC_STATUS_RamBlockData)
+		Read Block status
+		
+		[FALSE]
+		Nothing
+	EndIf
+			
+	[FALSE]
+	Nothing
+	
+EndIf
+
+Update value for u8RecorderUpdateStatus
+Check If u8RecorderUpdateStatus is updated
+If
+	[TRUE]
+	Get error status for Presafe Recorder 1
+	Check error status is not NVM_REQ_PENDING
+	If
+		[TRUE]
+		NvmServicesRecorder1_WriteBlock(&amp;NVP_BLOCK_ID_PRE_SAFE_RECORDER_1_RamBlockData)
+		NvmServicesRecorderID_WriteBlock(&amp;NVP_BLOCK_ID_PRE_SAFE_RECORDER_ID_RamBlockData)
+		
+		[FALSE]
+		Nothing
+	EndIf
+			
+	[FALSE]
+	Nothing
+	
+EndIf
+
+Update value for u8RecorderUpdateStatus
+Check If u8RecorderUpdateStatus is updated
+If
+	[TRUE]
+	Get error status for Presafe Recorder 2
+	Check error status is not NVM_REQ_PENDING
+	If
+		[TRUE]
+		NvmServicesRecorder1_WriteBlock(&amp;NVP_BLOCK_ID_PRE_SAFE_RECORDER_2_RamBlockData)
+		NvmServicesRecorderID_WriteBlock(&amp;NVP_BLOCK_ID_PRE_SAFE_RECORDER_ID_RamBlockData)
+		
+		[FALSE]
+		Nothing
+	EndIf
+			
+	[FALSE]
+	Nothing
+	
+EndIf
+
+End
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

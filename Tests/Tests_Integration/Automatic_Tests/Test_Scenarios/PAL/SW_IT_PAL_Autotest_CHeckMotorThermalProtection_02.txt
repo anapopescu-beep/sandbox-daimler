@@ -1,0 +1,49 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0360, ARCH_SW_PAL_0366
+ARCH_SW_PAL_0360: The component shall check if an over temperature of the power stage is reached by returning a SW self-protection status.
+ARCH_SW_PAL_0366: The component shall check the state of specific autotests.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PAL_0360
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMotorThermalProctection at the RTE Call for CheckMotorThermalProctection autotest 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PAL_Autotest_CheckMotorThermalProctection at the RTE call for GetTestResult 
+		Expected result:  BP reached.
+
+	Step 4: Write autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable set to KU8_ATM_TEST_OK
+
+	Step 5: Set a breakpoint in function PAL_Autotest_CheckMotorCurrent at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 6: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0366
+
+	Step 7: Evaluate pal_tSwThermalProtectionEventStatus 
+		Expected result:  Variable is equal to 0x1.
+
+	Step 8: Set a breakpoint in function PAL_cbk_CheckMotorThermalProctection after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 9: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 10: Return ECU to default values

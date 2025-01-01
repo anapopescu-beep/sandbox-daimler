@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0111, ARCH_SW_CIL_0109, ARCH_SW_CIL_0110
+ARCH_SW_CIL_0111: Bit 6 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if profile requested is not implemented.
+ARCH_SW_CIL_0109: Bit 4 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if DTC: B210E00 - The power supply is too high OR B210D00 - The power supply is too low OR B228B16 - Terminal 30 measurement undervoltage OR B228B17 -Terminal 30 measurement is set.
+ARCH_SW_CIL_0110: Bit 5 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if DTC: U012287 - Communication with control unit ''Traction system'' has a malfunction OR U041608 - Implausible data received from control unit Traction system OR U042708- Implausible data received from the electronic ignition lock OR	U015187 - Communication with the supplemental restraint system (SRS) has a malfunction OR	U045208 - Implausible data were received from the supplemental restraint system is set.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Bckl_Sw_D_Stat_ST3 to KU8_ONE.
+
+	Step 3: Set a breakpoint in function cil_ManageFctPrecondSignal.
+
+Action: ARCH_SW_CIL_0111, ARCH_SW_CIL_0109, ARCH_SW_CIL_0110
+
+	Step 4: Check if signal RBTMFL_SP_FctPrecond_Stat_ST35 value is KU8_ONE. 
+		Expected result:  KU8_ONE
+
+Postcondition
+
+	Step 5: Return ECU to default values

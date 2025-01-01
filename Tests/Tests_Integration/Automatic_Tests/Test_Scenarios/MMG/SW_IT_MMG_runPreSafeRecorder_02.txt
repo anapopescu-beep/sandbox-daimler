@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0031, ARCH_SW_MMG_0407
+ARCH_SW_MMG_0407: StbM_GetCurrentTime shall be called in order to get the system time.
+ARCH_SW_MMG_0031: Undervoltage / ovelvoltage situation shall represent the 6 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by Ov or UV; Yes = 1 if the tensioning was inhibited/ aborted by Uv or Ov
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runPreSafeRecorder() at line 'mmg_u8Return = Rte_Call_GlobalTime_Slave_GTD_BODY3_0_14e64f11_GetCurrentTime(&mmg_TimeStamp, &mmg_TimeUserData);'.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 4: Check if CPU stopped in function MMG_runPreSafeRecorder() at line 'mmg_u8Return = Rte_Call_GlobalTime_Slave_GTD_BODY3_0_14e64f11_GetCurrentTime(&mmg_TimeStamp, &mmg_TimeUserData);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Step in function Rte_Call_GlobalTime_Slave_GTD_BODY3_0_14e64f11_GetCurrentTime(&mmg_TimeStamp, &mmg_TimeUserData). 
+		Expected result:  Stepped in function StbM_GetCurrentTime
+
+Action: ARCH_SW_MMG_0407
+
+	Step 6: Check if CPU has stopped in function StbM_GetCurrentTime().
+
+	Step 7: Set a breakpoint in mmg_PreSafe_HandleStateData() at line 'mmg_stPreSafeStateData.State1UvOROV = MMG_KU8_State_DTC_Is_Not_Set;'.
+
+Action: ARCH_SW_MMG_0031
+
+	Step 8: Check if CPU stopped in mmg_PreSafe_HandleStateData() at line 'mmg_stPreSafeStateData.State1UvOROV = MMG_KU8_State_DTC_Is_Not_Set;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0031
+
+	Step 9: Evaluate if variable mmg_stPreSafeStateData.State1UvOROV is equal to MMG_KU8_State_DTC_Is_Not_Set. 
+		Expected result:  Variable mmg_stPreSafeStateData.State1UvOROV  is equal to MMG_KU8_State_DTC_Is_Not_Set
+
+Postcondition
+
+	Step 10: Return ECU to default values

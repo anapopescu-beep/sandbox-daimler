@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>477</x>
+      <y>0</y>
+      <w>1765</w>
+      <h>3602</h>
+    </coordinates>
+    <panel_attributes>title:MMG_runPreSafeRecorder
+Start
+
+Read CIL input signals data
+Read deficiency value
+Read local voltage
+Read global time
+
+Local Presafe ID = NVM Presafe ID
+PreSafeState = Tensioning State Type
+
+Check if Tensioning state is changed
+If
+	[New tensioning state]
+	Check if Presafe lvl is not LVL2
+	If
+		[Presafe lvl is LVl2]
+		PreSafeWriteTrigger = Trigger ON
+	
+		[Presafe lvl is not LVl2]
+	EndIf
+
+	
+	[Same tensioning state]
+	Check PreSafeState = TENSIONING_INHIBIT &amp; u8PresafeLevelType != OldReqestedProfileLvl
+	If
+		[TRUE]
+		Check u8PresafeLevelType is not LVL2 &amp; u8PresafeLevelType is not NOLVL
+		If
+			[TRUE]
+			PreSafeWriteTrigger = TRIGGER ON
+
+			[FALSE]
+			Do nothing
+		EndIf
+		
+		[FALSE]
+		PreSafeWriteTrigger = TRIGGER OFF
+	EndIf
+	
+
+EndIf
+
+Check if a profile started
+If
+	[Profile is started]
+	Check if Previous state is not start
+	If
+		[Prevoius state is not start]
+		Set started profile as presafe lvl
+	
+		[Prevoius state is start]
+	EndIf
+	
+	[Profile is not started]
+EndIf
+
+Check if a profile is interrupted
+If
+	[Profile interrupted]
+	Check if Presafe level is NOLVL or LVL2
+	If
+		[Presafe level is NOLVL or LVL2]
+	
+		[Presafe level is not NOLVL or LVL2]
+		Check if Presafe lvl executed is different than the initial requested
+		If
+			[Presafe lvl is different]
+			Set interrupted status to TRUE
+			Set Profile as executed profile
+	
+			[Presafe lvl is not different]
+			Set interrupted status to FALSE
+			Set Profile as NO_CYCLE
+		EndIf
+	EndIf
+	
+	[Profile not interrupted]
+EndIf
+
+Check if triger is ON
+If
+	[Trigger ON]
+	Check if a profile is ended or aborted
+	If
+		[Profile is ended or aborted]
+		Set Recorder End as TRUE
+	
+		[Profile is not ended or aborted]
+	EndIf
+	Check if a block was not written before
+	If
+		[Block was not written before]
+		Set Recorder ID as 1
+	
+		[Block was not written before]
+		Check Recorder ID
+		If
+			[Recorder ID is 1]
+			Set Recorder ID as 2
+	
+			[Recorder ID is 2]
+			Set Recorder ID as 1
+		EndIf
+	EndIf
+	Check tensioning state
+	If
+		[Start]
+		call mmg_PreSafe_HandleStartData
+		
+		[End]
+		call mmg_PreSafe_HandleStopData 
+		Set Profile Interrupted Status as FALSE
+		Set New profile executed as NOCYCLE
+		Set Started profile as NOCYCLE 
+		
+		[Inhibit]
+		call mmg_PreSafe_HandleStartData
+		call mmg_PreSafe_HandleStopData
+
+		[Abort]
+		call mmg_PreSafe_HandleStopData
+
+		[None]
+	EndIf
+	PreSafeWriteTrigger = Trigger OFF
+	Check if Recorder End status is true
+	If
+		[Recorder End status is true]
+		Update NVM Recorder ID 
+	
+		[Recorder End status is not true]
+		
+	EndIf
+
+	[Trigger OFF]
+
+EndIf
+Update previous presafe state
+Update OldReqestedProfileLvl
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

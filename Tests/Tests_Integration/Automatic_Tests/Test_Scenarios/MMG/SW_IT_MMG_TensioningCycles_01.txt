@@ -1,0 +1,62 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0133, ARCH_SW_MMG_0135, ARCH_SW_MMG_0138, ARCH_SW_MMG_0157, ARCH_SW_MMG_0159, ARCH_SW_MMG_0160, ARCH_SW_MMG_0162
+ARCH_SW_MMG_0133: The �KU32_AEC_GROUP_MASK_SELF_PROTECTION � SW/HW Self protection status AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.
+ARCH_SW_MMG_0135: The �KU32_AEC_GROUP_MASK_UNDER_VO_TENS � to check undervoltage AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.
+ARCH_SW_MMG_0138: The �KU32_AEC_GROUP_MASK_EOL_LOW_HIGH � to check counters AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.
+ARCH_SW_MMG_0157: The �KU32_AEC_GROUP_MASK_OVER_VO_TENS � to check overvoltage during tensioning AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.
+ARCH_SW_MMG_0159: The �KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE � to check timout for buckle signal AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.
+ARCH_SW_MMG_0160: The �KU32_AEC_GROUP_MASK_STEERING_CONFIGURATION � to check control unit configuration AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line 'mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus at line 'mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles at the first line.
+
+	Step 5: Check if CPU stopped in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles at the first line. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Step in mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles.
+
+Action: ARCH_SW_MMG_0133
+
+	Step 7: Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_TEMPERATURE_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_SELF_PROTECTION);'.
+
+	Step 8: Check if CPU stopped in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_TEMPERATURE_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_SELF_PROTECTION);'. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_IMPL_BUCKLE_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC);'.
+
+Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162
+
+	Step 10: Check if CPU stopped in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_IMPL_BUCKLE_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC);'.
+
+	Step 11: Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);'.
+
+Action: ARCH_SW_MMG_0135, ARCH_SW_MMG_0159
+
+	Step 12: Check if CPU stopped in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);'.
+
+	Step 13: Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_EOL_LOW_AND_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_EOL_LOW_HIGH);'.
+
+Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162
+
+	Step 14: Check if CPU stopped in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles() at line 'u32AecStatus_TensioningCycles[MMG_KU8_IDX_EOL_LOW_AND_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_EOL_LOW_HIGH);'.
+
+Postcondition
+
+	Step 15: Return ECU to default values

@@ -1,0 +1,48 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0383, ARCH_SW_PMP_0384, ARCH_SW_PMP_0385
+ARCH_SW_PMP_0383: This function shall provide the motor resistance compensated in temperature..
+ARCH_SW_PMP_0384: The NVP_au16MotorResistTempIndex parameter shall be read.
+ARCH_SW_PMP_0385: The NVP_au8MotorResistReferences parameter shall be read.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_0383, ARCH_SW_PMP_0384, ARCH_SW_PMP_0385
+
+	Step 2: Set a breakpoint in function BFE_runScheduleStep at the call for M_ManageStepEvents function 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function M_ManageStepEvents in order to Overwritten local variable eStepValidity 
+		Expected result:  BP reached.
+
+	Step 4: Overwrite variable eStepValidity with value 0x2 
+		Expected result:  Overwritten local variable with 0x2
+
+	Step 5: Overwrite variable IF_Sa97_st_StepParameters_i with value 0x1 
+		Expected result:  Overwritten local variable with 0x1
+
+	Step 6: Set a breakpoint in function M_ManageStepEvents at the RTE Call for PMP_runGetMotorResistance function 
+		Expected result:  BP reached.
+
+	Step 7: Read variable pu16Resistance_mOhm 
+		Expected result:  Variable read
+
+	Step 8: Set a breakpoint in function after RTE Call for PMP_runGetMotorResistance function
+		Expected result:  BP reached.
+
+	Step 9: Evaluate local variable pu16Resistance_mOhm_a 
+		Expected result:  Variable read is equal to pu16Resistance_mOhm data pointer contents.
+
+Postcondition
+
+	Step 10: Return ECU to default values

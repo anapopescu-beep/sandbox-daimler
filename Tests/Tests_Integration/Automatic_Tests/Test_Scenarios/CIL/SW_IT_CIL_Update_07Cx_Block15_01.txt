@@ -1,0 +1,80 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0725, ARCH_SW_CIL_0771, ARCH_SW_CIL_0772
+ARCH_SW_CIL_0725: If selected, the content of the measurement frame - block #15 shall be encoded and provided to CAN..
+ARCH_SW_CIL_0771: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be read in order to determine the current cycle.
+ARCH_SW_CIL_0772: Rte_BFE_psrExecutedStep_u8StepNumber 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 15.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block15_InfosToSend at line Rte_Read_prrCycleNumber_u8CycleNumber(&u8CurrentCycle);.
+
+	Step 4: Set a breakpoint in function cil_Update_07Cx_Block15_InfosToSend at line Rte_Read_prrStepNumber_u8StepNumber(&u8CurrentStep);.
+
+Action: ARCH_SW_CIL_0772
+
+	Step 5: Check if CPU stopped at line Rte_Read_prrStepNumber_u8StepNumber(&u8CurrentStep);. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0771
+
+	Step 6: Check if CPU stopped at line Rte_Read_prrCycleNumber_u8CycleNumber(&u8CurrentCycle);. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint at the last line of function cil_Update_07Cx_Block15_InfosToSend.
+
+Action: ARCH_SW_CIL_0725
+
+	Step 8: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 and signal Meas_RBTM_FL_01_ST3 are equal to CU8_BLOCK_ID_15. 
+		Expected result:  CU8_BLOCK_ID_15
+
+Action: ARCH_SW_CIL_0725
+
+	Step 9: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX
+
+Action: ARCH_SW_CIL_0725
+
+	Step 10: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX)
+
+Action: ARCH_SW_CIL_0725
+
+	Step 11: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 and signal Meas_RBTM_FL_04_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX
+
+Action: ARCH_SW_CIL_0725
+
+	Step 12: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 and signal Meas_RBTM_FL_05_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX
+
+Action: ARCH_SW_CIL_0725
+
+	Step 13: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX
+
+Action: ARCH_SW_CIL_0725
+
+	Step 14: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX
+
+Action: ARCH_SW_CIL_0725
+
+	Step 15: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 and signal Meas_RBTM_FL_08_ST3 are equal to KU8_MAX. 
+		Expected result:  KU8_MAX
+
+Postcondition
+
+	Step 16: Return ECU to default values

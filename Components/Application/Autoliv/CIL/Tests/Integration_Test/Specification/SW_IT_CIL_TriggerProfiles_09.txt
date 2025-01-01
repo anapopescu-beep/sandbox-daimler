@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0024
+ARCH_SW_CIL_0024: If any other value than 1,2,3,4,5,6,7,8 is received for signal Presf_Lvl_ST3 then no cycle should be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal Presf_Lvl_ST3 to 0x9.
+
+	Step 4: Set a breakpoint in function cil_TriggerProfiles where u8CycleRequest == KU8_NO_CYCLE.
+
+Action: ARCH_SW_CIL_0121
+
+	Step 5: Check if CPU stopped at cil_TriggerProfiles function . 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 6: Return ECU to default values

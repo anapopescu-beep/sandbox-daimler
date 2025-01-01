@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0001
+ARCH_SW_ATM_0001: Verify that all autotests are initialized with status NOT_DECIDED
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in the task *ApplInitTask_Core0* at line *ATM_Init();*
+
+	Step 3: Set a breakpoint in ATM_Init() function.
+
+Action: ARCH_SW_ATM_0001
+
+	Step 4: Check if the SW has reached breakpoint at ATM_Init(). 
+		Expected result:  CPU is Stopped at BP.
+
+Action: ARCH_SW_ATM_0001
+
+	Step 5: Evaluate au8AtStatuses to check if autotests are initialized with KU8_ATM_TEST_NOT_DECIDED (0x0). 
+		Expected result:  0x0.
+
+Postcondition
+
+	Step 6: Return ECU to default values

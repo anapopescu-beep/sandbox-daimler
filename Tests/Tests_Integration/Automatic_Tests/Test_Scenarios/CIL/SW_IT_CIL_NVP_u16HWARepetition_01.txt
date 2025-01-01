@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0047
+ARCH_SW_CIL_0047: CIL component shall ensure repetition of vibration phase (cycle 19) of HWA 1 for NVP_u16DurationHaptic1.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL2.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageHapticRepetition at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic1)/KU16_TEN);'.
+
+	Step 6: Check if CPU stopped at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic1)/KU16_TEN);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0047
+
+	Step 7: Evaluate if variable CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic1 / KU16_TEN 
+		Expected result:  NVP_u16DurationHaptic1 / KU16_TEN (0x64).
+
+Postcondition
+
+	Step 8: Return ECU to default values

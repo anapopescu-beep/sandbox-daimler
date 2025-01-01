@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>14</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>364</x>
+      <y>42</y>
+      <w>1037</w>
+      <h>1139</h>
+    </coordinates>
+    <panel_attributes>title:mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles
+Start
+
+Get AEC group status
+Get Temperature high aec status
+Get Implausible buckle aec status
+Get Timeout buckle aec status
+Verify if at least one AEC is qualified and voltage is in extended operating range
+If
+	[AEC qualified]
+	Set u8ModeStatusIsOk FALSE
+		
+	[AEC not qualified]
+EndIf
+
+Check if u8ModeStatusIsOk is TRUE
+If
+	[Mode status is TRUE]
+	Unset INHIB_TENSIONING_CYCLES system context
+	
+	[Mode status is FALSE]
+	Set INHIB_TENSIONING_CYCLES system context
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

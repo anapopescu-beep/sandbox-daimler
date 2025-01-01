@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0048
+ARCH_SW_CIL_0048: Signal PresfAct_TensSupp_Rq_ST3 shall be send though application when it�s needed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PresfAct_TensSupp_Rq_ST3 to value 7.
+
+	Step 3: Set a breakpoint in function CIL_ComNotification_PresfAct_Adj_Pr5_ST3_2joar1a41xrgjqab60epnbplm_25141edc_Rx().
+
+	Step 4: Check if CPU stopped in function CIL_ComNotification_PresfAct_Adj_Pr5_ST3_2joar1a41xrgjqab60epnbplm_25141edc_Rx(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 6: Check if CPU stopped in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0048
+
+	Step 7: Read variable cil_stPresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 
+		Expected result:  0x7.
+
+Postcondition
+
+	Step 8: Return ECU to default values

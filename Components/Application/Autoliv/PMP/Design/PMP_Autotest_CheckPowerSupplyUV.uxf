@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>176</x>
+      <y>96</y>
+      <w>986</w>
+      <h>779</h>
+    </coordinates>
+    <panel_attributes>title:PMP_Autotest_CheckPowerSupplyUV
+Start
+Get Battery over voltage AEC status
+Check if battery over voltage AEC is qualified
+If
+	[TRUE]
+
+	[FALSE]
+	Get the filtered physical value measured on ADC Power Vbat pin from PMP
+	Get the associated AEC status to decide the autotest result
+	Check if AEC is cleared 
+	If
+		[TRUE]
+		Check if KL30 is over related threshold
+		If
+			[TRUE]
+			Set status as KU8_ATM_TEST_OK
+
+			[FALSE]
+			Set status as KU8_ATM_TEST_NOK
+		EndIf
+		
+		[FALSE]
+		Check if KL30 is over related threshold
+		If
+			[TRUE]
+			Set status as KU8_ATM_TEST_OK
+
+			[FALSE]
+			Set status as KU8_ATM_TEST_NOK
+		
+	EndIf
+EndIf
+
+Return the auto test status
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

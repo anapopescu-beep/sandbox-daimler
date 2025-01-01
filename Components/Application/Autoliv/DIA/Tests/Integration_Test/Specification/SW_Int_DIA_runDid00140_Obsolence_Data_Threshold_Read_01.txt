@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0330; ARCH_SW_DIA_0334; ARCH_SW_DIA_0335
+ARCH_SW_DIA_0330: DataIdentifier shall be 0x0140
+ARCH_SW_DIA_0334: Response data length shall be 24 bytes long
+ARCH_SW_DIA_0335: Read Obsolescence Data service shall return the number of remaing BSR(Comfort), Low Force, High Force, Max Force possible activation.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid00140_Obsolescence_Data_PRE_SAFE_Lvl_4_5_Treshold_Yellow_To_Red_Read*.
+
+Action: ARCH_SW_DIA_0330; ARCH_SW_DIA_0334; ARCH_SW_DIA_0335
+
+	Step 3: Send diag request for 01 40 
+		Expected result:  Timeout received.
+
+	Step 4: Evaluate response data lenght. 
+		Expected result:  response data lenght is 24.
+
+Postcondition
+
+	Step 5: Return ECU to default values

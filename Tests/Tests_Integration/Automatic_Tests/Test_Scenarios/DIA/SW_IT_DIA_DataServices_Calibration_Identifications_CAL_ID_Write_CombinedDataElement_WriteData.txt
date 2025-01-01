@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0745; ARCH_SW_DIA_0746; ARCH_SW_DIA_0747; ARCH_SW_DIA_0748
+ARCH_SW_DIA_0745: Service 0x2E (Write Data By Identifier) will be implemented for DID F804 (Calibration Identifications (CAL ID))
+ARCH_SW_DIA_0746: The Write Calibration Identifications (CAL ID) service shall be available in the following sessions: ?Programming (0x02) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0747: The Write Calibration Identifications (CAL ID) service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales STANDARD 
+ARCH_SW_DIA_0748: Bytes #2-#3: DataIdentifier of the Write Calibration Identifications (CAL ID) shall be: 0xF804
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Calibration_Identifications_CAL_ID_Write_CombinedDataElement_WriteData*.
+
+ARCH_SW_DIA_0745; ARCH_SW_DIA_0746; ARCH_SW_DIA_0747; ARCH_SW_DIA_0748
+
+	Step 4: Send diag request for 2E F804 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_Calibration_Identifications_CAL_ID_Write_CombinedDataElement_WriteData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

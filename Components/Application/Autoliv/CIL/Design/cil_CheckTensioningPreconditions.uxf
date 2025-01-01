@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>231</x>
+      <y>245</y>
+      <w>1403</w>
+      <h>627</h>
+    </coordinates>
+    <panel_attributes>title: cil_CheckTensioningPreconditions
+Start
+If
+	[cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 == 0] AND
+	[cil_BcklSwStatSignal == 0]  AND
+	[cil_PresfActAdjFrame.Presf_Enbl_ST3 == 1 ] AND
+	[cil_IgnStatFrame.ISw_Stat_ST3 == 4] AND
+	[CIL_u8Impact3_ST3Signal.Impact_RO_type1_ST3 == 0] AND
+	[CIL_u8Impact3_ST3Signal.Impact_RO_type2_ST3 == 0] AND
+	[CIL_bImpactSignalsStatus != 1]
+	forward call\cil_TriggerTensioningProfiles();
+
+	[cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  1) || (cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  2) || (cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  3) || (cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  7) ] OR
+	[(cil_BcklSwStatSignal = 1] OR
+	[(cil_PresfActAdjFrame.Presf_Enbl_ST3 == 0] OR
+	[(cil_IgnStatFrame.ISw_Stat_ST3 == 0) || (cil_IgnStatFrame.ISw_Stat_ST3 == 1) || (cil_IgnStatFrame.ISw_Stat_ST3 == 2) || (cil_IgnStatFrame.ISw_Stat_ST3 == 5) || (cil_IgnStatFrame.ISw_Stat_ST3 == 7)] OR
+	[(CIL_u8Impact3_ST3Signal.Impact_RO_type1_ST3 == 1) || (CIL_u8Impact3_ST3Signal.Impact_RO_type2_ST3 == 1)] OR
+	[(CIL_bImpactSignalsStatus != 0)]
+	forward call \cil_AbortTensioningProfiles();
+EndIf
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

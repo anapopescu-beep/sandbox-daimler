@@ -1,0 +1,727 @@
+/*@!Encoding:1252*/
+/*  
+    AUTOSAR GLOBAL TIME on CAN implementation
+
+    (C) 2017 Vector Informatik GmbH, Department for Networks and Distributed Systems
+    CAPL Include File - Version 0.3
+
+    This include file implements the GLOBAL TIME on CAN
+    protocol for usage in a CANoe simulation. Master as
+    well as slave simulations are supported.
+    
+    Restrictions:
+    - Offset messages are not implemented
+*/
+variables
+{
+  //
+  // Constants
+  //
+
+  const word cARGTCAN1_MaxChannels = 16;
+
+  enum ARGTCAN1_MessageType {
+    eARGTCAN1_SYNC                 = 0x10,
+    eARGTCAN1_FOLLOW_UP            = 0x18,
+    eARGTCAN1_SYNC_PROTECTED       = 0x20,
+    eARGTCAN1_FOLLOW_UP_PROTECTED  = 0x28,
+    eARGTCAN1_OFFSET_S             = 0x34,
+    eARGTCAN1_OFFSET_S_PROTECTED   = 0x44,
+    eARGTCAN1_OFFSET_NS            = 0x3C,
+    eARGTCAN1_OFFSET_NS_PROTECTED  = 0x4C,
+    eARGTCAN1_OFFSET_EXT           = 0x54,
+    eARGTCAN1_OFFSET_EXT_PROTECTED = 0x64
+  };
+  
+  //
+  // Structs
+  //
+
+  struct ARGTCAN1_Channel
+  {
+    enum ARGTMgr_Role              role;
+    word                               timeDomainIndex;
+    enum ARGTMgr_TxCompliance      txCompliance;
+    enum ARGTMgr_RxCompliance      rxCompliance;
+    word                               appChannel;
+    word                               active;
+                                 
+    dword                              canID;
+    byte                               FDF;
+    byte                               BRS;
+    byte                               EDL;
+    
+    byte                               userBytes[3];
+    word                               userBytesLength;
+    
+    byte                               syncDataIDList[16];
+    word                               syncDataIDListLength;
+    byte                               followUpDataIDList[16];
+    word                               followUpDataIDListLength;
+    
+    dword                              syncPeriodTimeMs;
+    dword                              syncConfirmationTimeoutMs;
+    dword                              followUpTxOffsetMs;
+    qword                              followUpTimeoutMs;
+    
+    dword                              sequenceCounterJumpWidth;
+    dword                              timeHardwareCorrectionThresholdMs;
+    
+    qword                              mLastSyncSimTimeNs;    // Time in [ns] when Tx of sync message was scheduled == global time t0r at master
+    qword                              mCurrentSyncSimTimeNs;   // Simulation-Time in [ns] when Rx of sync message was received == t2r at slave
+    qword                              mCurrentMasterTimeOnSync; // global time t1r (from master) at sim time t2r (at slave)
+    qword                              mLastMasterTimeOnSync;
+    
+    word                               mVerbose;
+    byte                               txSyncSent;
+    byte                               txSequenceCntr;
+  };
+
+  //
+  // Global variables
+  //
+  
+  struct ARGTCAN1_Channel gARGTCAN1_Channel[ cARGTCAN1_MaxChannels ];
+  msTimer                 gARGTCAN1_SyncTimer[ cARGTCAN1_MaxChannels ];
+  msTimer                 gARGTCAN1_FollowUpTimer[ cARGTCAN1_MaxChannels ];
+
+  message 0x0 gARGTCAN1_txMsg[ cARGTCAN1_MaxChannels ];
+}
+
+/// <Setup>
+void ARGTCAN1_OnInit()
+{
+  word chIdx;
+
+  for( chIdx = 0; chIdx < cARGTCAN1_MaxChannels; chIdx++ )
+  {
+    gARGTCAN1_Channel[chIdx].role                              = eARGTMgr_UnknownRole;
+    gARGTCAN1_Channel[chIdx].appChannel                        = 0;
+    gARGTCAN1_Channel[chIdx].active                            = 0;
+    gARGTCAN1_Channel[chIdx].timeDomainIndex                   = 0xFFFF;
+    
+    if (isTimerActive( gARGTCAN1_SyncTimer[chIdx] ))
+      cancelTimer( gARGTCAN1_SyncTimer[chIdx] );
+    if (isTimerActive( gARGTCAN1_FollowUpTimer[chIdx] ))
+      cancelTimer( gARGTCAN1_FollowUpTimer[chIdx] );
+  }
+}
+
+/// <Setup>
+void ARGTCAN1_Init( word chIdx
+                     , word timeDomainMgrIndex
+                     , enum ARGTMgr_Role role
+                     , enum ARGTMgr_TxCompliance txCompliance
+                     , enum ARGTMgr_RxCompliance rxCompliance
+                     , dword channel
+                     , dword canID
+                     , byte FDF
+                     , byte BRS
+                     , byte EDL
+                     , dword syncPeriodMs
+                     , dword syncConfirmationTimeoutMs
+                     , dword fupTxOffsetMs
+                     , dword fupTimeoutMs
+                     , dword sequenceCounterJumpWidth
+                     , dword timeHardwareCorrectionThresholdMs
+                     , word verbosityLevel)
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    byte syncDataIDList[16] =     { 225, 102, 230, 107, 235, 112, 240, 117, 245, 122, 250, 127,   4, 132,   9, 137 };
+    byte followUpDataIDList[16] = { 143,  78,  13, 199, 134,  69,   4, 190, 125,  60, 246, 181, 116,  51, 237, 172 };
+    
+    gARGTCAN1_Channel[chIdx].role                              = role;
+    gARGTCAN1_Channel[chIdx].txCompliance                      = txCompliance;
+    gARGTCAN1_Channel[chIdx].rxCompliance                      = rxCompliance;
+    gARGTCAN1_Channel[chIdx].appChannel                        = (channel & 0xFFFF);
+    gARGTCAN1_Channel[chIdx].active                            = 0;
+    gARGTCAN1_Channel[chIdx].timeDomainIndex                   = timeDomainMgrIndex;
+    gARGTCAN1_Channel[chIdx].followUpTxOffsetMs                = fupTxOffsetMs;
+    gARGTCAN1_Channel[chIdx].followUpTimeoutMs                 = fupTimeoutMs;
+    gARGTCAN1_Channel[chIdx].syncPeriodTimeMs                  = syncPeriodMs;
+    gARGTCAN1_Channel[chIdx].syncConfirmationTimeoutMs         = syncConfirmationTimeoutMs;
+    gARGTCAN1_Channel[chIdx].sequenceCounterJumpWidth          = sequenceCounterJumpWidth;
+    gARGTCAN1_Channel[chIdx].timeHardwareCorrectionThresholdMs = timeHardwareCorrectionThresholdMs;
+    gARGTCAN1_Channel[chIdx].canID                             = canID;
+    gARGTCAN1_Channel[chIdx].FDF                               = FDF;
+    gARGTCAN1_Channel[chIdx].BRS                               = BRS;
+    gARGTCAN1_Channel[chIdx].EDL                               = EDL;
+    gARGTCAN1_Channel[chIdx].mVerbose                          = verbosityLevel;
+    //
+    gARGTCAN1_Channel[chIdx].userBytes[0]                      = 0;
+    gARGTCAN1_Channel[chIdx].userBytes[1]                      = 0;
+    gARGTCAN1_Channel[chIdx].userBytes[2]                      = 0;
+    gARGTCAN1_Channel[chIdx].userBytesLength                   = 0;
+    //
+    memcpy(gARGTCAN1_Channel[chIdx].syncDataIDList, syncDataIDList, 16);
+    gARGTCAN1_Channel[chIdx].syncDataIDListLength = 16;
+    memcpy(gARGTCAN1_Channel[chIdx].followUpDataIDList, followUpDataIDList, 16);
+    gARGTCAN1_Channel[chIdx].followUpDataIDListLength = 16;
+    //
+    gARGTCAN1_txMsg[chIdx].dlc = 8;
+    gARGTCAN1_txMsg[chIdx].id  = gARGTCAN1_Channel[chIdx].canID;
+    gARGTCAN1_txMsg[chIdx].FDF = gARGTCAN1_Channel[chIdx].FDF;
+    gARGTCAN1_txMsg[chIdx].BRS = gARGTCAN1_Channel[chIdx].BRS;
+    gARGTCAN1_txMsg[chIdx].EDL = gARGTCAN1_Channel[chIdx].EDL;
+  }
+}
+
+/// <Control>
+void ARGTCAN1_Start( word chIdx )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    if ((gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeMaster) || (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewayMaster))
+    {
+      gARGTCAN1_Channel[chIdx].active = 1;
+      gARGTCAN1_Channel[chIdx].txSyncSent = 0;
+      gARGTCAN1_Channel[chIdx].txSequenceCntr = 0;
+      
+      {
+        setTimer( gARGTCAN1_SyncTimer[chIdx], 0 );
+  
+        if (gARGTCAN1_Channel[chIdx].followUpTxOffsetMs > 0)
+          setTimer( gARGTCAN1_FollowUpTimer[chIdx], gARGTCAN1_Channel[chIdx].followUpTxOffsetMs );
+      }
+    }
+  }
+}
+
+/// <Control>
+void ARGTCAN1_Stop( word chIdx )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    if ((gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeMaster) || (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewayMaster))
+    {
+      cancelTimer( gARGTCAN1_SyncTimer[chIdx] );
+      cancelTimer( gARGTCAN1_FollowUpTimer[chIdx] );
+      gARGTCAN1_Channel[chIdx].active = 0;
+    }
+  }
+}
+
+/// <Setup>
+void ARGTCAN1_SetDataIDList( word chIdx, word listIdx, byte idBytes[], word idBytesLength )
+{
+  word i, len;
+  
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    len = _min(elcount(idBytes), 16);
+    len = _min(len, idBytesLength);
+    if (listIdx == 0)
+    {
+      for (i = 0; i < len; i++)
+        gARGTCAN1_Channel[chIdx].syncDataIDList[i] = idBytes[i];
+      gARGTCAN1_Channel[chIdx].syncDataIDListLength = len;
+    }
+    else if (listIdx == 1)
+    {
+      for (i = 0; i < len; i++)
+        gARGTCAN1_Channel[chIdx].followUpDataIDList[i] = idBytes[i];
+      gARGTCAN1_Channel[chIdx].followUpDataIDListLength = len;
+    }
+  }
+}
+
+/// <Setup>
+word ARGTCAN1_GetDataIDList( word chIdx, word listIdx, byte idBytes[] )
+{
+  word i, len;
+  
+  len = 0;
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    if (listIdx == 0)
+    {
+      len = _min(elcount(idBytes), 16);
+      len = _min(len, gARGTCAN1_Channel[chIdx].syncDataIDListLength);
+      for (i = 0; i < len; i++)
+        idBytes[i] = gARGTCAN1_Channel[chIdx].syncDataIDList[i];
+    }
+    else if (listIdx == 1)
+    {
+      len = _min(elcount(idBytes), 16);
+      len = _min(len, gARGTCAN1_Channel[chIdx].followUpDataIDListLength);
+      for (i = 0; i < len; i++)
+        idBytes[i] = gARGTCAN1_Channel[chIdx].followUpDataIDList[i];
+    }
+  }
+  return len;
+}
+
+/// <Control>
+void ARGTCAN1_SetUserByte( word chIdx, word byteIdx, byte userByte )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    if (byteIdx < elcount(gARGTCAN1_Channel[chIdx].userBytes))
+    {
+      gARGTCAN1_Channel[chIdx].userBytes[byteIdx] = userByte;
+    }
+  }
+}
+
+/// <Control>
+byte ARGTCAN1_GetUserByte( word chIdx, word byteIdx )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    if (byteIdx < elcount(gARGTCAN1_Channel[chIdx].userBytes))
+    {
+      return gARGTCAN1_Channel[chIdx].userBytes[byteIdx];
+    }
+  }
+  return 0;
+}
+
+/// <Control>
+void ARGTCAN1_SetUserBytesLength( word chIdx, word length )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    gARGTCAN1_Channel[chIdx].userBytesLength = length;
+  }
+}
+
+/// <Control>
+word ARGTCAN1_GetUserBytesLength( word chIdx )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    return gARGTCAN1_Channel[chIdx].userBytesLength;
+  }
+  return 0;
+}
+
+/// <Control>
+int ARGTCAN1_IsActive( word chIdx )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    return isTimerActive( gARGTCAN1_SyncTimer[chIdx] );
+  }
+  return 0;
+}
+
+/// <_Internal>
+word ARGTCAN1_FindChannelIndex( word chStartIdx, word appChannel, dword canID )
+{
+  word chIdx;
+  
+  if (chStartIdx > cARGTCAN1_MaxChannels)
+    chStartIdx = 0;
+  
+  for( chIdx = chStartIdx; chIdx < cARGTCAN1_MaxChannels; chIdx++ )
+  {
+    if (   (gARGTCAN1_Channel[chIdx].appChannel == appChannel)
+        && (((canID & 0x70000000) != 0) || (gARGTCAN1_Channel[chIdx].canID == canID))
+       )
+    {
+      return chIdx;
+    }
+  }
+  
+  return 0xFFFF;
+}
+
+/// <_Internal>
+void ARGTCAN1_OutputSync( word chIdx )
+{
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    byte useDataID, dataID, td;
+    
+    useDataID = 0;
+    dataID = 0;
+    if (gARGTCAN1_Channel[chIdx].txCompliance == eARGTMgr_CRC_PROTECTED)
+    {
+      if ((gARGTCAN1_Channel[chIdx].syncDataIDListLength >= 16) && (gARGTCAN1_Channel[chIdx].txSequenceCntr < 16))
+      {
+        useDataID = 1;
+        dataID = gARGTCAN1_Channel[chIdx].syncDataIDList[gARGTCAN1_Channel[chIdx].txSequenceCntr];
+      }
+    }
+
+    //gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs = timeNowInt64();
+    gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs /* st0r */ = ARGTMgr_GetCurrentTimeNs( gARGTCAN1_Channel[chIdx].timeDomainIndex );
+    
+    td = ARGTMgr_GetDomainId( gARGTCAN1_Channel[chIdx].timeDomainIndex );
+    gARGTCAN1_txMsg[chIdx].byte(0) = (gARGTCAN1_Channel[chIdx].txCompliance == eARGTMgr_CRC_PROTECTED) ? eARGTCAN1_SYNC_PROTECTED : eARGTCAN1_SYNC;
+    gARGTCAN1_txMsg[chIdx].byte(2) = (td << 4) + gARGTCAN1_Channel[chIdx].txSequenceCntr;
+    gARGTCAN1_txMsg[chIdx].byte(3) = gARGTCAN1_Channel[chIdx].userBytes[0]; // User Byte 0
+    gARGTCAN1_txMsg[chIdx].dword(4) = swapDWord((dword)(gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs / 1e9));
+    gARGTCAN1_txMsg[chIdx].id = gARGTCAN1_Channel[chIdx].canID;
+    gARGTCAN1_txMsg[chIdx].dlc = 8;
+    gARGTCAN1_txMsg[chIdx].FDF = gARGTCAN1_Channel[chIdx].FDF;
+    gARGTCAN1_txMsg[chIdx].BRS = gARGTCAN1_Channel[chIdx].BRS;
+    //gARGTCAN1_txMsg[chIdx].EDL = gARGTCAN1_Channel[chIdx].EDL;
+    gARGTCAN1_txMsg[chIdx].MsgChannel = gARGTCAN1_Channel[chIdx].appChannel;
+    gARGTCAN1_txMsg[chIdx].byte(1) = (gARGTCAN1_Channel[chIdx].txCompliance == eARGTMgr_CRC_PROTECTED) ? ARGTCAN1_CALC_CRC( useDataID, dataID, gARGTCAN1_txMsg[chIdx] ) : gARGTCAN1_Channel[chIdx].userBytes[1];
+    
+    output( gARGTCAN1_txMsg[chIdx] );
+    
+    gARGTCAN1_Channel[chIdx].txSyncSent = 1;
+    
+    if (gARGTCAN1_Channel[chIdx].mVerbose & 1)
+    {
+      writeLineEx(-3, 0, "GT MASTER \"%NODE_NAME%\": Timestamp %fs will be sent", gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs/1e9);
+    }
+  }
+}
+
+/// <_Internal>
+void ARGTCAN1_OutputFollowUp( word chIdx )
+{
+  qword st0r, t1r;
+  int64 diff;
+  double diffDbl;
+  byte diffSeconds;
+  
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    byte useDataID, dataID, td;
+    
+    useDataID = 0;
+    dataID = 0;
+    if (gARGTCAN1_Channel[chIdx].txCompliance == eARGTMgr_CRC_PROTECTED)
+    {
+      if ((gARGTCAN1_Channel[chIdx].followUpDataIDListLength >= 16) && (gARGTCAN1_Channel[chIdx].txSequenceCntr < 16))
+      {
+        useDataID = 1;
+        dataID = gARGTCAN1_Channel[chIdx].followUpDataIDList[gARGTCAN1_Channel[chIdx].txSequenceCntr];
+      }
+    }
+
+    st0r = (gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs / 1e9);
+    st0r = st0r * 1e9;
+    t1r = gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs;
+    diff =  t1r - st0r; //subtract seconds portion of t0r
+    diffSeconds = diff / 1e9;
+    diffDbl = diff;
+    diffDbl -= ((double)(diffSeconds) * 1e9); //subtract second portion of the diff time
+    
+    td = ARGTMgr_GetDomainId( gARGTCAN1_Channel[chIdx].timeDomainIndex );
+    gARGTCAN1_txMsg[chIdx].byte(0) = (gARGTCAN1_Channel[chIdx].txCompliance == eARGTMgr_CRC_PROTECTED) ? eARGTCAN1_FOLLOW_UP_PROTECTED : eARGTCAN1_FOLLOW_UP;
+    gARGTCAN1_txMsg[chIdx].byte(2) = (td << 4) + gARGTCAN1_Channel[chIdx].txSequenceCntr;
+    gARGTCAN1_txMsg[chIdx].byte(3) = (((gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewayMaster) || (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewaySlave)) ? 4 : 0) + (diffSeconds & 3);
+    gARGTCAN1_txMsg[chIdx].dword(4) = swapDWord(diff);
+    gARGTCAN1_txMsg[chIdx].id = gARGTCAN1_Channel[chIdx].canID;
+    gARGTCAN1_txMsg[chIdx].dlc = 8;
+    gARGTCAN1_txMsg[chIdx].FDF = gARGTCAN1_Channel[chIdx].FDF;
+    gARGTCAN1_txMsg[chIdx].BRS = gARGTCAN1_Channel[chIdx].BRS;
+    //gARGTCAN1_txMsg[chIdx].EDL = gARGTCAN1_Channel[chIdx].EDL;
+    gARGTCAN1_txMsg[chIdx].MsgChannel = gARGTCAN1_Channel[chIdx].appChannel;
+    gARGTCAN1_txMsg[chIdx].byte(1) = (gARGTCAN1_Channel[chIdx].txCompliance == eARGTMgr_CRC_PROTECTED) ? ARGTCAN1_CALC_CRC( useDataID, dataID, gARGTCAN1_txMsg[chIdx] ) : gARGTCAN1_Channel[chIdx].userBytes[2];
+    
+    output( gARGTCAN1_txMsg[chIdx] );
+    
+    gARGTCAN1_Channel[chIdx].txSyncSent = 0;
+  }
+}
+
+on timer gARGTCAN1_SyncTimer( dword index )
+{
+  ARGTCAN1_OutputSync( index );
+
+  setTimer( gARGTCAN1_SyncTimer[index], gARGTCAN1_Channel[index].syncPeriodTimeMs );
+  
+  if (gARGTCAN1_Channel[index].followUpTxOffsetMs > 0)
+    setTimer( gARGTCAN1_FollowUpTimer[index], gARGTCAN1_Channel[index].followUpTxOffsetMs );
+}
+
+on timer gARGTCAN1_FollowUpTimer( dword index )
+{
+  ARGTCAN1_OutputFollowUp( index );
+}
+
+/// <MessageHandler>
+void OnARGTCAN1_Message(message * aMsg)
+{
+  byte gtDomain;
+  byte gtSequenceCntr;
+  word chIdx;
+  byte diffSeconds;
+  int64 diff, t4r;
+  qword st0r, t0r, t1r, t2r, t3r;
+  qword deltaSimTime, deltaSyncTime;
+  
+  for (chIdx = ARGTCAN1_FindChannelIndex(-1, aMsg.MsgChannel, aMsg.ID); (chIdx < cARGTCAN1_MaxChannels); chIdx = ARGTCAN1_FindChannelIndex(++chIdx, aMsg.MsgChannel, aMsg.ID))
+  {
+    // Check time domain ID
+    gtDomain = aMsg.byte(2) >> 4;
+    if (gtDomain != ARGTMgr_GetDomainId( gARGTCAN1_Channel[chIdx].timeDomainIndex ))
+    {
+      continue;
+    }
+  
+    // Check sequence counter
+    gtSequenceCntr = aMsg.byte(2) & 0xF;
+    if (gtSequenceCntr != gARGTCAN1_Channel[chIdx].txSequenceCntr)
+    {
+      //if (gARGTCAN1_Channel[chIdx].mVerbose)
+      {
+        writeLineEx(-3, 3, "GT NODE \"%NODE_NAME%\": Message with invalid sequence counter. Received %d, expected %d. Message is dropped.", gtSequenceCntr, gARGTCAN1_Channel[chIdx].txSequenceCntr);
+      }
+      continue;
+    }
+  
+    // Copy buffer to frame object:
+    gARGTCAN1_txMsg[chIdx].qword(0) = aMsg.qword(0);
+    gARGTCAN1_txMsg[chIdx].qword(1) = aMsg.qword(1);
+  
+    // Accept frame only when CRC is ok or should be ignored
+    if ((aMsg.byte(0) == eARGTCAN1_SYNC_PROTECTED) || (aMsg.byte(0) == eARGTCAN1_FOLLOW_UP_PROTECTED) || (aMsg.byte(0) == eARGTCAN1_OFFSET_S_PROTECTED) || (aMsg.byte(0) == eARGTCAN1_OFFSET_NS_PROTECTED) || (aMsg.byte(0) == eARGTCAN1_OFFSET_EXT_PROTECTED))
+    {
+      if ((gARGTCAN1_Channel[chIdx].rxCompliance == eARGTMgr_CRC_VALIDATED) || (gARGTCAN1_Channel[chIdx].rxCompliance == eARGTMgr_CRC_OPTIONAL))
+      {
+        byte crc;
+        byte useDataID, dataID;
+      
+        useDataID = 0;
+        dataID = 0;
+        if (aMsg.byte(0) == eARGTCAN1_SYNC_PROTECTED)
+        {
+          if ((gARGTCAN1_Channel[chIdx].syncDataIDListLength >= 16) && (gtSequenceCntr < 16))
+          {
+            useDataID = 1;
+            dataID = gARGTCAN1_Channel[chIdx].syncDataIDList[gtSequenceCntr];
+          }
+        }
+        else if (aMsg.byte(0) == eARGTCAN1_FOLLOW_UP_PROTECTED)
+        {
+          if ((gARGTCAN1_Channel[chIdx].followUpDataIDListLength >= 16) && (gtSequenceCntr < 16))
+          {
+            useDataID = 1;
+            dataID = gARGTCAN1_Channel[chIdx].followUpDataIDList[gtSequenceCntr];
+          }
+        }
+        
+        crc = ARGTCAN1_CALC_CRC( useDataID, dataID, aMsg );
+        if (aMsg.byte(1) != crc)
+        {
+          //if (gARGTCAN1_Channel[chIdx].mVerbose)
+          {
+            writeLineEx(-3, 3, "GT NODE \"%NODE_NAME%\": Message with invalid CRC. Received 0x%2X, expected 0x%2X. Message is dropped.", aMsg.byte(1), crc);
+          }
+          return;
+        }
+      }
+      else if (gARGTCAN1_Channel[chIdx].rxCompliance == eARGTMgr_CRC_NOT_VALIDATED)
+      {
+        // Only non-protected PDUs should be accepted!
+        //if (gARGTCAN1_Channel[chIdx].mVerbose)
+        {
+          writeLineEx(-3, 3, "GT NODE \"%NODE_NAME%\": CRC-protected message received, but only non-protected messages are allowed!");
+        }
+        return;
+      }
+    }
+    else if ((aMsg.byte(0) == eARGTCAN1_SYNC) || (aMsg.byte(0) == eARGTCAN1_FOLLOW_UP) || (aMsg.byte(0) == eARGTCAN1_OFFSET_S) || (aMsg.byte(0) == eARGTCAN1_OFFSET_NS) || (aMsg.byte(0) == eARGTCAN1_OFFSET_EXT))
+    {
+      if (gARGTCAN1_Channel[chIdx].rxCompliance == eARGTMgr_CRC_VALIDATED)
+      {
+        // Only CRC protected PDUs should be accepted!
+        //if (gARGTCAN1_Channel[chIdx].mVerbose)
+        {
+          writeLineEx(-3, 3, "GT NODE \"%NODE_NAME%\": Non-protected message received, but only CRC-protected messages are allowed!");
+        }
+        return;
+      }
+    }  
+    
+    if ((gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeMaster) || (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewayMaster))
+    {
+      if (aMsg.dir == Tx)
+      {
+        if (gARGTCAN1_Channel[chIdx].txSyncSent)
+        {
+          gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs /* t1r */ = aMsg.time_ns;
+          if (gARGTCAN1_Channel[chIdx].followUpTxOffsetMs <= 0)
+            ARGTCAN1_OutputFollowUp(chIdx);
+        }
+        else
+        {
+          switch (gARGTCAN1_txMsg[chIdx].byte(0))
+          {
+            case eARGTCAN1_FOLLOW_UP:
+              // no break; continue... 
+            case eARGTCAN1_FOLLOW_UP_PROTECTED:
+              gARGTCAN1_Channel[chIdx].txSequenceCntr = (gARGTCAN1_Channel[chIdx].txSequenceCntr + 1) & 0x0F;
+
+              if (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeMaster)
+              {
+                ARGTMgr_OnSyncPoint( gARGTCAN1_Channel[chIdx].timeDomainIndex, TX, gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs );
+              }
+              break;
+          }    
+        }
+      }
+    }
+    else if ((gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeSlave) || (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewaySlave))
+    {
+      if (aMsg.dir == Rx)
+      {
+        switch (gARGTCAN1_txMsg[chIdx].byte(0))
+        {
+          case eARGTCAN1_SYNC:
+            gARGTCAN1_Channel[chIdx].userBytes[1] = gARGTCAN1_txMsg[chIdx].byte(1);
+            // no break; continue... 
+          case eARGTCAN1_SYNC_PROTECTED:
+            gARGTCAN1_Channel[chIdx].userBytes[0] = gARGTCAN1_txMsg[chIdx].byte(3);
+            gARGTCAN1_Channel[chIdx].userBytesLength = (gARGTCAN1_txMsg[chIdx].byte(0) == eARGTCAN1_SYNC_PROTECTED) ? 1 : 3;
+            gARGTCAN1_Channel[chIdx].mLastMasterTimeOnSync = gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync;
+            gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs = gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs;
+            gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync = swapDWord(gARGTCAN1_txMsg[chIdx].dword(4)) * 1e9; //s(t0r)
+            gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs = aMsg.time_ns; //t2r
+            gARGTCAN1_Channel[chIdx].txSyncSent = 1;
+            break;
+          case eARGTCAN1_FOLLOW_UP:
+            gARGTCAN1_Channel[chIdx].userBytes[2] = gARGTCAN1_txMsg[chIdx].byte(1);
+            // no break; continue... 
+          case eARGTCAN1_FOLLOW_UP_PROTECTED:
+            gARGTCAN1_Channel[chIdx].userBytesLength = (gARGTCAN1_txMsg[chIdx].byte(0) == eARGTCAN1_FOLLOW_UP_PROTECTED) ? 1 : 3;
+            gARGTCAN1_Channel[chIdx].txSequenceCntr = (gARGTCAN1_Channel[chIdx].txSequenceCntr + 1) & 0x0F;
+            st0r = gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync;
+            t2r = gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs;
+            diffSeconds = gARGTCAN1_txMsg[chIdx].byte(3) & 3;
+            diff = swapDWord(gARGTCAN1_txMsg[chIdx].dword(4));
+            t4r = diff + (diffSeconds * 1e9); // t4r = diff[ns] + diffseconds[s]
+            t1r = st0r + t4r; // t1r = s(t0r) + t4r  at local t3r
+            gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync = t1r; 
+            //gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs = t2r; is already set to this value
+            t3r = aMsg.time_ns; // local sim time t3r
+            t0r = t1r + (int64)(t3r - t2r);
+            gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync = t0r;
+            gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs = t3r;
+            
+            gARGTCAN1_Channel[chIdx].txSyncSent = 0;
+            
+            if (gARGTCAN1_Channel[chIdx].mVerbose & 2)
+            {
+//              writeLineEx(-3, 0, "GT SLAVE    \"%NODE_NAME%\": t2r    == %fs", t2r/1e9 );
+//              writeLineEx(-3, 0, "GT SLAVE    \"%NODE_NAME%\": s(t0r) == %fs", st0r/1e9 );
+//              writeLineEx(-3, 0, "GT SLAVE    \"%NODE_NAME%\": t3r    == %fs", t3r/1e9 );
+//              writeLineEx(-3, 0, "GT SLAVE    \"%NODE_NAME%\": t4r    == %fs", t4r/1e9 );
+//              writeLineEx(-3, 0, "GT SLAVE    \"%NODE_NAME%\": t0r    == %fs", t0r/1e9 );
+
+              deltaSimTime  = gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs - gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs;
+              deltaSyncTime = gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync - gARGTCAN1_Channel[chIdx].mLastMasterTimeOnSync;
+              writeLineEx(-3, 0, "GT SLAVE    \"%NODE_NAME%\": SYNC POINT at %fs ==> delta sim time %fs, delta global time %fs (current global time = %fs)", gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs/1e9, deltaSimTime/1e9, deltaSyncTime/1e9, gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync/1e9);
+            }
+
+            // update synchronized time of time manager
+            ARGTMgr_OnSyncPoint( gARGTCAN1_Channel[chIdx].timeDomainIndex, RX, t0r );
+	    
+            // Trigger sync message on TimeGatewayMaster ports
+            if (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewaySlave)
+            {
+              OnARGTMgr_TriggerSyncMessageOnGatewayMasterPorts( gARGTCAN1_Channel[chIdx].timeDomainIndex, ARGTMgr_GetDomainId(gARGTCAN1_Channel[chIdx].timeDomainIndex), t0r, gARGTCAN1_Channel[chIdx].userBytes, gARGTCAN1_Channel[chIdx].userBytesLength );
+            }
+            break;
+        }
+      }
+    }
+  }
+}
+
+/// <GetGlobalTime>
+int64 ARGTCAN1_Transform_SlaveTime_to_MasterTime_NS(word chIdx, int64 localSlaveTime)
+{
+  int64 gt;
+  
+  if (chIdx < cARGTCAN1_MaxChannels)
+  {
+    gt = (gARGTCAN1_Channel[chIdx].txSyncSent)
+      ? (localSlaveTime - gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs + gARGTCAN1_Channel[chIdx].mLastMasterTimeOnSync) 
+      : (localSlaveTime - gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs + gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync);
+
+    if (gARGTCAN1_Channel[chIdx].mVerbose & 4)
+    {
+      if (gARGTCAN1_Channel[chIdx].txSyncSent)
+        writeLineEx(-3, 0, "ARGTMgr \"%NODE_NAME%\": sim time %fs - last sim time %fs at sync point + last master time %fs ==> global time %fs", localSlaveTime/1e9, gARGTCAN1_Channel[chIdx].mLastSyncSimTimeNs/1e9, gARGTCAN1_Channel[chIdx].mLastMasterTimeOnSync/1e9, gt/1e9);
+      else
+        writeLineEx(-3, 0, "ARGTMgr \"%NODE_NAME%\": sim time %fs - curr sim time %fs at sync point + curr master time %fs ==> global time %fs", localSlaveTime/1e9, gARGTCAN1_Channel[chIdx].mCurrentSyncSimTimeNs/1e9, gARGTCAN1_Channel[chIdx].mCurrentMasterTimeOnSync/1e9, gt/1e9);
+    }
+  }
+  else
+  {
+    gt = 0;
+  }
+  return gt;
+}
+
+/// <_Internal>
+void ARGTMgrCAN1_TriggerSyncMessageOnGatewayMasterPorts( word timeDomainIndex, word domainID, qword currentGlobalTimeNs, byte userBytes[], word userBytesLength )
+{
+  word chIdx;
+  
+  for( chIdx = 0; chIdx < cARGTCAN1_MaxChannels; chIdx++ )
+  {
+    if (   //(gARGTCAN1_Channel[chIdx].timeDomainIndex == timeDomainIndex)
+           (ARGTMgr_GetDomainId(gARGTCAN1_Channel[chIdx].timeDomainIndex) == domainID)
+        && (gARGTCAN1_Channel[chIdx].role == eARGTMgr_TimeGatewayMaster) )
+    {
+	  ARGTMgr_OnSyncPoint( gARGTCAN1_Channel[chIdx].timeDomainIndex, RX, currentGlobalTimeNs );
+	  if ((userBytesLength > 0) && (elcount(userBytes) > 0)) ARGTCAN1_SetUserByte( chIdx, 0, userBytes[0] );
+	  if ((userBytesLength > 1) && (elcount(userBytes) > 1)) ARGTCAN1_SetUserByte( chIdx, 1, userBytes[1] );
+	  if ((userBytesLength > 2) && (elcount(userBytes) > 2)) ARGTCAN1_SetUserByte( chIdx, 2, userBytes[2] );
+	  ARGTCAN1_SetUserBytesLength( chIdx, userBytesLength );
+	  
+      if (isTimerActive(gARGTCAN1_SyncTimer[chIdx]))
+      {
+        ARGTCAN1_OutputSync( chIdx );
+
+        cancelTimer( gARGTCAN1_SyncTimer[chIdx] );
+        setTimer( gARGTCAN1_SyncTimer[chIdx], gARGTCAN1_Channel[chIdx].syncPeriodTimeMs * 2 );
+      }
+    }
+  }
+}
+
+/// <_Internal>
+byte ARGTCAN1_CALC_CRC( byte useDataID, byte dataID, message * aMsg )
+{
+  int idx_u16;
+  byte tmp_u8;
+  byte crc_u8;
+  
+  crc_u8 = 0xFF; //CRC start value
+  
+  //byte 2 to byte 7 are CRC protected with a CRC8H2F algorithm
+  for (idx_u16 = 2; idx_u16 < 8; idx_u16++)
+  {
+    tmp_u8 = aMsg.byte(idx_u16);
+    crc_u8 = ARGTCAN1_2F_CRC8_ONE_BYTE(crc_u8 ^ tmp_u8);
+  }
+  
+  if (useDataID > 0)
+  {
+    crc_u8 = ARGTCAN1_2F_CRC8_ONE_BYTE(crc_u8 ^ dataID);
+  }
+  
+  return ((byte) ~crc_u8);
+}
+
+/// <_Internal>
+byte ARGTCAN1_2F_CRC8_ONE_BYTE(byte data_u8)
+{
+  byte bit_u8;
+  byte msb_u8;
+  byte tmp_u8;
+
+  tmp_u8 = data_u8;
+  for (bit_u8=0; bit_u8 < 8; bit_u8++)
+  {   //get MSB
+      msb_u8   = (tmp_u8 >> 7) & 0x01;
+      //shift one bit to the left
+      tmp_u8 <<= 1;
+      //XOR with CRC polynom if MSB != 0
+      tmp_u8  ^= 0x2F * msb_u8;
+  }
+  return (tmp_u8);
+}
+
+// EOF

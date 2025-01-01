@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>783</w>
+      <h>605</h>
+    </coordinates>
+    <panel_attributes>title:Dcm_Svc19Handler
+Start
+lStdResult = Dcm_DiagVerifyServiceWithSubFunction()
+DemClientId = Dcm_DiagGetDemClientId(pMsgContext)
+
+	[lStdResult == DCM_E_OK]
+	SubSvcRef = (Dcm_DiagSubServiceRefMemType)lSubSvcRef
+	Dcm_RepeaterNextStep
+	Dcm_ExtSvc19UtiPatchDtcStatusInit
+	lStdResult = DCM_E_LOOP
+
+	[lStdResult == DCM_E_NOT_OK]
+	ErrorCode is already set
+	
+return lStdResult
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

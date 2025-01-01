@@ -1,0 +1,56 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0555, ARCH_SW_DIA_0556, ARCH_SW_DIA_0557, ARCH_SW_DIA_0558, ARCH_SW_DIA_0559, ARCH_SW_DIA_0560, ARCH_SW_DIA_0561, ARCH_SW_DIA_0562, ARCH_SW_DIA_0563
+ARCH_SW_DIA_0555: Service 0x22 (Read Data By Identifier) will be implemented for DID 0220 (HW Input).
+ARCH_SW_DIA_0556: The Read HW Input service shall be available in the following sessions: ?Default Session (0x01) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E).
+ARCH_SW_DIA_0557: The Read HW Input service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool.
+ARCH_SW_DIA_0558: DataIdentifier of the Read HW Input shall be: 0x0220.
+ARCH_SW_DIA_0559: Response data length shall be 5 bytes long.
+ARCH_SW_DIA_0560: Bytes #2-#3:  DataIdentifier of the Read HW Input shall be: 0x0220
+ARCH_SW_DIA_0561: Byte #4: ?bits 0-7: Voltage KL30t; Any value from 0x00 -> 0xFF; Offset is 0 (i.e. 0x00 = 0V); Resolution is 0.1 (e.g. 0x10 = 1.6 V); Range is 0V -> 25.4V.
+ARCH_SW_DIA_0562: Read HW Input service shall return the Voltage measured.
+ARCH_SW_DIA_0563: Byte #5: ?bits 0-7: Voltage Motor; Any value from 0x00 -> 0xFF; Offset is 0 (i.e. 0x00 = 0V); Resolution is 0.1 (e.g. 0x10 = 1.6 V); Range is 0V -> 25.4V
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function DIA_runDid0220_HW_input_Read_Voltage_Motor_ReadData().
+
+	Step 3: Enter development session.
+
+Action: ARCH_SW_DIA_0555, ARCH_SW_DIA_0556, ARCH_SW_DIA_0557
+
+	Step 4: Send diag request for 22 0220. 
+		Expected result:  Request sent
+
+Action: ARCH_SW_DIA_0555, ARCH_SW_DIA_0558
+
+	Step 5: Check if CPU stopped in function DIA_runDid0220_HW_input_Read_Voltage_Motor_ReadData(). 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function DIA_runDid0220_HW_input_Read_Voltage_Motor_ReadData() at line '(void)Rte_Call_pclKL30_V_Get(&batteryVoltage);'.
+
+Action: ARCH_SW_DIA_0561, ARCH_SW_DIA_0562, ARCH_SW_DIA_0563
+
+	Step 7: Check if CPU stopped in function DIA_runDid0220_HW_input_Read_Voltage_Motor_ReadData() at line '(void)Rte_Call_pclMotor_Vp_Get(&motorVoltage);'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function DIA_runDid0220_HW_input_Read_Voltage_Motor_ReadData() at line 'Data[0] = motorVoltage / DIA_KU16_VOLTAGE_CONVERSION;'.
+
+Action: ARCH_SW_DIA_0555, ARCH_SW_DIA_0558, ARCH_SW_DIA_0559, ARCH_SW_DIA_0560
+
+	Step 9: Check if CPU stopped in function DIA_runDid0220_HW_input_Read_Voltage_Motor_ReadData(). 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 10: Return ECU to default values

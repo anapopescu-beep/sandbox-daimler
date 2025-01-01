@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 autosar_4-2-2.xsd">
+<AR-PACKAGES>
+    <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="698317a3-009c-478d-85c5-edaef0440e62">
+      <SHORT-NAME>AUTOLIV</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="c8cf0e3d-5b46-456c-8da2-dad16dcef6e7">
+          <SHORT-NAME>SoftwareComponents</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="650dd25c-6456-423f-b9d1-108752b24cde">
+              <SHORT-NAME>BMM</SHORT-NAME>
+              <ELEMENTS>
+                <ECU-ABSTRACTION-SW-COMPONENT-TYPE T="2017-01-04T08:25:38+01:00" UUID="ebc7f35f-c7a4-4317-a0e1-b12632e0e16e">
+                  <SHORT-NAME>BMM_AC_BeltMovementMonitoring</SHORT-NAME>
+                  <CATEGORY>IO_HW_ABS</CATEGORY>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR T="2017-11-23T11:46:29+02:00" UUID="e4b67d01-67fa-4165-87ce-74bd714861b0">
+                      <SHORT-NAME>BMM_IB_BobbinRotatingSensor</SHORT-NAME>
+                      <CONSTANT-VALUE-MAPPING-REFS>
+                        <CONSTANT-VALUE-MAPPING-REF DEST="CONSTANT-SPECIFICATION-MAPPING-SET">/AUTOLIV/GlobalDictionary/Constants/ConstantsMappingSet_PP4G</CONSTANT-VALUE-MAPPING-REF>
+                      </CONSTANT-VALUE-MAPPING-REFS>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/AUTOLIV/GlobalDictionary/DataTypeMappingSet/DataTypeMappingSet_PP4G</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EVENTS>
+                        <OPERATION-INVOKED-EVENT T="2016-07-13T14:37:17+02:00" UUID="b7ef46f3-a5d5-47df-bfad-b5e2a7a7046f">
+                          <SHORT-NAME>BMM_evDisableHBSMonitoring</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runDisableHBSMonitoring</START-ON-EVENT-REF>
+                          <OPERATION-IREF T="2016-07-13T14:37:17+02:00">
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseHBSControl</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsHbsControl/DisableHBSMonitoring</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2016-07-13T14:36:38+02:00" UUID="4033cd72-d8a0-4b7f-a114-4b2ef6928e4b">
+                          <SHORT-NAME>BMM_evEnableHBSMonitoring</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runEnableHBSMonitoring</START-ON-EVENT-REF>
+                          <OPERATION-IREF T="2016-07-13T14:36:38+02:00">
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseHBSControl</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsHbsControl/EnableHBSMonitoring</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="267bb2cb-b4b4-4f35-913c-ac7f0851757b">
+                          <SHORT-NAME>BMM_evGetPositionFromMinPos_deg</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPositionFromMinPos_deg</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_D</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromMinPos_deg</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="fbfcfb25-abf2-4bfd-ab6d-c88604c00c76">
+                          <SHORT-NAME>BMM_evGetPositionFromMinPos_mm</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPositionFromMinPos_mm</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_D</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromMinPos_mm</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="f8d00873-df7c-47ab-bea1-ab1655d2a66a">
+                          <SHORT-NAME>BMM_evGetPositionFromT0_deg</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPositionFromT0_deg</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_D</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromT0_deg</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="43f44080-a432-4e9a-8777-6da54ee1499a">
+                          <SHORT-NAME>BMM_evGetPositionFromT0_mm</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPositionFromT0_mm</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_D</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromT0_mm</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="006a4e7c-08ad-406d-bd79-333eeb0a5c88">
+                          <SHORT-NAME>BMM_evGetPositionRange_deg</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPositionRange_deg</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_D</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetRange_deg</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="ef6cd551-5913-43e1-b31c-af0ff1b2f0d0">
+                          <SHORT-NAME>BMM_evGetPositionRange_mm</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPositionRange_mm</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_D</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetRange_mm</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="8b909e49-2d1c-4632-934f-396bf258a802">
+                          <SHORT-NAME>BMM_evGetPyroActivationStatus</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetPyroActivationStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/psePyroDevice</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsPyroDevice/GetPyroActivationStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="67600a60-872a-4e31-8bca-1cef128ebbc2">
+                          <SHORT-NAME>BMM_evGetSpeed_deg_s</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetSpeed_deg_s</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_S</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltSpeed/GetSpeed_deg_s</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="9c558a64-91dc-41ae-bee5-99856d5ac692">
+                          <SHORT-NAME>BMM_evGetSpeed_mm_s</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runGetSpeed_mm_s</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseBelt_S</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltSpeed/GetSpeed_mm_s</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <TIMING-EVENT T="2017-11-23T11:46:29+02:00" UUID="5b1ce410-b463-4aaa-92c3-951e6d181268">
+                          <SHORT-NAME>BMM_evMainFunction</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_runMainFunction</START-ON-EVENT-REF>
+                          <PERIOD>0.002</PERIOD>
+                        </TIMING-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2015-11-05T16:05:57+01:00" UUID="0dc2558e-041a-407c-a368-966c9293d52f">
+                          <SHORT-NAME>oie_pseCheckHallEffectSensor_AutotestCallback</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor/BMM_Autotest_CheckHallEffectSensor</START-ON-EVENT-REF>
+                          <OPERATION-IREF T="2015-11-05T16:05:57+01:00">
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pseCheckHallEffectSensor</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsAutotestCallback/AutotestCallback</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                      </EVENTS>
+                      <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY T="2017-04-26T09:43:36+02:00" UUID="DCE:88f1a7de-d93a-4d12-aa28-5a2a74d36ed4">
+                          <SHORT-NAME>BMM_Autotest_CheckHallEffectSensor</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT UUID="87350f32-3b0d-4e86-85dd-4ec375f7e0fd">
+                              <SHORT-NAME>scp_GetTestResult</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pclAutotestServices</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsAutotestServices/GetTestResult</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT UUID="6f33b628-64b3-40db-becb-a1b678be1eb6">
+                              <SHORT-NAME>scp_Get_100ms</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pclHBS_A_V_raw</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsSampledAnalogSignal/Get_100ms</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT UUID="fafaf188-e2aa-44b7-9146-50952950a177">
+                              <SHORT-NAME>scp_Get_100ms1</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pclHBS_B_V_raw</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsSampledAnalogSignal/Get_100ms</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-26T09:43:36+02:00" UUID="eb41ac7c-fe12-4d3e-9ff4-23ec557a94c3">
+                              <SHORT-NAME>scp_GetEventStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/pclEvtInfoBatPwrUnderVoltage</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>BMM_Autotest_CheckHallEffectSensor</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2016-08-02T17:55:44+02:00" UUID="DCE:8fdb1c96-0fa5-4c06-bc17-6cc2b6fdf853">
+                          <SHORT-NAME>BMM_runDisableHBSMonitoring</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runDisableHBSMonitoring</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2016-07-13T14:36:46+02:00" UUID="DCE:c4e32370-bf95-4c80-b6d2-f94e047afb5b">
+                          <SHORT-NAME>BMM_runEnableHBSMonitoring</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runEnableHBSMonitoring</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="d6e19b81-a3ab-44a0-96ea-b9c16c1c3d6d">
+                          <SHORT-NAME>BMM_runGetPositionFromMinPos_deg</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPositionFromMinPos_deg</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="c771cef2-1eb6-416f-b977-c25eb56220a8">
+                          <SHORT-NAME>BMM_runGetPositionFromMinPos_mm</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPositionFromMinPos_mm</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="c5566dd3-3506-49d0-9384-31bb292c99ab">
+                          <SHORT-NAME>BMM_runGetPositionFromT0_deg</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPositionFromT0_deg</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="b304d851-685a-4b37-8ed4-665452da6c75">
+                          <SHORT-NAME>BMM_runGetPositionFromT0_mm</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPositionFromT0_mm</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="b30e397b-03b1-434e-b6f9-27d2fa7df7a0">
+                          <SHORT-NAME>BMM_runGetPositionRange_deg</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPositionRange_deg</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="da669e66-d83c-4d5b-93ff-dafcbd4c6f58">
+                          <SHORT-NAME>BMM_runGetPositionRange_mm</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPositionRange_mm</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="1fe41458-73b0-46a1-b17a-431bce8ebaf5">
+                          <SHORT-NAME>BMM_runGetPyroActivationStatus</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetPyroActivationStatus</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="1e095778-95c9-42fe-ac32-61cbf2cb3734">
+                          <SHORT-NAME>BMM_runGetSpeed_deg_s</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetSpeed_deg_s</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="4956d5bd-25d3-4817-96ea-6021f9dc9f08">
+                          <SHORT-NAME>BMM_runGetSpeed_mm_s</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runGetSpeed_mm_s</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="35e4f2fb-e800-40d9-bb06-7ac7371c42e6">
+                          <SHORT-NAME>BMM_runInit</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runInit</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-11-23T11:46:29+02:00" UUID="DCE:cc972bbc-6a76-4085-81ab-2f612805157d">
+                          <SHORT-NAME>BMM_runMainFunction</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BMM_runMainFunction</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </ECU-ABSTRACTION-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION T="2017-01-04T08:25:38+01:00" UUID="3996ff29-13bb-44f7-9806-06f2343fac00">
+                  <SHORT-NAME>BMM_impBobbinRotatingSensor</SHORT-NAME>
+                  <CODE-DESCRIPTORS>
+                    <CODE T="2017-01-04T08:25:38+01:00" UUID="1a012743-9cec-4761-b2ec-92f38982ecd1">
+                      <SHORT-NAME>BMM_Impl_Code</SHORT-NAME>
+                      <ARTIFACT-DESCRIPTORS>
+                        <AUTOSAR-ENGINEERING-OBJECT T="2015-10-12T16:34:45+02:00">
+                          <SHORT-LABEL>BMM_Impl_Code_CodeDesc</SHORT-LABEL>
+                          <CATEGORY>SWSRC</CATEGORY>
+                        </AUTOSAR-ENGINEERING-OBJECT>
+                      </ARTIFACT-DESCRIPTORS>
+                    </CODE>
+                  </CODE-DESCRIPTORS>
+                  <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+                  <RESOURCE-CONSUMPTION T="2016-06-03T08:35:29+02:00" UUID="DCE:863af7e2-7ef6-4539-b7a4-c085ca1d5050">
+                    <SHORT-NAME>BMM_Impl_ResCons</SHORT-NAME>
+                    <MEMORY-SECTIONS>
+                      <MEMORY-SECTION T="2017-02-07T16:14:08+01:00" UUID="DCE:c19fdb2a-8d67-4411-a63c-c62f870a9fd3">
+                        <SHORT-NAME>CODE</SHORT-NAME>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:14:14+01:00" UUID="DCE:0a69fcf7-e2d1-4a21-8acf-2fd1a3f22c95">
+                        <SHORT-NAME>VAR_16</SHORT-NAME>
+                        <ALIGNMENT>16</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:14:19+01:00" UUID="DCE:4efcec11-aaf1-48e1-a9c1-b2493adc1972">
+                        <SHORT-NAME>VAR_32</SHORT-NAME>
+                        <ALIGNMENT>32</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:14:10+01:00" UUID="DCE:66e6a633-dcdd-4711-9e8d-4035af25dcdb">
+                        <SHORT-NAME>VAR_8</SHORT-NAME>
+                        <ALIGNMENT>8</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                    </MEMORY-SECTIONS>
+                  </RESOURCE-CONSUMPTION>
+                  <SW-VERSION>1.0.0</SW-VERSION>
+                  <VENDOR-ID>0</VENDOR-ID>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/AUTOLIV/SoftwareComponents/BMM/BMM_AC_BeltMovementMonitoring/BMM_IB_BobbinRotatingSensor</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

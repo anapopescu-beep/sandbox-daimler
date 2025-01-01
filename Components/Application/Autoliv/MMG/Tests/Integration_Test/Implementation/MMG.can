@@ -1,0 +1,1688 @@
+/*@!Encoding:1252*/
+/*@!Encoding:1252*/
+includes
+{
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Project_functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Functions.cin"
+}
+
+
+variables
+{
+  byte bWriteStepsLibraryRequest[3] = {0x2E, 0xFD, 0x2A};
+}
+
+
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation();
+  
+  strncpy(cLogPathAndName, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",  elcount(cLogPathAndName));
+}
+
+
+
+testcase SW_IT_MMG_runUpdateModeStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0004");
+  AddRequirementInfo("ARCH_SW_MMG_0004", "Context should be periodically updated in order to inhibit/abort cycles.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+  testStep("STEP", "Set a breakpoint in MMG_runUpdateModeStatus() at function mmg_UpdateModeStatus_CriticalAutotestsNok() and step in.");
+  debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "4");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf", "mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf");
+
+  testStep("STEP", "Set a breakpoint in mmg_UpdateModeStatus_CriticalAutotestsNok() at line: if (KU8_ATM_TEST_OK == u8StatusOfLastCriticalAutoTest).");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_CriticalAutotestsNok", "0");
+  
+  testStep("STEP", "Set a breakpoint at M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK).");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_CriticalAutotestsNok", "8");
+  
+  debugger_run();
+  
+  testStep("STEP", "Set variable u8StatusOfLastCriticalAutoTest value to KU8_ATM_TEST_OK.");
+  debugger_writeLocalVariable("u8StatusOfLastCriticalAutoTest", "1");
+  
+  testStep("STEP", "Set a breakpoint at M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK).");
+  debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_CriticalAutotestsNok", "12");
+  
+  debugger_run();
+  
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  testStep("STEP", "Change variable MMG_u32ModesStatus value to 0x8.");
+  debugger_writeVariable("uint32", "MMG_u32ModesStatus,,app.elf",  "0", "0x8");
+  
+  testCaseComment("Action: ARCH_SW_MMG_0300, ARCH_SW_MMG_0004");
+  testStep("STEP", "Step in to stop at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK). --> Stepped in mmg_UpdateModeStatus_CriticalAutotestsNok");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf", "mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf");
+
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runCheckModeStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0006");
+  AddRequirementInfo("ARCH_SW_MMG_0006", "This module shall inform other modules about the requested mode status.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+    
+    testStep("STEP", "Set a breakpoint in BSR_runBeltSlackReductionAlgo() at line Rte_Call_pclModeManagement_CheckModeStatus(CFG_KU32_BSR_MASK_INT_ABORTING_MODES, &bModeStatus_b).");
+    debugger_setRelativeFunctionBpAtLine("BSR_runBeltSlackReductionAlgo", "8");
+    
+    testStep("STEP", "At line Rte_Call_pclModeManagement_CheckModeStatus(CFG_KU32_BSR_MASK_INT_ABORTING_MODES, &bModeStatus_b), modify parameter bModeStatus_b to 170).");
+    debugger_writeVariable("uint8", "bModeStatus_b,,app.elf", "0", "170");
+    
+    testStep("STEP", "Set a breakpoint in MMG_runCheckModeStatus() at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).");
+    debugger_setRelativeFunctionBpAtLine("MMG_runCheckModeStatus", "0");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0006");
+    testStep("STEP", "Check if CPPU stopped in MMG_runCheckModeStatus() at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result ,"CPU stopped at BP", "CPU stopped at BP");
+    
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+  
+
+testcase SW_IT_MMG_runManageModeDelays_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0007");
+  AddRequirementInfo("ARCH_SW_MMG_0007", "Modes for delayed executed cycle should be managed by this module.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+
+    testStep("STEP", "Set a breakpoint in function MMG_runManageModeDelays() at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).");
+    debugger_setRelativeFunctionBpAtLine("MMG_runManageModeDelays", "0");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint in MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runManageModeDelays", "4");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0007");
+    testStep("STEP", "Check if CPU stopped in MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle();.");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    testCaseComment("Action: ARCH_SW_MMG_0007");
+    testStep("STEP", "Step in function mmg_ManageModeDelays_ExecutedCycle().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_ManageModeDelays_ExecutedCycle,,app.elf", "mmg_ManageModeDelays_ExecutedCycle,,app.elf");  
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runCheckModeStatus_02()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0008");
+    AddRequirementInfo("ARCH_SW_MMG_0008", "All cycles shall be inhibitted if they are not valid.");
+  //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+ 
+    testStep("STEP", "Set a breakpoint in function MMG_Init at line mmg_CheckCycleEnable();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_Init", "29");
+    
+    debugger_reset();
+    debugger_run();
+  
+    
+    testStep("STEP", "Check if CPU stopped at line at line mmg_CheckCycleEnable();.");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    testCaseComment("Action: ARCH_SW_MMG_0008");
+    testStep("STEP", "Step in function mmg_CheckCycleEnable(). --> mmg_CheckCycleEnable,,app.elf");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_CheckCycleEnable,,app.elf", "mmg_CheckCycleEnable,,app.elf");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+//  debugger_deleteAllBreakpoints();
+//  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runPreSafeRecorder_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0009, ARCH_SW_MMG_0010, ARCH_SW_MMG_0011, ARCH_SW_MMG_0012, ARCH_SW_MMG_0014, ARCH_SW_MMG_0027, ARCH_SW_MMG_0029, ARCH_SW_MMG_0030, ARCH_SW_MMG_0032, ARCH_SW_MMG_0033, ARCH_SW_MMG_0034");
+    AddRequirementInfo("ARCH_SW_MMG_0009", "The Start Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM when a requested profile has started regardless of status of execution: inhibited or started successful.");
+    AddRequirementInfo("ARCH_SW_MMG_0010", "The Stop Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM when a requested profile has ended regardless of status of execution: ended successful, aborted or inhibited.");
+    AddRequirementInfo("ARCH_SW_MMG_0011", "The State Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM whenever a start or stop block is saved.");
+    AddRequirementInfo("ARCH_SW_MMG_0012", "The PRE-SAFE Recorder 1/2 Data shall be saved in NVM as a rolling buffer containing the data of the last two profiles requested when the ECU goes to sleep.");
+    AddRequirementInfo("ARCH_SW_MMG_0014", "The writing of a PRE-SAFE Recorder data should be tiggered if a PreSafe profile (PRE-SAFE = 1 and PRE-SAFE = 8 except PRE-SAFE = 2) is requested regardless of type of request: PreSafe, API CAN frames or a UDS diagnostic request.");
+    AddRequirementInfo("ARCH_SW_MMG_0027", "Pre-Safe cycles are disabled shall represent the 2 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by disabled cycles; Yes = 1 if the tensioning was inhibited/ aborted by disabled cycles");
+    AddRequirementInfo("ARCH_SW_MMG_0029", "Failure Message on the bus shall represent the 4 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by a failure message on buss; Yes = 1 if the tensioning was inhibited/ aborted by a failure message on buss");
+    AddRequirementInfo("ARCH_SW_MMG_0032", "OverTemperature shall represent the 0 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by overtemperature; Yes = 1 if the tensioning was inhibited/ aborted by overtemperature");
+    AddRequirementInfo("ARCH_SW_MMG_0033", "EOL counter rejection shall represent the 1 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by EOL counter limit; Yes = 1 if the tensioning was inhibited/ aborted by EOL counter limit");
+    AddRequirementInfo("ARCH_SW_MMG_0034", "System failure shall represent the 2 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by system failure; Yes = 1 if the tensioning was inhibited/ aborted by system failure");
+    
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder() at line case KU8_TENSIONING_START:.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "92");
+  
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder() at line case KU8_TENSIONING_END:.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "95");
+  
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder() at line case KU8_TENSIONING_INHIBIT:.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "102");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+
+    testStep("STEP", "Set a breakpoint in function mmg_PreSafe_HandleStateData.");
+    debugger_setRelativeFunctionBpAtLine("mmg_PreSafe_HandleStateData", "0");
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runPreSafeRecorder at line NVP_BLOCK_ID_PRE_SAFE_RECORDER_ID_RamBlockData.NVP_u8PreSafeRecorderID = u8PreSafeRecorderNewID;.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "119");
+  
+    testStep("STEP", "Start Development Session."); 
+    AuthenticateECU(2); // Development_Enhanced
+    EnterDiagnosticSession("development");
+      
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C02_BCKL_SW_STAT_OK.");
+    setSignal(BODY3::Bckl_Sw_Fx_Stat_ST3::Bckl_Sw_D_Stat_ST3, 0);
+  
+    testWaitForTimeoutSilent(100);
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_LVL1);
+  
+    testWaitForTimeoutSilent(500);
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_NOLVL.");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+  
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0009, ARCH_SW_MMG_0014");
+    testStep("STEP", "Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_START:. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0010");
+    testStep("STEP", "Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_END:. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0013, ARCH_SW_MMG_0027");
+    testStep("STEP", "Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_INHIBIT:. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+    
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0011, ARCH_SW_MMG_0029, ARCH_SW_MMG_0030, ARCH_SW_MMG_0032, ARCH_SW_MMG_0033, ARCH_SW_MMG_0034");
+    testStep("STEP", "Check if CPU stopped in function mmg_PreSafe_HandleStateData(). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+    
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0009, ARCH_SW_MMG_0011, ARCH_SW_MMG_0012");
+    testStep("STEP", "Check if CPU stopped in MMG_runPreSafeRecorder() at line NVP_BLOCK_ID_PRE_SAFE_RECORDER_ID_RamBlockData.NVP_u8PreSafeRecorderID = u8PreSafeRecorderNewID;. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_deleteAllBreakpoints();
+    debugger_run();
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runPreSafeRecorder_02()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0016, ARCH_SW_MMG_0017, ARCH_SW_MMG_0018, ARCH_SW_MMG_0019, ARCH_SW_MMG_0020, ARCH_SW_MMG_0023, ARCH_SW_MMG_0024, ARCH_SW_MMG_0026, ARCH_SW_MMG_0031, ARCH_SW_MMG_0407");
+    AddRequirementInfo("ARCH_SW_MMG_0016", "Buckle Switch State shall represent the 0-1 Bits of Byte 0 from Start and Stop Blocks and shall be saved with the following values: STAT_OK = 0 if the buckle state is buckled; STAT_NOT = 1 if the buckle state is unbuckled; STAT_FLT = 2 if the buckle state is fault; STAT_SNA = 3 if the signal is not available");
+    AddRequirementInfo("ARCH_SW_MMG_0017", "Belt Hand Over State shall represent the 2-3 Bits of Byte 0 from Start and Stop Blocks and shall be saved with the following values: RETRACT = 0 if the belt hand over is retracted; OUT_OF_END = 1” if the belt hand over is out of end position; EXTEND = 2 if the belt hand over is extended; SNA = 3 if the signal is not available");
+    AddRequirementInfo("ARCH_SW_MMG_0018", "Pre-Safe Level shall represent the 0-3 Bits of Byte1 from Start and Stop Blocks and shall be saved with the following values: None = 0 No pre-safe requested; PRE-SAFE 1 = 1 pre-safe 1 requested; PRE-SAFE 3 = 3 pre-safe 3 requested; PRE-SAFE 4 = 4 pre-safe 4 requested; PRE-SAFE 5 = 5 pre-safe 5 requested; PRE-SAFE 6 = 6 pre-safe 6 requested; PRE-SAFE 7 = 7 pre-safe 7 requested; PRE-SAFE 8 = 8 pre-safe 8 requested; Not Defined 9-13 pre-safe not defined; SNA = 15 if the signal is not available");
+    AddRequirementInfo("ARCH_SW_MMG_0019", "Impact X shall represent the 4 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Impact X Crash conditions detected; Yes = 1 if Impact X Crash conditions detected");
+    AddRequirementInfo("ARCH_SW_MMG_0020", "Impact X shall represent the 4 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Impact X Crash conditions detected; Yes = 1 if Impact X Crash conditions detected");
+    AddRequirementInfo("ARCH_SW_MMG_0023", "ECU Temperature shall represent the Bytes 3-4 from Start and Stop Blocks and shall be saved with the following values: Byte 3: Low-temperature – 0x00 if deficiency level &lt; 1200; Middle-temperature – 0x01 if deficiency level &gt;= 1200 and deficiency level &lt; 32000; High-temperature – 0x02 if deficiency level &gt;= 32000 and deficiency level &lt;150000; Hot-temperature – 0x03 if deficiency level &gt;= 150000 and deficiency level &lt;160000; Over-temperature – 0x04 if deficiency level &gt;= 160000; Invalid – 0xFF Value not available; Byte 4: will always be 0.");
+    AddRequirementInfo("ARCH_SW_MMG_0024", "System Timpe shall represent the Bytes 5-9 from Start and Stop Blocks and shall be saved with the following values: Byte 5-8: will represent the current operating time represented in seconds; Byte 9: will always be 0.");
+    AddRequirementInfo("ARCH_SW_MMG_0026", "Tensioning State shall represent the 0-1 Bits of Byte 0 from State Block and shall be saved with the following values: Successfull = 0 if a tensioning was started or ended successfull; Not Started = 1 if a tensioning was not started; Aborted = 2 if a tensioning was aborted; Not Defined = 3 not defined.");
+    AddRequirementInfo("ARCH_SW_MMG_0031", "Undervoltage / ovelvoltage situation shall represent the 6 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by Ov or UV; Yes = 1 if the tensioning was inhibited/ aborted by Uv or Ov");
+    AddRequirementInfo("ARCH_SW_MMG_0407", "StbM_GetCurrentTime shall be called in order to get the system time.");
+    
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "92");
+  
+    testStep("STEP", "Set a breakpoint in mmg_PreSafe_HandleStartData() at line mmg_stPreSafeStartData.Start2ImpactX = KB_ONE;.");
+    debugger_setRelativeFunctionBpAtLine("mmg_PreSafe_HandleStartData", "5");
+  
+    testStep("STEP", "Set a breakpoint in mmg_PreSafe_CopyStartData() at line u8PreSafeRecStart1 = (uint8)(mmg_stPreSafeStartData.Start1BuckleSwitch + (uint8)(mmg_stPreSafeStartData.Start1BeltHandOver << MMG_KU8_SHIFT_BELT_HAND_OVER));.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\MMG\\Implementation\\src\\MMG_PreSafeRecorder.c", "287");
+  
+    testStep("STEP", "Start Development Session."); 
+    AuthenticateECU(2); // Development_Enhanced
+    EnterDiagnosticSession("development");
+
+    testStep("STEP", "Set signal Impact_X_ST3 to KB_ONE.");
+    setSignal(BODY3::Impact_X_ST3, 1);
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_LVL1);
+  
+    testWaitForTimeoutSilent(250);
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_NOLVL.");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+  
+    debugger_run();
+    testWaitForTimeoutSilent(250);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0018, ARCH_SW_MMG_0026");
+    testStep("STEP", "Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_START:. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0019, ARCH_SW_MMG_0020, ARCH_SW_MMG_0407");
+    testStep("STEP", "Check if CPU stopped in function mmg_PreSafe_HandleStartData() at line mmg_stPreSafeStartData.Start2ImpactX = KB_ONE;. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_run();
+    testWaitForTimeoutSilent(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0016, ARCH_SW_MMG_0017, ARCH_SW_MMG_0023, ARCH_SW_MMG_0024");
+    testStep("STEP", "Check if CPU stopped in function mmg_PreSafe_CopyStartData() at line u8PreSafeRecStart1 = (uint8)(mmg_stPreSafeStartData.Start1BuckleSwitch + (uint8)(mmg_stPreSafeStartData.Start1BeltHandOver << MMG_KU8_SHIFT_BELT_HAND_OVER));. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_deleteAllBreakpoints();
+    debugger_run();
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+
+  debugger_stop();
+}
+
+
+
+testcase SW_IT_MMG_runPreSafeRecorder_03()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0021, ARCH_SW_MMG_0022, ARCH_SW_MMG_0404, ARCH_SW_MMG_0405");
+    AddRequirementInfo("ARCH_SW_MMG_0021", "Type 2 Roll Over Event shall represent the 7 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Type 2 Roll Over Crash conditions detected; Yes = 1 if Type 2 Roll Over Crash conditions detected");
+    AddRequirementInfo("ARCH_SW_MMG_0022", "KL30 Voltage shall represent the Byte 2 from Start and Stop Blocks and shall be saved with values between 0x00 and 0xFF.");
+    AddRequirementInfo("ARCH_SW_MMG_0404", "CIL_runGetInputSignalPresafeRecorderInfo shall be called in order to get PreSafe Recorder Info data from CIL module.");
+    AddRequirementInfo("ARCH_SW_MMG_0405", "PMP_runGetDeficiencyLevel shall be called in order to get the Deficiency level input.");
+    
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================  
+  
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "92");
+  
+    testStep("STEP", "Set a breakpoint in mmg_PreSafe_HandleStartData() at line if(KU8_ONE == mmm_stPreSafeInputData.bRoEventType2).");
+    debugger_setRelativeFunctionBpAtLine("mmg_PreSafe_HandleStartData", "24");
+  
+    testStep("STEP", "Start Development Session."); 
+    AuthenticateECU(2); // Development_Enhanced
+    EnterDiagnosticSession("development");
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_LVL1);
+  
+    testWaitForTimeoutSilent(250);
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_NOLVL.");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+  
+    debugger_run();  
+    debugger_run();
+
+    testCaseComment("Action: ARCH_SW_MMG_0021, ARCH_SW_MMG_0405");
+    testStep("STEP", "Check if CPU stopped in function mmg_PreSafe_HandleStartData() at line if(KU8_ONE == mmm_stPreSafeInputData.bRoEventType2). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder() at line Rte_Call_pclPreSafeRecInput_GetInputSignals(&mmm_stPreSafeInputData);.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "6");
+  
+    testCaseComment("Action: ARCH_SW_MMG_0404");
+    testStep("STEP", "Check if CPU stopped at line Rte_Call_pclPreSafeRecInput_GetInputSignals(&mmm_stPreSafeInputData);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in MMG_runPreSafeRecorder() at line Rte_Call_pclKL30_Get(&mmg_u16LocalVoltage);.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "10");
+    
+    testCaseComment("Action: ARCH_SW_MMG_0022");
+    testStep("STEP", "Check if variable mmg_u16LocalVoltage values are between 0x00 and 0xFF. --> values are between 0x00 and 0xFF");
+    debugger_readVariable("uint16", "mmg_u16LocalVoltage,,app.elf", "0");
+    ExpectedTestResult(debugger_result,"0x3158", "0x3158");
+  
+//    debugger_deleteAllBreakpoints();
+//    debugger_run();
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+//  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_TensioningCycles_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0133, ARCH_SW_MMG_0135, ARCH_SW_MMG_0138, ARCH_SW_MMG_0157, ARCH_SW_MMG_0159, ARCH_SW_MMG_0160, ARCH_SW_MMG_0162");
+    AddRequirementInfo("ARCH_SW_MMG_0133", "The “KU32_AEC_GROUP_MASK_SELF_PROTECTION – SW/HW Self protection status AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0135", "The “KU32_AEC_GROUP_MASK_UNDER_VO_TENS – to check undervoltage AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0138", "The “KU32_AEC_GROUP_MASK_EOL_LOW_HIGH – to check counters AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0157", "The “KU32_AEC_GROUP_MASK_OVER_VO_TENS – to check overvoltage during tensioning AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0159", "The “KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE – to check timout for buckle signal AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0160", "The “KU32_AEC_GROUP_MASK_STEERING_CONFIGURATION – to check control unit configuration AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0162", "The “KU32_AEC_GROUP_MASK_EOL_COMFORT – To check EOL comfort counter AEC group status from ERH shall be an input for MMG_KU32_MASK_EOL_COUNTER_INHIBITION context qualification.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "40");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles at the first line.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles", "0");
+    
+    testStep("STEP", "Step in mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles.");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles,,app.elf", "mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles,,app.elf");
+    
+    testCaseComment("Action: ARCH_SW_MMG_0133");
+    testStep("STEP", "Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TEMPERATURE_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_SELF_PROTECTION);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles", "16");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_IMPL_BUCKLE_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles", "20");
+
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162");
+    testStep("STEP", "Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_IMPL_BUCKLE_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC);.");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    testStep("STEP", "Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles", "22");
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0135, ARCH_SW_MMG_0159");
+    testStep("STEP", "Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);.");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    testCaseComment("Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162");
+    testStep("STEP", "Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_EOL_LOW_AND_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_EOL_LOW_HIGH);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles", "18");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162");
+    testStep("STEP", "Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_EOL_LOW_AND_HIGH] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_EOL_LOW_HIGH);.");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+
+testcase SW_IT_MMG_NoHallEffectSensor_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0140");
+    AddRequirementInfo("ARCH_SW_MMG_0140", "The “To check Hall Efect Sensor AEC status from ERH shall be an input for MMG_KU32_MASK_NO_HALL_EFFECT_SENSOR context qualification.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "28");
+
+    testStep("STEP", "Step in mmg_UpdateModeStatus_NoHallEffectSensor.");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_NoHallEffectSensor,,app.elf", "mmg_UpdateModeStatus_NoHallEffectSensor,,app.elf");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint at line M_SET_MODE_MASK_OFF(MMG_KU32_MASK_NO_HALL_EFFECT_SENSOR);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", "11");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0140");
+    testStep("STEP", "Check if CPU stopped at line M_SET_MODE_MASK_OFF(MMG_KU32_MASK_NO_HALL_EFFECT_SENSOR);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_PowerSupply_AllCycles_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0150, ARCH_SW_MMG_0151");
+    AddRequirementInfo("ARCH_SW_MMG_0150", "The “KU32_AEC_GROUP_MASK_OVER_VO – To check Over Voltage AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_ALL_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0151", "The “KU32_AEC_GROUP_MASK_UNDER_VO – To check Under Volatge AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_ALL_CYCLES context qualification.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_PowerSupply_AllCycles();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "32");
+
+    testStep("STEP", "Set a breakpoint in function mmg_UpdateModeStatus_PowerSupply_AllCycles at the first line;.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerSupply_AllCycles", "0");
+  
+    testStep("STEP", "Set a breakpoint at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_AEC_INHIB_ALL_CYCLES);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerSupply_AllCycles", "34");
+  
+    testStep("STEP", "Step in mmg_UpdateModeStatus_PowerSupply_AllCycles.");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_PowerSupply_AllCycles,,app.elf", "mmg_UpdateModeStatus_PowerSupply_AllCycles,,app.elf");
+  
+    debugger_run();
+
+    testCaseComment("Action: ARCH_SW_MMG_0150, ARCH_SW_MMG_0151");
+    testStep("STEP", "Check if CPU stopped at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_AEC_INHIB_ALL_CYCLES);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_EcuDefective_AllCycles_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0152, ARCH_SW_MMG_0153, ARCH_SW_MMG_0205, ARCH_SW_MMG_0403");
+    AddRequirementInfo("ARCH_SW_MMG_0152", "The “KU32_AEC_GROUP_MASK_HARDWARE – To check ECU is defective AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0153", "The “KU32_AEC_GROUP_MASK_ACTUATOR_BLOCKED – To check if the actuator is blocked AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0205", "ERH_runGetAecGroupsStatus shall be called to get de status of the AEC for different contexts."); 
+    AddRequirementInfo("ARCH_SW_MMG_0403", "ERH_runGetAecGroupsStatus shall be called in order to get the AEC group status."); 
+  //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_EcuDefective_AllCycles();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "36");
+
+    testStep("STEP", "Step in mmg_UpdateModeStatus_EcuDefective_AllCycles().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_EcuDefective_AllCycles,,app.elf", "mmg_UpdateModeStatus_EcuDefective_AllCycles,,app.elf");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_EcuDefective_AllCycles", "13");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0205, ARCH_SW_MMG_0403");
+    testStep("STEP", "Check if CPU stopped at line Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+
+    testStep("STEP", "Set a breakpoint at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_EcuDefective_AllCycles", "39");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0152, ARCH_SW_MMG_0153");
+    testStep("STEP", "Check if CPU stopped at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_TensioningCycles_02()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0158");
+    AddRequirementInfo("ARCH_SW_MMG_0158", "The “KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE – to check implausible data for buckle signal AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "40");
+
+    testStep("STEP", "Step in mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles,,app.elf", "mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles,,app.elf");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles", "22"); // 54
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0158");
+    testStep("STEP", "Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus & KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_PowerVoltageUnstable_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0251");
+    AddRequirementInfo("ARCH_SW_MMG_0251", "The Battery voltage survey status shall be an input for MMG_KU32_MASK_POWER_VOLTAGE_UNSTABLE context qualification.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_PowerVoltageUnstable();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "8");
+
+    testStep("STEP", "Step in mmg_UpdateModeStatus_PowerVoltageUnstable().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_PowerVoltageUnstable,,app.elf", "mmg_UpdateModeStatus_PowerVoltageUnstable,,app.elf");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_POWER_VOLTAGE_UNSTABLE);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerVoltageUnstable", "21");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0251");
+    testStep("STEP", "Check if CPU stopped at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_POWER_VOLTAGE_UNSTABLE);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runGetLastCriticalAutotestId_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0200");
+    AddRequirementInfo("ARCH_SW_MMG_0200", "ATM_runGetLastCriticalAutotestId shall be called to get last critical autotest ID.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_CriticalAutotestsNok();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "4");
+  
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pclAutotestServices_GetLastCriticalAutotestID(&u8AutoTestId);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_CriticalAutotestsNok", "3");
+  
+    testStep("STEP", "Step in mmg_UpdateModeStatus_CriticalAutotestsNok().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf", "mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0200");
+    testStep("STEP", "Step in Rte_Call_pclAutotestServices_GetLastCriticalAutotestID(). --> ATM_runGetLastCriticalAutotestId,,app.elf");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"ATM_runGetLastCriticalAutotestId,,app.elf", "ATM_runGetLastCriticalAutotestId,,app.elf");  
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runGetTestResult_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0201, ARCH_SW_MMG_0408");
+    AddRequirementInfo("ARCH_SW_MMG_0201", "ATM_runGetTestResult shall be called to get the status of the last executed autotest.");
+    AddRequirementInfo("ARCH_SW_MMG_0408", "ATM_runGetTestResult shall be called in order to get the autotest result for EOL counters.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_CriticalAutotestsNok();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "4");
+
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pclAutotestServices_GetTestResult(u8AutoTestId, &u8StatusOfLastCriticalAutoTest);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_CriticalAutotestsNok", "6");
+  
+    testStep("STEP", "Step in mmg_UpdateModeStatus_CriticalAutotestsNok().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf", "mmg_UpdateModeStatus_CriticalAutotestsNok,,app.elf");
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0201, ARCH_SW_MMG_0408");
+    testStep("STEP", "Step in function Rte_Call_pclAutotestServices_GetTestResult. --> ATM_runGetTestResult,,app.elf");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"ATM_runGetTestResult,,app.elf", "ATM_runGetTestResult,,app.elf");  
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runGetBatteryVoltageSurveyStatus_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0202, ARCH_SW_MMG_0207, ARCH_SW_MMG_0208, ARCH_SW_MMG_0406");
+    AddRequirementInfo("ARCH_SW_MMG_0202", "PMP_runGetBatteryVoltageSurveyStatus shall be called to get the battery voltage.");
+    AddRequirementInfo("ARCH_SW_MMG_0207", "PMP_runGetBatteryVoltage_10ms shall be called to read the KL30 battery voltage to check if measured battery voltage is outside Extended Operating range.");
+    AddRequirementInfo("ARCH_SW_MMG_0208", "PMP_runGetBatteryVoltage_10ms shall be called to read the KL30 battery voltage to check if measured battery voltage is outside Normal Operating range.");
+    AddRequirementInfo("ARCH_SW_MMG_0406", "PMP_runGetBatteryVoltage shall be called in order to get the battery voltage.");
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_PowerVoltageUnstable().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "8");
+    
+    debugger_run();
+    
+    testStep("STEP", "Step in function mmg_UpdateModeStatus_PowerVoltageUnstable.");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_PowerVoltageUnstable,,app.elf", "mmg_UpdateModeStatus_PowerVoltageUnstable,,app.elf");
+    
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pclSurveyBatteryVoltage_GetStatus( &u8BatteryVoltageSurveyStatus).");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerVoltageUnstable", "6");
+    
+    debugger_run();
+    debugger_deleteAllBreakpoints();
+    
+    testStep("STEP", "Set a breakpoint at line pu8BatteryVoltageSurveyStatus = PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltageSurveyStatus", "0");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0202, ARCH_SW_MMG_0207, ARCH_SW_MMG_0208,ARCH_SW_MMG_0406");
+    testStep("STEP", "Check if CPU stopped at line pu8BatteryVoltageSurveyStatus = PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_AvailabilityDataCategory_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0209");
+    AddRequirementInfo("ARCH_SW_MMG_0209", "Rte_Write_MMG_AC_ModeManagement_AvailabilityDataHandler_AvailabilityDataCategory shall be called to send the AvailabilityDataCategory towards DiagFunction.");
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_AvailabilityDataStatus();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "50");
+    
+    testStep("STEP", "Set a breakpoint in function mmg_AvailabilityDataStatus at line if (u8oldAvailabilityDataCategory != u8newAvailabilityDataCategory).");
+    debugger_setRelativeFunctionBpAtLine("mmg_AvailabilityDataStatus", "31");
+    
+    testStep("STEP", "Step in function mmg_AvailabilityDataStatus.");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_AvailabilityDataStatus,,app.elf", "mmg_AvailabilityDataStatus,,app.elf");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set local variable u8newAvailabilityDataCategory to KU8_ZERO.");
+    debugger_writeLocalVariable("u8newAvailabilityDataCategory", "0");
+  
+//    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0209");
+    testStep("STEP", "Set a breakpoint at line Rte_Write_AvailabilityDataHandler_AvailabilityDataCategory(u8newAvailabilityDataCategory);. --> CPU stopped at BP");
+    debugger_setRelativeFunctionBpAtLine("mmg_AvailabilityDataStatus", "34");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_ExecutedCycleDelay_01()
+{
+  //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0252");
+    AddRequirementInfo("ARCH_SW_MMG_0252", "The executed cycle delay value shall be an input for MMG_KU32_MASK_NO_BELTFUNCTIONS_DELAY context qualification.");
+   //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycleDelay();.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "12");
+
+    testStep("STEP", "Set a breakpoint at line M_SET_MODE_MASK_OFF  (MMG_astDelayAfterCycleThrsandModes[mmg_u8Index].u32AssociatedMode);.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_ExecutedCycleDelay", "0");//6
+  
+    testStep("STEP", "Step in mmg_UpdateModeStatus_ExecutedCycleDelay().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result ,"mmg_UpdateModeStatus_ExecutedCycleDelay,,app.elf", "mmg_UpdateModeStatus_ExecutedCycleDelay,,app.elf");
+  
+    testCaseComment("Action: ARCH_SW_MMG_0252");
+    testStep("STEP", "Check if CPU stopped at line M_SET_MODE_MASK_OFF  (MMG_astDelayAfterCycleThrsandModes[mmg_u8Index].u32AssociatedMode);. --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_prrExecutedCycle_01()
+{
+    //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0203, ARCH_SW_MMG_0253, ARCH_SW_MMG_0254");
+    AddRequirementInfo("ARCH_SW_MMG_0203", "Rte_Read_prrExecutedCycle_u8CycleNumber shall be called to get the executed cycle for different contexts.");
+    AddRequirementInfo("ARCH_SW_MMG_0253", "The current execute cycle and pyro activation status  shall be an input for MMG_KU32_MASK_NO_BELTFUNCTIONS context qualification.");
+    AddRequirementInfo("ARCH_SW_MMG_0254", "The executed cycle  shall be an input for MMG_KU32_MASK_NO_TENSIONING context qualification.");
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "0");
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "16");
+    
+    debugger_run();
+    
+    testStep("STEP", "Step in function mmg_UpdateModeStatus_ExecutedCycle().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_ExecutedCycle,,app.elf", "mmg_UpdateModeStatus_ExecutedCycle,,app.elf");
+    
+    testStep("STEP", "Set a breakpoint at line Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle).");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_ExecutedCycle", "9");
+    
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0253");
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_ExecutedCycle", "12");
+    debugger_stepOver();
+    
+    debugger_deleteAllBreakpoints();
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint at line mmg_UpdateModeStatus_ExecutedTensioningCycle().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "20");
+    
+    testCaseComment("Action: ARCH_SW_MMG_0203, ARCH_SW_MMG_0254");
+    testStep("STEP", "Step in function mmg_UpdateModeStatus_ExecutedTensioningCycle() at line Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle);. --> mmg_UpdateModeStatus_ExecutedTensioningCycle,,app.elf");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_ExecutedTensioningCycle,,app.elf", "mmg_UpdateModeStatus_ExecutedTensioningCycle,,app.elf");
+    
+    //====================================================
+    
+    testCaseComment("Postcondition");
+    testStep("STEP", "Return ECU to default values");
+    RunPostTs();
+    
+    debugger_deleteAllBreakpoints();
+    debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runGetPyroActivationStatus_01()
+{
+    //***********************************Test report header*********************************
+    testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+    TestReportAddMiscInfo("Nightly test", "No");
+    TestReportAddMiscInfo("Test type", "Requirement-Based test");
+    TestReportAddMiscInfo("Regression Test", "No");
+    TestReportAddMiscInfo("Fault injection method used", "No");
+    TestReportAddMiscInfo("Resource usage evaluation", "No");
+    TestReportAddMiscInfo("Priority", "No");
+    TestReportAddMiscInfo("Safety relevant", "No");
+    
+    AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0204");
+    AddRequirementInfo("ARCH_SW_MMG_0204", "BMM_runGetPyroActivationStatus shall be called to get pyro activation status.");
+    //***************************************************************************************
+
+    testCaseComment("Preconditions");
+    testStep("STEP", "Bench Initialization");
+    
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+    debugger_run();
+    
+    RunPreTs();
+    //====================================================
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "0");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "16");
+
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    testStep("STEP", "Step in function mmg_UpdateModeStatus_ExecutedCycle().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_ExecutedCycle,,app.elf", "mmg_UpdateModeStatus_ExecutedCycle,,app.elf");  
+    
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_ExecutedCycle", "12");
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    testStep("STEP", "Set a breakpoint in function BMM_runGetPyroActivationStatus().");
+    debugger_setRelativeFunctionBpAtLine("BMM_runGetPyroActivationStatus", "0");  
+  
+    testCaseComment("Action: ARCH_SW_MMG_0204");
+    testStep("STEP", "Check if CPU stopped in function BMM_runGetPyroActivationStatus(). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    //====================================================
+    
+    testCaseComment("Postcondition");
+    testStep("STEP", "Return ECU to default values");
+    RunPostTs();
+    
+    debugger_deleteAllBreakpoints();
+    debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runEnableHBSMonitoring_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0206");
+  AddRequirementInfo("ARCH_SW_MMG_0206", "BMM_runEnableHBSMonitoring shall be called to notify BMM about restoring the puls counting.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "0");
+
+    testStep("STEP", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runUpdateModeStatus", "28");
+    
+    debugger_run();
+
+    testStep("STEP", "Step in mmg_UpdateModeStatus_NoHallEffectSensor.");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_UpdateModeStatus_NoHallEffectSensor,,app.elf", "mmg_UpdateModeStatus_NoHallEffectSensor,,app.elf");
+  
+    testStep("STEP", "Set a breakpoint at line if (KU8_TRUE == MMG_u8PrevHESModeStatus).");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", "11");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable MMG_u8PrevHESModeStatus to KU8_TRUE.");
+    debugger_writeVariable("uint8", "MMG_u8PrevHESModeStatus", "0", "170");
+    
+    testCaseComment("Action: ARCH_SW_MMG_0206");
+    testStep("STEP", "Set a breakpoint at line Rte_Call_pcl_HBSControl_EnableHBSMonitoring(); --> BP set");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_NoHallEffectSensor", "17");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");    
+    
+    //====================================================
+    
+    testCaseComment("Postcondition");
+    testStep("STEP", "Return ECU to default values");
+    RunPostTs();
+    
+    debugger_deleteAllBreakpoints();
+    debugger_stop();
+}
+
+
+testcase SW_IT_MMG_runGetResetCause_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0400");
+  AddRequirementInfo("ARCH_SW_MMG_0400", "RCM_runGetResetCause  shall be called to get the reset cause.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runManageModeDelays", "4");
+    
+    testStep("STEP", "Step in mmg_ManageModeDelays_ExecutedCycle().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_ManageModeDelays_ExecutedCycle,,app.elf", "mmg_ManageModeDelays_ExecutedCycle,,app.elf");
+    
+    testStep("STEP", "Set a breakpoint in function mmg_ManageModeDelays_ExecutedCycle() at line Rte_Call_pclResetCause_GetResetCause(&mmg_u32ResetCause).");
+    debugger_setRelativeFunctionBpAtLine("mmg_ManageModeDelays_ExecutedCycle", "16");
+  
+    testStep("STEP", "Set a breakpoint in function RCM_runGetResetCause() at line if ( ((uint32 *) KPU8_NULL) != pu32ResetCause).");
+    debugger_setRelativeFunctionBpAtLine("RCM_runGetResetCause", "0");
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0400");
+    testStep("STEP", "Step in function Rte_Call_pclResetCause_GetResetCause(&mmg_u32ResetCause). --> RCM_runGetResetCause,,app.elf");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "RCM_runGetResetCause,,app.elf", "RCM_runGetResetCause,,app.elf");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_psrExecutedCycle_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0401");
+  AddRequirementInfo("ARCH_SW_MMG_0401", "Rte_BFE_psrExecutedCycle_u8CycleNumber shall be called to get cycle number.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+    
+    testStep("STEP", "Set a breakpoint in function MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle().");
+    debugger_setRelativeFunctionBpAtLine("MMG_runManageModeDelays", "4");
+    
+    testStep("STEP", "Step in mmg_ManageModeDelays_ExecutedCycle().");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "mmg_ManageModeDelays_ExecutedCycle,,app.elf", "mmg_ManageModeDelays_ExecutedCycle,,app.elf");
+    
+    testStep("STEP", "Set a breakpoint in function mmg_ManageModeDelays_ExecutedCycle().");
+    debugger_setRelativeFunctionBpAtLine("mmg_ManageModeDelays_ExecutedCycle", "22");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0400, ARCH_SW_MMG_0401"); // BMM_runGetPyroActivationStatus() function body is empty
+    testStep("STEP", "Step in function Rte_Call_pclPyroDevice_GetPyroActivationStatus(). --> BMM_runGetPyroActivationStatus,,app.elf");
+    debugger_stepIn();  
+    ExpectedTestResult(debugger_result, "BMM_runGetPyroActivationStatus,,app.elf", "BMM_runGetPyroActivationStatus,,app.elf");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_MMG_CheckCycleEnable_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MMG_0300");
+  AddRequirementInfo("ARCH_SW_MMG_0300", "Write Rte_MMG_psrEnableCycleX_.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+
+    debugger_setRelativeFunctionBpAtLine("mmg_CheckCycleEnable", "0");
+  
+    debugger_reset();
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0300");
+    testStep("STEP", "Set a breakpoint in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle0_b8CycleValidity(B_FALSE). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    debugger_run();
+  
+    debugger_setRelativeFunctionBpAtLine("mmg_CheckCycleEnable", "1");
+  
+    debugger_reset();
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_MMG_0300");
+    testStep("STEP", "Check if CPU stopped in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle1_b8CycleValidity(B_FALSE). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    debugger_run();
+    
+    debugger_setRelativeFunctionBpAtLine("mmg_CheckCycleEnable", "2");
+  
+    testStep("", "Reset the debugger.");
+    debugger_reset();
+  
+    testStep("", "Run the debugger.");
+    debugger_run();
+    testWaitForTimeout(500);
+  
+    testCaseComment("Action: ARCH_SW_MMG_0300");
+    testStep("STEP", "Check if CPU stopped in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle2_b8CycleValidity(B_FALSE). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+
+    debugger_run();
+    
+    debugger_setRelativeFunctionBpAtLine("mmg_CheckCycleEnable", "3");
+  
+    debugger_reset();
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_MMG_0300");
+    testStep("STEP", "Check if CPU stopped in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle3_b8CycleValidity(B_FALSE). --> CPU stopped at BP");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+
+void MainTest()
+{
+  InitTestModule();
+  
+  SW_IT_MMG_runUpdateModeStatus_01();
+  SW_IT_MMG_runCheckModeStatus_01();
+  SW_IT_MMG_runManageModeDelays_01();
+  SW_IT_MMG_runCheckModeStatus_02();
+  SW_IT_MMG_runPreSafeRecorder_01();
+  SW_IT_MMG_runPreSafeRecorder_02();
+  SW_IT_MMG_runPreSafeRecorder_03();
+  SW_IT_MMG_TensioningCycles_01();
+  SW_IT_MMG_NoHallEffectSensor_01();
+  SW_IT_MMG_PowerSupply_AllCycles_01();
+  SW_IT_MMG_EcuDefective_AllCycles_01();
+  SW_IT_MMG_TensioningCycles_02();
+  SW_IT_MMG_PowerVoltageUnstable_01();
+  SW_IT_MMG_runGetLastCriticalAutotestId_01();
+  SW_IT_MMG_runGetTestResult_01();
+  SW_IT_MMG_runGetBatteryVoltageSurveyStatus_01(); 
+  SW_IT_MMG_ExecutedCycleDelay_01();
+  SW_IT_MMG_prrExecutedCycle_01();
+  SW_IT_MMG_runGetPyroActivationStatus_01();
+  SW_IT_MMG_runEnableHBSMonitoring_01();
+  SW_IT_MMG_runGetResetCause_01();
+  SW_IT_MMG_psrExecutedCycle_01();
+  SW_Int_MMG_CheckCycleEnable_01();
+  SW_IT_MMG_AvailabilityDataCategory_01();
+  
+}

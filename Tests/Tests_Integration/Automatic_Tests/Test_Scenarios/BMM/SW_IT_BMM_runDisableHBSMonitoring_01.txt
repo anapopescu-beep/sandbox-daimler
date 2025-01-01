@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_1060
+ARCH_SW_BMM_1060: This function shall deactivate the interrupt linked to the HES pulses signal.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function mmg_UpdateModeStatus_NoHallEffectSensor at line 'if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK != (ERH_KU8_AEC_QUALIFIED_STATUS_MASK & mmg_u8AECStatus))'.
+
+	Step 3: Check if CPU stopped at line 'if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK != (ERH_KU8_AEC_QUALIFIED_STATUS_MASK & mmg_u8AECStatus))'. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set variable mmg_u8AECStatus to KU8_ONE.
+
+	Step 5: Set a breakpoint at line 'Rte_Call_pcl_HBSControl_DisableHBSMonitoring()' and run the debugger.
+
+	Step 6: Check if CPU stopped at line 'Rte_Call_pcl_HBSControl_DisableHBSMonitoring()'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_1060
+
+	Step 7: Step in function Rte_Call_pcl_HBSControl_DisableHBSMonitoring. 
+		Expected result:  BMM_runDisableHBSMonitoring,,app.elf
+
+Postcondition
+
+	Step 8: Return ECU to default values

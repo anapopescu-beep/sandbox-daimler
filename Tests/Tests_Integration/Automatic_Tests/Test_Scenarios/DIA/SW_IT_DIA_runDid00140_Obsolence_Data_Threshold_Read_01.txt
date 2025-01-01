@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0330; ARCH_SW_DIA_0334; ARCH_SW_DIA_0335
+ARCH_SW_DIA_0330: Service 0x22 (Read Data By Identifier) will be implemented for DID 0140 (Obsolescence Data)
+ARCH_SW_DIA_0334: Response data length shall be 24 bytes long: Bytes #2-#3: DataIdentifier of the Read Obsolescence Data shall be: 0x0140 Bytes #4 - #5 = Remaining BSR Activations [2bytes] : Bytes #6 - #7 = Threshold Green to Yellow for Remaining BSR Activation [2bytes] = 0x00 0x00 Bytes #8 - #9 = Threshold Yellow to Red for Remaining BSR Activation [2bytes] = 0x00 0x00 Bytes #10 - #11 = Remaining Low Force Activations [2bytes] : Bytes #12 - #13 = Threshold Green to Yellow for Remaining Low Force Activation [2bytes] = 0x00 0x00 Bytes #14 - #15 = Threshold Yellow to Red for Remaining Low Force Activation [2bytes] = 0x00 0x00 Bytes #16 - #17 = Remaining high Force Activations [2bytes] : Bytes #18 - #19 = Threshold Green to Yellow for Remaining High Force Activation [2bytes] = 0x00 0x00 Bytes #20 - #21 = Threshold Yellow to Red for Remaining High Force Activation [2bytes] = 0x00 0x00 Bytes #22 - #23 = Remaining Max Force Activations [2bytes] : Bytes #24 - #25 = Threshold Green to Yellow for Remaining Max Force Activation [2bytes] = 0x00 0x00 Bytes #26 - #27 = Threshold Yellow to Red for Remaining Max Force Activation [2bytes] = 0x00 0x00. Note: Full Response length = 3 bytes + Response data length
+ARCH_SW_DIA_0335: Read Obsolescence Data service shall return the number of remaing BSR(Comfort), Low Force, High Force, Max Force possible activation.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid00140_Obsolescence_Data_PRE_SAFE_Lvl_4_5_Treshold_Yellow_To_Red_Read*. 
+		Expected result:  BP is reached
+
+Action: ARCH_SW_DIA_0330; ARCH_SW_DIA_0334; ARCH_SW_DIA_0335
+
+	Step 3: Send diag request for 01 40 
+		Expected result:  Timeout received.
+
+	Step 4: Evaluate Data Record 
+		Expected result:  Variable was read.
+
+Postcondition
+
+	Step 5: Return ECU to default values

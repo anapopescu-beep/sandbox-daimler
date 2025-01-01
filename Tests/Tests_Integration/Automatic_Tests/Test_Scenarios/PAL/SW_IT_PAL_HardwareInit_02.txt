@@ -1,0 +1,53 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0090, ARCH_SW_PAL_0095
+ARCH_SW_PAL_0090: The component shall be able to init the hardware.
+ARCH_SW_PAL_0095: The component shall be able to disable the H-bridge at startup.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_Init() at line 'pal_Cfg_Init ();' .
+
+Action: ARCH_SW_PAL_0090
+
+	Step 3: Step in function pal_Cfg_Init(). 
+		Expected result:  pal_Cfg_Init,,app.elf
+
+	Step 4: Check if CPU has stopped in function pal_Cfg_Init('. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Set a breakpoint at line 'PAL_Cfg_InternalData.s16AdaptedDutyCycleCommand = KS16_ZERO'.
+
+Action: ARCH_SW_PAL_0095
+
+	Step 6: Check if CPU stopped at line 'PAL_Cfg_InternalData.s16AdaptedDutyCycleCommand = KS16_ZERO;'. 
+		Expected result:  CPU stopped at BP
+
+	Step 7: Set a breakpoint at line 'PAL_Cfg_InternalData.s16RawDutyCycleCommand     = KS16_ZERO;'.
+
+	Step 8: Check if CPU stopped at line 'PAL_Cfg_InternalData.s16RawDutyCycleCommand     = KS16_ZERO;'. 
+		Expected result:  CPU stopped at BP
+
+	Step 9: Set a breakpoint at line 'PAL_Cfg_InternalData.u8EnableCommand            = KU8_ZERO;'.
+
+	Step 10: Check if CPU stopped at line 'PAL_Cfg_InternalData.u8EnableCommand            = KU8_ZERO;'. 
+		Expected result:  CPU stopped at BP
+
+	Step 11: Set a breakpoint at line 'PAL_Cfg_InternalData.bIsPwrStgInSelfProtection  = B_FALSE;'.
+
+	Step 12: Check if CPU stopped at line 'PAL_Cfg_InternalData.bIsPwrStgInSelfProtection  = B_FALSE;'. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 13: Return ECU to default values

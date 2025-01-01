@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>3</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>222</x>
+      <y>405</y>
+      <w>1482</w>
+      <h>354</h>
+    </coordinates>
+    <panel_attributes>title:Synchronize_to_Non_volatile_Memory_Start
+Start
+If
+	[(OpStatus == DCM_INITIAL) || (OpStatus == DCM_PENDING)]
+	If
+		[DiagFunction_NvmWriteAll_Status == DIAGFUNCTION_NVM_WRITEALL_STATE_IDLE]
+		DiagFunction_WriteAllFlag = DIAGFUNCTION_NVMWRITEALL_FLAG_IDLE
+		DiagFunction_NvmWriteAll_Status = DIAGFUNCTION_NVM_WRITEALL_STATE_START
+
+		[(DiagFunction_NvmWriteAll_Status == DIAGFUNCTION_NVM_WRITEALL_STATE_START) || (DiagFunction_NvmWriteAll_Status == DIAGFUNCTION_NVM_WRITEALL_STATE_PENDING)]
+		NvM_GetErrorStatus()
+		If
+			[(nvmRetVal == E_OK) &amp;&amp; (RequestResultPtr != NVM_REQ_PENDING)]
+			If
+				[DiagFunction_NvmWriteAll_Status == DIAGFUNCTION_NVM_WRITEALL_STATE_START]
+				NvM_WriteAll()
+				DiagFunction_NvmWriteAll_Status = DIAGFUNCTION_NVM_WRITEALL_STATE_PENDING
+				DiagFunction_WriteAllFlag = DIAGFUNCTION_NVMWRITEALL_FLAG_TRIGGERED
+				
+				[DIAGFUNCTION_NVM_WRITEALL_STATE_PENDING]
+				If
+					[RequestResultPtr == NVM_REQ_OK]
+					routineInfo = DIAGFUNCTION_ROUTINE_COMPLETED_SUCCESSFULLY
+					DiagFunction_NvmWriteAll_Status = DIAGFUNCTION_NVM_WRITEALL_STATE_IDLE
+					DiagFunction_WriteAllFlag = DIAGFUNCTION_ROUTINE_COMPLETED_SUCCESSFULLY
+					retVal = RTE_E_OK
+
+					[Storing the NVM data has failed]
+					DiagFunction_NvmWriteAll_Status = DIAGFUNCTION_NVM_WRITEALL_STATE_IDLE
+					retVal = RTE_E_RoutineServices_Routine_Synchronize_to_Non_volatile_Memory_Start_E_NOT_OK
+					ErrorCode = DCM_E_REQUESTOUTOFRANGE
+				EndIf
+			EndIf
+			
+			[(nvmRetVal == E_OK) &amp;&amp; (RequestResultPtr == NVM_REQ_PENDING)]
+			routineInfo = DIAGFUNCTION_ROUTINE_IN_PROGRESS
+			retVal = RTE_E_OK
+
+			[Storing the NVM data has failed]
+			DiagFunction_NvmWriteAll_Status = DIAGFUNCTION_NVM_WRITEALL_STATE_IDLE
+			retVal = RTE_E_RoutineServices_Routine_Synchronize_to_Non_volatile_Memory_Start_E_NOT_OK
+			ErrorCode = DCM_E_GENERALPROGRAMMINGFAILURE
+		EndIf	
+
+		[Do nothing]
+	EndIf
+		
+	[OpStatus == DCM_CANCEL]
+	DiagFunction_NvmWriteAll_Status = DIAGFUNCTION_NVM_WRITEALL_STATE_IDLE
+	ErrorCode = DCM_E_POSITIVERESPONSE
+	Return OK
+EndIf
+
+Return
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

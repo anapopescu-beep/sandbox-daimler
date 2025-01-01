@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0027; ARCH_SW_DIA_0112; ARCH_SW_DIA_0113
+ARCH_SW_DIA_0027: Service 0x22 will be implemented for DID 0310.
+ARCH_SW_DIA_0112: Response data shall be 1 byte long.
+ARCH_SW_DIA_0113: Data returned shall represent Equipment 3 stored in Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment.Equipment3
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Vehicle_Equipment_Read_Equipment_3_ReadData*.
+
+Action: ARCH_SW_DIA_0027; ARCH_SW_DIA_0112; ARCH_SW_DIA_0113;
+
+	Step 3: Send diag request for 22 03 10 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Vehicle_Equipment_Read_Equipment_3_ReadData. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Equipment 3 byte of Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

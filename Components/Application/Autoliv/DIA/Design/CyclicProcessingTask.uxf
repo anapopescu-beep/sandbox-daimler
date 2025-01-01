@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>4</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>204</x>
+      <y>4</y>
+      <w>1498</w>
+      <h>1044</h>
+    </coordinates>
+    <panel_attributes>title:CyclicProcessingTask
+Start
+
+Get buckle switch status
+Check if ECU Location is front left
+If
+	[TRUE]
+	Check if the steering wheel is on left
+	If
+		[TRUE]
+		dia_u8BcklSwStatSignal = stBckl_Sw_Fx_Stat.Bckl_Sw_D_Stat_ST3
+
+		[FALSE]	
+		Check if steering wheel is on right
+		If
+			[TRUE]
+			dia_u8BcklSwStatSignal = stBckl_Sw_Fx_Stat.Bckl_Sw_FP_Stat_ST3
+		
+			[FALSE]
+		EndIf
+	EndIf
+
+	[FALSE]
+	Check if ECU Location is front right
+	If
+		[TRUE]
+		Check if the steering wheel is on left
+		If
+			[TRUE]
+			dia_u8BcklSwStatSignal = stBckl_Sw_Fx_Stat.Bckl_Sw_FP_Stat_ST3
+
+			[FALSE]
+			Check if steering wheel is on right
+			If
+				[TRUE]
+				dia_u8BcklSwStatSignal = stBckl_Sw_Fx_Stat.Bckl_Sw_D_Stat_ST3
+		
+				[FALSE]
+			EndIf
+		EndIf
+
+		[FALSE]
+	EndIf
+EndIf
+
+
+Switch routineStatus
+If
+	[case TENSIONING_ROUTINE_NOT_RUNNING]
+
+	[case TENSIONING_ROUTINE_STARTED]
+	u32Duration = DIA_FACTOR_SECONDS_TO_MS * DIA_stTensioningCycleStarted.timeToRun
+	DIA_stTensioningCycleStarted.routineStatus = TENSIONING_ROUTINE_DEBOUNCING	
+	
+	[case TENSIONING_ROUTINE_DEBOUNCING]
+	Check if Duration is higher than task cyclicality
+	If
+		[TRUE]
+		Decrease duration
+		Switch requestedCycle
+		If
+			[case KU8_BELT_FUNCTION_18]
+			Read current executed cycle
+			Check If no cycle is currently executed
+			If
+				[TRUE]
+				Write KU8_BELT_FUNCTION_19
+					
+				[FALSE]
+			EndIf
+			
+			[case KU8_BELT_FUNCTION_20]
+			Read current executed cycle
+			Check If no cycle is currently executed
+			If
+				[TRUE]
+				Write KU8_BELT_FUNCTION_21
+					
+				[FALSE]
+			EndIf
+
+			[case KU8_BELT_FUNCTION_22]
+			Read current executed cycle
+			Check If no cycle is currently executed
+			If
+				[TRUE]
+				Write KU8_BELT_FUNCTION_23
+					
+				[FALSE]
+			EndIf
+
+			[case KU8_BELT_FUNCTION_24]
+			Read current executed cycle
+			Check If no cycle is currently executed
+			If
+				[TRUE]
+				Write KU8_BELT_FUNCTION_25
+					
+				[FALSE]
+			EndIf
+			
+		EndIf
+		
+		[FALSE]
+		routineStatus = TENSIONING_ROUTINE_STOP
+
+	EndIf
+
+	[case TENSIONING_ROUTINE_STOP]
+	Stoop &amp; reset cyclic counter
+
+	[case TENSIONING_ROUTINE_STOPPED]
+	Stop completely
+EndIf
+
+Check if TriggerPreSafeRequest = TRIGGER_PRESAFE_ROUTINE_STARTED
+If
+	[TRUE]
+	Check if Presafe counter is lower than PRESAFE_TRIGGER_COUNTER
+	If
+		[TRUE]
+		Increment TriggerPreSafeCounter
+		Write Presafe Display Request to TRUE
+		
+		[FALSE]
+		DIA_u8TriggerPreSafeRequest = TRIGGER_PRESAFE_ROUTINE_STOPED
+		TriggerPreSafeCounter = KU16_ZERO
+		Write Presafe Display Request to FALSE
+	EndIf
+	
+	[FALSE]
+EndIf
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

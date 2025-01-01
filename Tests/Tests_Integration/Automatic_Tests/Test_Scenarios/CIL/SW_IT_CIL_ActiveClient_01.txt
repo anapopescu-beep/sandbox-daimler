@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0098, ARCH_SW_CIL_0099, ARCH_SW_CIL_0104
+ARCH_SW_CIL_0099: When no profile is executed the signal RBTMxy_SP_ActvClient_ST35 shall be set to 0.
+ARCH_SW_CIL_0098: Signal RBTMxy_SP_ActvClient_ST35 shall be written and send to CAN.
+ARCH_SW_CIL_0104: Signal RBTMxy_SP_ActvClient_ST35 shall be 0x0F dring initialization phase.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_CIL_0104
+
+	Step 2: Check if variable CIL_u8Actv_Client is equal to I_C04_RBTM_ACTVCLIENT_SNA. 
+		Expected result:   I_C04_RBTM_ACTVCLIENT_SNA (0x0F)
+
+	Step 3: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C04_PRESF_LVL_V2_NOLVL.
+
+	Step 4: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 5: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function cil_ManageActiveClientRequestSource() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_ActvClient_ST35_RBTMFL_SP_ActvClient_ST35(CIL_u8Actv_Client);'.
+
+	Step 7: Check if CPU stopped at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_P_RBTMFL_SP_ActvClient_ST35_RBTMFL_SP_ActvClient_ST35(CIL_u8Actv_Client);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0098, ARCH_SW_CIL_0099
+
+	Step 8: Check if signal RBTMFL_SP_ActvClient_ST35 value is I_C04_RBTM_ACTVCLIENT_NONE. 
+		Expected result:  I_C04_RBTM_ACTVCLIENT_NONE
+
+Postcondition
+
+	Step 9: Return ECU to default values

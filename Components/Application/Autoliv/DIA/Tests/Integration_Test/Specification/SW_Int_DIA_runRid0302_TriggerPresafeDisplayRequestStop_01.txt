@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0220; ARCH_SW_DIA_0229; ARCH_SW_DIA_0230; ARCH_SW_DIA_0231; ARCH_SW_DIA_0232
+ARCH_SW_DIA_0220: Service 0x31 (Routine Control) 0x31 01 0x31 02 0x31 03 for RID 0x0302 (Trigger Pre-Safe Display Request) will be implemented .
+ARCH_SW_DIA_0229: Service shall be available in Default session, Extended sessionUpdate session and Development session.
+ARCH_SW_DIA_0230: Service shall be available in the following forms of Authentication:Supplier, Development ENHANCED, Production, After-Sales ENHANCED, After-Sales.
+ARCH_SW_DIA_0231: Successful Authentication is a pre-condition for running this Service
+ARCH_SW_DIA_0232: Result can have the following values: 0x00, 0x01 and 0x02.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set BCKL_ON.
+
+	Step 4: Clear fault memory
+
+	Step 5: Set breakpoint in function *DIA_runRid0302_TriggerPresafeDisplayRequestStop*.
+
+	Step 6: Send diag request for RID 03 02 Start 
+		Expected result:  Request Sent.
+
+	Step 7: Send diag request for RID 03 02 Stop 
+		Expected result:  Timeout error.
+
+Action: ARCH_SW_DIA_0220; ARCH_SW_DIA_0229; ARCH_SW_DIA_0230; ARCH_SW_DIA_0231; ARCH_SW_DIA_0232
+
+	Step 8: Check if breakpoint from function DIA_runRid0302_TriggerPresafeDisplayRequestStop was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 9: Return ECU to default values

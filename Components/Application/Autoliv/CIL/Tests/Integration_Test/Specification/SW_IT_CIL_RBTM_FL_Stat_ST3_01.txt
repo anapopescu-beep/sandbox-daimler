@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0010, ARCH_SW_CIL_0065, ARCH_SW_CIL_0066, ARCH_SW_CIL_0067; ARCH_SW_CIL_0068
+ARCH_SW_CIL_0010: Signals from frame RBTM_FL/FR_Stat_ST3 shall be written with information from application.
+ARCH_SW_CIL_0066: Signal RBTM _FL/FR Actv_Lvl_ST35 shall be written and send to CAN.
+ARCH_SW_CIL_0067: The signal RBTM _FL/FR Actv_Lvl_ST35 shall be initialized with the value 0x3F(�SNA-Init�).
+ARCH_SW_CIL_0068: If BSR1(cycle 26) is executed (and his next cycle ) then RBTM _FL/FR Actv_Lvl_ST35 should be 0x13 = �BSR1� no matter the source of the request: API interface, PRE-SAFE interface.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_ManageAbortingConditions.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).
+
+Action: ARCH_SW_CIL_0010, ARCH_SW_CIL_0065, ARCH_SW_CIL_0066, ARCH_SW_CIL_0067; ARCH_SW_CIL_0068
+
+	Step 4: Set variable CIL_u8Actv_Lvl to 0x1.
+		Expected result:  Successfully overwritten variable CIL_u8Actv_Lvl.
+
+Postcondition
+
+	Step 5: Return ECU to default values

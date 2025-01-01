@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0140
+ARCH_SW_MMG_0140: The �To check Hall Efect Sensor AEC status from ERH shall be an input for MMG_KU32_MASK_NO_HALL_EFFECT_SENSOR context qualification.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor();.
+
+	Step 3: Step in mmg_UpdateModeStatus_NoHallEffectSensor.
+
+	Step 4: Set a breakpoint at line M_SET_MODE_MASK_OFF(MMG_KU32_MASK_NO_HALL_EFFECT_SENSOR);.
+
+Action: ARCH_SW_MMG_0140
+
+	Step 5: Check if CPU stopped at line M_SET_MODE_MASK_OFF(MMG_KU32_MASK_NO_HALL_EFFECT_SENSOR);. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 6: Return ECU to default values

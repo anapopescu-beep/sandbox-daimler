@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0010; ARCH_SW_DIA_0281; ARCH_SW_DIA_0282; ARCH_SW_DIA_0283, ARCH_SW_DIA_0284
+ARCH_SW_DIA_0010: Service Read DTC Information shall be implemented with subfunction 0x02 ReportDTCByStatusMask.
+ARCH_SW_DIA_0281: Service 0x19 (Read DTC Information) will be implemented for ReportDTCByStatusMask.
+ARCH_SW_DIA_0282: The ReportDTCByStatusMask shall be available in the following sessions: Update session
+ARCH_SW_DIA_0283: The byte 3 shall be reserved for the DTCStatusAvailabilityMask of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0284: DTCStatusAvailabilityMask shall be 0x39.  REVAS supported status bits are the following ones:- Test Failed (bit 0) - Confirmed DTC (bit 3) - Test Not Completed Sin� Last Clear (bit 4) - Test Failed this Operation Cycle (bit 5)
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *Dcm_Svc19Handler*.
+
+Action: ARCH_SW_DIA_0010; ARCH_SW_DIA_0281; ARCH_SW_DIA_0282; ARCH_SW_DIA_0283; ARCH_SW_DIA_0284;
+
+	Step 3: Send fault memory clear request.
+
+	Step 4: Check if  was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

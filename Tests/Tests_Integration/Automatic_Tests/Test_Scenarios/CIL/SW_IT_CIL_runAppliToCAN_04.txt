@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0083
+ARCH_SW_CIL_0083: If PRE-SAFE3 is executed (cycle 1) (and his next cycle ) then RBTM _FL/FR Actv_Lvl_ST35 should be equal to 0x03 = �PRE-SAFE 3� no matter the source of the request: API interface, PRE SAFE interface, Diagnostic request.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL3.
+
+	Step 3: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 4: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageActiveLevelSignal() after line 'CIL_u8Actv_Lvl = I_C06_RBTM_LVL_STAT_PROFILE3;'.
+
+	Step 6: Check if CPU stopped in function cil_ManageActiveLevelSignal() after line 'CIL_u8Actv_Lvl = I_C06_RBTM_LVL_STAT_PROFILE3;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0083
+
+	Step 7: Check if variable CIL_u8Actv_Lvl is I_C06_RBTM_LVL_STAT_PROFILE3. 
+		Expected result:  I_C06_RBTM_LVL_STAT_PROFILE3
+
+Action: ARCH_SW_CIL_0083
+
+	Step 8: Check if signal RBTMFL_Actv_Lvl_ST35 value is I_C06_RBTM_LVL_STAT_PROFILE3. 
+		Expected result:  I_C06_RBTM_LVL_STAT_PROFILE3
+
+Postcondition
+
+	Step 9: Return ECU to default values

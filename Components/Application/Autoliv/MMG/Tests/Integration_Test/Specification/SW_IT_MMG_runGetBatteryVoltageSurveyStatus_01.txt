@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0202, ARCH_SW_MMG_0207, ARCH_SW_MMG_0208, ARCH_SW_MMG_0406
+ARCH_SW_MMG_0202: PMP_runGetBatteryVoltageSurveyStatus shall be called to get the battery voltage.
+ARCH_SW_MMG_0207: PMP_runGetBatteryVoltage_10ms shall be called to read the KL30 battery voltage to check if measured battery voltage is outside Extended Operating range.
+ARCH_SW_MMG_0208: PMP_runGetBatteryVoltage_10ms shall be called to read the KL30 battery voltage to check if measured battery voltage is outside Normal Operating range.
+ARCH_SW_MMG_0406: PMP_runGetBatteryVoltage shall be called in order to get the battery voltage.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_PowerVoltageUnstable().
+
+	Step 3: Step in function mmg_UpdateModeStatus_PowerVoltageUnstable.
+
+	Step 4: Set a breakpoint at line Rte_Call_pclSurveyBatteryVoltage_GetStatus( &u8BatteryVoltageSurveyStatus).
+
+	Step 5: Set a breakpoint at line pu8BatteryVoltageSurveyStatus = PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState.
+
+Action: ARCH_SW_MMG_0202, ARCH_SW_MMG_0207, ARCH_SW_MMG_0208,ARCH_SW_MMG_0406
+
+	Step 6: Check if CPU stopped at line pu8BatteryVoltageSurveyStatus = PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

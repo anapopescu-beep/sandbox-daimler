@@ -1,0 +1,1227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Diagnostic Session Transitions</title>
+    <script type="text/javascript">
+      function showTimestamp(timestamp){top.LogFile.showTimestamp(timestamp);}
+    </script>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="extendedNavigation.css">
+  </head>
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td class="UpCell">
+            <a href="Frame_Report.html">Go up</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <tr>
+        <td class="TestcaseHeadingPositiveResult">
+          <big class="Heading3">1 <a name="i__-1249098880_9">Test Case SW_IT_DIA_0069: Diagnostic Session Transitions</a>: Passed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_1">
+      <p>Purpose of test: To test the functionality of the 0x10 service.<br> Requirement: ARCH_SW_DIA_0042, ARCH_SW_DIA_0043, ARCH_SW_DIA_0044<br> Regression Test: No<br> Test Type: Requirement-Based<br> Fault injection method used: No<br> Resource usage evaluation: No <br> Priority: Yes<br> Safety relevant: No <br>
+      </p>
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2022-12-13 15:31:16</td>
+            <td class="CellNoColor">(logging timestamp    0.760644)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2022-12-13 15:31:28</td>
+            <td class="CellNoColor" nowrap>(logging timestamp   12.862332)</td>
+          </tr>
+        </table>
+        <p><A HREF='s:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_IT_DIA__Tue_Dec_13_15_31_16_2022.asc'>Log file: SW_IT_DIA__Tue_Dec_13_15_31_16_2022.asc </A></p>
+      </div>
+      <div class="Indentation">
+        <table class="ScreenOnly">
+          <tbody>
+            <tr>
+              <td>
+                <a class="Undecorated" href="javascript:showTable('1_')">[expand test steps]</a>
+              </td>
+              <td width="2px"></td>
+              <td>
+                <a class="Undecorated" href="javascript:hideTable('1_')">[collapse test steps]</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="TestGroupHeadingBackground">
+        <tr>
+          <td>
+            <big class="Heading3">Main Part of Test Case</big>
+          </td>
+        </tr>
+      </table>
+      <div class="Indentation">
+        <table class="ResultTable">
+          <tr>
+            <th class="TableHeadingCell" width="1px">Timestamp</th>
+            <th class="TableHeadingCell" width="1px">Test Step</th>
+            <th class="TableHeadingCell" width="auto">Description</th>
+            <th class="TableHeadingCell" width="1px">Result</th>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">1. Precondtions: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   0.760644</td>
+            <td class="NumberCell">1</td>
+            <td class="DefaultCell">Start Logging.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.760644</td>
+            <td class="NumberCell">2</td>
+            <td class="DefaultCell">Set Ignition to ON</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.760644</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_56" href="javascript:switchTable('1_i__-1249098880_56')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_56">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Ignition set to ON</td>
+                  <td class="DefaultCell">Ignition set to ON</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.760644</td>
+            <td class="NumberCell">3</td>
+            <td class="DefaultCell">Authenticate with Developer_Enhanced user role.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.794137</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_116" href="javascript:switchTable('1_i__-1249098880_116')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/Authenticate_Diagnostic_User_or_Tester_Start/RC_STR_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_1_i__-1249098880_116">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x71</td>
+                  <td class="DefaultCell">71 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RoutineControlType</td>
+                  <td class="DefaultCell">0x01</td>
+                  <td class="DefaultCell">01 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RoutineIdentifier</td>
+                  <td class="DefaultCell">0x0260</td>
+                  <td class="DefaultCell">02 60 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">routineInfo</td>
+                  <td class="DefaultCell">Routine succesfully completed</td>
+                  <td class="DefaultCell">00 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Verification Result</td>
+                  <td class="DefaultCell">Certificate verification failed - Invalid Format</td>
+                  <td class="DefaultCell">14 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Authentication Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">EndOfServiceIteration0</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 40px;">Challenge/Certificate/Proof of Ownership</td>
+                  <td class="DefaultCell"></td>
+                  <td class="DefaultCell">00 00 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">EndOfServiceIteration1</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 40px;">Challenge/Certificate/Proof of Ownership</td>
+                  <td class="DefaultCell"></td>
+                  <td class="DefaultCell">00 00 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">EndOfServiceIteration2</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 40px;">Challenge/Certificate/Proof of Ownership</td>
+                  <td class="DefaultCell"></td>
+                  <td class="DefaultCell">00 00 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   3.794137</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_365" href="javascript:switchTable('1_i__-1249098880_365')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_365">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Positive response reached!</td>
+                  <td class="DefaultCell">Positive response reached!</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.794137</td>
+            <td class="NumberCell">4</td>
+            <td class="DefaultCell">Check HW and SW versions</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.794137</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_426" href="javascript:switchTable('1_i__-1249098880_426')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_426">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Trigger to send the request succeded.</td>
+                  <td class="DefaultCell">Trigger to send the request succeded.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.796089</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_477" href="javascript:switchTable('1_i__-1249098880_477')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_477">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Request was sent successfully.</td>
+                  <td class="DefaultCell">Request was sent successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.803005</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_528" href="javascript:switchTable('1_i__-1249098880_528')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_528">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Response received successfully.</td>
+                  <td class="DefaultCell">Response received successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.803005</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_578" href="javascript:switchTable('1_i__-1249098880_578')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/HardwareVersion_Read/RDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_1_i__-1249098880_578">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x62</td>
+                  <td class="DefaultCell">62 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xF150</td>
+                  <td class="DefaultCell">f1 50 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Hardware Version Information</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">HW - year</td>
+                  <td class="DefaultCell">22</td>
+                  <td class="DefaultCell">16 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">HW - week</td>
+                  <td class="DefaultCell">25</td>
+                  <td class="DefaultCell">19 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">HW - patch level</td>
+                  <td class="DefaultCell">0</td>
+                  <td class="DefaultCell">00 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.803005</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_734" href="javascript:switchTable('1_i__-1249098880_734')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_734">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Positive Response received as expected.</td>
+                  <td class="DefaultCell">Positive Response received as expected.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.803005</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_785" href="javascript:switchTable('1_i__-1249098880_785')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_785">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Trigger to send the request succeded.</td>
+                  <td class="DefaultCell">Trigger to send the request succeded.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.806233</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_836" href="javascript:switchTable('1_i__-1249098880_836')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_836">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Request was sent successfully.</td>
+                  <td class="DefaultCell">Request was sent successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.813825</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_887" href="javascript:switchTable('1_i__-1249098880_887')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_887">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Response received successfully.</td>
+                  <td class="DefaultCell">Response received successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.813825</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_937" href="javascript:switchTable('1_i__-1249098880_937')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/SoftwareVersion_Read/RDBI_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_1_i__-1249098880_937">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x62</td>
+                  <td class="DefaultCell">62 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">RecordDataIdentifier</td>
+                  <td class="DefaultCell">0xF151</td>
+                  <td class="DefaultCell">f1 51 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Software Version Information</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 20px;">Software Logical Block # Version Information</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 40px;">EndOfServiceIteration0</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 60px;">SW - year</td>
+                  <td class="DefaultCell">22</td>
+                  <td class="DefaultCell">16 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 60px;">SW - week</td>
+                  <td class="DefaultCell">44</td>
+                  <td class="DefaultCell">2c </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 60px;">SW - patch level</td>
+                  <td class="DefaultCell">1</td>
+                  <td class="DefaultCell">01 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 40px;">EndOfServiceIteration1</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 60px;">SW - year</td>
+                  <td class="DefaultCell">22</td>
+                  <td class="DefaultCell">16 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 60px;">SW - week</td>
+                  <td class="DefaultCell">44</td>
+                  <td class="DefaultCell">2c </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 60px;">SW - patch level</td>
+                  <td class="DefaultCell">2</td>
+                  <td class="DefaultCell">02 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   8.813825</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1189" href="javascript:switchTable('1_i__-1249098880_1189')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1189">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Positive Response received as expected.</td>
+                  <td class="DefaultCell">Positive Response received as expected.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.813825</td>
+            <td class="NumberCell">5</td>
+            <td class="DefaultCell">Start Default Session</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.813825</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1257" href="javascript:switchTable('1_i__-1249098880_1257')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1257">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Trigger to send the request succeded.</td>
+                  <td class="DefaultCell">Trigger to send the request succeded.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.815585</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1308" href="javascript:switchTable('1_i__-1249098880_1308')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1308">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Request was sent successfully.</td>
+                  <td class="DefaultCell">Request was sent successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.822372</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1359" href="javascript:switchTable('1_i__-1249098880_1359')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1359">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Response received successfully.</td>
+                  <td class="DefaultCell">Response received successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.822372</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1409" href="javascript:switchTable('1_i__-1249098880_1409')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/Default_Start/STDS_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_1_i__-1249098880_1409">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x50</td>
+                  <td class="DefaultCell">50 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">DiagnosticSessionType</td>
+                  <td class="DefaultCell">0x01</td>
+                  <td class="DefaultCell">01 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">P2_CAN_ECU_max</td>
+                  <td class="DefaultCell">20 ms</td>
+                  <td class="DefaultCell">00 14 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">P2s_CAN_ECU_max</td>
+                  <td class="DefaultCell">2000 ms</td>
+                  <td class="DefaultCell">00 c8 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.822372</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1533" href="javascript:switchTable('1_i__-1249098880_1533')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1533">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Positive Response received as expected.</td>
+                  <td class="DefaultCell">Positive Response received as expected.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.822372</td>
+            <td class="NumberCell">6</td>
+            <td class="DefaultCell">Start Extended Session</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.822372</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1594" href="javascript:switchTable('1_i__-1249098880_1594')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1594">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Trigger to send the request succeded.</td>
+                  <td class="DefaultCell">Trigger to send the request succeded.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.823644</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1645" href="javascript:switchTable('1_i__-1249098880_1645')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1645">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Request was sent successfully.</td>
+                  <td class="DefaultCell">Request was sent successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.832380</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1696" href="javascript:switchTable('1_i__-1249098880_1696')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1696">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Response received successfully.</td>
+                  <td class="DefaultCell">Response received successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.832380</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1746" href="javascript:switchTable('1_i__-1249098880_1746')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/Extended_Start/STDS_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_1_i__-1249098880_1746">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x50</td>
+                  <td class="DefaultCell">50 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">DiagnosticSessionType</td>
+                  <td class="DefaultCell">0x03</td>
+                  <td class="DefaultCell">03 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">P2_CAN_ECU_max</td>
+                  <td class="DefaultCell">20 ms</td>
+                  <td class="DefaultCell">00 14 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">P2s_CAN_ECU_max</td>
+                  <td class="DefaultCell">2000 ms</td>
+                  <td class="DefaultCell">00 c8 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.832380</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1870" href="javascript:switchTable('1_i__-1249098880_1870')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1870">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Positive Response received as expected.</td>
+                  <td class="DefaultCell">Positive Response received as expected.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.832380</td>
+            <td class="NumberCell">7</td>
+            <td class="DefaultCell">Start Programming Session</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.832380</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1931" href="javascript:switchTable('1_i__-1249098880_1931')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1931">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Trigger to send the request succeded.</td>
+                  <td class="DefaultCell">Trigger to send the request succeded.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.833720</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_1982" href="javascript:switchTable('1_i__-1249098880_1982')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_1982">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Request was sent successfully.</td>
+                  <td class="DefaultCell">Request was sent successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.862332</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_2033" href="javascript:switchTable('1_i__-1249098880_2033')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_2033">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Response received successfully.</td>
+                  <td class="DefaultCell">Response received successfully.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.862332</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_2083" href="javascript:switchTable('1_i__-1249098880_2083')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/ProgrammingStart/STDS_PR</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_1_i__-1249098880_2083">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-PR</td>
+                  <td class="DefaultCell">0x50</td>
+                  <td class="DefaultCell">50 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">DiagnosticSessionType</td>
+                  <td class="DefaultCell">0x02</td>
+                  <td class="DefaultCell">02 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">P2_CAN_ECU_max</td>
+                  <td class="DefaultCell">20 ms</td>
+                  <td class="DefaultCell">00 14 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">P2s_CAN_ECU_max</td>
+                  <td class="DefaultCell">2000 ms</td>
+                  <td class="DefaultCell">00 c8 </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.862332</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_1_i__-1249098880_2207" href="javascript:switchTable('1_i__-1249098880_2207')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_1_i__-1249098880_2207">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Positive Response received as expected.</td>
+                  <td class="DefaultCell">Positive Response received as expected.</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">2. Postconditions: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

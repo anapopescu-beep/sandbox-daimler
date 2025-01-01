@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0203, ARCH_SW_PMP_0204
+ARCH_SW_PMP_0203: This function shall provide the value of HighSide Switch Voltage from the ADC (not FILTERED).
+ARCH_SW_PMP_0204: The AdcIf_runGetHS1_V function shall be called to get the sampled value of the HighSide Switch from the ADC.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+Action: ARCH_SW_PMP_0203, ARCH_SW_PMP_1054
+
+	Step 4: Set a breakpoint in function PMP_runGetHS1Level at the RTE Call for AdcIf_runGetHS1_V function 
+		Expected result:  BP reached.
+
+	Step 5: Read local variable pu16SampledSignal 
+		Expected result:  Variable read from ADC channel
+
+	Step 6: Set a breakpoint in function PMP_runGetHS1Level at the pu16Voltage assignment
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0204
+
+	Step 7: Evaluate local variable u16InternalAnalogSignal 
+		Expected result:  Variable read is the same from *(pu16SampledSignal) data pointer
+
+Postcondition
+
+	Step 8: Return ECU to default values

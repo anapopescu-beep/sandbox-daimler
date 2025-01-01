@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0310
+ARCH_SW_MMG_0310: If the first step from a cycle is 0xFF then cycle is invalid.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init() at line 'mmg_CheckCycleEnable();' and press run.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line 'mmg_CheckCycleEnable();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Step in function mmg_CheckIfCycleStepIsvalid.
+
+	Step 5: Set a breakpoint in function mmg_CheckIfCycleStepIsvalid() at line 'if ( KU8_MAX == NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[u16Step0])'.
+
+Action: ARCH_SW_MMG_0310
+
+	Step 6: Check if CPU stopped in function mmg_CheckIfCycleStepIsvalid() at line 'if ( KU8_MAX == NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[u16Step0])'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 7: Return ECU to default values

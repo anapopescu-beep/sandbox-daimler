@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0563
+ARCH_SW_CIL_0563: NVP_stVehicleEquipmentData shall be read to get the coding configuration: Display message enabled.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 3: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManagePresfDisplay() at line 'cil_u8RBTMDisp = I_C02_PRESF_DISP_RQ_IDLE;' and press run.
+
+Action: ARCH_SW_CIL_0563
+
+	Step 5: Check if CPU stopped in function cil_ManagePresfDisplay() at line 'cil_u8RBTMDisp = I_C02_PRESF_DISP_RQ_IDLE;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0563
+
+	Step 6: Evaluate if signal RBTM_FL_Disp_Rq_ST3 is equal to I_C02_PRESF_DISP_RQ_IDLE. 
+		Expected result:  I_C02_PRESF_DISP_RQ_IDLE
+
+Postcondition
+
+	Step 7: Return ECU to default values

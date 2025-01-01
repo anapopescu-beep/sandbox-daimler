@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0027; ARCH_SW_DIA_0128; ARCH_SW_DIA_0129
+ARCH_SW_DIA_0027: Service 0x22 will be implemented for DID 0310.
+ARCH_SW_DIA_0128: Response data shall be 2 bytes long.
+ARCH_SW_DIA_0129: Data returned shall represent Uberspannungsabbruchschwelle stored in Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment. Uberspannungsabbruchschwelle.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Vehicle_Equipment_Read_Uberspannungsabbruchschwelle*.
+
+Action: ARCH_SW_DIA_0027; ARCH_SW_DIA_0128; ARCH_SW_DIA_0129
+
+	Step 3: Send diag request for 22 03 10 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Vehicle_Equipment_Read_Uberspannungsabbruchschwelle. 
+		Expected result:  BP was reached.
+
+	Step 5: Read byte 7 byte of Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

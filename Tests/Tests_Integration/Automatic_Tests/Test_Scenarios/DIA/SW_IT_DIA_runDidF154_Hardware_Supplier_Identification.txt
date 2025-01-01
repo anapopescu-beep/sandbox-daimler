@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0655, ARCH_SW_DIA_0701; ARCH_SW_DIA_0702; ARCH_SW_DIA_0703; ARCH_SW_DIA_0704; ARCH_SW_DIA_0705
+ARCH_SW_DIA_0655: Service 0x22 (Read Data By Identifier) will be implemented for DiagCommonData Structure which is composed by the following DIDs: EF00 (ECU Extract Version) EF01 (Diagnostic Extract Version) EF03 (Standard Application SW Package Information) EF05 (Minimum SW Version) F100 (Active Diagnostic Information) F104 (ECU Name) F10D (DDS Package Release) F111 (MBC ECU Identification - Hardware Part Number) F121 (MBC ECU Identification - Software Logical Block Part Number(s)) F154 (Hardware Supplier Identification) F155 (Software Supplier Identification)
+ARCH_SW_DIA_0701: The Read Hardware Supplier Identification shall be available in the following sessions: ?Default Session (0x01) ?Programming Session (0x02) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E 
+ARCH_SW_DIA_0702: The Read Hardware Supplier Identification service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0703: DataIdentifier of the Read Hardware Supplier Identification shall be: 0xF154
+ARCH_SW_DIA_0704: Response data length shall be 2 bytes long Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0705: Byte #4:?bits 0-7: Hardware Supplier IdentificationByte #5:?bits 0-7: Hardware Supplier Identification
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0655, ARCH_SW_DIA_0701; ARCH_SW_DIA_0702; ARCH_SW_DIA_0703; ARCH_SW_DIA_0704; ARCH_SW_DIA_0705
+
+	Step 2: Send diag request for 22 F10D and check response 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 3: Return ECU to default values

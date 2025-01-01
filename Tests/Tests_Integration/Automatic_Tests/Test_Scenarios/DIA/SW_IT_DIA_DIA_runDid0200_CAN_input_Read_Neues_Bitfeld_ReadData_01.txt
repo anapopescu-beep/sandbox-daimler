@@ -1,0 +1,162 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365; ARCH_SW_DIA_0441; ARCH_SW_DIA_0442; ARCH_SW_DIA_0443; ARCH_SW_DIA_0444; ARCH_SW_DIA_0445; ARCH_SW_DIA_0446; ARCH_SW_DIA_0447; ARCH_SW_DIA_0448; ARCH_SW_DIA_0449; ARCH_SW_DIA_0450; ARCH_SW_DIA_0451; ARCH_SW_DIA_0452; ARCH_SW_DIA_0453; ARCH_SW_DIA_0454;ARCH_SW_DIA_0455; ARCH_SW_DIA_0456; ARCH_SW_DIA_0457; ARCH_SW_DIA_0458; ARCH_SW_DIA_0497; ARCH_SW_DIA_0498; ARCH_SW_DIA_0499; ARCH_SW_DIA_0500; ARCH_SW_DIA_0501; ARCH_SW_DIA_0502; ARCH_SW_DIA_0503; ARCH_SW_DIA_0504; ARCH_SW_DIA_0505; ARCH_SW_DIA_0506; ARCH_SW_DIA_0535;ARCH_SW_DIA_0536; ARCH_SW_DIA_0537; ARCH_SW_DIA_0538; ARCH_SW_DIA_0539; ARCH_SW_DIA_0540; ARCH_SW_DIA_0541; ARCH_SW_DIA_0542
+ARCH_SW_DIA_0360: Service 0x22 (Read Data By Identifier) will be implemented for DID 0200 (CAN Input)
+ARCH_SW_DIA_0361: The Read CAN Input service shall be available in the following sessions: Default Session (0x01) Extended Session (0x03) Supplier Session/Development Session (0x7E) Update Session (0x42)
+ARCH_SW_DIA_0362: Read CAN Input service shall be available under the following forms of Authentication: Supplier Development ENHANCED Production After-Sales ENHANCED After-Sales After-Sales BASIC Internal Diagnostic Test Tool ePTI Test Tool
+ARCH_SW_DIA_0363: DataIdentifier of the Read CAN Input shall be: 0x0200
+ARCH_SW_DIA_0364: Response data length shall be 9 bytes long: Bytes #2-#3: DataIdentifier of the Read CAN Input shall be: 0x0200 Byte #4 : bits 0-2: Ignition switch state (Isw_Stat_ST3 signal) bit 3 : Reserved (set to 0) bits 4-5 : Buckle switch driver state (Bckl_Sw_D_Stat_ST3) bits 6-7 : Buckle switch front passenger state (Bckl_Sw_FP_Stat_ST3) Byte #5 : bits 0-1 : Presafe enabled (Presf_Enbl_ST3) bits 2-3 : Presafe actuator RBTM_FL tensioning suppress request (PresfAct_TensSupp_Rq_ST3) bits 4-7 : Presafe level (Presf_Lvl_ST3) Byte #6 : bits 0-1 : Belt hand over left state (BeltHdOvr_FL_Stat_ST3) bits 2-3 : Belt hand over right state (BeltHdOvr_FR_Stat_ST3) bits 4-6 : Engine start state (PT4_PTCoor_EngStartPN14_Stat_ST3) bit 7 : Reserved (set to 0) Byte #7 : bit 0 : Impact event X (Impact_X_ST3) bit 1 : Reserved (set to 0) bit 2 : Turn over event 1 RO_type1 (Impact_RO_type1_ST3) bit 3 : Turn over event 2 RO_type2 (Impact_RO_type2_ST3) bits 4-5 : Steering variant (EVC_List03_StStyle_ST3) bits 6-7 : Reserved (set to 0) Byte #8 : bits 0-7 : Supply battery voltage (ngagedng of PN14_SupBat_Volt_ST3 signal with 0.1V resolution) Byte #9 : bits 0-2: Supply battery cutoff switch status ((PN14_DDP_Sw_Stat_ST3) bits3-5 : Powernet Production mode status (PN14_ProdMd_Stat_ST3) bits 6-7 : Powernet transport mode status (PN14_TransMd_Stat_ST3) Byte #10 : bits 0-1: Belt slack decreasing mode request (BltSlckDec_Md_Rq_HU_ST3) bits 2-3 : Powertrain ready (PT4_PTCoor_PT_Rdy_ST3) bits 4-7 : Reverse gear ngaged (PT4_PTCoor_DrvPosn_Stat_ST3) Byte #11 : bits 0-5: RBTMFL_SP_Lvl_Rq_ST35 bits 6-7: DidA external tester present (DidA_ExtTest_Pres_ST3) Byte #12 : bits 0-5: RBTMFR_SP_Lvl_Rq_ST35 bits 6-7: Presafe acceleration threshold (PresfAccelReset_NotExcd_ST3)
+ARCH_SW_DIA_0365: Read CAN Input service shall return the current values of the mentioned CAN signals.
+ARCH_SW_DIA_0441: Signal PT4_PTCoor_EngStartPN14_Stat_ST3 Position: â¦ StartByte = 4; â¦ StartBit = 4; â¦ SignalLength = 3; Note:StartByte starts from 1 and StartBit starts from 0
+ARCH_SW_DIA_0442: Signal Values: 0 = NO_COMBUSTIONSTART_RQ (No combustion start required) 1 = CUSTOMER_START_RQ(Customer start required) 2 = AUTO_START_NO_PN_SUP_RQ(Automatic start without Powernet support required) 3 = AUTO_START_PN_SUP_RQ(Automatic start with Powernet support required) 7 = Signal not Available (SNA)
+ARCH_SW_DIA_0443: PT4_PTCoor_EngStartPN14_Stat_ST3 signal shall be read by both Front LEFT ECU and Front RIGHT ECU and reported via CAN Input Service (0x0200)
+ARCH_SW_DIA_0444: Signal DidA_ExtTest_Pres_ST3 Position: â¦ StartByte = 1 â¦ StartBit = 2; â¦ SignalLength = 2 Note:StartByte starts from 1 and StartBit starts from 0
+ARCH_SW_DIA_0445: Signal Values: 0x01= FALSE 0x02 = TRUE 0x03 = default / Signal not Available (SNA)
+ARCH_SW_DIA_0446: DidA_ExtTest_Pres_ST3 signal shall be read by both Front LEFT ECU and Front RIGHT ECU and reported via CAN Input Service (0x0200)
+ARCH_SW_DIA_0447: Signal PN14_DDP_Sw_Stat_ST3 Position: â¦ StartByte = 1 â¦ StartBit = 2; â¦ SignalLength = 3 â¦ Note:StartByte starts from 1 and StartBit starts from 0
+ARCH_SW_DIA_0448: Signal Values: 0 = CLS TDP (switch is closed) 1 = PRE_RESET (Pre-Reset warning) 2 = RESET (Reset active) 3 = PRE_OPN (Pre-Open warning) 4 = OPN (TDP switch is open) 7 = default / Signal not Available (SNA)
+ARCH_SW_DIA_0449: PN14_DDP_Sw_Stat_ST3 signal shall be read by both Front LEFT ECU and Front RIGHT ECU and reported via CAN Input Service (0x0200)
+ARCH_SW_DIA_0450: Signal PN14_SupBat_Volt_ST3 Position: â¦ StartByte = 3 â¦ StartBit = 6; â¦ SignalLength = 10 Note:StartBytes starts from 1 and StartBits starts from 0
+ARCH_SW_DIA_0451: Signal Values: 0x00...0x3FE (0..25.55 V) 0x03FF = default / Signal not Available (SNA) unit: 0.025 V
+ARCH_SW_DIA_0452: PN14_SupBat_Volt_ST3 signal shall be read by both Front LEFT ECU and Front RIGHT ECU and reported via CAN Input Service (0x0200)
+ARCH_SW_DIA_0453: Signal PN14_ProdMd_Stat_ST3 Position: â¦ StartByte = 1 â¦ StartBit = 5; â¦ SignalLength = 3; Note:StartBytes starts from 1 and StartBits starts from 0
+ARCH_SW_DIA_0454: Signal Values: 0 = OFF (Productionmode off) 1 = ON (Productionmode active) 2 = SF01 (Productionmode Special Funcion 1) 3 = SF02 (Productionmode Special Funcion 2) 4 = SF03 (Productionmode Special Funcion 3) 7 = default / Signal not Available (SNA)
+ARCH_SW_DIA_0455: PN14_ProdMd_Stat_ST3 signal shall be read by both Front LEFT ECU and Front RIGHT ECU and reported via CAN Input Service (0x0200)
+ARCH_SW_DIA_0456: Signal PN14_TransMd_Stat_ST3 Position: â¦ StartByte = 1 â¦ StartBit = 0; â¦ SignalLength = 2; Note:StartBytes starts from 1 and StartBits starts from 0
+ARCH_SW_DIA_0457: Signal Values: 0 = OFF (Transport mode permanently off) 1 = TEMP_OFF (Transport mode temporarily off) 2 = ACTV (Transport mode active) 3 = default / Signal not Available (SNA)
+ARCH_SW_DIA_0458: PN14_TransMd_Stat_ST3 signal shall be read by both Front LEFT ECU and Front RIGHT ECU and reported via CAN Input Service (0x0200)
+ARCH_SW_DIA_0497: CAN Frame DIAG_Stat_ST3 shall be identified with the address 0x6D0
+ARCH_SW_DIA_0498: CAN Frame PN14_Master_Stat1_ST3 shall be identified with the address 0x464
+ARCH_SW_DIA_0499: Diagnostic request frame DIAG_RBTM_FL_03_ExtEth_RQ_ST3 identifier shall be 0x18E1A488 if ECU is configured as FRONT LEFT side
+ARCH_SW_DIA_0500: DIAG_RBTM_FL_03_ExtEth_RQ_ST3 Frame size: variable, max 8 bytes
+ARCH_SW_DIA_0501: Diagnostic request frame DIAG_RBTM_FR_03_ExtEth_RQ_ST3 identifier shall be 0x18E1A588 if ECU is configured as FRONT RIGHT side
+ARCH_SW_DIA_0502: DIAG_RBTM_FR_03_ExtEth_RQ_ST3 Frame size: variable, max 8 bytes
+ARCH_SW_DIA_0503: If a diagnostic service request is received via CAN Frame DIAG_RBTM_xy_03_ExtEth_RQ_ST3 then RGS shall respond via DIAG_RBTM_FL_03_ExtEth_RS_ST3 (Id: 0x18E1A480) frame
+ARCH_SW_DIA_0504: DIAG_RBTM_FL_03_ExtEth_RS_ST3 Frame size: variable max 8 bytes
+ARCH_SW_DIA_0505: If a diagnostic service request is received via CAN Frame DIAG_RBTM_FR_03_ExtEth_RQ_ST3 then RGS shall respond via DIAG_RBTM_FR_03_ExtEth_RS_ST3 (Id: 0x18E1A580) frame
+ARCH_SW_DIA_0506: DIAG_RBTM_FR_03_ExtEth_RS_ST3 Frame size: variable max 8 bytes
+ARCH_SW_DIA_0535: Diagnostic request frame DIAG_RBTM_FL_03_ExtCAN_RQ_ST3 identifier shall be 0x18E1A489 if ECU is configured as FRONT LEFT side.
+ARCH_SW_DIA_0536: DIAG_RBTM_FL_03_ExtCAN_RQ_ST3 Frame size: variable, max 8 bytes
+ARCH_SW_DIA_0537: Diagnostic request frame DIAG_RBTM_FR_03_ExtCAN_RQ_ST3 identifier shall be 0x18E1A589 if ECU is configured as FRONT LEFT side
+ARCH_SW_DIA_0538: DIAG_RBTM_FR_03_ExtCAN_RQ_ST3 Frame size: variable, max 8 bytes
+ARCH_SW_DIA_0539: Diagnostic request frame DIAG_RBTM_FL_03_IntEth_RQ_ST3 identifier shall be 0x18E1A48D if ECU is configured as FRONT LEFT side
+ARCH_SW_DIA_0540: DIAG_RBTM_FL_03_IntEth_RQ_ST3 Frame size: variable, max 8 bytes
+ARCH_SW_DIA_0541: Diagnostic request frame DIAG_RBTM_FR_03_IntEth_RQ_ST3 identifier shall be 0x18E1A58D if ECU is configured as FRONT LEFT side
+ARCH_SW_DIA_0542: DIAG_RBTM_FR_03_IntEth_RQ_ST3 Frame size: variable, max 8 bytes
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_1_ReadData*.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365
+
+	Step 3: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_1_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365
+
+	Step 6: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 7: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_2_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 8: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365; ARCH_SW_DIA_0441; ARCH_SW_DIA_0442; ARCH_SW_DIA_0443
+
+	Step 9: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 10: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_3_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 11: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365
+
+	Step 12: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 13: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_4_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 14: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365; ARCH_SW_DIA_0447; ARCH_SW_DIA_0448; ARCH_SW_DIA_0449; ARCH_SW_DIA_0453; ARCH_SW_DIA_0454; ARCH_SW_DIA_0455; ARCH_SW_DIA_0456; ARCH_SW_DIA_0457; ARCH_SW_DIA_0458
+
+	Step 15: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 16: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_5_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 17: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365
+
+	Step 18: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 19: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_6_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 20: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365; ARCH_SW_DIA_0450; ARCH_SW_DIA_0451; ARCH_SW_DIA_0452
+
+	Step 21: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 22: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Supply_battery_voltage_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 23: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365; ARCH_SW_DIA_0444; ARCH_SW_DIA_0445; ARCH_SW_DIA_0446
+
+	Step 24: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 25: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_7_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 26: Read Data variable 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_DIA_0360; ARCH_SW_DIA_0361; ARCH_SW_DIA_0362; ARCH_SW_DIA_0363; ARCH_SW_DIA_0364; ARCH_SW_DIA_0365; ARCH_SW_DIA_0535;ARCH_SW_DIA_0536; ARCH_SW_DIA_0537; ARCH_SW_DIA_0538; ARCH_SW_DIA_0539; ARCH_SW_DIA_0540; ARCH_SW_DIA_0541; ARCH_SW_DIA_0542
+
+	Step 27: Send diag request for 22 02 00 
+		Expected result:  Timeout received.
+
+	Step 28: Check if breakpoint from function DIA_runDid0200_CAN_input_Read_Neues_Bitfeld_8_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 29: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 30: Return ECU to default values

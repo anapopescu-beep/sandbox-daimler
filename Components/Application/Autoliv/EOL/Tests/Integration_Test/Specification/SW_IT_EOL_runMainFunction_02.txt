@@ -1,0 +1,49 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0002
+ARCH_SW_EOL_0002: The EOL_runMainFunction function shall update the low force cycle counter when HWA profile or tensioning cycles 0 and 1 are executed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).
+
+	Step 4: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle0_b8CycleValidity(&u8CycleValidityStatus);.
+
+	Step 5: Check if CPU is stopped in cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle0_b8CycleValidity(&u8CycleValidityStatus);.
+
+	Step 6: Set a breakpoint in function EOL_runMainFunction.
+
+Action: ARCH_SW_EOL_0002
+
+	Step 7: Check if CPU is stopped in EOL_runMainFunction function at line eol_ManageCycleCounters();. 
+		Expected result:  CPU stopped at BP
+
+	Step 8: Step in eol_ManageCycleCounters function.
+
+	Step 9: Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_LOW_FORCE_LEVEL:'.
+
+Action: ARCH_SW_EOL_0002
+
+	Step 10: Check if CPU is stopped in function eol_ManageCycleCounters at line 'case KU8_EOL_LOW_FORCE_LEVEL:'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_EOL_0002
+
+	Step 11: Evaluate if u8PreSafeLvl variable is 1 
+		Expected result:  0x1
+
+Postcondition
+
+	Step 12: Return ECU to default values

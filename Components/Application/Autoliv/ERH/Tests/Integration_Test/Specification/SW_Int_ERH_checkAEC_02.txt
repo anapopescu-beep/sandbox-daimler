@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0075, ARCH_SW_ERH_0076, ARCH_SW_ERH_0080, ARCH_SW_ERH_0083
+ARCH_SW_ERH_0075: The NvM_SetRamBlockStatus interface shall be called to notify NVM that AEC status block shall be stored in NVM by the next call of NvM_WriteAll function.
+ARCH_SW_ERH_0076: NvM_WriteBlock shall be called to copy the data of the RAM block to its corresponding NVM block.
+ARCH_SW_ERH_0080: This prototype shall manage the Qualification status and Deskill status of the AECs.
+ARCH_SW_ERH_0083: This prototype shall manage the Qualification status and Deskill status of the DTCs by AECs group status.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_ResetAllAECStatus() at line Result = Rte_Call_pclNvmServicesAecBlock_WriteBlock.
+
+	Step 3: Start Development Session.
+
+	Step 4: Send diagnostic request 14 FF FF FF.
+
+	Step 5: Check if CPU stopped in function ERH_ResetAllAECStatus() at line Result = Rte_Call_pclNvmServicesAecBlock_WriteBlock. 
+		Expected result:  CPU stopped in function ERH_ResetAllAECStatus()
+
+Action: ARCH_SW_ERH_0075, ARCH_SW_ERH_0076, ARCH_SW_ERH_0080, ARCH_SW_ERH_0083
+
+	Step 6: Step in function Rte_Call_pclNvmServicesAecBlock_WriteBlock 
+		Expected result:  Stepped in NvM_WriteBlock
+
+Postcondition
+
+	Step 7: Return ECU to default values

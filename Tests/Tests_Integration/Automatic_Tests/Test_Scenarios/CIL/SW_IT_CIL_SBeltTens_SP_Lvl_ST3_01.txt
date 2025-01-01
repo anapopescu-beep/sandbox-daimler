@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0116, ARCH_SW_CIL_0052, ARCH_SW_CIL_0059
+ARCH_SW_CIL_0116: If Signal RBTMFL_SP_Lvl_Rq_ST35 is different than 0 than next cycle release for previous API requested profiles is inhibitted
+ARCH_SW_CIL_0052: If signal is received with value 1, then tensioning cycle 0 shall be requested.
+ARCH_SW_CIL_0059: If signal is received with value 1, then tensioning cycle 0 shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 from frame SBeltTens_SP_Lvl_ST3 to KU8_ONE.
+
+	Step 3: Set a breakpoint in fucntion CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped at function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint at the last line of the function cil_ManageInputSignals and press run.
+
+	Step 6: Check if CPU stopped at the last line of the function cil_ManageInputSignals. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0116, ARCH_SW_CIL_0052, ARCH_SW_CIL_0059
+
+	Step 7: Read variable cil_u8APIActivationRequest. 
+		Expected result:  KU8_ONE
+
+	Step 8: Set signal RBTMFL_SP_Lvl_Rq_ST35 from frame SBeltTens_SP_Lvl_ST3 to KU8_ZERO.
+
+	Step 9: Set a breakpoint at the function cil_ManageInhibitConditions.
+
+Action: ARCH_SW_CIL_0116
+
+	Step 10: Check if CPU stopped at function cil_ManageInhibitConditions. 
+		Expected result:  CPU is Stopped

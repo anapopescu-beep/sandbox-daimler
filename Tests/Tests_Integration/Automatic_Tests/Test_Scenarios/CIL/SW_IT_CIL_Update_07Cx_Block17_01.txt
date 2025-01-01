@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0769
+ARCH_SW_CIL_0769: PMP_runGetHS1Level_(Ext)* shall be called to get the value of the HS_SW voltage in V.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 17.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block17_InfosToSend at line 'Rte_Call_pclHS1_V_Get(&u16VHs1);'.
+
+Action: ARCH_SW_CIL_0769
+
+	Step 4: Step in function Rte_Call_pclHS1_V_Get(&u16VHs1);. 
+		Expected result:  PMP_runGetHS1Level,,app.elf
+
+	Step 5: Check if CPU stopped in function Rte_Call_pclHS1_V_Get(). 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint at the last line of function PMP_runGetHS1Level() and press run.
+
+	Step 7: Check if CPU stopped in function PMP_runGetHS1Level(). 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0769
+
+	Step 8: Evaluate if variable pu16Voltage is equal to 0x3233. 
+		Expected result:  0x3233
+
+Postcondition
+
+	Step 9: Return ECU to default values

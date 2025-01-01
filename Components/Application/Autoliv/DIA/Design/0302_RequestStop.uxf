@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>13</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>104</x>
+      <y>273</y>
+      <w>1998</w>
+      <h>874</h>
+    </coordinates>
+    <panel_attributes>title:0302 RequestStop
+Start
+Check if Presafe Display counter is zero
+If
+	[TRUE]
+	Check if routine trigger request is to stop
+	If
+		[TRUE]
+		dia_u8RequestResult0302 = KU8_ROUTINE_SUCCESFULLY_COMPPLETED;
+		*routineInfo = KU8_ROUTINE_SUCCESFULLY_COMPPLETED;
+		
+		[FALSE]
+		*ErrorCode = DCM_E_REQUESTSEQUENCEERROR;
+		ret = RTE_E_RoutineServices_Routine_Trigger_BSR_Start_E_NOT_OK;		
+	
+	EndIf
+
+	[FALSE]
+	*ErrorCode = DCM_E_REQUESTSEQUENCEERROR;
+	ret = RTE_E_RoutineServices_Routine_Trigger_BSR_Start_E_NOT_OK;	
+
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

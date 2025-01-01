@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0201, ARCH_SW_MMG_0408, ARCH_SW_MMG_0250
+ARCH_SW_MMG_0201: ATM_runGetTestResult shall be called to get the status of the last executed autotest.
+ARCH_SW_MMG_0408: ATM_runGetTestResult shall be called in order to get the autotest result for EOL counters.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_CriticalAutotestsNok();.
+
+	Step 3: Set a breakpoint at line Rte_Call_pclAutotestServices_GetTestResult(u8AutoTestId, &u8StatusOfLastCriticalAutoTest);.
+
+	Step 4: Step in mmg_UpdateModeStatus_CriticalAutotestsNok().
+
+Action: ARCH_SW_MMG_0201, ARCH_SW_MMG_0408, ARCH_SW_MMG_0250
+
+	Step 5: Step in function Rte_Call_pclAutotestServices_GetTestResult. 
+		Expected result:  ATM_runGetTestResult,,app.elf
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0217
+ARCH_SW_ATM_0217: ATM_runMainFunction shall call the PMP_cbk_CheckTemperatureSensor function.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in ATM_runMainFunction() at line 'atm_PlayCyclicTests(castRunningCyclicList);'.
+
+Action: ARCH_SW_ATM_0217
+
+	Step 3: Check if CPU stopped in ATM_runMainFunction() at line 'atm_PlayCyclicTests(castRunningCyclicList);'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function atm_PlayCyclicTests() at line 'atm_executeAutoTest(u8AutotestID);' under 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))' and press run.
+
+	Step 5: Check if CPU stopped in function atm_PlayCyclicTests() at line 'atm_executeAutoTest(u8AutotestID);' under 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function atm_executeAutoTest() at line 'u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;'.
+
+	Step 7: Check if CPU stopped in function atm_executeAutoTest() at line 'u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function PMP_cbk_CheckTemperatureSensor().
+
+Action: ARCH_SW_ATM_0217
+
+	Step 9: Check if CPU stopped in function PMP_cbk_CheckTemperatureSensor(). 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 10: Return ECU to default values

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0032; ARCH_SW_DIA_0157; ARCH_SW_DIA_0158; ARCH_SW_DIA_0159, ARCH_SW_NVP_0011
+ARCH_SW_DIA_0032: Service 0x22 will be implemented for DID FD09.
+ARCH_SW_DIA_0157: Service shall be available in Development session.
+ARCH_SW_DIA_0158: Response data shall be 4 bytes long.
+ARCH_SW_DIA_0159: Response shall return Last Detected Warm Reset Cause.
+ARCH_SW_NVP_0011: NVP_BLOCK_ID_WARM_RESET shall be used to store last warm reset cause and counter.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD09_LastWarmResetRead_LastDetectedWarmResetCause*.
+
+Action: ARCH_SW_DIA_0032; ARCH_SW_DIA_0157; ARCH_SW_DIA_0158; ARCH_SW_DIA_0159
+
+	Step 3: Send diag request for 22 FD09 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFD09_LastWarmResetRead_LastDetectedWarmResetCause was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read first byte of NVP_BLOCK_ID_WARM_RESET_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

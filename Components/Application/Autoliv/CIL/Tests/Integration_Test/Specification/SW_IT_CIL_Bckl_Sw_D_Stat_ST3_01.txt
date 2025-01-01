@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0045, ARCH_SW_CIL_0078, ARCH_SW_CIL_0187, ARCH_SW_CIL_0155
+ARCH_SW_CIL_0045: If value for Bckl_Sw_D_Stat_ST3 is trasitioning from 1 to 0 then cycle 26 (BSR) shall be executed.
+ARCH_SW_CIL_0078: If value for Bckl_Sw_D_Stat_ST3 is trasitioning from 1 to 0 and BSR is being executed than any profile activation on API-interface request will be inhibited.
+ARCH_SW_CIL_0187: Values of 0 and 3 for tis signall shall inhibit all BSR profiles.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal Bckl_Sw_D_Stat_ST3 to 0x1.
+
+	Step 4: Set signal Bckl_Sw_D_Stat_ST3 to 0x0.
+
+	Step 5: Set a breakpoint in function CIL_runCANToAppli at line if (KU8_TRUE == cil_u8BSRStarted).
+
+Action: ARCH_SW_CIL_0045, ARCH_SW_CIL_0078, ARCH_SW_CIL_0187,ARCH_SW_CIL_0155
+
+	Step 6: Check if CPU stopped in function CIL_runCANToAppli at line if (KU8_TRUE == cil_u8BSRStarted);. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

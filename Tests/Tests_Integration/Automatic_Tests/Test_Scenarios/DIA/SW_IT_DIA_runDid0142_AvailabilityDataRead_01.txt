@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0235; ARCH_SW_DIA_0236; ARCH_SW_DIA_0237; ARCH_SW_DIA_0238; ARCH_SW_DIA_0336; ARCH_SW_DIA_0337
+ARCH_SW_DIA_0235: Service 0x22 (Read Data By Identifier) will be implemented for DID 0x0142 (Availability Data)
+ARCH_SW_DIA_0236: Service shall be available in Default session, Extended session Update session and Development session
+ARCH_SW_DIA_0237: Service shall be available in the following forms of Authentication: Development ENHANCED, Production After-Sales ENHANCED, After-Sales After-Sales BASIC, Internal Diagnostic Test Tool, ePTI Test Tol
+ARCH_SW_DIA_0238: Result can have the following values: 0x00, 0x01 and 0x02
+ARCH_SW_DIA_0337: Positive Response: Green no DTC or DTC without Warning indicator. Yellow is not used Red Display message is requested -> DTC with Warning indicator is set
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0142_AvailabilityDataRead*.
+
+Action: ARCH_SW_DIA_0235; ARCH_SW_DIA_0236; ARCH_SW_DIA_0237; ARCH_SW_DIA_0238; ARCH_SW_DIA_0336; ARCH_SW_DIA_0337
+
+	Step 3: Send diag request for 22 0142 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDid0142_AvailabilityDataRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

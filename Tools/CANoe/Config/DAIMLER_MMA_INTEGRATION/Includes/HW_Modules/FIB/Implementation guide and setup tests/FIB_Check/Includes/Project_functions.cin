@@ -1,0 +1,582 @@
+/*@!Encoding:1252*/
+includes
+{  
+  #include "Project_configuration.cin"
+}
+
+variables
+{
+  int NGUProfile = 0;
+  
+  // Variable used for test report formatting.
+  dword iLevelOfDetailPass = 0;
+  dword iLevelOfDetailFail = 0;
+  dword iLevelOfDetailStep = 0; 
+  
+  // Variables used for requirements table.
+  char cOriginalTestCaseTitle[300];
+  char cAllRequirements[50][400];
+  char cAllRequirementsDescription[50][5000];
+  int iRequirementsIndex = 0;
+}
+
+/// <Evaluation>
+// Evaluates the two char arrays provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The char array for the received result.
+// "aExpectedResult" = The char array for the expected result.
+// Example:          EvalManStepEqual("Check Software Version", "ER01473H.P30", "ER01473H.P30"); => pass.
+void EvalManStepEqual(char aActionName[], char aReceivedResult[], char aExpectedResult[])
+{
+  long EvalManStepTable = 0;
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, aReceivedResult);
+  TestInfoCell(EvalManStepTable, aExpectedResult);
+
+ if(strncmp(aExpectedResult, aReceivedResult, elcount(aExpectedResult)) != 0)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the two bytes provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The byte for the received result.
+// "aExpectedResult" = The byte for the expected result.
+// Example:          EvalManStepEqual("Check byte value", 0x0F, 0x0F); => pass.
+void EvalManStepEqual(char aActionName[], byte aReceivedResult, byte aExpectedResult)
+{
+  long EvalManStepTable = 0;
+  char tmp[5];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "0x%02X ", aReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "0x%02X ", aExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(aExpectedResult != aReceivedResult)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the two float numbers provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The float for the received result.
+// "aExpectedResult" = The float for the expected result.
+// Example:          EvalManStepEqual("Check float value", 420, 420); => pass.
+void EvalManStepEqual(char aActionName[], float aReceivedResult, float aExpectedResult)
+{
+  long EvalManStepTable = 0;
+  char tmp[30];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "%.2f ", aReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "%.2f ", aExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(aExpectedResult != aReceivedResult)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the two byte arrays provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The byte array for the received result.
+// "aExpectedResult" = The byte array for the expected result.
+// Example:          arr1 = {0x02, 0x03}; arr2 = {0x02, 0x03}.
+//                   EvalManStepEqual("Check byte array values", arr1, arr2); => pass.
+void EvalManStepEqual(char aActionName[], byte aReceivedResult[], byte aExpectedResult[])
+{
+  long EvalManStepTable = 0;
+  char tmp[1024];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  ConvertByteArrInCharArr(aReceivedResult, tmp, 0, elcount(aReceivedResult) - 1, "true"); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  ConvertByteArrInCharArr(aExpectedResult, tmp, 0, elcount(aExpectedResult) - 1, "true");
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(memcmp(aExpectedResult, aReceivedResult, elcount(aReceivedResult)) !=0)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the two char arrays provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The char array for the received result.
+// "aExpectedResult" = The char array for the expected result.
+// Example:          EvalManStepEqual("Check Software Version", "ER01473H.P30", "ER01473H.P30"); => fail.
+void EvalManStepUnEqual(char aActionName[], char aReceivedResult[], char aExpectedResult[])
+{
+  long EvalManStepTable = 0;
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, aReceivedResult);
+  TestInfoCell(EvalManStepTable, aExpectedResult);
+
+ if(strncmp(aExpectedResult, aReceivedResult, elcount(aExpectedResult)) == 0)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+
+/// <Evaluation>
+// Evaluates the two bytes provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The byte for the received result.
+// "aExpectedResult" = The byte for the expected result.
+// Example:          EvalManStepUnEqual("Check byte value", 0x0F, 0x0B); => pass.
+void EvalManStepUnEqual(char aActionName[], byte aReceivedResult, byte aExpectedResult)
+{
+  long EvalManStepTable = 0;
+  char tmp[5];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "0x%02X ", aReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "0x%02X ", aExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(aExpectedResult == aReceivedResult)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the two float numbers provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The float for the received result.
+// "aExpectedResult" = The float for the expected result.
+// Example:          EvalManStepUnEqual("Check float value", 420, 421); => pass.
+void EvalManStepUnEqual(char aActionName[], float aReceivedResult, float aExpectedResult)
+{
+  long EvalManStepTable = 0;
+  char tmp[30];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "%.2f ", aReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "%.2f ", aExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(aExpectedResult == aReceivedResult)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the two byte arrays provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The byte array for the received result.
+// "aExpectedResult" = The byte array for the expected result.
+// Example:          arr1 = {0x01, 0x02}; arr2 = {0x02, 0x03}.
+//                   EvalManStepUnEqual("Check byte array values", arr1, arr2); => pass.
+void EvalManStepUnEqual(char aActionName[], byte aReceivedResult[], byte aExpectedResult[])
+{
+  long EvalManStepTable = 0;
+  char tmp[1024];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  ConvertByteArrInCharArr(aReceivedResult, tmp, 0, elcount(aReceivedResult) - 1, "true"); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  ConvertByteArrInCharArr(aExpectedResult, tmp, 0, elcount(aExpectedResult) - 1, "true");
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(memcmp(aExpectedResult, aReceivedResult, elcount(aReceivedResult)) ==0)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+void EvalManStepEqual(char aActionName[], diagResponse * dResponse, char aExpectedResult[])
+{
+  long EvalManStepTable = 0;
+  byte bResponse[255];
+  char cResponse[255];
+  diagGetPrimitiveData(dResponse, bResponse, DiagGetPrimitiveSize(dResponse));
+  
+  ConvertByteArrInCharArr(bResponse, cResponse, 0, DiagGetPrimitiveSize(dResponse)-1, "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse);
+  TestInfoCell(EvalManStepTable, aExpectedResult);
+
+ if(strncmp(aExpectedResult, cResponse, elcount(cResponse)) != 0)
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+void EvalManStepUnEqual(char aActionName[], diagResponse * dResponse, char aExpectedResult[])
+{
+  long EvalManStepTable = 0;
+  byte bResponse[255];
+  char cResponse[255];
+  diagGetPrimitiveData(dResponse, bResponse, DiagGetPrimitiveSize(dResponse));
+  
+  ConvertByteArrInCharArr(bResponse, cResponse, 0, DiagGetPrimitiveSize(dResponse)-1, "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse);
+  TestInfoCell(EvalManStepTable, aExpectedResult);
+
+ if(strncmp(aExpectedResult, cResponse, elcount(cResponse)) != 0)
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <Evaluation>
+// Evaluates the one int64 provided as parameters and sets the test result to passed if they are certain range.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The char array for the received result.
+// "aExpectedResultMin" = The int64 for the expected result, minumum value.
+// "aExpectedResultMax" = The int64 for the expected result, maximum value.
+// Example:          EvalManStepRange("Qualification time", "20", "10","30"); => pass.
+// Example:          EvalManStepRange("Qualification time", "20", "400","30"); => fail.
+void EvalManStepRange(char aActionName[],  int64 iReceivedResult, int64 iExpectedResultMin, int64 iExpectedResultMax)
+{
+  long EvalManStepTable = 0;
+  char aReceivedResult[20];
+  char aExpectedResultMin[20];
+  char aExpectedResultMax[20];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "MinExpected");
+  TestInfoCell(EvalManStepTable, "MaxExpected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1 
+  ltoa(iReceivedResult,aReceivedResult,10);
+  ltoa(iExpectedResultMin,aExpectedResultMin,10);
+  ltoa(iExpectedResultMax,aExpectedResultMax,10);
+  
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, aReceivedResult);
+  TestInfoCell(EvalManStepTable, aExpectedResultMin);
+  TestInfoCell(EvalManStepTable, aExpectedResultMax);
+
+ if((iReceivedResult<=iExpectedResultMin)||(iReceivedResult>=iExpectedResultMax))
+  {
+    TestStepFail(iLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(iLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <Helpers>
+// Converts a byte array to a char array.
+// "inputArr[]"   = Input byte array.
+// "cOutputArray" = Char array where output will be saved.
+// "StartIndex"   = Conversion start index.
+// "StopIndex"    = Conversion stop index.
+// "cFormat"      Option 1: "true"  = keep hex format.
+//                Option 2: "false" = convert to char.
+// Example:       Software Version diag response = {62, fd, 01, 45, 52, 30, 31, 34, 37, 33, 48, 2e, 50, 33, 30}.
+//                ConvertArrByteInArrChar(bSoftwareVersion, cSoftwareVersion, ReadSWVersionReq.GetPrimitiveSize(), elcount(bSoftwareVersion) - 1)
+// Result:        Option 1: bSoftwareVersion converted to char array "ER01473H.P30" and assigned to cOutputArray.
+//                Option 2: bSoftwareVersion converted to char array "0x45 0x52 0x30 0x31 0x34 0x37 0x33 0x48 0x2E 0x50 0x33 0x30" and assigned to cOutputArray.
+void ConvertByteArrInCharArr(byte bInputArr[], char cOutputArray[], int iStartIndex, int iStopIndex, char cFormat[])
+{
+  char tmp[200] = "";
+  int iOptionOneIndex;
+  char cFormat_LowerCase[10];
+  
+  strncpy(cOutputArray, "", elcount(cOutputArray));
+  
+  toLower(cFormat_LowerCase, cFormat, elcount(cFormat));
+  
+  if(iStartIndex > (elcount(bInputArr) - 1) || iStartIndex < 0 || iStopIndex >= elcount(bInputArr) || iStartIndex > iStopIndex) 
+  {
+    testStepFail(iLevelOfDetailFail, "-", "Incorrect index or array size; Please check parameters for ConvertByteArrInCharArr function.");
+  }
+  else
+  {
+    if(strncmp(cFormat_LowerCase, "true", elcount(cFormat_LowerCase)) == 0)
+    {
+      iOptionOneIndex = (iStopIndex - iStartIndex + 1) * 5;
+      for(iStartIndex; iStartIndex <= iStopIndex; iStartIndex++)
+          {
+            snprintf(tmp, elcount(tmp), "0x%02X ", bInputArr[iStartIndex]);  
+            strncat(cOutputArray, tmp, elcount(cOutputArray)); 
+          }
+      snprintf(cOutputArray, iOptionOneIndex, "%s", cOutputArray); // removes last empty character.
+    }
+    // Make sure "cOutputArray" is large enough.
+    else if ((strncmp(cFormat_LowerCase, "false", elcount(cFormat_LowerCase)) == 0) && (elcount(cOutputArray) >= iStopIndex - iStartIndex + 2)) 
+         {
+          for(iStartIndex; iStartIndex <= iStopIndex; iStartIndex++)
+          {
+            snprintf(tmp,elcount(tmp), "%c", bInputArr[iStartIndex]);  
+            strncat(cOutputArray, tmp, elcount(cOutputArray)); 
+          }
+         }
+    else testStepFail(iLevelOfDetailFail, "-", "Incorrect format sellection or output array size; Please check parameters for ConvertByteArrInCharArr function.");
+  }
+}
+
+/// <Helpers>
+//Concatenate two byte arrays and returns the length of the output array
+long ConcatenateTwoByteArrays(byte bByteArray1[], byte bByteArray2[], byte bByteArrayOut[])
+{
+  int i;
+  int j;
+  long iSize;
+  
+  iSize = 0;
+  
+  for (i = 0; i < elcount(bByteArray1); i++)
+  {
+    bByteArrayOut[i] = bByteArray1[i];
+    iSize += 1;
+  }
+  for (j = 0; j < elcount(bByteArray2)-1; j++)
+  {
+    bByteArrayOut[iSize] = bByteArray2[j];
+    iSize += 1;
+  }
+  
+  return iSize+1;
+}
+
+/// <Helpers>
+// Sets the data for a requirements table row.
+// "cRequirement" = requrement under test.
+// "cRequirementDescription" = requirement description.
+void AddRequirementInfo(char cRequirement[], char cRequirementDescription[])
+{
+  strncpy(cAllRequirements[iRequirementsIndex], cRequirement, elcount(cAllRequirements[iRequirementsIndex]));
+  strncpy(cAllRequirementsDescription[iRequirementsIndex], cRequirementDescription, elcount(cAllRequirementsDescription[iRequirementsIndex]));
+  iRequirementsIndex++;
+}
+
+/// <Helpers>
+void AddTestSetupInformation()
+{
+  TestReportAddMiscInfoBlock("Test equipment");
+  TestReportAddMiscInfo("Tester Name",  cTesterName);
+  TestReportAddMiscInfo("CAN case ID", cCAN_CaseId);
+  TestReportAddMiscInfo("SBC Board", cSBC_BOARD);
+  TestReportAddMiscInfo("Power supply ID", cPowerSupply1Id);
+  TestReportAddMiscInfo("Motherboard", cMOTHER_BOARD);
+  TestReportAddMiscInfo("MCU", cMCU);
+  TestReportAddMiscInfo("DUT", "AUDI TR6 PPMI");
+}
+
+/// <Helpers>
+// Displays the test header based on data added with "AddRequirementInfo" function.
+void DisplayRequirementsInfo()
+{
+  int i;
+  char cTimeBuffer[64];
+  char cTestCaseTitle[1024];  
+  
+  TestReportAddExtendedInfo("html", "<table>"
+                                        "<tr>"
+                                          "<th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>%s</th>"
+                                          "<th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>%s</th>"
+                                        "</tr>"
+                                    "</table>"
+                                    , cAllRequirements[0], cAllRequirementsDescription[0]);
+  
+  TestReportAddExtendedInfo("html", "<table> <tr>"
+                                         "<th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th>"
+                                         "<th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th>"
+                                    "</tr>");
+  
+  for(i = 1; i < iRequirementsIndex; i++)
+  {
+    TestReportAddExtendedInfo("html", "<tr>"
+                                          "<td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>%s</td>"
+                                          "<td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>%s</td>" 
+                                      "</tr>"
+                                      , cAllRequirements[i], cAllRequirementsDescription[i]);
+  }
+  TestReportAddExtendedInfo("html", "</table>");
+  
+  iRequirementsIndex = 0;
+  // Add timestamp to test case name.
+  strncpy(cTestCaseTitle, "", 1); 
+  
+  getLocalTimeString(cTimeBuffer);
+  str_replace(cTimeBuffer, " ", "_");
+  str_replace(cTimeBuffer, ":", "_");
+  
+  testGetCurrentTestCaseTitle(cTestCaseTitle, elcount(cTestCaseTitle));
+  strncpy(cOriginalTestCaseTitle, cTestCaseTitle, elcount(cTestCaseTitle));
+  
+  strncat(cTestCaseTitle, "_", elcount(cTestCaseTitle));
+  strncat(cTestCaseTitle, cTimeBuffer, elcount(cTestCaseTitle));
+  
+  TestCaseTitle("", cTestCaseTitle);
+}
+
+

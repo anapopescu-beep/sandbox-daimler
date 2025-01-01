@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>260</x>
+      <y>160</y>
+      <w>870</w>
+      <h>609</h>
+    </coordinates>
+    <panel_attributes>title:cil_AbortTensioningProfiles
+Start
+Write\     b8IsCarAccelerationLow = true; 
+Write\     b8IsCarCrashDetected = true; 
+Write\     b8PreCrashRequestEnable_a == false
+
+Check if tensioning request is not active
+If
+	[TRUE]
+	Set CIL_u8TensioningAbortedStatus to TRUE
+	Call Rte_IrvWrite_CIL_runCANToAppli_u8ResponseSignal(KU8_CIL_ACTV_LVL_SIGNAL_REJECTED)
+
+		
+	[FALSE]
+	QAC
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

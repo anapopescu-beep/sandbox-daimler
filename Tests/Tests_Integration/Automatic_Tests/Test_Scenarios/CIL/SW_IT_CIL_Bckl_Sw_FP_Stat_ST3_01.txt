@@ -1,0 +1,48 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0007, ARCH_SW_CIL_0008, ARCH_SW_CIL_0028
+ARCH_SW_CIL_0007: Frame Bckl_Sw_Fx_Stat_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0008: Signal Bckl_Sw_D_Stat_ST3 shall be send though application when it�s needed.
+ARCH_SW_CIL_0028: If value for Bckl_Sw_D_Stat_ST3 is not 0 (is 1,2,3) then cycle request should be inhibitted/aborted.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Bckl_Sw_D_Stat_ST3 from frame Bckl_Sw_Fx_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli().
+
+Action: ARCH_SW_CIL_0008
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals() at line '	cil_ManageInhibitConditions();'.
+
+Action: ARCH_SW_CIL_0007
+
+	Step 6: Check if CPU stopped in function cil_ManageInputSignals() at line '	cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_Bckl_Sw_Inhibition);'.
+
+	Step 8: Check if CPU stopped at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_Bckl_Sw_Inhibition);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0028
+
+	Step 9: Evaluate if variable CIL_u16InhibitionStatus is equal to 0x40 
+		Expected result:  0x40.
+
+Postcondition
+
+	Step 10: Return ECU to default values

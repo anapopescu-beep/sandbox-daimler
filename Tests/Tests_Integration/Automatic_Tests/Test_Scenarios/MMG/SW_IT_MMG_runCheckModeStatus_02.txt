@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0008
+ARCH_SW_MMG_0008: All cycles shall be inhibitted if they are not valid.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init at line 'mmg_CheckCycleEnable();'.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line at line 'mmg_CheckCycleEnable();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Step in function mmg_CheckCycleEnable().
+
+	Step 5: Set a breakpoint in function mmg_CheckCycleEnable at line '(void)Rte_Write_psrEnableCycle0_b8CycleValidity(B_TRUE);' and press run.
+
+Action: ARCH_SW_MMG_0008
+
+	Step 6: Check if CPU stopped in function mmg_CheckCycleEnable at line '(void)Rte_Write_psrEnableCycle0_b8CycleValidity(B_TRUE);'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function cil_ManageInhibitConditions at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_TENS_INHIBITING_MODES, &u8ContextStatus);' and press run.
+
+Action: ARCH_SW_MMG_0008
+
+	Step 8: Check if CPU stopped in function cil_ManageInhibitConditions at line '(void)Rte_Call_pclModeManagement_CheckModeStatus(KU32_CIL_MASK_TENS_INHIBITING_MODES, &u8ContextStatus);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

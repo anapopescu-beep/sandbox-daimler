@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0152, ARCH_SW_MMG_0153, ARCH_SW_MMG_0205, ARCH_SW_MMG_0403
+ARCH_SW_MMG_0152: The �KU32_AEC_GROUP_MASK_HARDWARE � To check ECU is defective AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES context qualification.
+ARCH_SW_MMG_0153: The �KU32_AEC_GROUP_MASK_ACTUATOR_BLOCKED � To check if the actuator is blocked AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES context qualification.
+ARCH_SW_MMG_0205: ERH_runGetAecGroupsStatus shall be called to get de status of the AEC for different contexts.
+ARCH_SW_MMG_0403: ERH_runGetAecGroupsStatus shall be called in order to get the AEC group status.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus() at line 'mmg_UpdateModeStatus_EcuDefective_AllCycles();'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus() at line 'mmg_UpdateModeStatus_EcuDefective_AllCycles();'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Step in mmg_UpdateModeStatus_EcuDefective_AllCycles().
+
+	Step 5: Set a breakpoint in function mmg_UpdateModeStatus_EcuDefective_AllCycles() at line 'Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);'.
+
+Action: ARCH_SW_MMG_0205, ARCH_SW_MMG_0403
+
+	Step 6: Check if CPU stopped in function mmg_UpdateModeStatus_EcuDefective_AllCycles() at line 'Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function mmg_UpdateModeStatus_EcuDefective_AllCycles() at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES);.
+
+Action: ARCH_SW_MMG_0152, ARCH_SW_MMG_0153
+
+	Step 8: Check if CPU stopped in function mmg_UpdateModeStatus_EcuDefective_AllCycles() at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_AEC_ECU_DEFECT_ALL_CYCLES);. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

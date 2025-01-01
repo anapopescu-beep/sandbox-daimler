@@ -1,0 +1,110 @@
+/*@!Encoding:1252*/
+//////////////////////////////////////////////////////////////
+// LocalAuthentication_Helper.cin
+//
+// Provides functions to authenticate an tester.
+// The function must be used within a testcase.
+// 
+//////////////////////////////////////////////////////////////
+
+variables
+{
+  long DiagTargetCount = 0; // number of available diag targets
+  char DiagTargetList[200]; // available targets, one per cdd
+}
+
+// test sequence for ECU authentication
+int  Authenticate(char target[],int role)
+{
+  char diagJob[40];
+  int retVal;
+  char strBuff[150];
+  int ret;
+   
+  TestStep("Start", "Start Authentication, target: %s",target);
+    
+  RoleToDiagJob(role,diagJob);
+  retVal = testWaitForDiagAuthCompleted(target, diagJob);
+  
+  if (retVal == 0)
+  {
+    TestStepPass("Result", "Authentication has succeeded, %s",strBuff);
+    
+    
+    @sysvar::LocalAuthentication::AuthResult = 1;
+	
+  	if( @sysvar::LocalAuthentication::DiagnosticsRole == 0)
+  	{
+  		 @sysvar::LocalAuthentication::AuthResult = 0;
+  	}
+    ret = 1;
+  }
+  else
+  {
+    TestStepFail("Result", "Authentication has failed, %s",strBuff);
+    @sysvar::LocalAuthentication::AuthResult = 0;
+    ret = 0;
+  }
+  return ret; 
+}
+
+void RoleToDiagJob(int role, char jobQualifier[] )
+{
+  switch(role)
+  {
+    case 0:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Anybody");
+      break;
+    case 1:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Supplier");
+      break;
+    case 2:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Development_Enhanced");
+      break;
+    case 3:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Production");
+      break;
+    case 4:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_After_Sales_Enhanced");
+      break;
+    case 5:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_After_Sales_Standard");
+      break;
+    case 6:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_After_Sales_Basic");
+      break;
+    case 7:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_Internal_Diagnostic_Test_Tool");
+      break;
+    case 8:
+      snprintf(jobQualifier,elCount(jobQualifier),"Job_ePTI_Test_Tool");
+      break;
+    default:
+      break;
+  }
+}
+
+// utility function to collect all available diag targets
+void ReadDiagQualifier()
+{
+  int i;
+  char ecuQual[100];
+
+  DiagTargetCount = diagGetTargetCount();
+  
+  //write("DiagTargetCount = %i",DiagTargetCount);
+  
+  i = DiagTargetCount;
+  while( i-- > 0)
+  {
+    diagGetTargetQualifier( i, ecuQual, elcount(ecuQual));
+    //write( "Target %d: %s", i, ecuQual);
+    strncat(DiagTargetList,ecuQual,elcount(DiagTargetList));
+    if(i!=0)
+    {
+      strncat(DiagTargetList,",",elcount(DiagTargetList));  
+    }
+  }
+  sysSetVariableString("LocalAuthentication","DiagTargetList",DiagTargetList);
+  //write("List: %s",DiagTargetList);
+}

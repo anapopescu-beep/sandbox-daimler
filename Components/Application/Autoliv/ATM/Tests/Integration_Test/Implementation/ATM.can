@@ -1,0 +1,4561 @@
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Project_functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Functions.cin"
+}
+
+
+variables
+{
+  byte bWriteStepsLibraryRequest[3] = {0x2E, 0xFD, 0x2A};
+}
+
+
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation();
+  
+  strncpy(cLogPathAndName, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",  elcount(cLogPathAndName));
+}
+
+/*------------------------------------------------------------------------------
+                                TEST EXECUTION
+------------------------------------------------------------------------------*/
+  
+  /*------------------------- Test scenario start ------------------------------*/
+
+testcase SW_IT_ATM_Init_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0001");
+  AddRequirementInfo("ARCH_SW_ATM_0001", "Verify that all autotests are initialized with status NOT_DECIDED");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+   testStep("STEP", "Set a breakpoint in the task *ApplInitTask_Core0* at line *ATM_Init();*");
+   debugger_setRelativeFunctionBpAtLine("Os_Task_ApplInitTask_Core0", "84");
+    
+   testStep("STEP", "Set a breakpoint in ATM_Init() function.");
+   debugger_setRelativeFunctionBpAtLine("ATM_Init", "10");
+    
+   testStep("", "Reset the debugger.");
+   debugger_reset();
+  
+   testStep("", "Run the debugger.");
+   debugger_run();
+   
+   testCaseComment("Action: ARCH_SW_ATM_0001");
+   testStep("STEP", "Check if the SW has reached breakpoint at ATM_Init(). --> CPU is Stopped at BP.");
+//   debugger_waitUntilBPisReached("1000");
+   debugger_isCPUStoppedAtBP("1000");
+   ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP.");
+    
+   testCaseComment("Action: ARCH_SW_ATM_0001");
+   testStep("STEP", "Evaluate au8AtStatuses to check if autotests are initialized with KU8_ATM_TEST_NOT_DECIDED (0x0). --> 0x0.");
+   debugger_readVariable("uint8", "atm_au8AtStatuses,,app.elf", "0");
+   ExpectedTestResult(debugger_result,"0x0", "0x0");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_IT_ATM_autotest_result_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0002, ARCH_SW_ATM_0003");
+  AddRequirementInfo("ARCH_SW_ATM_0002", "Verify if each autotest returns a result and check if it's reported to the rest of the SW application.");
+  AddRequirementInfo("ARCH_SW_ATM_0003", "Verify if ATM_runMainFunction is the entry point for execution in an autotest.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() function at line atm_PlayOneShotTests();.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "21");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action:ARCH_SW_ATM_0003");
+  testStep("STEP", "Check if CPU is stopped at the breakpoint in ATM_runMainFunction() function at line atm_PlayOneShotTests();. --> CPU stopped at BP");
+//  debugger_waitUntilBPisReached("1000");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+  testStep("STEP", "Stept in atm_PlayOneShotTests() function.");
+  debugger_stepIn();
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayOneShotTests() function at line switch (atm_au8AtStatuses[u8AutotestID]).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayOneShotTests", "25");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0003");
+  testStep("STEP", "Check if CPU is stopped at the breakpoint in atm_PlayOneShotTests() function at line switch (atm_au8AtStatuses[u8AutotestID]). --> CPU stopped at BP");
+//  debugger_waitUntilBPisReached("1000");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  // Disable PWR
+  
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckMotorConnection() at line Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult);.");
+  debugger_setRelativeFunctionBpAtLine ("PAL_Autotest_CheckMotorConnection", "30");
+  testStep("STEP", "Set a breakpoint in ATM_runGetTestResult().");
+  debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", "0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0002");
+  testStep("STEP", "Check if CPU is stopped at PAL_Autotest_CheckMotorConnection() at line Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult);. --> CPU stopped at BP");
+//  debugger_waitUntilBPisReached("1000");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+  testStep("STEP", "Step in Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult);");
+  debugger_stepIn();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0002");
+  testStep("STEP", "Check if CPU is stopped at ATM_runGetTestResult(). --> CPU stopped at BP");
+//  debugger_waitUntilBPisReached("1000");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_Init_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0004");
+  AddRequirementInfo("ARCH_SW_ATM_0004", "Verify that cyclic tests won't run unless critical tests are not passed or finished.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction at line: if (atm_u8StartupTestIndex < (ATM_KU8_NB_OF_STARTUP_AUTO_TESTS + 1u))");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "5");
+   
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  testStep("STEP", "Set variable atm_u8StartupTestIndex to 0x12.");
+  debugger_writeVariable("uint8", "atm_u8StartupTestIndex,,app.elf", "0", "0x12");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line *atm_PlayOneShotTests();*.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "21");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0004");
+  testStep("STEP", "Check if CPU stopped at ATM_runMainFunction() at line *atm_PlayOneShotTests();*. --> CPU is Running");
+//  debugger_isCPUStoppedAtBP("1000");
+  debugger_getCPUStatus();
+  ExpectedTestResult(debugger_result, "CPU is Running", "CPU is Running");
+//  ExpectedTestResult(debugger_result, "Timeout in waitUntilStopped()! [CExecutionController.cpp, 576]", "Timeout in waitUntilStopped()! [CExecutionController.cpp, 576]");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_inhibit_autotest_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0030, ARCH_SW_ATM_0031, ARCH_SW_ATM_0032, ARCH_SW_ATM_0033, ARCH_SW_ATM_0034, ARCH_SW_ATM_0035, ARCH_SW_ATM_0036, ARCH_SW_ATM_0037, ARCH_SW_ATM_0038, ARCH_SW_ATM_0039, ARCH_SW_ATM_0040, ARCH_SW_ATM_0041, ARCH_SW_ATM_0042, ARCH_SW_ATM_0043, ARCH_SW_ATM_0044, ARCH_SW_ATM_0045, ARCH_SW_ATM_0046, ARCH_SW_ATM_0047, ARCH_SW_ATM_0048, ARCH_SW_ATM_0049, ARCH_SW_ATM_0050, ARCH_SW_ATM_0051, ARCH_SW_ATM_0052, ARCH_SW_ATM_0053, ARCH_SW_ATM_0054, ARCH_SW_ATM_0055, ARCH_SW_ATM_0056, ARCH_SW_ATM_0057, ARCH_SW_ATM_0058, ARCH_SW_ATM_0059, ARCH_SW_ATM_0060, ARCH_SW_ATM_0061, ARCH_SW_ATM_0062, ARCH_SW_ATM_0063, ARCH_SW_ATM_0064, ARCH_SW_ATM_0065, ARCH_SW_ATM_0066, ARCH_SW_ATM_0067");
+  AddRequirementInfo("ARCH_SW_ATM_0030", "ATM_KU8_ID_TEST_HIGH_SIDE_SWITCH autotest is inhibited by KU8_MODES________VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0031", "ATM_KU8_ID_TEST_DRIVER_COMMAND autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0032", "ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT autotest is inhibited by KU8_MODES_BELTFN_VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0033", "ATM_KU8_ID_TEST_MOSFET_LOW_SHORT_CIRCUIT autotest is inhibited by KU8_MODES_BELTFN_VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0034", "ATM_KU8_ID_TEST_MOTOR_DISCONNECTION autotest is inhibited by KU8_MODES_BELTFN_VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0035", "ATM_KU8_ID_TEST_DRIVER_SELF_PROTECTION autotest is inhibited by KU8_MODES_______________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0036", "ATM_KU8_ID_TEST_MOSFET_OPEN_CIRCUIT autotest is inhibited by KU8_MODES_BELTFN_VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0037", "ATM_KU8_ID_TEST_HALL_EFFECT_SENSORS autotest is inhibited by KU8_MODES________VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0038", "ATM_KU8_ID_TEST_MOTOR_CURRENT autotest is inhibited by KU8_MODES________VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0039", "ATM_KU8_ID_TEST_MOTOR_BLOCKED autotest is inhibited by KU8_MODES________VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0040", "ATM_KU8_ID_TEST_MOTOR_TEMPERATURE autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0041", "ATM_KU8_ID_TEST_MOTOR_SHORT_CIRCUIT autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0042", "ATM_KU8_ID_TEST_SENSOR_TEMPERATURE autotest is inhibited by KU8_MODES________________.");
+  AddRequirementInfo("ARCH_SW_ATM_0043", "ATM_KU8_ID_TEST_PWM_ORDER autotest is inhibited by KU8_MODES________VOLTAG_INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0044", "ATM_KU8_ID_TEST_UNDER_VOLTAGE_POWER autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0045", "ATM_KU8_ID_TEST_OVER_VOLTAGE_POWER autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0046", "ATM_KU8_ID_TEST_UNDER_VOLTAGE_TENSIONING_POWER autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0047", "ATM_KU8_ID_TEST_OVER_VOLTAGE_TENSIONING_POWER autotest is inhibited by KU8_MODES________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0048", "ATM_KU8_ID_EXT_WDG_OUT_OF_ORDER autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0049", "ATM_KU8_ID_RESET_CAUSE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0050", "ATM_KU8_ID_END_OF_LIFE_LOW_FORCE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0051", "ATM_KU8_ID_END_OF_LIFE_HIGH_FORCE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0052", "ATM_KU8_ID_END_OF_LIFE_COMFORT autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0053", "ATM_KU8_ID_TIMEOUT_PRESAFE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0054", "ATM_KU8_ID_TIMEOUT_BUCKLE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0055", "ATM_KU8_ID_IMPLAUSIBLE_DATA_PRESAFE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0056", "ATM_KU8_ID_IMPLAUSIBLE_DATA_IGNITION autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0057", "ATM_KU8_ID_IMPLAUSIBLE_DATA_BUCKLE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0058", "ATM_KU8_ID_END_OF_LIFE_MAX_FORCE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0059", "ATM_KU8_ID_TIMEOUT_IGNITION autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0060", "ATM_KU8_ID_TIMEOUT_POWERTRAIN autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0061", "ATM_KU8_ID_IMPLAUSIBLE_DATA _POWERTRAIN autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0062", "ATM_KU8_ID_IMPLAUSIBLE_DATA _ORC autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0063", "ATM_KU8_ID_TIMEOUT_BELT_HAND_OVER_LEFT autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0064", "ATM_KU8_ID_TIMEOUT_BELT_HAND_OVER_RIGHT autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0065", "ATM_KU8_ID_TIMEOUT_API_INTERFACE autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0066", "ATM_KU8_ID_OVERVOLTAGE_SYSTEM autotest is inhibited by KU8_MODES______________________INHIB.");
+  AddRequirementInfo("ARCH_SW_ATM_0067", "ATM_KU8_ID_UNDERVOLTAGE_SYSTEM autotest is inhibited by KU8_MODES______________________INHIB.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() function at line atm_PlayOneShotTests();.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() function at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Check if CPU is stopped at the breakpoint in ATM_runMainFunction() function at line atm_PlayCyclicTests(castStartupCyclicList);.");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+  
+  testStep("STEP", "Step in atm_PlayCyclicTests() from ATM_runMainFunction().");
+  debugger_stepIn();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0030");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_HIGH_SIDE_SWITCH]).u8InhibIndex,,app.elf = KU8_MODES________VOLTAG_INHIB. --> 0x1");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "13");
+  ExpectedTestResult(debugger_result, "0x1", "0x1");
+     
+  testCaseComment("Action: ARCH_SW_ATM_0031");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_DRIVER_COMMAND]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB. --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "21");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0032");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_INHIB --> 0x2");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "29");
+  ExpectedTestResult(debugger_result, "0x2", "0x2");
+ 
+  testCaseComment("Action: ARCH_SW_ATM_0033");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_INHIB --> 0x2");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "37");
+  ExpectedTestResult(debugger_result, "0x2", "0x2");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0034");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOTOR_DISCONNECTION]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_INHIB --> 0x2");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "45");
+  ExpectedTestResult(debugger_result, "0x2", "0x2");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0035");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_DRIVER_SELF_PROTECTION]).u8InhibIndex,,app.elf = KU8_MODES_______________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "53");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0036");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOSFET_OPEN_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_INHIB --> 0x2");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "61");
+  ExpectedTestResult(debugger_result, "0x2", "0x2");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0037");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_HALL_EFFECT_SENSORS]).u8InhibIndex,,app.elf = KU8_MODES________VOLTAG_INHIB --> 0x1");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "77"); //69
+  ExpectedTestResult(debugger_result, "0x1", "0x1");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0038");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOTOR_CURRENT]).u8InhibIndex,,app.elf = KU8_MODES________VOLTAG_INHIB --> 0x1");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "85");
+  ExpectedTestResult(debugger_result, "0x1", "0x1");
+
+  testCaseComment("Action: ARCH_SW_ATM_0039");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOTOR_BLOCKED]).u8InhibIndex,,app.elf = KU8_MODES________VOLTAG_INHIB --> 0x1");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "93");
+  ExpectedTestResult(debugger_result, "0x1", "0x1");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0040");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOTOR_TEMPERATURE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "101");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0041");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_MOTOR_SHORT_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "109");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+
+  testCaseComment("Action: ARCH_SW_ATM_0042");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_SENSOR_TEMPERATURE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "109");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0043");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_PWM_ORDER]).u8InhibIndex,,app.elf = KU8_MODES________VOLTAG_INHIB --> 0x1");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "125");
+  ExpectedTestResult(debugger_result, "0x1", "0x1");
+
+  testCaseComment("Action: ARCH_SW_ATM_0044");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_UNDER_VOLTAGE_POWER]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "133");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0045");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_OVER_VOLTAGE_POWER]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "141");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0046");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_UNDER_VOLTAGE_TENSIONING_POWER]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "149");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0047");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TEST_OVER_VOLTAGE_TENSIONING_POWER]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "157");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+
+  testCaseComment("Action: ARCH_SW_ATM_0048");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_EXT_WDG_OUT_OF_ORDER]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "165");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0049");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_RESET_CAUSE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "173");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0050");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_END_OF_LIFE_LOW_FORCE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "229");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0051");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_END_OF_LIFE_HIGH_FORCE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "237");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0052");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_END_OF_LIFE_COMFORT]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "245");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0053");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_PRESAFE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "253");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0054");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_BUCKLE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "277");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0055");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA_PRESAFE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "285");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0056");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA_IGNITION]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "293");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0057");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA_BUCKLE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "301");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0058");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_END_OF_LIFE_MAX_FORCE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "309");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0059");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_IGNITION]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "317");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0060");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_POWERTRAIN]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "325");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0061");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA _POWERTRAIN]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "333");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0062");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA _ORC]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "341");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0063");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_BELT_HAND_OVER_LEFT]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "349");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0064");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_BELT_HAND_OVER_RIGHT]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "357");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0065");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_TIMEOUT_API_INTERFACE]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "365");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0066");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_OVERVOLTAGE_SYSTEM]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "373");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  testCaseComment("Action: ARCH_SW_ATM_0067");
+  testStep("STEP", "Evaluate that (castATMConfig[ATM_KU8_ID_ UNDERVOLTAGE_SYSTEM]).u8InhibIndex,,app.elf = KU8_MODES________________INHIB --> 0x0");
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", "381");
+  ExpectedTestResult(debugger_result, "0x0", "0x0");
+  
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_runCheckModeStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0021");
+  AddRequirementInfo("ARCH_SW_ATM_0021", "MMG_runCheckModeStatus shall be called to check if all conditions are fulfilled to execute the test.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_ATM_0021");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("STEP", "Step over at line Rte_Call_pclModeManagement_CheckModeStatus(cau32InhibitingModes[u8InhibModesIndex], &u8InhibitingContextStatus);.");
+  debugger_stepOver();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0021");
+  testStep("STEP", "Step in function Rte_Call_pclModeManagement_CheckModeStatus(). --> Stepped in function MMG_runCheckModeStatus,,app.elf");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function MMG_runCheckModeStatus,,app.elf", "Stepped in function MMG_runCheckModeStatus,,app.elf");
+    
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_RunResetCause_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0106");
+  AddRequirementInfo("ARCH_SW_ATM_0106", "ATM_runMainFunction shall call the RCM_Autotest_RunResetCause function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_ATM_0106");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in RCM_Autotest_RunResetCause().");
+  debugger_setRelativeFunctionBpAtLine("RCM_Autotest_RunResetCause", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0106");
+  testStep("STEP", "Check if CPU stopped at RCM_Autotest_RunResetCause()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeLowForce_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0107");
+  AddRequirementInfo("ARCH_SW_ATM_0107", "ATM_runMainFunction shall call the EOL_Autotest_CheckProductEndOfLifeLowForce function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0107");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in EOL_cbk_CheckProductEndOfLifeLowForce().");
+  debugger_setRelativeFunctionBpAtLine("EOL_cbk_CheckProductEndOfLifeLowForce", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0107");
+  testStep("STEP", "Check if CPU stopped at EOL_cbk_CheckProductEndOfLifeLowForce()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeHighForce_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0108");
+  AddRequirementInfo("ARCH_SW_ATM_0108", "ATM_runMainFunction shall call the EOL_Autotest_CheckProductEndOfLifeHighForce function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0108");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in EOL_Autotest_CheckProductEndOfLifeHighForce().");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeHighForce", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0108");
+  testStep("STEP", "Check if CPU stopped at EOL_Autotest_CheckProductEndOfLifeHighForce()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeComfort_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0109");
+  AddRequirementInfo("ARCH_SW_ATM_0109", "ATM_runMainFunction shall call the EOL_Autotest_CheckProductEndOfLifeComfort function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0109");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in EOL_Autotest_CheckProductEndOfLifeComfort().");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeComfort", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0109");
+  testStep("STEP", "Check if CPU stopped at EOL_Autotest_CheckProductEndOfLifeComfort()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeMaxForce_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0110");
+  AddRequirementInfo("ARCH_SW_ATM_0110", "ATM_runMainFunction shall call the EOL_Autotest_CheckProductEndOfLifeMaxForce function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0110");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in EOL_Autotest_CheckProductEndOfLifeMaxForce().");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeMaxForce", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0110");
+  testStep("STEP", "Check if CPU stopped at EOL_Autotest_CheckProductEndOfLifeMaxForce()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckHighSideSwRegulation_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0114");
+  AddRequirementInfo("ARCH_SW_ATM_0114", "ATM_runMainFunction shall call the PAL_Autotest_CheckHighSideSwRegulation function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0114");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckHighSideSwRegulation().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckHighSideSwRegulation", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0114");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckHighSideSwRegulation()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckCommandConsistency_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0115");
+  AddRequirementInfo("ARCH_SW_ATM_0115", "ATM_runMainFunction shall call the PAL_Autotest_CheckCommandConsistency function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0115");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckCommandConsistency().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckCommandConsistency", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0115");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckCommandConsistency()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMosfetHighSC_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0116");
+  AddRequirementInfo("ARCH_SW_ATM_0116", "ATM_runMainFunction shall call the  PAL_Autotest_CheckMosfetHighSC function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0116");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckMosfetHighSC().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0116");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckMosfetHighSC()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMosfetLowSC_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0117");
+  AddRequirementInfo("ARCH_SW_ATM_0117", "ATM_runMainFunction shall call the  PAL_Autotest_CheckMosfetLowSC function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0117");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckMosfetLowSC().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetLowSC", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0117");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckMosfetLowSC()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorConnection_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0118");
+  AddRequirementInfo("ARCH_SW_ATM_0118", "ATM_runMainFunction shall call the PAL_Autotest_CheckMotorConnection function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0118");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckMotorConnection().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorConnection", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0118");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckMotorConnection()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckHWSelfProtection_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0119");
+  AddRequirementInfo("ARCH_SW_ATM_0119", "ATM_runMainFunction shall call the PAL_Autotest_CheckHWSelfProtection function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0119");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckHWSelfProtection().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckHWSelfProtection", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0119");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckHWSelfProtection()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMosfetOCAT_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0120");
+  AddRequirementInfo("ARCH_SW_ATM_0120", "ATM_runMainFunction shall call the PAL_Autotest_CheckMosfetOCAT function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0120");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckMosfetOCAT().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetOCAT", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0120");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckMosfetOCAT()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckPowerSupplyUV_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0150");
+  AddRequirementInfo("ARCH_SW_ATM_0150", "ATM_runMainFunction shall call the PMP_Autotest_CheckPowerSupplyUV function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0150");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PMP_Autotest_CheckPowerSupplyUV().");
+  debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0150");
+  testStep("STEP", "Check if CPU stopped at PMP_Autotest_CheckPowerSupplyUV()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckPowerSupplyOV_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0151");
+  AddRequirementInfo("ARCH_SW_ATM_0151", "ATM_runMainFunction shall call the PMP_Autotest_CheckPowerSupplyOV function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0151");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PMP_Autotest_CheckPowerSupplyOV().");
+  debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0151");
+  testStep("STEP", "Check if CPU stopped at PMP_Autotest_CheckPowerSupplyOV()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckPowerSupplyUVDuringActivation_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0202");
+  AddRequirementInfo("ARCH_SW_ATM_0202", "ATM_runMainFunction shall call the PMP_Autotest_CheckPowerSupplyUVDuringActivation function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0202");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PMP_Autotest_CheckPowerSupplyUVDuringActivation().");
+  debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0202");
+  testStep("STEP", "Check if CPU stopped at PMP_Autotest_CheckPowerSupplyUVDuringActivation()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckPowerSupplyOVDuringActivation_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0203");
+  AddRequirementInfo("ARCH_SW_ATM_0203", "ATM_runMainFunction shall call the PMP_Autotest_CheckPowerSupplyOVDuringActivation function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0203");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PMP_Autotest_CheckPowerSupplyOVDuringActivation().");
+  debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0203");
+  testStep("STEP", "Check if CPU stopped at PMP_Autotest_CheckPowerSupplyOVDuringActivation()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckSystemUV_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0235");
+  AddRequirementInfo("ARCH_SW_ATM_0235", "ATM_runMainFunction shall call the PMP_Autotest_CheckSystemUV function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0235");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PMP_Autotest_CheckSystemUV().");
+  debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemUV", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0235");
+  testStep("STEP", "Check if CPU stopped at PMP_Autotest_CheckSystemUV()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckSystemOV_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0236");
+  AddRequirementInfo("ARCH_SW_ATM_0236", "ATM_runMainFunction shall call the PMP_Autotest_CheckSystemOV function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0236");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+   
+  testStep("STEP", "Set a breakpoint in PMP_Autotest_CheckSystemOV().");
+  debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemOV", "0");
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0236");
+  testStep("STEP", "Check if CPU stopped at PMP_Autotest_CheckSystemOV()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckCommandConsistency_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0205");
+  AddRequirementInfo("ARCH_SW_ATM_0205", "ATM_runMainFunction shall call the PAL_Autotest_CheckCommandConsistency function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0205");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_Autotest_CheckCommandConsistency().");
+  debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckCommandConsistency", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0205");
+  testStep("STEP", "Check if CPU stopped at PAL_Autotest_CheckCommandConsistency()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMosfetHighSC_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0206");
+  AddRequirementInfo("ARCH_SW_ATM_0206", "ATM_runMainFunction shall call the PAL_cbk_CheckMosfetHighSC function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0206");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMosfetHighSC().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetHighSC", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0206");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMosfetHighSC()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMosfetLowSC_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0207");
+  AddRequirementInfo("ARCH_SW_ATM_0207", "ATM_runMainFunction shall call the PAL_cbk_CheckMosfetLowSC function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0207");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMosfetLowSC().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetLowSC", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0207");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMosfetLowSC()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorConnection_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0208");
+  AddRequirementInfo("ARCH_SW_ATM_0208", "ATM_runMainFunction shall call the PAL_cbk_CheckMotorConnection function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0208");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMotorConnection().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorConnection", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0208");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMotorConnection()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckHWSelfProtection_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0209");
+  AddRequirementInfo("ARCH_SW_ATM_0209", "ATM_runMainFunction shall call the PAL_cbk_CheckHWSelfProtection function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0209");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckHWSelfProtection().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckHWSelfProtection", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0209");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckHWSelfProtection()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorDisengagement_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0210");
+  AddRequirementInfo("ARCH_SW_ATM_0210", "ATM_runMainFunction shall call the PAL_cbk_CheckMotorDisengagement function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0210");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMotorDisengagement().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorDisengagement", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0210");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMotorDisengagement()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckHallEffectSensor_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0211");
+  AddRequirementInfo("ARCH_SW_ATM_0211", "ATM_runMainFunction shall call the BMM_cbk_CheckHallEffectSensor function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0211");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in BMM_cbk_CheckHallEffectSensor().");
+  debugger_setRelativeFunctionBpAtLine("BMM_cbk_CheckHallEffectSensor", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0211");
+  testStep("STEP", "Check if CPU stopped at BMM_cbk_CheckHallEffectSensor()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorCurrent_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0212");
+  AddRequirementInfo("ARCH_SW_ATM_0212", "ATM_runMainFunction shall call the PAL_cbk_CheckMotorCurrent function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0212");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMotorCurrent().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorCurrent", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0212");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMotorCurrent()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeLowForce_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0213");
+  AddRequirementInfo("ARCH_SW_ATM_0213", "ATM_runMainFunction shall call the EOL_cbk_CheckProductEndOfLifeLowForce function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0213");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in EOL_cbk_CheckProductEndOfLifeLowForce().");
+  debugger_setRelativeFunctionBpAtLine("EOL_cbk_CheckProductEndOfLifeLowForce", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0213");
+  testStep("STEP", "Check if CPU stopped at EOL_cbk_CheckProductEndOfLifeLowForce()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_SteeringConfiguration_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0237");
+  AddRequirementInfo("ARCH_SW_ATM_0237", "ATM_runMainFunction shall call the CIL_cbk_SteeringConfiguration function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0237");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_cbk_SteeringConfiguration().");
+  debugger_setRelativeFunctionBpAtLine("CIL_cbk_SteeringConfiguration", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0237");
+  testStep("STEP", "Check if CPU stopped at CIL_cbk_SteeringConfiguration()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckPowerSupplyUV_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0214");
+  AddRequirementInfo("ARCH_SW_ATM_0214", "ATM_runMainFunction shall call the PMP_cbk_CheckPowerSupplyUV function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0214");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PMP_cbk_CheckPowerSupplyUV().");
+  debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUV", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0214");
+  testStep("STEP", "Check if CPU stopped at PMP_cbk_CheckPowerSupplyUV()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckPowerSupplyOV_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0215");
+  AddRequirementInfo("ARCH_SW_ATM_0215", "ATM_runMainFunction shall call the PMP_cbk_CheckPowerSupplyOV function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0215");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PMP_cbk_CheckPowerSupplyOV().");
+  debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyOV", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0215");
+  testStep("STEP", "Check if CPU stopped at PMP_cbk_CheckPowerSupplyOV()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_Presafe_CheckTimeoutError_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0222");
+  AddRequirementInfo("ARCH_SW_ATM_0222", "ATM_runMainFunction shall call the CIL_Autotest_Presafe_CheckTimeoutError function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0222");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_Presafe_CheckTimeoutError().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_Presafe_CheckTimeoutError", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0222");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_Presafe_CheckTimeoutError()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_Buckle_CheckTimeoutError_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0223");
+  AddRequirementInfo("ARCH_SW_ATM_0223", "ATM_runMainFunction shall call the CIL_Autotest_Buckle_CheckTimeoutError function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0223");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_Buckle_CheckTimeoutError().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_Buckle_CheckTimeoutError", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0223");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_Buckle_CheckTimeoutError()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckImplausibleData_Presafe_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0224");
+  AddRequirementInfo("ARCH_SW_ATM_0224", "ATM_runMainFunction shall call the CIL_Autotest_CheckImplausibleData_Presafe function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0224");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckImplausibleData_Presafe().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckImplausibleData_Presafe", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0224");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckImplausibleData_Presafe()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckImplausibleData_Ignition_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0225");
+  AddRequirementInfo("ARCH_SW_ATM_0225", "ATM_runMainFunction shall call the CIL_Autotest_CheckImplausibleData_Ignition function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0225");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckImplausibleData_Ignition().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckImplausibleData_Ignition", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0225");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckImplausibleData_Ignition()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckImplausibleData_Buckle_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0226");
+  AddRequirementInfo("ARCH_SW_ATM_0226", "ATM_runMainFunction shall call the CIL_Autotest_CheckImplausibleData_Buckle function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0226");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckImplausibleData_Buckle().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckImplausibleData_Buckle", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0226");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckImplausibleData_Buckle()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckTimeoutError_Powertrain_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0227");
+  AddRequirementInfo("ARCH_SW_ATM_0227", "ATM_runMainFunction shall call the CIL_Autotest_CheckTimeoutError_Powertrain function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0227");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckTimeoutError_Powertrain().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckTimeoutError_Powertrain", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0227");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckTimeoutError_Powertrain()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckTimeoutError_Ignition_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0228");
+  AddRequirementInfo("ARCH_SW_ATM_0228", "ATM_runMainFunction shall call the CIL_Autotest_CheckTimeoutError_Ignition function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0228");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckTimeoutError_Ignition().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckTimeoutError_Ignition", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0228");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckTimeoutError_Ignition()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckImplausibleData_Powertrain_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0229");
+  AddRequirementInfo("ARCH_SW_ATM_0229", "ATM_runMainFunction shall call the CIL_Autotest_CheckImplausibleData_Powertrain function");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0229");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckImplausibleData_Powertrain().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckImplausibleData_Powertrain", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0229");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckImplausibleData_Powertrain()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckImplausibleData_ORC_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0230");
+  AddRequirementInfo("ARCH_SW_ATM_0230", "ATM_runMainFunction shall call the CIL_Autotest_CheckImplausibleData_ORC function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0230");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckImplausibleData_ORC().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckImplausibleData_ORC", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0230");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckImplausibleData_ORC()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckTimeoutError_Belthandover_L_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0231");
+  AddRequirementInfo("ARCH_SW_ATM_0231", "ATM_runMainFunction shall call the CIL_Autotest_CheckTimeoutError_Belthandover_L function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0231");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckTimeoutError_BelthandoverL().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckTimeoutError_BelthandoverL", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0231");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckTimeoutError_BelthandoverL()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckTimeoutError_Belthandover_R_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0232");
+  AddRequirementInfo("ARCH_SW_ATM_0232", "ATM_runMainFunction shall call the CIL_Autotest_CheckTimeoutError_Belthandover_R function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0232");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckTimeoutError_BelthandoverR().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckTimeoutError_BelthandoverR", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0232");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckTimeoutError_BelthandoverR()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckTimeoutError_API_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0233");
+  AddRequirementInfo("ARCH_SW_ATM_0233", "ATM_runMainFunction shall call the CIL_Autotest_CheckTimeoutError_API function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0233");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in CIL_Autotest_CheckTimeoutError_API().");
+  debugger_setRelativeFunctionBpAtLine("CIL_Autotest_CheckTimeoutError_API", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0233");
+  testStep("STEP", "Check if CPU stopped at CIL_Autotest_CheckTimeoutError_API()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorPowerOrder_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0216");
+  AddRequirementInfo("ARCH_SW_ATM_0216", "ATM_runMainFunction shall call the PAL_cbk_CheckMotorPowerOrder function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0216");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMotorPowerOrder().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorPowerOrder", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0216");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMotorPowerOrder()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckTemperatureSensor_01() // ERROR HERE 
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0217");
+  AddRequirementInfo("ARCH_SW_ATM_0217", "ATM_runMainFunction shall call the PMP_cbk_CheckTemperatureSensor function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0217");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PMP_cbk_CheckTemperatureSensor().");
+  debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckTemperatureSensor", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0217");
+  testStep("STEP", "Check if CPU stopped at PMP_cbk_CheckTemperatureSensor()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeHighForce_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0218");
+  AddRequirementInfo("ARCH_SW_ATM_0218", "ATM_runMainFunction shall call the EOL_cbk_CheckProductEndOfLifeHighForce function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0218");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in EOL_cbk_CheckProductEndOfLifeHighForce().");
+  debugger_setRelativeFunctionBpAtLine("EOL_cbk_CheckProductEndOfLifeHighForce", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0218");
+  testStep("STEP", "Check if CPU stopped at EOL_cbk_CheckProductEndOfLifeHighForce()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeComfort_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0219");
+  AddRequirementInfo("ARCH_SW_ATM_0219", "ATM_runMainFunction shall call the EOL_cbk_CheckProductEndOfLifeComfort function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0219");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in EOL_cbk_CheckProductEndOfLifeComfort().");
+  debugger_setRelativeFunctionBpAtLine("EOL_cbk_CheckProductEndOfLifeComfort", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0219");
+  testStep("STEP", "Check if CPU stopped at EOL_cbk_CheckProductEndOfLifeComfort()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorSC_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0220");
+  AddRequirementInfo("ARCH_SW_ATM_0220", "ATM_runMainFunction shall call the PAL_cbk_CheckMotorSC function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0220");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMotorSC().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorSC", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0220");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMotorSC()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckMotorThermalProctection_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0221");
+  AddRequirementInfo("ARCH_SW_ATM_0221", "ATM_runMainFunction shall call the PAL_cbk_CheckMotorThermalProctection function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0221");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in PAL_cbk_CheckMotorThermalProctection().");
+  debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorThermalProctection", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0221");
+  testStep("STEP", "Check if CPU stopped at PAL_cbk_CheckMotorThermalProctection()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_CheckProductEndOfLifeMaxForce_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0234");
+  AddRequirementInfo("ARCH_SW_ATM_0234", "ATM_runMainFunction shall call the EOL_cbk_CheckProductEndOfLifeMaxForce function.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0234");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "27");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Set a breakpoint in EOL_cbk_CheckProductEndOfLifeMaxForce().");
+  debugger_setRelativeFunctionBpAtLine("EOL_cbk_CheckProductEndOfLifeMaxForce", "0"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0234");
+  testStep("STEP", "Check if CPU stopped at EOL_cbk_CheckProductEndOfLifeMaxForce()*. --> CPU stopped at BP");
+  debugger_isCPUStoppedAtBP("1000");
+  ExpectedTestResult(debugger_result,"CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+testcase SW_IT_ATM_runMainFunction_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ATM_0260, ARCH_SW_ATM_0111, ARCH_SW_ATM_0113");
+  AddRequirementInfo("ARCH_SW_ATM_0260", "Verify if an auto-test cannot be executed ATM_runMainFunction shall set the status of the tests to “NOT DECIDED”.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+  
+  testCaseComment("Action: ARCH_SW_ATM_0260");
+  testStep("STEP", "Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. --> BP set.");
+  debugger_setRelativeFunctionBpAtLine("ATM_runMainFunction", "19");
+  ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  testStep("STEP", "Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).");
+  debugger_setRelativeFunctionBpAtLine("atm_PlayCyclicTests", "9");
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testStep("STEP", "Step in function atm_PlayCyclicTests().");
+  debugger_stepIn();
+  ExpectedTestResult(debugger_result, "Stepped in function atm_PlayCyclicTests,,app.elf", "Stepped in function atm_PlayCyclicTests,,app.elf"); 
+  
+  testStep("STEP", "Step in function atm_executeAutoTest().");
+  debugger_stepIn();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0260, ARCH_SW_ATM_0111, ARCH_SW_ATM_0113");
+  testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line atm_au8AtStatuses[cu8AutotestID] =  KU8_ATM_TEST_NOT_DECIDED;. --> BP set.");
+  debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "209");
+  ExpectedTestResult(debugger_result, "BP set", "BP set"); 
+  
+  testStep("", "Run the debugger.");
+  debugger_run();
+  
+  testCaseComment("Action: ARCH_SW_ATM_0260");
+  testStep("STEP", "Evaluate if atm_au8AtStatuses[cu8AutotestID] =  KU8_ATM_TEST_NOT_DECIDED;. --> 0x4.");
+  debugger_readVariable("uint8", "atm_au8AtStatuses,,app.elf", "0");
+  ExpectedTestResult(debugger_result, "0x4", "0x4"); 
+  
+  //====================================================
+  
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_stop();
+}
+
+/*------------------------------------------------------------------------------
+                                TEST SEQUENCE
+------------------------------------------------------------------------------*/
+void MainTest()
+{
+  InitTestModule();
+//  
+//  SW_IT_ATM_Init_01();
+//  SW_IT_ATM_autotest_result_01();
+//  SW_IT_ATM_Init_02();
+//  SW_IT_ATM_inhibit_autotest_01();
+//  SW_IT_ATM_runCheckModeStatus_01();
+//  SW_IT_ATM_RunResetCause_01();
+//  SW_IT_ATM_CheckProductEndOfLifeLowForce_01();
+//  SW_IT_ATM_CheckProductEndOfLifeHighForce_01();
+//  SW_IT_ATM_CheckProductEndOfLifeComfort_01();
+//  SW_IT_ATM_CheckProductEndOfLifeMaxForce_01();
+//  SW_IT_ATM_CheckHighSideSwRegulation_01();
+//  SW_IT_ATM_CheckCommandConsistency_01();
+//  SW_IT_ATM_CheckMosfetHighSC_01();
+//  SW_IT_ATM_CheckMosfetLowSC_01();
+//  SW_IT_ATM_CheckMotorConnection_01();
+//  SW_IT_ATM_CheckHWSelfProtection_01();
+//  SW_IT_ATM_CheckMosfetOCAT_01();
+//  SW_IT_ATM_CheckPowerSupplyUV_01();
+//  SW_IT_ATM_CheckPowerSupplyOV_01();
+//  SW_IT_ATM_CheckPowerSupplyUVDuringActivation_01();
+//  SW_IT_ATM_CheckPowerSupplyOVDuringActivation_01();
+//  SW_IT_ATM_CheckSystemUV_01();
+//  SW_IT_ATM_CheckSystemOV_01();
+//  SW_IT_ATM_CheckCommandConsistency_02();
+//  SW_IT_ATM_CheckMosfetHighSC_02();
+//  SW_IT_ATM_CheckMosfetLowSC_02();
+//  SW_IT_ATM_CheckMotorConnection_02();
+//  SW_IT_ATM_CheckHWSelfProtection_02();
+//  SW_IT_ATM_CheckMotorDisengagement_02();
+//  SW_IT_ATM_CheckHallEffectSensor_02();
+//  SW_IT_ATM_CheckMotorCurrent_02();
+//  SW_IT_ATM_CheckProductEndOfLifeLowForce_02();
+//  SW_IT_ATM_SteeringConfiguration_01();
+//  SW_IT_ATM_CheckPowerSupplyUV_02();
+//  SW_IT_ATM_CheckPowerSupplyOV_02();
+//  SW_IT_ATM_Presafe_CheckTimeoutError_01();
+//  SW_IT_ATM_Buckle_CheckTimeoutError_01();
+//  SW_IT_ATM_CheckImplausibleData_Presafe_01();
+//  SW_IT_ATM_CheckImplausibleData_Ignition_01();
+//  SW_IT_ATM_CheckImplausibleData_Buckle_01();
+//  SW_IT_ATM_CheckTimeoutError_Powertrain_01();
+//  SW_IT_ATM_CheckTimeoutError_Ignition_01();
+//  SW_IT_ATM_CheckImplausibleData_Powertrain_01();
+//  SW_IT_ATM_CheckImplausibleData_ORC_01();
+//  SW_IT_ATM_CheckTimeoutError_Belthandover_L_01();
+//  SW_IT_ATM_CheckTimeoutError_Belthandover_R_01();
+//  SW_IT_ATM_CheckTimeoutError_API_01();
+//  SW_IT_ATM_CheckMotorPowerOrder_01();
+//  SW_IT_ATM_CheckTemperatureSensor_01();
+//  SW_IT_ATM_CheckProductEndOfLifeHighForce_02();
+//  SW_IT_ATM_CheckProductEndOfLifeComfort_02();
+//  SW_IT_ATM_CheckMotorSC_01();
+//  SW_IT_ATM_CheckMotorThermalProctection_01();
+//  SW_IT_ATM_CheckProductEndOfLifeMaxForce_02();
+ 
+  SW_IT_ATM_runMainFunction_01();
+}

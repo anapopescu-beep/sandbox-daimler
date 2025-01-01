@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0073, ARCH_SW_ERH_0084, ARCH_SW_ERH_0085
+ARCH_SW_ERH_0073: The erh_UpdateGroup function shall be called to update the group status after all errors of the group has just been cleared.
+ARCH_SW_ERH_0084: A DTC shall be qualified if a group of AECs is qualified (minim one AEC from group is qualified).
+ARCH_SW_ERH_0085: A DTC shall be deskilled if all AECs from the associated group are deskilled.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_ResetAllAECStatus() at line 'if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK == (erh_au8AecStatus[u8OutputIndex]'.
+
+	Step 3: Send diagnostic request 14 FF FF FF.
+
+	Step 4: Set a breakpoint in function ERH_ResetAllAECStatus() at line 'if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK == (erh_au8AecStatus[u8OutputIndex]'.
+
+	Step 5: Check if CPU stopped in function ERH_ResetAllAECStatus() at line 'erh_au8AecStatus[u8OutputIndex] = KU8_ZERO;'.
+
+	Step 6: Set a breakpoint in function ERH_ResetAllAECStatus() at line 'erh_au8AecStatus[u8OutputIndex] = KU8_ZERO;'.
+
+	Step 7: Check if CPU stopped in function ERH_ResetAllAECStatus() at line 'erh_au8AecStatus[u8OutputIndex] = KU8_ZERO;'.
+
+	Step 8: Step in function erh_UpdateGroup().
+
+	Step 9: Set a breakpoint at line 'case (uint32)KU32_AEC_GROUP_MASK_UNDER_VO:'.
+
+Action: ARCH_SW_ERH_0073, ARCH_SW_ERH_0084,ARCH_SW_ERH_0085
+
+	Step 10: Check if CPU stopped at line 'case (uint32)KU32_AEC_GROUP_MASK_UNDER_VO:'. 
+		Expected result:  CPU stopped in function erh_UpdateGroup()
+
+Postcondition
+
+	Step 11: Return ECU to default values

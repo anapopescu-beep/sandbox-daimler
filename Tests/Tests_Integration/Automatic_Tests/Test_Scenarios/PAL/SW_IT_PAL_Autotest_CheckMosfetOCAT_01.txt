@@ -1,0 +1,67 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0373, ARCH_SW_PAL_0374, ARCH_SW_PAL_0375
+ARCH_SW_PAL_0373: The component shall check is the power bridge is open circuit.
+ARCH_SW_PAL_0374: The Autotest shall be performed in 4 steps in order to set the result.
+ARCH_SW_PAL_0375: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMosfetOCAT at the RTE Call for CheckMosfetOCAT autotest.
+
+Action: ARCH_SW_PAL_0373, ARCH_SW_PAL_0374
+
+	Step 3: Check if the CPU stopped at the RTE Call for CheckMosfetOCAT autotest. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Step in function Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);. 
+		Expected result:  Stepped in PAL_Autotest_CheckMosfetOCAT function
+
+	Step 5: Check if the CPU stopped in function PAL_Autotest_CheckMosfetOCAT(). 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMosfetOCAT at the RTE call for GetTestResult.
+
+	Step 7: Check if the CPU stopped at the RTE call for GetTestResult. 
+		Expected result:  CPU stopped at BP
+
+	Step 8: Check if the CPU stopped in function ATM_runGetTestResult(). 
+		Expected result:  CPU stopped at BP
+
+	Step 9: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable overwritten with 0x1
+
+	Step 10: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the return of autotest result.
+
+	Step 11: Check if the CPU stopped at the return of autotest result. 
+		Expected result:  CPU stopped at BP
+
+	Step 12: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to KU8_ATM_TEST_OK.
+
+Action: ARCH_SW_PAL_0375
+
+	Step 13: Evaluate PreviousADCTestresult 
+		Expected result:  Variable is equal to 0x1.
+
+	Step 14: Set a breakpoint in function PAL_cbk_CheckMosfetOCAT after the return of the autotest result.
+
+	Step 15: Check if the CPU stopped after the return of the autotest result. 
+		Expected result:  CPU stopped at BP
+
+	Step 16: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 17: Return ECU to default values

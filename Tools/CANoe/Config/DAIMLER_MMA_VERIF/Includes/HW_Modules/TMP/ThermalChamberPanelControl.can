@@ -1,0 +1,50 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "..\..\SW_Modules\SW_Modules_Project\Project_Includes_Configuration.cin"
+}
+
+variables
+{
+}
+
+void MainTest()
+{
+  if (@sysvar::ThermalChamber::sysGetTCSetpointButton==1)
+  {
+    ChamberReadSetpoint();
+  }
+  
+  else if (@sysvar::ThermalChamber::sysGetTCTempButton==1)
+  {
+    ChamberReadTemperature();
+  }
+  
+  else if (@sysvar::ThermalChamber::sysSetTCSetpointButton==1)
+  {
+    ChamberSetSetpoint(@sysvar::ThermalChamber::sysSetTCSetpoint);
+  }
+  
+  else if (@sysvar::ThermalChamber::sysTCOnButton==1)
+  {
+    ChamberTurnOn();
+  }
+  
+  else if (@sysvar::ThermalChamber::sysTCOffButton==1)
+  {
+    ChamberTurnOff();
+  }
+  
+  else if(@sysvar::ThermalChamber::sysTempLiveUpdate==1)
+  {
+    while(@sysvar::ThermalChamber::sysTempLiveUpdate==1)
+    {
+      TestWaitForTimeout(100);  
+      ChamberReadTemperature();
+      TestWaitForTimeout(2000);
+    }
+  }
+  
+  else{}
+
+}

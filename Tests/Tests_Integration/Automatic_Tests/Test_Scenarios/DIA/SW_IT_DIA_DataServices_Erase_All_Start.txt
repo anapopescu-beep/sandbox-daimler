@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0860; ARCH_SW_DIA_0861; ARCH_SW_DIA_0862; ARCH_SW_DIA_0863; ARCH_SW_DIA_0864; ARCH_SW_DIA_0865
+ARCH_SW_DIA_0860: Service 0x31 (Routine Control) 0x31 01 Start for RID 0xF782 (Erase All) will be implemented 
+ARCH_SW_DIA_0861: RoutineIdentifier shall be 0xF782.
+ARCH_SW_DIA_0862: The folowing request shall be available for this RID: - Start Routine 
+ARCH_SW_DIA_0863: Routine Start shall be available in the following diagnostic sessions: ?Supplier Session/Development Session (0x7E) Routine Start requires the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales STANDARD 
+ARCH_SW_DIA_0864: Routine Start shall be used to reset/clear the following NVM data: ?All cycle counters (EOL counters, Request Counters) ?System context ?System time ?Deficiency level ?Warm Reset data ?Security event log 
+ARCH_SW_DIA_0865: RID specific Routine Status Record Start shall be represented by the following: ?Byte 6: Erase Block Status ?Bit 0: EOL Counters ?0 = Block is filled with data ?1 = Block has been erased NVP_BLOCK_ID_EXECUTION_COUNTERS ?Bit 1: Request Counters ?0 = Block is filled with data ?1 = Block has been erased NVP_BLOCK_ID_MEASUREMENT_FRAME_12_CONFIG ?Bit 2: System Context ?0 = Block is filled with data ?1 = Block has been erased NVP_BLOCK_ID_SYSTEM_CONTEXT_0 NVP_BLOCK_ID_SYSTEM_CONTEXT_1 NVP_BLOCK_ID_SYSTEM_CONTEXT_2 ?Bit 3: System Time ?0 = Block is filled with data ?1 = Block has been erased NVP_BLOCK_ID_PRE_SAFE_RECORDER_1 NVP_BLOCK_ID_PRE_SAFE_RECORDER_2 ?Bit 4: Deficiency Level ?0 = Block is filled with data ?1 = Block has been erased NVP_BLOCK_ID_TESTS_PARAM ?Bit 5: Warm Reset Data ?0 = Block is filled with data ?1 = Block has been erased NVP_BLOCK_ID_WARM_RESET ?Bit 6: Security Event Log ?0 = Block is filled with data ?1 = Block has been erased Ssa_SecLogNvM_SecLog_LogDataEvnt1_FailedCertVerif Ssa_SecLogNvM_SecLog_LogDataEvnt2_SucCertVerif Ssa_SecLogNvM_SecLog_LogDataEvnt3_SucAuthAndEnhanceRights Ssa_SecLogNvM_SecLog_LogDataEvnt4_AuthBySecAccess Ssa_SecLogNvM_SecLog_LogDataEvnt5_SucDiagServiceExec Ssa_SecLogNvM_SecLog_LogDataEvnt6_RightsMgmt Ssa_SecLogNvM_SecLog_LogDataEvnt7_SigVerif Ssa_SecLogNvM_SecLog_LogDataEvnt8_TickCountDateAndTime Ssa_SecLogNvM_SecLog_LogDataEvnt9_SecOcMisconfig Ssa_SecLogNvM_SecLog_LogDataEvnt10_FailedPduMacVerif Ssa_SecLogNvM_SecLog_LogDataEvnt11_SecOrAuthBoot Ssa_SecLogNvM_SecLog_LogDataEvnt12_ChangeOfVin Ssa_SecLogNvM_SecLog_LogDataEvnt13_AclReplacement 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+Action: ARCH_SW_DIA_0860; ARCH_SW_DIA_0861; ARCH_SW_DIA_0862; ARCH_SW_DIA_0863; ARCH_SW_DIA_0864; ARCH_SW_DIA_0865
+
+	Step 3: Send diag request for 22 F782 and check response 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 4: Return ECU to default values

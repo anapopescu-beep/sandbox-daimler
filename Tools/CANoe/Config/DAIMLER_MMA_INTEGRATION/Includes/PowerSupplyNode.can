@@ -1,0 +1,74 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  
+}
+
+
+on sysvar_update sysvar::PowerSupply::sysPowerOnButton
+{
+If (@this == 1)
+{
+@sysvar::PowerSupply::sysTrigger=1;
+
+}
+}
+
+on sysvar_update sysvar::PowerSupply::sysPowerOffButton
+{
+If (@this == 1)
+{
+@sysvar::PowerSupply::sysTrigger=1;
+
+}
+}
+
+on sysvar_update sysvar::PowerSupply::sysSetVoltageButton
+{
+If (@this == 1)
+{
+@sysvar::PowerSupply::sysTrigger=1;
+
+}
+}
+
+on sysvar_update sysvar::PowerSupply::sysSetCurrentButton
+{
+If (@this == 1)
+{
+@sysvar::PowerSupply::sysTrigger=1;
+
+}
+}
+
+on sysvar sysvar::PowerSupply::sysLiveUpdateStartStopButton
+{
+If (@this == 1)
+{
+@sysvar::PowerSupply::sysTrigger=1;
+}
+}
+
+on sysvar_update ReadAllAecPanel::sysvarClarAllAec
+{
+  if (@this == 1)
+  {
+    @sysvar::ReadAllAecPanel::sysvarClearAllAectrigger = 1;
+    @sysvar::ReadAllAecPanel::sysvarTrigger = 1;
+  }
+}
+
+on sysvar_update ReadAllAecPanel::sysvarReadAllAec
+{
+  if (@this == 1)
+  {
+    @sysvar::ReadAllAecPanel::sysvarReadAllAectrigger = 1;
+    @sysvar::ReadAllAecPanel::sysvarTrigger = 1;
+  }
+}
+

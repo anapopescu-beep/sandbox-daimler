@@ -1,0 +1,1 @@
+/* Dummy file to satify Mcal_WdgLib.c */

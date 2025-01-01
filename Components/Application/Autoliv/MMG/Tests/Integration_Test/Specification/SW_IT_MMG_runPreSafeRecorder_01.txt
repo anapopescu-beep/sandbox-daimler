@@ -1,0 +1,72 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0009, ARCH_SW_MMG_0010, ARCH_SW_MMG_0011, ARCH_SW_MMG_0012, ARCH_SW_MMG_0014, ARCH_SW_MMG_0027, ARCH_SW_MMG_0029, ARCH_SW_MMG_0030, ARCH_SW_MMG_0032, ARCH_SW_MMG_0033, ARCH_SW_MMG_0034
+ARCH_SW_MMG_0009: The Start Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM when a requested profile has started regardless of status of execution: inhibited or started successful.
+ARCH_SW_MMG_0010: The Stop Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM when a requested profile has ended regardless of status of execution: ended successful, aborted or inhibited.
+ARCH_SW_MMG_0011: The State Block of the PRE-SAFE Recorder Data shall be manipulated and saved in RAM whenever a start or stop block is saved.
+ARCH_SW_MMG_0012: The PRE-SAFE Recorder 1/2 Data shall be saved in NVM as a rolling buffer containing the data of the last two profiles requested when the ECU goes to sleep.
+ARCH_SW_MMG_0014: The writing of a PRE-SAFE Recorder data should be tiggered if a PreSafe profile (PRE-SAFE = 1 and PRE-SAFE = 8 except PRE-SAFE = 2) is requested regardless of type of request: PreSafe, API CAN frames or a UDS diagnostic request.
+ARCH_SW_MMG_0027: Pre-Safe cycles are disabled shall represent the 2 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by disabled cycles; Yes = 1 if the tensioning was inhibited/ aborted by disabled cycles
+ARCH_SW_MMG_0029: Failure Message on the bus shall represent the 4 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by a failure message on buss; Yes = 1 if the tensioning was inhibited/ aborted by a failure message on buss
+ARCH_SW_MMG_0032: OverTemperature shall represent the 0 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by overtemperature; Yes = 1 if the tensioning was inhibited/ aborted by overtemperature
+ARCH_SW_MMG_0033: EOL counter rejection shall represent the 1 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by EOL counter limit; Yes = 1 if the tensioning was inhibited/ aborted by EOL counter limit
+ARCH_SW_MMG_0034: System failure shall represent the 2 Bit of Byte 1 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by system failure; Yes = 1 if the tensioning was inhibited/ aborted by system failure
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder() at line case KU8_TENSIONING_START:.
+
+	Step 3: Set a breakpoint in MMG_runPreSafeRecorder() at line case KU8_TENSIONING_END:.
+
+	Step 4: Set a breakpoint in MMG_runPreSafeRecorder() at line case KU8_TENSIONING_INHIBIT:.
+
+	Step 5: Set a breakpoint in function mmg_PreSafe_HandleStateData.
+
+	Step 6: Set a breakpoint in function MMG_runPreSafeRecorder at line NVP_BLOCK_ID_PRE_SAFE_RECORDER_ID_RamBlockData.NVP_u8PreSafeRecorderID = u8PreSafeRecorderNewID;.
+
+	Step 7: Start Development Session.
+
+	Step 8: Set signal Presf_Lvl_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 9: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 10: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_NOLVL.
+
+Action: ARCH_SW_MMG_0009, ARCH_SW_MMG_0014
+
+	Step 11: Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_START:. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_MMG_0010
+
+	Step 12: Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_END:. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_MMG_0013, ARCH_SW_MMG_0027
+
+	Step 13: Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_INHIBIT:. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_MMG_0011, ARCH_SW_MMG_0029, ARCH_SW_MMG_0030, ARCH_SW_MMG_0032, ARCH_SW_MMG_0033, ARCH_SW_MMG_0034
+
+	Step 14: Check if CPU stopped in function mmg_PreSafe_HandleStateData(). 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_MMG_0009, ARCH_SW_MMG_0011, ARCH_SW_MMG_0012
+
+	Step 15: Check if CPU stopped in MMG_runPreSafeRecorder() at line NVP_BLOCK_ID_PRE_SAFE_RECORDER_ID_RamBlockData.NVP_u8PreSafeRecorderID = u8PreSafeRecorderNewID;. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 16: Return ECU to default values

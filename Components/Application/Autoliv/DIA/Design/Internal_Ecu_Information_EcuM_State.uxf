@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>2386</w>
+      <h>727</h>
+    </coordinates>
+    <panel_attributes>title:Internal ECU Information Read AUTOSAR System State EcuM State Read Data
+Start
+Get EcuM CurrentMode value from RTE
+
+If
+	[EcuM_Mode = 0]
+	ecuM_Mode = DIA_ECUM_STATE_STARTUP
+
+	[EcuM_Mode = 1]
+	ecuM_Mode = DIA_ECUM_STATE_WAKEUP
+
+	[EcuM_Mode = 2]
+	ecuM_Mode = DIA_ECUM_STATE_RUN
+
+	[EcuM_Mode = 3]
+	ecuM_Mode = DIA_ECUM_STATE_SHUTDOWN
+
+	[EcuM_Mode = 4]
+	ecuM_Mode = DIA_ECUM_STATE_SLEEP
+
+	[EcuM_Mode = 5]
+	ecuM_Mode = DIA_ECUM_STATE_SLEEP
+
+	[EcuM_Mode = 6]
+	ecuM_Mode = DIA_ECUM_STATE_SLEEP
+
+	[default]
+	Do nothing
+
+Check Data for Null pointer
+If
+	[Data == nullPointer]
+	ret = NOT_OK
+	
+	[Data pointer valid]
+	Copy 'ecuM_Mode' into Data Buffer
+	ret = OK
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

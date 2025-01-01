@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0007; ARCH_SW_DIA_0070; ARCH_SW_DIA_0085; ARCH_SW_DIA_0071
+ARCH_SW_DIA_0007: Service 0x2E will be implemented for DID FD2A.
+ARCH_SW_DIA_0070: Service should be available in Development Session.
+ARCH_SW_DIA_0085: Data Length shall be 1160 bytes long.
+ARCH_SW_DIA_0071: NVP_BLOCK_ID_STEPS0-144_RamBlockData will be Written..
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD2A_StepsLibraryWrite*.
+
+Action: ARCH_SW_DIA_0007; ARCH_SW_DIA_0070; ARCH_SW_DIA_0085; ARCH_SW_DIA_0071
+
+	Step 4: Send diag request for 2E FD2A and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD2A_StepsLibraryWrite was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Write first byte of NVP_BLOCK_ID_STEP_0_RamBlockData 
+		Expected result:  Variable overwritten with 0x1.
+
+Postcondition
+
+	Step 7: Return ECU to default values

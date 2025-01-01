@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>279</x>
+      <y>108</y>
+      <w>1096</w>
+      <h>985</h>
+    </coordinates>
+    <panel_attributes>title:cil_ManageHapticRepetition
+Start
+
+Check if CIL_bHapticStarted is TRUE
+If
+	[TRUE]
+	Read CycleNumber
+	Check if u8ExecutedCycle is WHA1 and CIL_bHWA1PhaseStarted is not started
+	If
+		[TRUE]
+		Set CIL_bHWA1PhaseStarted to TRUE
+		Set CIL_u16HWACounter ZERO
+
+		[FALSE]
+		QAC
+	EndIf
+	If
+		[Check CIL_bHapticAbortion is FALSE and NVP_u16HWARepetition &gt; CIL_u16HWACounter]
+		Check if CIL_bHWA1PhaseStarted is TRUE
+		If
+			[TRUE]
+			Increment CIL_u16HWACounter
+
+			[FALSE]
+			QAC
+		EndIf
+
+		[FALSE]
+		Send KU8_NO_HAPTIC_REQUEST
+	EndIf
+		
+	[FALSE]
+	QAC
+
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

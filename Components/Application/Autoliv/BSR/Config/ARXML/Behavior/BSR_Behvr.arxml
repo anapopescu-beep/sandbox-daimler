@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 autosar_4-2-2.xsd">
+<AR-PACKAGES>
+    <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="647361d4-ca8b-4eeb-be37-d01cc80ccd48">
+      <SHORT-NAME>AUTOLIV</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="b95249a5-7fc7-43af-ae77-a54bf02abe03">
+          <SHORT-NAME>SoftwareComponents</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="854a3c2c-f879-40d3-ac02-b6b6e9d40723">
+              <SHORT-NAME>BSR</SHORT-NAME>
+              <ELEMENTS>
+                <APPLICATION-SW-COMPONENT-TYPE T="2017-01-04T08:25:38+01:00" UUID="3c8132aa-97bf-43d6-92a7-ff2779faa46f">
+                  <SHORT-NAME>BSR_AC_BeltSlackReduction</SHORT-NAME>
+                  <CATEGORY>SWC</CATEGORY>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR T="2017-01-04T08:25:38+01:00" UUID="4c1b521b-eaff-45cc-b4fe-5f53de9f7f81">
+                      <SHORT-NAME>BSR_IB_BeltSlackReduction</SHORT-NAME>
+                      <CONSTANT-VALUE-MAPPING-REFS>
+                        <CONSTANT-VALUE-MAPPING-REF DEST="CONSTANT-SPECIFICATION-MAPPING-SET">/AUTOLIV/GlobalDictionary/Constants/ConstantsMappingSet_PP4G</CONSTANT-VALUE-MAPPING-REF>
+                      </CONSTANT-VALUE-MAPPING-REFS>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/AUTOLIV/GlobalDictionary/DataTypeMappingSet/DataTypeMappingSet_PP4G</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EVENTS>
+                        <TIMING-EVENT T="2017-01-04T08:25:38+01:00" UUID="708887a3-2f3a-478a-b11e-745017393150">
+                          <SHORT-NAME>BSR_evBeltSlackReductionAlgo</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">Periodical event to trig BSR runnable</L-2>
+                          </DESC>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/BSR_IB_BeltSlackReduction/BSR_runBeltSlackReductionAlgo</START-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </TIMING-EVENT>
+                      </EVENTS>
+                      <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY T="2017-04-24T16:30:45+02:00" UUID="538ad3dc-b4aa-4b29-a293-5e27e74b9daf">
+                          <SHORT-NAME>BSR_runBeltSlackReductionAlgo</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                          <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="7ed81a32-780c-48f0-878b-3283d54612eb">
+                              <SHORT-NAME>DRP_prrBuckleDoorSwitch_u8BuckleSwitch</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/prrBuckleDoorSwitch</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrBuckleDoorSwitch/u8BuckleSwitch</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="117e8659-462a-40d2-bfeb-5b0e51a40e83">
+                              <SHORT-NAME>DRP_prrCustomerSpecific_b8IsCarCrashDetected</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/prrCustomerSpecific</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCustomerSpecific/b8IsCarCrashDetected</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="026c549c-b307-41d3-b51e-b9cad8f4b1ec">
+                              <SHORT-NAME>DRP_prrCustomerSpecific_u8BeltSlackStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/prrCustomerSpecific</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCustomerSpecific/u8BeltSlackStatus</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="f277ba33-08ee-45ff-b74a-b837c522a543">
+                              <SHORT-NAME>DRP_prrDriverControls_u16VehicleSpeed</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/prrDriverControls</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrDriverControls/u16VehicleSpeed</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="e3e013f4-b093-43b6-86f5-920ef00c2e2b">
+                              <SHORT-NAME>DRP_prrExecutedCycle_u8CycleNumber</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/prrExecutedCycle</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCycleNumber/u8CycleNumber</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                          <DATA-SEND-POINTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="ffec292c-5a3a-4167-b7a1-486186e47355">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BSR_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/psrAlgo_Flags_BSR</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="8522c2ac-820a-49ec-848e-ae12b78f136f">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BSR_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/psrAlgo_Flags_BSR</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="50df260f-b913-4ca2-a278-3d4ef2b7da7a">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BSR_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/psrAlgo_Flags_BSR</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="a77b4e01-64bf-4b4d-8948-c6a424d01c11">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BSR_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/psrAlgo_Flags_BSR</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="8ee413d8-2975-46df-8e8e-34b235fa1cba">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BSR_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/psrAlgo_Flags_BSR</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-SEND-POINTS>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="43f9209b-9732-49a5-aafd-8e55e8c6d83d">
+                              <SHORT-NAME>SSCP_pclBelt_D_GetFromT0_deg</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclBelt_D</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromT0_deg</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="374d0435-dc4c-4933-9118-92f2fb8d77ce">
+                              <SHORT-NAME>SSCP_pclDiagRequestCycle_ClearDiagRequestCycle</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclDiagRequestCycle</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsDiagRequestCycle/ClearDiagRequestCycle</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="905c5893-5d48-4891-b1e5-d9ff499d3903">
+                              <SHORT-NAME>SSCP_pclDiagRequestCycle_GetDiagRequestCycle</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclDiagRequestCycle</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsDiagRequestCycle/GetDiagRequestCycle</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="674ed8f1-4e3a-441d-826c-bd0118cea9ba">
+                              <SHORT-NAME>SSCP_pclModeManagement_CheckModeStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclModeManagement</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsModeManagement/CheckModeStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="4f6cf909-a9ff-4e80-911d-3ba0cc450499">
+                              <SHORT-NAME>SSCP_pclTestResult_GetTestResult</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclAutotestServices</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsAutotestServices/GetTestResult</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-24T16:30:45+02:00" UUID="915899db-5d23-4148-874e-100957193af4">
+                              <SHORT-NAME>scp_GetEventStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclEvtInfoComfortEndOfLife</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-24T16:30:45+02:00" UUID="04d7853a-95ad-4fc8-9a68-9adf69556200">
+                              <SHORT-NAME>scp_GetEventStatus1</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclEvtInfoBatPwrOverVoltage</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-24T16:30:45+02:00" UUID="157f9a21-66b2-4919-a39a-1b332bd32816">
+                              <SHORT-NAME>scp_GetEventStatus2</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/pclEvtInfoBatPwrUnderVoltageDuringTens</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>BSR_runBeltSlackReductionAlgo</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </APPLICATION-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION T="2017-01-04T08:25:38+01:00" UUID="d26b56e8-ec6d-4b7c-b38b-1ffaa6aa9b73">
+                  <SHORT-NAME>BSR_impBeltSlackReduction</SHORT-NAME>
+                  <CODE-DESCRIPTORS>
+                    <CODE T="2017-01-04T08:25:38+01:00" UUID="cacf70a8-891f-4805-8fb2-82801cfea32f">
+                      <SHORT-NAME>BSR_Impl_Code</SHORT-NAME>
+                      <ARTIFACT-DESCRIPTORS>
+                        <AUTOSAR-ENGINEERING-OBJECT>
+                          <SHORT-LABEL>BSR_Impl_Code_CodeDesc</SHORT-LABEL>
+                          <CATEGORY>SWSRC</CATEGORY>
+                        </AUTOSAR-ENGINEERING-OBJECT>
+                      </ARTIFACT-DESCRIPTORS>
+                    </CODE>
+                  </CODE-DESCRIPTORS>
+                  <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+                  <RESOURCE-CONSUMPTION T="2016-06-01T10:28:28+02:00" UUID="DCE:17fd99e5-2538-4262-b0cc-a3fa90df73e1">
+                    <SHORT-NAME>BSR_Impl_ResCons</SHORT-NAME>
+                    <MEMORY-SECTIONS>
+                      <MEMORY-SECTION T="2017-02-07T16:22:51+01:00" UUID="DCE:e22dcb3a-5957-421f-9494-6d80e52671bc">
+                        <SHORT-NAME>CODE</SHORT-NAME>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:22:54+01:00" UUID="DCE:8e83db6e-2f7c-4ce4-a689-cb4ed21ffe82">
+                        <SHORT-NAME>VAR_INIT_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:22:58+01:00" UUID="DCE:6fbf6c9f-4ed0-4f58-b3f7-12734d9dcdb7">
+                        <SHORT-NAME>VAR_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                    </MEMORY-SECTIONS>
+                  </RESOURCE-CONSUMPTION>
+                  <SW-VERSION>1.0.0</SW-VERSION>
+                  <VENDOR-ID>0</VENDOR-ID>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/AUTOLIV/SoftwareComponents/BSR/BSR_AC_BeltSlackReduction/BSR_IB_BeltSlackReduction</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

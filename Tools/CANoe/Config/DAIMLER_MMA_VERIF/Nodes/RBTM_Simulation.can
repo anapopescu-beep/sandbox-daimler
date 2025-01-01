@@ -1,0 +1,66 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  msTimer startup_delay_timer;
+   msTimer VIN_Broadcast_timer;
+}
+
+on start
+{
+  setTimer(startup_delay_timer,300);
+  setSignal(Odo_ST3,(getSignal(Odo_ST3)+1));
+  setTimerCyclic(VIN_Broadcast_timer, 500);
+   @sysvar::ModelGlobal::ISw_Stat =2;
+
+}
+
+on timer VIN_Broadcast_timer
+{
+  if(@ProjectConfiguration::EnableVINBroadcast == 1)
+  {
+    if(@sysvar::SecuredVINBroadcast::TriggerSecuredVINBroadcast == 0)
+    {
+      @sysvar::SecuredVINBroadcast::TriggerSecuredVINBroadcast = 1;
+    }
+    else
+    {
+      @sysvar::SecuredVINBroadcast::TriggerSecuredVINBroadcast = 0;
+    }
+  }
+}
+
+on timer startup_delay_timer
+{
+    @sysvar::LocalAuthentication::TargetMode=0;
+   @sysvar::ModelGlobal::ISw_Stat =4;
+}
+
+on signal Presf_Lvl_ST3
+{
+  if (this > 0)
+  {
+    setSignal(Presf_Snd_Rq_ST3,0);
+  }
+  else
+  {
+    setSignal(Presf_Snd_Rq_ST3,1);
+  }
+}
+
+
+on signal_update Impact_RO_type1_ST3
+{
+  if (this||(getSignal(Impact_RO_type2_ST3)||getSignal(Impact_X_ST3)) )
+  {
+    @sysvar::IL_CAN1::NODES::N_BC_F::PDUS::Impact3_ST3::TIMINGS::FITimingMode=1;
+  }
+  else
+  {
+    @sysvar::IL_CAN1::NODES::N_BC_F::PDUS::Impact3_ST3::TIMINGS::FITimingMode=0;
+  }
+}

@@ -1,0 +1,56 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0094, ARCH_SW_CIL_0095, ARCH_SW_CIL_0096
+ARCH_SW_CIL_0094: Frame BeltAdj_UI_Set_Rq_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0095: Signal PS_Curve_FL_Rq_HU_ST3 shall be send though application when it�s needed(0,1,2,3)
+ARCH_SW_CIL_0096: Signal PS_Curve_FR_Rq_HU_ST3 shall be send though application when it�s needed(0,1,2,3)
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PS_Curve_FL_Rq_HU_ST3 from frame BeltAdj_UI_Set_Rq_ST3 to KU8_ONE.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals() at line '(void)Rte_Read_CIL_AC_CommunicationInteractionLayer_R_PS_Curve_FL_Rq_HU_ST3_PS_Curve_FL_Rq_HU_ST3(&CIL_u8PSCurve);'.
+
+	Step 6: Check if CPU stopped in function cil_ManageInputSignals() at line '(void)Rte_Read_CIL_AC_CommunicationInteractionLayer_R_PS_Curve_FL_Rq_HU_ST3_PS_Curve_FL_Rq_HU_ST3(&CIL_u8PSCurve);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0094, ARCH_SW_CIL_0095
+
+	Step 7: Evaluate if variable CIL_u8PSCurve is equal to KU8_ONE
+		Expected result:  KU8_ONE.
+
+	Step 8: Set signal PS_Curve_FR_Rq_HU_ST3 from frame BeltAdj_UI_Set_Rq_ST3 to KU8_ONE.
+
+	Step 9: Set a breakpoint in function CIL_runCANToAppli().
+
+	Step 10: Check if CPU stopped in function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 11: Set a breakpoint in function cil_ManageInputSignals() at line 'void)Rte_Read_CIL_AC_CommunicationInteractionLayer_R_PS_Curve_FR_Rq_HU_ST3_PS_Curve_FR_Rq_HU_ST3(&CIL_u8PSCurve);'.
+
+	Step 12: Check if CPU stopped in function cil_ManageInputSignals() at line 'void)Rte_Read_CIL_AC_CommunicationInteractionLayer_R_PS_Curve_FR_Rq_HU_ST3_PS_Curve_FR_Rq_HU_ST3(&CIL_u8PSCurve);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0094, ARCH_SW_CIL_0096
+
+	Step 13: Evaluate if variable CIL_u8PSCurve is equal to KU8_ONE
+		Expected result:  KU8_ONE.
+
+Postcondition
+
+	Step 14: Return ECU to default values

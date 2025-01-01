@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0203, ARCH_SW_MMG_0253, ARCH_SW_MMG_0254
+ARCH_SW_MMG_0203: Rte_Read_prrExecutedCycle_u8CycleNumber shall be called to get the executed cycle for different contexts.
+ARCH_SW_MMG_0253: The current execute cycle and pyro activation status  shall be an input for MMG_KU32_MASK_NO_BELTFUNCTIONS context qualification.
+ARCH_SW_MMG_0254: The executed cycle  shall be an input for MMG_KU32_MASK_NO_TENSIONING context qualification.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus at line 'if(B_TRUE == MMG_b8MMGHAsBeenInitialized)'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus() at line 'if(B_TRUE == MMG_b8MMGHAsBeenInitialized)'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().
+
+	Step 5: Step in function mmg_UpdateModeStatus_ExecutedCycle().
+
+	Step 6: Set a breakpoint in function mmg_UpdateModeStatus_ExecutedCycle() at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle)'.
+
+Action: ARCH_SW_MMG_0253
+
+	Step 7: Set a breakpoint in function mmg_UpdateModeStatus_ExecutedCycle() at line 'Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus)'.
+
+	Step 8: Set a breakpoint at line mmg_UpdateModeStatus_ExecutedTensioningCycle().
+
+Action: ARCH_SW_MMG_0203, ARCH_SW_MMG_0254
+
+	Step 9: Step in function mmg_UpdateModeStatus_ExecutedTensioningCycle() at line Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle);. 
+		Expected result:  mmg_UpdateModeStatus_ExecutedTensioningCycle,,app.elf
+
+Postcondition
+
+	Step 10: Return ECU to default values

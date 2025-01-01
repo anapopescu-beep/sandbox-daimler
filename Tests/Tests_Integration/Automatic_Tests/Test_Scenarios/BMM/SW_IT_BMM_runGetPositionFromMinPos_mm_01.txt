@@ -1,0 +1,30 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0030
+ARCH_SW_BMM_0030: This module shall provide to the rest of the application the displacement of the belt in millimeters from its minimum position (continuously monitored by the BMM).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_runGetPositionFromMinPos_mm at line '*ps16BeltPosition_mm'.
+
+Action: ARCH_SW_BMM_0030
+
+	Step 3: Check if CPU stopped at line '*ps16BeltPosition_mm'. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Evaluate variable ps16BeltPosition_mm.  
+		Expected result:  KU8_ZERO (0x0)
+
+Postcondition
+
+	Step 5: Return ECU to default values

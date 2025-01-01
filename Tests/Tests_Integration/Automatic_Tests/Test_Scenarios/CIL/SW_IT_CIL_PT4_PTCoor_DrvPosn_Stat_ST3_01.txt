@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0153, ARCH_SW_CIL_0154
+ARCH_SW_CIL_0153: Frame PT4_PTCoor_DrvPosn_Stat_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0154: Signal PT4_PTCoor_DrvPosn_Stat_ST3 shall be send through application when it�s needed (1,2,3,4, 15).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PT4_PTCoor_DrvPosn_Stat_ST3 to I_C04_DRVPOSN_ST3_D.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 6: Set a breakpoint in function cil_ManageInhibitConditions() at line '(I_C04_DRVPOSN_ST3_R == cil_stPTCoorDrvPos.PT4_PTCoor_DrvPosn_Stat_ST3) )'.
+
+	Step 7: Check if CPU stopped in function cil_ManageInhibitConditions() at line '(I_C04_DRVPOSN_ST3_R == cil_stPTCoorDrvPos.PT4_PTCoor_DrvPosn_Stat_ST3) )'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0153, ARCH_SW_CIL_0154
+
+	Step 8: Evaluate if variable cil_stPTCoorDrvPos.PT4_PTCoor_DrvPosn_Stat_ST3 is equal to I_C04_DRVPOSN_ST3_D 
+		Expected result:  I_C04_DRVPOSN_ST3_D (0x1).
+
+Postcondition
+
+	Step 9: Return ECU to default values

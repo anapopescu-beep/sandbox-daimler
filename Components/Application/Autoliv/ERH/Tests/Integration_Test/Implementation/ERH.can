@@ -1,0 +1,2198 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Project_functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Functions.cin"
+}
+
+
+variables
+{
+  byte bWriteStepsLibraryRequest[3] = {0x2E, 0xFD, 0x2A};
+  diagRequest RBTMFL174.FaultMem_ClearGroup reqFaultMem_ClearGroup;
+
+}
+
+
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation();
+  
+  strncpy(cLogPathAndName, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",  elcount(cLogPathAndName));
+}
+
+
+
+testcase SW_Int_ERH_HW_SELF_PROTECTION_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0001, ARCH_SW_ERH_0004, ARCH_SW_ERH_0006");
+  AddRequirementInfo("ARCH_SW_ERH_0001", "The AEC ERH_KU8_HW_SELF_PROTECTION_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification time: 1200ms; deskill time: 60000ms; associated group: KU32_AEC_GROUP_MASK_SELF_PROTECTION;");
+  AddRequirementInfo("ARCH_SW_ERH_0006", "The AEC ERH_KU8_SW_SELF_PROTECTION_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification count: 1; deskill count: 1; associated group: KU32_AEC_GROUP_MASK_SELF_PROTECTION;");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0004, ARCH_SW_ERH_0001");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+  
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run(); 
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line erh_u32GroupsStatus = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "18");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+  
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 2048.");
+    debugger_writeLocalVariable("u32GroupStatusForDTC", "2048");
+
+    testCaseComment("Action: ARCH_SW_ERH_0004, ARCH_SW_ERH_0006");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_SELF_PROTECTION:.--> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "57");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_MOTOR_DISCONNECTED_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0004, ARCH_SW_ERH_0016, ARCH_SW_ERH_0026, ARCH_SW_ERH_0027, ARCH_SW_ERH_0028");
+  AddRequirementInfo("ARCH_SW_ERH_0004", "The AEC ERH_KU8_MOTOR_DISCONNECTED_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification count: 50; deskill count: 1; associated group: KU32_AEC_GROUP_MASK_MOTOR;");
+  AddRequirementInfo("ARCH_SW_ERH_0016", "The AEC ERH_KU8_PWM_ORDER_AEC_CFG shall be defined as a Counter based AEC, with the following parameters:- qualification time: instantaneously- deskill time: instantaneously; associated group: KU32_AEC_GROUP_MASK_MOTOR");
+  AddRequirementInfo("ARCH_SW_ERH_0026", "The ERH_KU8_MOTOR_BLOCKED_AEC_CFG should have the following properties: Qualification Count = 5; Qualification_time = Qualification_count * Autotest_Periodicity = 50ms; Deskill Count = 1; Deskill_time = Deskill_count * Autotest_Periodicity = 10ms; associated group: KU32_AEC_GROUP_MASK_MOTOR");
+  AddRequirementInfo("ARCH_SW_ERH_0027", "The ERH_KU8_MOTOR_IN_SC_AEC_CFG should have the following properties:  Qualification Count = 6; Qualification_time = Qualification_count * Autotest_Periodicity = 60ms; Deskill Count = 1 (shall be deskilled after reset); associated group: KU32_AEC_GROUP_MASK_MOTOR");
+  AddRequirementInfo("ARCH_SW_ERH_0028", "The ERH_KU8_MOTOR_CURRENT_AEC_CFG should have the following properties: Qualification Count: Medium Current threshold: 1200 ms; High Current threshold: 120000 ms; Deskill Count = 60000 ms; associated group: KU32_AEC_GROUP_MASK_MOTOR");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0004, ARCH_SW_ERH_0016, ARCH_SW_ERH_0026, ARCH_SW_ERH_0027, ARCH_SW_ERH_0028");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 0x2.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "2");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0004, ARCH_SW_ERH_0016, ARCH_SW_ERH_0026, ARCH_SW_ERH_0027, ARCH_SW_ERH_0028");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_MOTOR:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "60");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+
+testcase SW_Int_ERH_OVO_POWER_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0008");
+  AddRequirementInfo("ARCH_SW_ERH_0008", "The AEC ERH_KU8_OVO_POWER_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification time: 150s; deskill time:  15s; associated group: KU32_AEC_GROUP_MASK_OVER_VO");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0008");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 0x4.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "4");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0008");  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_OVER_VO:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "33");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_UVO_POWER_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0010");
+  AddRequirementInfo("ARCH_SW_ERH_0010", "The AEC ERH_KU8_UVO_POWER_AEC_CFG  shall be defined as a Counter based AEC, with the following parameters: qualification time: 15s; deskill time: 150s; associated group: KU32_AEC_GROUP_MASK_UNDER_VO;");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0010");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 0x4.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "0x4");
+
+    testCaseComment("Action: ARCH_SW_ERH_0010");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_OVER_VO:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "36");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_UVO_TENSIONING_POWER_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0012");
+  AddRequirementInfo("ARCH_SW_ERH_0012", "The AEC ERH_KU8_UVO_TENSIONING_POWER_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification time: 30ms; deskill time: 30ms; associated group: KU32_AEC_GROUP_MASK_UNDER_VO_TENS");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0012");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 32.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "32");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0012");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_UNDER_VO_TENS:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "42");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_UVO_TENSIONING_POWER_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0014");
+  AddRequirementInfo("ARCH_SW_ERH_0014", "The AEC ERH_KU8_UVO_TENSIONING_POWER_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification time: 30ms; deskill time: 30ms; associated group: KU32_AEC_GROUP_MASK_OVER_VO_TENS");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0014");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 32.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "32");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0014");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_OVER_VO_TENS:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "39");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_GROUP_MASK_HARDWARE_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0018, ARCH_SW_ERH_0019, ARCH_SW_ERH_0020, ARCH_SW_ERH_0021, ARCH_SW_ERH_0022, ARCH_SW_ERH_0023, ARCH_SW_ERH_0025");
+  AddRequirementInfo("ARCH_SW_ERH_0018", "The AEC ERH_KU8_HIGH_SIDE_SWITCH_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification time: instantaneously; deskill time: 1 (shall be deskilled even after reset to recheck the fault situation); associated group: KU32_AEC_GROUP_MASK_HARDWARE");
+  AddRequirementInfo("ARCH_SW_ERH_0019", "The ERH_KU8_MOSFET_HIGH_SC_AEC_CFG should have the following properties: Qualification Count = 50; Qualification_time = Qualification_count * Autotest_Periodicity = 5000ms; Deskill Count = 100; Deskill_time = Deskill_count * Autotest_Periodicity = 10000ms SC; associated group: KU32_AEC_GROUP_MASK_HARDWARE");
+  AddRequirementInfo("ARCH_SW_ERH_0020", "The ERH_KU8_MOSFET_LOW_SC_AEC_CFG should have the following properties: Qualification Count = 50; Qualification_time = Qualification_count * Autotest_Periodicity = 5000ms; Deskill Count = 100; Deskill_time = Deskill_count * Autotest_Periodicity = 10000ms; associated group: KU32_AEC_GROUP_MASK_HARDWARE");
+  AddRequirementInfo("ARCH_SW_ERH_0021", "The ERH_KU8_MOSFET_OC_AEC_CFG should have the following properties: Qualification_time = instantaneously; Deskill_time = 1 (after each reset); associated group: KU32_AEC_GROUP_MASK_HARDWARE ");
+  AddRequirementInfo("ARCH_SW_ERH_0022", "The ERH_KU8_HALL_SENSOR_AEC_CFG should have the following properties: Qualification Count = 1; Qualification_time = Qualification_count * Autotest_Periodicity = 100ms; Deskill Count = 1; Deskill_time = Deskill_count * Autotest_Periodicity = 100ms; associated group: KU32_AEC_GROUP_MASK_HARDWARE");
+  AddRequirementInfo("ARCH_SW_ERH_0023", "The ERH_KU8_ENABLE_OUT_OF_ORDER_AEC_CFG should have the following properties: Qualification Count = 2; Qualification_time = Qualification_count * Autotest_Periodicity = 200ms; Deskill Count = 60; Deskill_time = Deskill_count * Autotest_Periodicity = 6000ms; associated group: KU32_AEC_GROUP_MASK_HARDWARE");
+  AddRequirementInfo("ARCH_SW_ERH_0025", "The ERH_KU8_TEMPERATURE_SENSOR_FAILURE_AEC_CFG should have the following properties: Qualification Count = 1; Qualification_time = Qualification_count * Autotest_Periodicity = 5000ms; Deskill Count = 1; Deskill_time = Deskill_count * Autotest_Periodicity = 5000ms; - associated group: KU32_AEC_GROUP_MASK_HARDWARE");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_ERH_0018, ARCH_SW_ERH_0019, ARCH_SW_ERH_0020, ARCH_SW_ERH_0021, ARCH_SW_ERH_0022, ARCH_SW_ERH_0023, ARCH_SW_ERH_0025");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 32.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "32");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0018, ARCH_SW_ERH_0019, ARCH_SW_ERH_0020, ARCH_SW_ERH_0021, ARCH_SW_ERH_0022, ARCH_SW_ERH_0023, ARCH_SW_ERH_0025");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_HARDWARE:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "27");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_END_OF_LIFE_HIGH_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0029, ARCH_SW_ERH_0030");
+  AddRequirementInfo("ARCH_SW_ERH_0029", "The ERH_KU8_END_OF_LIFE_HIGH_AEC_CFG (NGU should have the following properties: Qualification Count: Instantaneously;  Deskill Count: None; ssociated group: KU32_AEC_GROUP_MASK_EOL_LOW_HIGH");
+  AddRequirementInfo("ARCH_SW_ERH_0030", "The ERH_KU8_END_OF_LIFE_HIGH_AEC_CFG (NGU should have the following properties: Qualification Count: Instantaneously; Deskill Count: None; ssociated group: KU32_AEC_GROUP_MASK_EOL_LOW_HIGH");
+ 
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0029, ARCH_SW_ERH_0030");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 128.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "128");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0029, ARCH_SW_ERH_0030");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_EOL_LOW_HIGH:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "54");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_END_OF_LIFE_COMFORT_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0031");
+  AddRequirementInfo("ARCH_SW_ERH_0031", "The ERH_KU8_END_OF_LIFE_COMFORT_AEC_CFG should have the following properties: Qualification Count: Instantaneously; Deskill Count: None; associated group: KU32_AEC_GROUP_MASK_EOL_COMFORT");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0031");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 256.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "256");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0031");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32)KU32_AEC_GROUP_MASK_EOL_COMFORT:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "48");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_TIMEOUT_PRESAFE_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0032");
+  AddRequirementInfo("ARCH_SW_ERH_0032", "The ERH_KU8_TIMEOUT_PRESAFE_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_TIMEOUT_PRESAFE");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0032");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run(); 
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 4096.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "4096");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0032");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_TIMEOUT_PRESAFE:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "60");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_TIMEOUT_BUCKLE_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0033, ARCH_SW_ERH_0086");
+  AddRequirementInfo("ARCH_SW_ERH_0033", "The ERH_KU8_TIMEOUT_BUCKLE_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0033");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 8192.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "8192");
+    
+    testCaseComment("Action: ARCH_SW_ERH_0033, ARCH_SW_ERH_0086");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "63");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_IMPLAUSIBLE_DATA_PRESAFE_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0034");
+  AddRequirementInfo("ARCH_SW_ERH_0034", "The ERH_KU8_IMPLAUSIBLE_DATA_PRESAFE_AEC_CFG should have the following properties: Qualification Count = 10; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_PRESAFE");
+  AddRequirementInfo("ARCH_SW_ERH_0024", "The ERH_KU8_WARM_RESET_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = None (shall never be deskilled even after reset); Linked Auto-test: TF_H12 - To Handle reste causes; associated group: ERH_OTHER_GROUP");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0024");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 16384.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "16384");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0034");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_PRESAFE:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "66");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_IMPLAUSIBLE_DATA_IGNITION_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0035");
+  AddRequirementInfo("ARCH_SW_ERH_0035", "The ERH_KU8_IMPLAUSIBLE_DATA_IGNITION_AEC_CFG should have the following properties: Qualification Count = 10; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_IGNITION");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0035");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 32768.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "32768");
+    
+    testCaseComment("Action: ARCH_SW_ERH_0035");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_IGNITION:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "69");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");    
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_IMPLAUSIBLE_DATA_BUCKLE_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0036, ARCH_SW_ERH_0041");
+  AddRequirementInfo("ARCH_SW_ERH_0036", "The ERH_KU8_IMPLAUSIBLE_DATA_BUCKLE_AEC_CFG should have the following properties: Qualification Count = 10; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC");
+  AddRequirementInfo("ARCH_SW_ERH_0041", "The ERH_KU8_IMPLAUSIBLE_DATA_ORC_AEC_CFG should have the following properties: Qualification Count =10; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0036,ARCH_SW_ERH_0041");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "72");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 65536.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "65536");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0036,ARCH_SW_ERH_0041");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "72");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_SYSTEM_OV_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0037");
+  AddRequirementInfo("ARCH_SW_ERH_0037", "The ERH_KU8_SYSTEM_OV_AEC_CFG should have the following properties: Qualification_time = 15s; Deskill_time = 15sec; associated group: KU32_AEC_GROUP_MASK_SYSTEM_OV");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0037");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 16777216.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "16777216");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0037");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_SYSTEM_OV:.--> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "93");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");    
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_SYSTEM_UV_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0038");
+  AddRequirementInfo("ARCH_SW_ERH_0038", "The ERH_KU8_SYSTEM_UV_AEC_CFG should have the following properties: Qualification_time = 15s; Deskill_time = 15sec; associated group: KU32_AEC_GROUP_MASK_SYSTEM_UV");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0038");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 33554432.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "33554432");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0038");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_SYSTEM_UV:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "96");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_TIMEOUT_POWERTRAIN_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0039");
+  AddRequirementInfo("ARCH_SW_ERH_0039", "The ERH_KU8_TIMEOUT_POWERTRAIN_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_TIMEOUT_POWERTRAIN");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0039");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 4194304.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "4194304");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0039");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_TIMEOUT_POWERTRAIN:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "87");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_IMPLAUSIBLE_DATA_POWERTRAIN_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0040");
+  AddRequirementInfo("ARCH_SW_ERH_0040", "The ERH_KU8_IMPLAUSIBLE_DATA_POWERTRAIN_AEC_CFG should have the following properties: Qualification Count =10; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_POWERTRAIN");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0040");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 131072.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "131072");
+    
+    testCaseComment("Action: ARCH_SW_ERH_0040");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_POWERTRAIN:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "75");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_TIMEOUT_BLTHD_L_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0042");
+  AddRequirementInfo("ARCH_SW_ERH_0042", "The ERH_KU8_TIMEOUT_BLTHD_L_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_TIMEOUT_BH_L");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0042");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 2097152.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "2097152");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0042");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_TIMEOUT_BH_L:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "84");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+    
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_TIMEOUT_BLTHD_R_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0043, ARCH_SW_ERH_0044, ARCH_SW_ERH_0046");
+  AddRequirementInfo("ARCH_SW_ERH_0043", "The ERH_KU8_TIMEOUT_BLTHD_R_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_TIMEOUT_BH_R");
+  AddRequirementInfo("ARCH_SW_ERH_0044", "The ERH_KU8_TIMEOUT_API should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3;");
+  AddRequirementInfo("ARCH_SW_ERH_0046", "The ERH_KU8_STEERING_CONFIG_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = Instantaneously; -associated group: KU32_AEC_GROUP_MASK_STEERING_CONFIG");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0043");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 1048576.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "1048576");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0043, ARCH_SW_ERH_0044");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_TIMEOUT_BH_R:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "81");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 8388608.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "8388608");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0046");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_STEERING_CONFIG:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "90");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_END_OF_LIFE_MAX_FORCE_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0045");
+  AddRequirementInfo("ARCH_SW_ERH_0045", "The ERH_KU8_END_OF_LIFE_MAX_FORCE_AEC_CFG (NGU should have the following properties: Qualification Count: Instantaneously; Deskill Count: None; associated group: KU32_AEC_GROUP_MASK_EOL_MAX");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0045");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 512.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "512");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0045");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_EOL_MAX:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "54");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_STEERING_CONFIG_01()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0047");
+  AddRequirementInfo("ARCH_SW_ERH_0047", "The ERH_KU8_TIMEOUT_IGNITION_AEC_CFG should have the following properties: Qualification Count = Instantaneously; Deskill Count = 3; associated group: KU32_AEC_GROUP_MASK_TIMEOUT_IGNITION");
+  AddRequirementInfo("ARCH_SW_ERH_0050", "All AEC shall have an identifier and should be linked to one Autotest");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "223");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0050");
+    testStep("STEP", "Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). --> Stepped in ERH_runSetAecEvent()");
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "ERH_runSetAecEvent,,app.elf", "ERH_runSetAecEvent,,app.elf");    
+  
+    debugger_deleteAllBreakpoints();
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_waitUntilBPisReached("1000");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "13");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testStep("STEP", "Set variable u32GroupStatusForDTC to 262144U.");
+    debugger_writeVariable("uint32", "u32GroupStatusForDTC", "0", "262144U");
+  
+    testCaseComment("Action: ARCH_SW_ERH_0047");
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_TIMEOUT_IGNITION:. --> BP set");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "78");
+    ExpectedTestResult(debugger_result, "BP set", "BP set");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_AEC_status_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0060, ARCH_SW_ERH_0048, ARCH_SW_ERH_0100, ARCH_SW_ERH_0081");
+  AddRequirementInfo("ARCH_SW_ERH_0060", "All AECs status and counters shall be initialized with 0x00.");
+  AddRequirementInfo("ARCH_SW_ERH_0048", "The CAN BUS ERROR shall qualify the U122488 DTC..");
+  AddRequirementInfo("ARCH_SW_ERH_0100", "Dem_SetOperationCycleState and Dem_SetEnableCondition called to enable conditions for error handler mechanism.");
+  AddRequirementInfo("ARCH_SW_ERH_0081", "DcmControlDtcSetting shall be called to get the status of DTCs setting Mode.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init() at line erh_au8AecStatus[u8Index] = KU8_ZERO;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "43");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+
+    testCaseComment("Action: ARCH_SW_ERH_0060");
+    testStep("STEP", "Check if CPU stopped in function ERH_Init() at line erh_au8AecStatus[u8Index] = KU8_ZERO;. --> CPU stopped in function ERH_Init(");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    testCaseComment("Action: ARCH_SW_ERH_0060");
+    testStep("STEP", "Check if erh_au8AecStatus[0] is 0x0. --> erh_au8AecStatus[0] == 0x0");
+    debugger_readVariable("uint8", "erh_au16AecCounter,,app.elf", "0");
+    ExpectedTestResult(debugger_result, "0x0", "0x0");
+    
+    debugger_reset();
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0100, ARCH_SW_ERH_0081");
+    testStep("STEP", "Set a breakpoint at line (void)Dem_SetOperationCycleState(DemConf_DemOperationCycle_PowerCycle, DEM_CYCLE_STATE_START);.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "93");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_ERH_0100, ARCH_SW_ERH_0048");
+    testStep("STEP", "Set a breakpoint at line (void)Dem_SetEnableCondition(DemConf_DemEnableCondition_DEM_SL_NETWORK_COMM_NO_CLAMP15,TRUE);.");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "94");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+  
+    debugger_run();
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+//  debugger_deleteAllBreakpoints();
+//  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_runGetAecStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0064, ARCH_SW_ERH_0090");
+  AddRequirementInfo("ARCH_SW_ERH_0064", "All AECs status and counters shall be initialized with 0x00.");
+  AddRequirementInfo("ARCH_SW_ERH_0090", "The AEC group status shall be an ouput for the ERH_runGetAecGroupStatus function.");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  
+    testStep("STEP", "Set a breakpoint in function ERH_runGetAecStatus() at line (*pu8AecStatus) = ERH_KU8_AEC_UNPLAUSIBLE_STATUS;.");
+    debugger_setRelativeFunctionBpAtLine("ERH_runGetAecStatus", "9");
+    debugger_waitUntilBPisReached("1000");
+  
+    debugger_run();
+
+    testCaseComment("Action: ARCH_SW_ERH_0064, ARCH_SW_ERH_0090");
+    testStep("STEP", "Check if CPU stopped in function ERH_runGetAecStatus() at line (*pu8AecStatus) = ERH_KU8_AEC_UNPLAUSIBLE_STATUS;. --> CPU stopped in function ERH_Init(");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+//  debugger_deleteAllBreakpoints();
+//  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_checkAEC_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0070, ARCH_SW_ERH_0073, ARCH_SW_ERH_0084, ARCH_SW_ERH_0085");
+  AddRequirementInfo("ARCH_SW_ERH_0073", "The erh_UpdateGroup function shall be called to update the group status after all errors of the group has just been cleared.");
+  AddRequirementInfo("ARCH_SW_ERH_0084", "A DTC shall be qualified if a group of AECs is qualified (minim one AEC from group is qualified).");
+  AddRequirementInfo("ARCH_SW_ERH_0085", "A DTC shall be deskilled if all AECs from the associated group are deskilled.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+    
+    debugger_reset();
+  
+    testStep("STEP", "Set a breakpoint in function ERH_Init().");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "0");
+    debugger_waitUntilBPisReached("1000");
+    
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_ERH_0084, ARCH_SW_ERH_0085");
+    testStep("STEP", "Check if CPU stopped at breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;. --> CPU stopped in function ERH_Init()");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    testStep("STEP", "Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1");
+    debugger_writeVariable("uint8", "NVP_BLOCK_ID_AEC_STATUS_RamBlockData,,app.elf", "0", "0x1");
+  
+    debugger_run();
+
+    testStep("STEP", "Step in function erh_UpdateGroup().");
+    debugger_stepIn();
+  
+    testStep("STEP", "Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.");
+    debugger_setRelativeFunctionBpAtLine("erh_UpdateGroup", "10");
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_ERH_0073, ARCH_SW_ERH_0070");
+    testStep("STEP", "Check if CPU stopped at breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;. --> CPU stopped in function erh_UpdateGroup()");
+    debugger_setRelativeFunctionBpAtLine("ERH_Init", "71");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+testcase SW_Int_ERH_ResetAllAECStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0070");
+  AddRequirementInfo("ARCH_SW_ERH_0070", "All AECs status shall be reset if the function is called.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+     
+  RunPreTs();
+  //====================================================
+      
+    testStep("STEP", "Set a breakpoint in function ERH_ResetAllAECStatus() at line if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK == (erh_au8AecStatus[u8OutputIndex] & ERH_KU8_AEC_QUALIFIED_STATUS_MASK)).");
+    debugger_setRelativeFunctionBpAtLine("ERH_ResetAllAECStatus", "25");
+  
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Start Development Session."); 
+    AuthenticateECU(2); // Development_Enhanced
+    EnterDiagnosticSession("development");
+    
+    testStep("STEP", "Send diagnostic request 14 FF FF FF.");
+    diagSendRequest(reqFaultMem_ClearGroup);
+    testWaitForTimeoutSilent(500);
+    
+    testCaseComment("Action: ARCH_SW_ERH_0070");
+    testStep("STEP", "Check if CPU stopped in function ERH_ResetAllAECStatus() at line if (ERH_KU8_AEC_QUALIFIED_STATUS_MASK == (erh_au8AecStatus[u8OutputIndex] & ERH_KU8_AEC_QUALIFIED_STATUS_MASK)).. --> CPU stopped in function ERH_ResetAllAECStatus()");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    /*********************************************************/
+    
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+testcase SW_Int_ERH_checkAEC_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0075, ARCH_SW_ERH_0076, ARCH_SW_ERH_0080, ARCH_SW_ERH_0083");
+  AddRequirementInfo("ARCH_SW_ERH_0075", "The NvM_SetRamBlockStatus interface shall be called to notify NVM that AEC status block shall be stored in NVM by the next call of NvM_WriteAll function.");
+  AddRequirementInfo("ARCH_SW_ERH_0076", "NvM_WriteBlock shall be called to copy the data of the RAM block to its corresponding NVM block.");
+  AddRequirementInfo("ARCH_SW_ERH_0080", "This prototype shall manage the Qualification status and Deskill status of the AECs.");
+  AddRequirementInfo("ARCH_SW_ERH_0083", "This prototype shall manage the Qualification status and Deskill status of the DTCs by AECs group status.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+
+    testStep("STEP", "Set a breakpoint in function ERH_ResetAllAECStatus() at line Result = Rte_Call_pclNvmServicesAecBlock_WriteBlock.");
+    debugger_setRelativeFunctionBpAtLine("ERH_ResetAllAECStatus", "63");
+  
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Start Development Session."); 
+    AuthenticateECU(2); // Development_Enhanced
+    EnterDiagnosticSession("development");
+    
+    testStep("STEP", "Send diagnostic request 14 FF FF FF.");
+    diagSendRequest(reqFaultMem_ClearGroup);
+    testWaitForTimeoutSilent(500);
+
+    testStep("STEP", "Check if CPU stopped in function ERH_ResetAllAECStatus() at line Result = Rte_Call_pclNvmServicesAecBlock_WriteBlock. --> CPU stopped in function ERH_ResetAllAECStatus()");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+    
+    testCaseComment("Action: ARCH_SW_ERH_0075, ARCH_SW_ERH_0076, ARCH_SW_ERH_0080, ARCH_SW_ERH_0083");
+    testStep("STEP", "Step in function Rte_Call_pclNvmServicesAecBlock_WriteBlock --> Stepped in NvM_WriteBlock");
+    debugger_stepIn();
+    debugger_stepIn();
+    ExpectedTestResult(debugger_result, "NvM_WriteBlock,,app.elf", "NvM_WriteBlock,,app.elf");  
+
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+
+testcase SW_Int_ERH_CheckAecId_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_ERH_0074");
+  AddRequirementInfo("ARCH_SW_ERH_0074", "The erh_CheckAecId function shall be called to check the validity of all AEC identifiers and to get the counter index and the status array of each AEC.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+
+    testStep("STEP", "Set a breakpoint in function ERH_ResetAllAECStatus() at line (void) erh_CheckAecId(u8AECIndex, &u8OutputIndex, &stAecData);.");
+    debugger_setRelativeFunctionBpAtLine("ERH_ResetAllAECStatus", "20");
+  
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Start Development Session."); 
+    AuthenticateECU(2); // Development_Enhanced
+    EnterDiagnosticSession("development");
+    
+    testStep("STEP", "Send diagnostic request 14 FF FF FF.");
+    diagSendRequest(reqFaultMem_ClearGroup);
+    testWaitForTimeoutSilent(500);
+    
+    testCaseComment("Action: ARCH_SW_ERH_0074");
+    testStep("STEP", "Check if CPU stopped in function ERH_ResetAllAECStatus() at line (void) erh_CheckAecId(u8AECIndex, &u8OutputIndex, &stAecData);. --> CPU stopped in function ERH_ResetAllAECStatus()");
+    debugger_isCPUStoppedAtBP("1000");
+    ExpectedTestResult(debugger_result, "CPU stopped at BP", "CPU stopped at BP");
+
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+  debugger_deleteAllBreakpoints();
+  debugger_stop();
+}
+
+
+void MainTest()
+{
+  InitTestModule();
+  
+  SW_Int_ERH_HW_SELF_PROTECTION_01();
+  SW_Int_ERH_MOTOR_DISCONNECTED_01();
+  SW_Int_ERH_OVO_POWER_01();
+  SW_Int_ERH_UVO_POWER_01();
+  SW_Int_ERH_UVO_TENSIONING_POWER_01();
+  SW_Int_ERH_UVO_TENSIONING_POWER_02();
+  SW_Int_ERH_GROUP_MASK_HARDWARE_01();
+  SW_Int_ERH_END_OF_LIFE_HIGH_02();
+  SW_Int_ERH_END_OF_LIFE_COMFORT_01();
+  SW_Int_ERH_TIMEOUT_PRESAFE_01();
+  SW_Int_ERH_TIMEOUT_BUCKLE_01();
+  SW_Int_ERH_IMPLAUSIBLE_DATA_PRESAFE_01();
+  SW_Int_ERH_IMPLAUSIBLE_DATA_IGNITION_01();
+  SW_Int_ERH_IMPLAUSIBLE_DATA_BUCKLE_01();
+  SW_Int_ERH_SYSTEM_OV_01();
+  SW_Int_ERH_SYSTEM_UV_01();
+  SW_Int_ERH_TIMEOUT_POWERTRAIN_01();
+  SW_Int_ERH_IMPLAUSIBLE_DATA_POWERTRAIN_01();
+  SW_Int_ERH_TIMEOUT_BLTHD_L_01();
+  SW_Int_ERH_TIMEOUT_BLTHD_R_01();
+  SW_Int_ERH_END_OF_LIFE_MAX_FORCE_01();
+  SW_Int_ERH_STEERING_CONFIG_01();
+  SW_Int_ERH_AEC_status_02();
+  SW_Int_ERH_runGetAecStatus_01();
+  SW_Int_ERH_checkAEC_01();
+  SW_Int_ERH_ResetAllAECStatus_01();
+  SW_Int_ERH_checkAEC_02();
+  SW_Int_ERH_CheckAecId_01();
+  
+}

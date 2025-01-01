@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>99</x>
+      <y>54</y>
+      <w>1163</w>
+      <h>875</h>
+    </coordinates>
+    <panel_attributes>title:mmg_ManageModeDelays_ExecutedCycle
+Start
+Get reset cause
+Get current executed cycle
+Get last interrupted cycle information
+Check if it is the first execution of this function
+If
+	[First execution]
+	Fill the mask with the "cold reset" causes
+	Check if reset cause is not a cold reset
+	If
+		[Cold reset]
+		Check if a cycle was interrupted by reset
+		If
+			[Cycle interrupted]
+			Initialize delay to NVP timeout
+			
+			[Cycle not interrupted]
+			Reset delay
+		EndIf	
+
+		[Not a cold reset]
+		Reset delay
+	EndIf
+
+	[Any cycle is executed]
+	Set delay to reactivate mode
+
+	[Delay has not expired]
+	Decrement counter
+
+	[Delay has expired]
+	
+	
+EndIf
+
+
+
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,1124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SW_Int_PAL_Autotest_CheckMotorSC_01_Thu_Mar_09_09_01_07_2023</title>
+    <script type="text/javascript">
+      function showTimestamp(timestamp){top.LogFile.showTimestamp(timestamp);}
+    </script>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="extendedNavigation.css">
+  </head>
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td class="UpCell">
+            <a href="Frame_Report.html">Go up</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <tr>
+        <td class="TestcaseHeadingNegativeResult">
+          <big class="Heading3">2 <a name="i__-429789088_30">SW_Int_PAL_Autotest_CheckMotorSC_01_Thu_Mar_09_09_01_07_2023</a>: Failed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_2">
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2023-03-09 09:01:03</td>
+            <td class="CellNoColor">(logging timestamp    0.581764)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2023-03-09 09:02:05</td>
+            <td class="CellNoColor" nowrap>(logging timestamp   62.917074)</td>
+          </tr>
+        </table>
+        <div class="Heading4">AUTOLIV ELECTRONICS document</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="CellNoColor">Nightly test: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Test type: </td>
+              <td class="CellNoColor">Requirement-Based test</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Regression Test: </td>
+              <td class="CellNoColor">Yes</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Fault injection method used: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Resource usage evaluation: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Priority: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Safety relevant: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+          </table>
+        </div>
+        <div class="Heading4">Test equipment</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="CellNoColor">Tester Name: </td>
+              <td class="CellNoColor">CGA</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">CAN case ID: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">SBC Board: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Power supply ID: </td>
+              <td class="CellNoColor">AER-PWR-005</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Motherboard: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">MCU: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">DUT: </td>
+              <td class="CellNoColor">Sample_1</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">HW Info: </td>
+              <td class="CellNoColor">22/04.00</td>
+            </tr>
+          </table>
+        </div>
+        <p><table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0386, ARCH_SW_PAL_0383, ARCH_SW_PAL_0384, ARCH_SW_PAL_0385, ARCH_SW_PAL_0386, ARCH_SW_PAL_0387, ARCH_SW_PAL_0388, ARCH_SW_PAL_0389</th></tr></table></p>
+        <p><table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0386</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The component shall check if the motor is not shortcut with Vbat or GND.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0383</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The current executed cycle data from BFE shall be an input.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0384</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The PMP_runGetBatteryVoltage_10ms function shall be called to get the battery voltage.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0385</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0386</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PAL_runReadMotorCurrentInmA shall be called to get the Motor current.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0387</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PMP_runGetBatteryVoltage_10ms shall be called to mesure motor SC current.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0388</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PMP_runGetFilteredTemperature_deg shall be called to get the filtred value of the ECU temperature.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0389</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>PMP_runGetMotorResistance shall be called to get the value for motor resitance.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_PAL_0086</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>If the motor rotation direction is “releasing”, the AdcIf_runGetMotor_In function shall be called to read the motor current measured by the half bridge connected to the VN pin of the motor.</td></tr></p>
+        <p></table></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\PAL\SW_Int_PAL_Autotest_CheckMotorSC_01_Thu_Mar_9_09_01_07_2023.asc'>Log file: SW_Int_PAL_Autotest_CheckMotorSC_01_Thu_Mar_9_09_01_07_2023.asc </A></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\PAL\SW_Int_PAL_Autotest_CheckMotorSC_01_Thu_Mar_9_09_01_07_2023.blf'>Log file: SW_Int_PAL_Autotest_CheckMotorSC_01_Thu_Mar_9_09_01_07_2023.blf </A></p>
+      </div>
+      <div class="Indentation">
+        <table class="ScreenOnly">
+          <tbody>
+            <tr>
+              <td>
+                <a class="Undecorated" href="javascript:showTable('2_')">[expand test steps]</a>
+              </td>
+              <td width="2px"></td>
+              <td>
+                <a class="Undecorated" href="javascript:hideTable('2_')">[collapse test steps]</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="TestGroupHeadingBackground">
+        <tr>
+          <td>
+            <big class="Heading3">Main Part of Test Case</big>
+          </td>
+        </tr>
+      </table>
+      <div class="Indentation">
+        <table class="ResultTable">
+          <tr>
+            <th class="TableHeadingCell" width="1px">Timestamp</th>
+            <th class="TableHeadingCell" width="1px">Test Step</th>
+            <th class="TableHeadingCell" width="auto">Description</th>
+            <th class="TableHeadingCell" width="1px">Result</th>
+          </tr>
+          <tr>
+            <td class="DefineCell">   0.581764</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Preconditions</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   0.581764</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Bench Initialization</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   0.581764</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">Delete all breakpoints from debugger.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   1.681764</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">Reset the debugger.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   3.281764</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Run the debugger.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">1. RunPreTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-indent: 20px;" class="DefineCell">   6.225618</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_107" href="javascript:switchTable('2_i__-429789088_107')">[−]</a>
+                    </td>
+                    <td>RBTMFL174: //RBTMFL174/V040/Development_Start/STDS_RQ</td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTable" id="tbl_2_i__-429789088_107">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Parameter</td>
+                  <td class="DefineCell">Value</td>
+                  <td class="DefineCell">Raw</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">SID-RQ</td>
+                  <td class="DefaultCell">0x10</td>
+                  <td class="DefaultCell">10 </td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">DiagnosticSessionType</td>
+                  <td class="DefaultCell">0x7E</td>
+                  <td class="DefaultCell">7e </td>
+                </tr>
+              </table>
+            </td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.137074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_PAL_0386, ARCH_SW_PAL_0383</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">   8.137074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_cbk_CheckMotorSC at the RTE Call for CheckMotorSC autotest --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  12.709074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_217" href="javascript:switchTable('2_i__-429789088_217')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_217">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function PAL_cbk_CheckMotorSC,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  12.709074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  14.809074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE call for GetTestResult --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  17.813074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_288" href="javascript:switchTable('2_i__-429789088_288')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_288">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function PAL_Autotest_CheckMotorSC,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  17.813074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  19.013074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Run until return in function ATM_runGetTestResult.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  19.979074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Write autotest result with 0x1</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_360">
+            <td class="DefineCell">  20.979074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_369" href="javascript:switchTable('2_i__-429789088_369')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_369">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 520]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  21.979074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_Autotest_CheckMotorSC at the PAL_runReadMotorCurrentInmA function call --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  24.947074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_430" href="javascript:switchTable('2_i__-429789088_430')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_430">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function _L1033,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  24.947074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  26.047074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Run until return PAL_runReadMotorCurrentInmA and evaluate *ps32MotorCurrentInmA data pointer --&gt; Variable read from ADC.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  27.919074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_501" href="javascript:switchTable('2_i__-429789088_501')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_501">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable read.</td>
+                  <td class="DefaultCell">Local variable *ps32MotorCurrentInmA is equal to -0x7ff91fb8</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  28.919074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetBatteryVoltage_10ms --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.879074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_562" href="javascript:switchTable('2_i__-429789088_562')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_562">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function _L1037,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  31.879074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.979074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_PAL_0086</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  32.979074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer --&gt; Variable read from ADC.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  34.945074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_644" href="javascript:switchTable('2_i__-429789088_644')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_644">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable read.</td>
+                  <td class="DefaultCell">Local variable *pu16Voltage is equal to 0x44fc</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  35.945074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetFilteredTemperature_deg --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  38.901074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_705" href="javascript:switchTable('2_i__-429789088_705')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_705">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function _L1038,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  38.901074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  40.001074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer --&gt; Variable read from ADC.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_767">
+            <td class="DefineCell">  41.981074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_776" href="javascript:switchTable('2_i__-429789088_776')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_776">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable read.</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 415]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  42.981074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetMotorResistance --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  45.937074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_837" href="javascript:switchTable('2_i__-429789088_837')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_837">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function _L1039,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  45.937074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">Step in.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  47.037074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer --&gt; Variable read from ADC.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  49.001074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_908" href="javascript:switchTable('2_i__-429789088_908')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_908">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable read.</td>
+                  <td class="DefaultCell">Local variable *pu16Resistance_mOhm is equal to 0x8e</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  50.001074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_Autotest_CheckMotorSC at the autotest result --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  52.957074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_969" href="javascript:switchTable('2_i__-429789088_969')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_969">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function _L1059,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  52.957074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_PAL_0385</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  52.957074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Evaluate PreviousADCTestResult --&gt; Variable is equal to 0x1.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_1032">
+            <td class="DefineCell">  53.957074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1041" href="javascript:switchTable('2_i__-429789088_1041')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1041">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable is equal to 0x1</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 415]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  53.957074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Evaluate ExecutedCycleNumber --&gt; Variable read.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_1093">
+            <td class="DefineCell">  54.957074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1102" href="javascript:switchTable('2_i__-429789088_1102')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1102">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable read</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 415]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  54.957074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_PAL_0389</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  54.957074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Evaluate ECUInternalTemperature --&gt; Variable is equal to *ps16InternalTemperature_deg data pointer.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_1165">
+            <td class="DefineCell">  55.957074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1174" href="javascript:switchTable('2_i__-429789088_1174')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1174">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable is equal to *ps16InternalTemperature_deg data pointer</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 415]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  55.957074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_PAL_0384, ARCH_SW_PAL_0387</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  55.957074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Evaluate KL30Voltage_mV --&gt; Variable is equal to *pu16Voltage data pointer data pointer.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_1237">
+            <td class="DefineCell">  56.957074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1246" href="javascript:switchTable('2_i__-429789088_1246')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1246">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable is equal to *pu16Voltage data pointer data pointer.</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 415]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  56.957074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_PAL_0388</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  56.957074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Evaluate MotorResistance_mOhm --&gt; Variable is equal to *pu16Resistance_mOhm data pointer.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr id="i__-429789088_1309">
+            <td class="DefineCell">  57.957074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1318" href="javascript:switchTable('2_i__-429789088_1318')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1318">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable is equal to *pu16Resistance_mOhm data pointer.</td>
+                  <td class="DefaultCell">ICONNECT_E_BAD_ID: Expression could not be evaluated. /   [CDataController.cpp, 415]
+</td>
+                </tr>
+              </table>
+            </td>
+            <td class="NegativeResultCell">fail</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  58.957074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function PAL_cbk_CheckMotorSC after the return of the autotest result --&gt; BP reached.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  61.917074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1379" href="javascript:switchTable('2_i__-429789088_1379')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1379">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU is stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP in function PAL_cbk_CheckMotorSC,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  61.917074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Read autotest result transmited from ATM --&gt; Variable is equal to 0x1.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  62.917074</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_2_i__-429789088_1440" href="javascript:switchTable('2_i__-429789088_1440')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_2_i__-429789088_1440">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">Variable is equal to 0x1</td>
+                  <td class="DefaultCell">Local variable u8TestResult is equal to 0x1</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  62.917074</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Postcondition</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">  62.917074</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Return ECU to default values</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">2. RunPostTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

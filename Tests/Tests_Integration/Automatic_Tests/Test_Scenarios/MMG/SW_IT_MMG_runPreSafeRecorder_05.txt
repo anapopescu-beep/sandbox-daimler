@@ -1,0 +1,45 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0017, ARCH_SW_MMG_0026, ARCH_SW_MMG_0027, ARCH_SW_MMG_0028
+ARCH_SW_MMG_0018: Pre-Safe Level shall represent the 0-3 Bits of Byte1 from Start and Stop Blocks and shall be saved with the following values: None = 0 No pre-safe requested; PRE-SAFE 1 = 1 pre-safe 1 requested; PRE-SAFE 3 = 3 pre-safe 3 requested; PRE-SAFE 4 = 4 pre-safe 4 requested; PRE-SAFE 5 = 5 pre-safe 5 requested; PRE-SAFE 6 = 6 pre-safe 6 requested; PRE-SAFE 7 = 7 pre-safe 7 requested; PRE-SAFE 8 = 8 pre-safe 8 requested; Not Defined 9-13 pre-safe not defined; SNA = 15 if the signal is not available
+ARCH_SW_MMG_0026: Tensioning State shall represent the 0-1 Bits of Byte 0 from State Block and shall be saved with the following values: Successfull = 0 if a tensioning was started or ended successfull; Not Started = 1 if a tensioning was not started; Aborted = 2 if a tensioning was aborted; Not Defined = 3 not defined.
+ARCH_SW_MMG_0027: Pre-Safe cycles are disabled shall represent the 2 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by disabled cycles; Yes = 1 if the tensioning was inhibited/ aborted by disabled cycles
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStartData(u8PreSafeRecorderNewID);' under case KU8_TENSIONING_INHIBIT.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_SNA.
+
+Action: ARCH_SW_MMG_0027
+
+	Step 4: Check if CPU stopped in function MMG_runPreSafeRecorder() at line 'mmg_PreSafe_HandleStartData(u8PreSafeRecorderNewID);' under case KU8_TENSIONING_INHIBIT. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start2PreSafeLvl = mmm_stPreSafeInputData.u8PresafeLevelType;'.
+
+Action: ARCH_SW_MMG_0027, ARCH_SW_MMG_0018, ARCH_SW_MMG_0026
+
+	Step 6: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start2PreSafeLvl = mmm_stPreSafeInputData.u8PresafeLevelType;'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in mmg_PreSafe_HandleStateData() at line 'if(NVP_stVehicleEquipmentData.PreSafeFuncActivation == KB_ONE)'.
+
+Action: ARCH_SW_MMG_0027, ARCH_SW_MMG_0028
+
+	Step 8: Check if CPU stopped in mmg_PreSafe_HandleStateData() at line 'if(NVP_stVehicleEquipmentData.PreSafeFuncActivation == KB_ONE)'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 9: Return ECU to default values

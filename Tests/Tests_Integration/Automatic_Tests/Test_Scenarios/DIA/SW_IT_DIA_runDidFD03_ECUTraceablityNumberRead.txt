@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0575; ARCH_SW_DIA_0576; ARCH_SW_DIA_0577
+ARCH_SW_DIA_0575: Service 0x22 (Read Data By Identifier) will be implemented for DID FD03 (AEE Traceability Number And PCBA Programmed PN)
+ARCH_SW_DIA_0576: The Read AEE Traceability Number And PCBA programmed PN shall be available in the following sessions: ?Default Session (0x01) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) ?Update Session (0x42) 
+ARCH_SW_DIA_0577: The Read AEE Traceability Number And PCBA programmed PN shall be processed without Authentification.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD03_ECUTraceablityNumberRead*.
+
+Action: ARCH_SW_DIA_0575; ARCH_SW_DIA_0576; ARCH_SW_DIA_0577
+
+	Step 3: Send diag request for 22 0220 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFD03_ECUTraceablityNumberRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

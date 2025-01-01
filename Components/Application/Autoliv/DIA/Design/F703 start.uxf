@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>1446</w>
+      <h>829</h>
+    </coordinates>
+    <panel_attributes>title:F703 Start
+Start
+If
+	[KU8_START_CYCLE_MAXIMUM_TRY &gt; \pendingCounter]
+	Get currently executed cycle
+	If
+		[(requestedCycle == currentlyExecCycle) &amp;&amp; \(requestedCycle != NO_CYCLE)]
+		routineInfo = KU8_ROUTINE_IN_PROGRESS
+		ret = OK
+		pendingCounter = 0
+		RequestResults = KU8_ROUTINE_IN_PROGRESS
+		
+		If
+			[0 == pendingCounter]
+			If
+				[requestedCycle not supported]
+				*ErrorCode = DCM_E_CONDITIONSNOTCORRECT
+				ret = NOT_OK
+				pendingCounter = 0
+
+				Set requested cycle to \requestedCycle
+				OpStatus = PENDING
+				Incerement pendingCounter
+				ret = PENDING
+				RequestResults = KU8_ROUTINE_IN_PROGRESS
+			EndIf
+				
+			OpStatus = PENDING
+			Increment pendingCounter
+			ret = PENDING
+		EndIf
+	EndIf
+	
+	pendingCounter = 0 
+	Set requested cycle to NO_CYCLE
+	ErrorCode = DCM_E_CONDITIONSNOTCORRECT
+	ret = NOT_OK
+	
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

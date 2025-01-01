@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0595; ARCH_SW_DIA_0599; ARCH_SW_DIA_0600; ARCH_SW_DIA_0601; ARCH_SW_DIA_0602
+ARCH_SW_DIA_0595: Service 0x22 (Read Data By Identifier) will be implemented for DID 0100 (Reprogramming Attempt Counter)
+ARCH_SW_DIA_0599: Response data length shall be (4 bytes* number of logical blocks) long. Note: Full Response length = 3 bytes + Response data length
+ARCH_SW_DIA_0600: Byte #4 #5: ?Number Of Reprogramming Attempts default value: 0x0000 if ECU erased and Programmed by the ECU supplier.
+ARCH_SW_DIA_0601: Byte #6 #7: ?Max. Number Of Reprogramming Attempts
+ARCH_SW_DIA_0602: The reprogramming attempt counter shall be incremented by each reprogramming attempt.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_ReadDataLength*.
+
+Action:ARCH_SW_DIA_0595; ARCH_SW_DIA_0599; ARCH_SW_DIA_0600; ARCH_SW_DIA_0601; ARCH_SW_DIA_0602
+
+	Step 3: Send diag request for 22 0100 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Reprogramming_Attempt_Counter_Read_Reprogramming_Attempts_ReadDataLength was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

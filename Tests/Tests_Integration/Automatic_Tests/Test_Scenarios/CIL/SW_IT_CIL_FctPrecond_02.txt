@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0109
+ARCH_SW_CIL_0109: Bit 4 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if DTC: B210E00 - The power supply is too high OR B210D00 - The power supply is too low OR B228B16 - Terminal 30 measurement undervoltage OR B228B17 -Terminal 30 measurement is set.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set voltage to 9V.
+
+	Step 3: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 4: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Under_overvoltage_BflMask);' and press run.
+
+	Step 6: Check if CPU stopped in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Under_overvoltage_BflMask);'.
+
+Action: ARCH_SW_CIL_0109
+
+	Step 7: Evaluate if variable cil_u16Fct_Precond is equal to 0x10. 
+		Expected result:  0x10
+
+Action: ARCH_SW_CIL_0109
+
+	Step 8: Evaluate if signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to 0x10. 
+		Expected result:  0x10
+
+	Step 9: Set voltage to 14V.
+
+Postcondition
+
+	Step 10: Return ECU to default values

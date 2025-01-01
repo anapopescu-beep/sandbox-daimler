@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>0</y>
+      <w>586</w>
+      <h>1081</h>
+    </coordinates>
+    <panel_attributes>title:0265_ActivateDebuggingInterface_Stop
+Start
+SuspendAllInterrupts()
+Erase DF0_UCB
+Wait Flash is not busy
+Clear 512 byte Buffer
+Set PROCONDBG
+[For each X Buffer index]
+Set 256-bit Password X
+If
+	[SERIES SOFTWARE]
+	Set Confirmation code to 'CONFIRMED'
+
+	[DEVELOPMENT SOFTWARE]
+Set UCB_DBG_Lock_e
+[For each DF01_UCB Sections]
+Program DF0_UCB
+Wait Flash is not busy
+
+ResumeAllInterrupts()
+[Prepare Diagnostic Response]
+Debugging_Interfaces_Status = 0x00u 'debugging interface deactivated'
+routineInfo = 0x00u 'routine completed successfully'
+
+Return RTE_E_OK
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

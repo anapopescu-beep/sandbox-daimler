@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>0</y>
+      <w>1435</w>
+      <h>1413</h>
+    </coordinates>
+    <panel_attributes>title:Global Time Sync Read Data
+Start
+Check Data for Null pointer
+If
+	[Data == nullPointer]
+	ret = NOT_OK
+	
+	[Data pointer valid]
+	Clear Data Buffer (201 bytes)
+	Fully initialize the Data Buffer with 0xAC
+	StbM_GetSyncTimeRecordHead()
+	Fill Data Buffer first 4 bytes with HWfrequency values
+	Fill Data Buffer next 2 bytes with HWprescalerLo values
+	Fill Data Buffer next 3 bytes with ECU Software Version values
+	Fill Data Buffer next 3 bytes with StbM version
+	Fill Data Buffer next 3 bytes with EthTSyn version
+	Fill Data Buffer next 3 bytes with CanTSyn version
+	Fill Data Buffer next 3 bytes with FrTSyn version
+	Fill Data Buffer last 1 byte with Data Section Last Index
+		[Check if we have valid data]
+		Fill Block0Type 1 with 23 bytes: GlbSeconds, GlbNanoSeconds, TimeBaseStatus, VirtualLocalTimeLow, RateDeviation, LocSeconds, LocNanoSeconds
+
+		[Do nothing]
+	Iterate trough Block1-12Type2
+		[Check if we have valid data]
+		Fill Block1-12Type2 with 14 bytes: GLSecondsLo, GNanoSecondsPart, TimeBaseStatus, VirtualLocalTimeLow, RateDeviation, LNanoSecondsPart
+	
+		[Do nothing]
+	ret = OK
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,61 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0308
+ARCH_SW_CIL_0308: NVP_u8HapticType(8 bits) will be check to get how the requested profile is configured: 0 fixed Duration ; 1 Non fixed Duration. NVP_u8HapticType (8 bits):�	HWA1 = bit 0�	HWA2 = bit 1�	HWA3 = bit3�	HWA4 = bit4
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL2.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_ONE));'.
+
+Action: ARCH_SW_CIL_0308
+
+	Step 6: Check if CPU stopped in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_ONE));'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = (uint8)(KU8_TWO == ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_TWO)));'.
+
+	Step 8: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE16.
+
+Action: ARCH_SW_CIL_0308
+
+	Step 9: Check if CPU stopped in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = (uint8)(KU8_TWO == ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_TWO)));'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = (uint8)(KU8_FOUR == ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_FOUR)));'.
+
+	Step 11: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE17.
+
+Action: ARCH_SW_CIL_0308
+
+	Step 12: Check if CPU stopped in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = (uint8)(KU8_FOUR == ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_FOUR)));'. 
+		Expected result:  CPU is Stopped
+
+	Step 13: Set a breakpoint in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = (uint8)(KU8_EIGHT == ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_EIGHT)));'.
+
+	Step 14: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE18.
+
+Action: ARCH_SW_CIL_0308
+
+	Step 15: Check if CPU stopped in function cil_TriggerProfiles at line 'cil_u8ExecHAPTIC_TYPE = (uint8)(KU8_EIGHT == ((uint8)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u8HapticType & KU8_EIGHT)));'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 16: Return ECU to default values

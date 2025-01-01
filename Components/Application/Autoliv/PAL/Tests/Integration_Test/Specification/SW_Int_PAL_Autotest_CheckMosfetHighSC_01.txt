@@ -1,0 +1,64 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0372, ARCH_SW_PAL_0395, ARCH_SW_PAL_0396
+ARCH_SW_PAL_0372: The component shall check the Short Circuit failure for High Mosfets and set the result of autotest..
+ARCH_SW_PAL_0395: ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0396: PMP_runGetBatteryVoltage_100ms , PMP_runGetMotorVp_100ms and PMP_runGetMotorVn_100ms shall be called to check battery voltage.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0372
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckMosfetHighSC at the RTE Call for CheckMosfetHighSC autotest 
+		Expected result:  BP reached.
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the RTE call for GetTestResult 
+		Expected result:  BP reached
+
+	Step 5: Write autotest result with 0x1 
+		Expected result:  Variable overwritten with value 0x1
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the RTE Call for PMP_runGetMotorVp_100ms 
+		Expected result:  BP reached.
+
+	Step 7: Step in.
+
+	Step 8: Run until return PMP_runGetMotorVp_100ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 9: Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 10: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0395
+
+	Step 11: Evaluate PreviousHighSideSWTestResult 
+		Expected result:  Variable is equal to 0x1.
+
+Action: ARCH_SW_PAL_0396
+
+	Step 12: Evaluate FilteredMotorPlusVoltage 
+		Expected result:  Variable is equal to *pu16Voltage data pointer.
+
+	Step 13: Set a breakpoint in function PAL_cbk_CheckMosfetHighSC after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 14: Read autotest result transmited from ATM.
+
+Postcondition
+
+	Step 15: Return ECU to default values

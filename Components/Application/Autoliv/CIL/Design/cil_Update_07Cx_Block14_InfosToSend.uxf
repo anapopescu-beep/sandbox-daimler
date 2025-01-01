@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>336</x>
+      <y>24</y>
+      <w>479</w>
+      <h>920</h>
+    </coordinates>
+    <panel_attributes>title:cil_Update_07Cx_Block14_InfosToSend
+Start
+
+Call Rte_Read_prrStepNumber_u8StepNumber function
+Call Rte_Read_prrCycleNumber_u8CycleNumber function
+
+Check u8CurrentCycle is NO_CYCLE
+If
+	[TRUE]
+	Set u8CurrentStep to ZERO
+	
+	[FALSE]
+	QAC
+EndIf
+Set u8CycleStep as (u8CurrentCycle&lt;&lt; 3)| u8CurrentStep
+
+Call Rte_Call_pclBelt_D_GetRange_mm function
+Set u8OriginPositionInmmMSB as high byte
+Set u8OriginPositionInmmLSB as low byte
+
+Call Rte_Call_pclBelt_D_GetFromT0_mm function
+Set u8BeltPayoutInmmMSB as high byte
+Set u8BeltPayoutInmmLSB as low byte
+
+
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_01 = CU8_BLOCK_ID_14;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_02 = u8CycleStep;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_03 = u8OriginPositionInmmMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_04 = u8OriginPositionInmmLSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_05 = u8BeltPayoutInmmMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_06 = u8BeltPayoutInmmLSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_07 = KU8_MAX;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_08 = KU8_MAX;
+
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

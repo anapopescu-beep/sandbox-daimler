@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0033; ARCH_SW_DIA_0162; ARCH_SW_DIA_0163; ARCH_SW_DIA_0164, ARCH_SW_NVP_0002
+ARCH_SW_DIA_0033: Service 0x22 will be implemented for DID FD31.
+ARCH_SW_DIA_0162: Service shall be available in Development session.
+ARCH_SW_DIA_0163: Response data shall be 40 bytes long.
+ARCH_SW_DIA_0164: Response data shall return HB Calibration parameters stored in NVP_BLOCK_ID_HB_CALIBRATION.
+ARCH_SW_NVP_0002: NVP_BLOCK_ID_HB_CALIBRATION shall be configured.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD31_HBCalibrationRead*.
+
+Action: ARCH_SW_DIA_0033; ARCH_SW_DIA_0162; ARCH_SW_DIA_0163; ARCH_SW_DIA_0164
+
+	Step 3: Send diag request for 22 FD31 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFD31_HBCalibrationRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read first byte of NVP_BLOCK_ID_HB_CALIBRATION_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

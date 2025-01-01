@@ -1,0 +1,304 @@
+/*@!Encoding:1252*/
+variables
+{
+
+}
+// <HESS>
+//Function that simulates a speed in mm/s using only one parameter
+//Examples: // SetBeltSpeed(100); // SetBeltSpeed(-100); //SetBeltSpeed(0);
+void SetBeltSpeed(int iSpeed)
+{
+  int  res;
+  int  iCount;
+  long iByte1;
+  long iByte2;
+  long iByte3;
+  long iSerialBytes;
+  char tmp1[2];
+  char tmp2[2];
+  char buffer[20];
+  char byte1[5]="0x";
+  char byte2[5]="0x";
+  char byte3[5]="0x";
+  byte inputArray[3] = {0x00, 0x00, 0x00};
+    
+  iSerialBytes = 0;  
+  
+  snprintf(byte1, 3, "%c%c", '0','x');
+  snprintf(byte2, 3, "%c%c", '0','x');
+  snprintf(byte3, 3, "%c%c", '0','x');
+ 
+  if (1==rs232Open(iHESSport))
+  {
+    rs232Configure(iHESSport, iBaudrateHESS, iByteSizeHESS, iStopbitHESS, iParityHESS);
+  
+    if(iSpeed > 0)
+    {
+
+      iSerialBytes = 1048576 | iSpeed;
+      snprintf(buffer, elCount(buffer), "%02X",iSerialBytes);
+      
+      // Byte1
+      snprintf(tmp1, elCount(tmp1), "%c", buffer[0]);
+      snprintf(tmp2, elCount(tmp2), "%c", buffer[1]);
+      strncat(byte1,tmp1,4);
+      strncat(byte1,tmp2,5);
+      res = strtol(byte1,iByte1);
+            
+      // Byte2
+      snprintf(tmp1, elCount(tmp1), "%c", buffer[2]);
+      snprintf(tmp2, elCount(tmp2), "%c", buffer[3]);
+      strncat(byte2,tmp1,4);
+      strncat(byte2,tmp2,5);
+      res = strtol(byte2,iByte2);
+      
+      // Byte3
+      snprintf(tmp1, elCount(tmp1), "%c", buffer[4]);
+      snprintf(tmp2, elCount(tmp2), "%c", buffer[5]);
+      strncat(byte3,tmp1,5);
+      strncat(byte3,tmp2,5);
+      res = strtol(byte3,iByte3);
+      
+      inputArray[0] = iByte1;
+      inputArray[1] = iByte2;
+      inputArray[2] = iByte3;
+      
+      rs232Send(iHESSport,inputArray,elcount(inputArray));
+      testStep("", "Simulated values: %d, %d, %d", iByte1, iByte2, iByte3);
+    }
+      
+    if(iSpeed < 0)
+    {
+      iSerialBytes = iSpeed*(-1);
+      snprintf(buffer, elCount(buffer), "%X",iSerialBytes);
+      
+      if(strlen(buffer)==1)
+      {
+        strncat(byte3,buffer,5);
+        res = strtol(byte3,iByte3);
+      
+        inputArray[0] = 0x00;
+        inputArray[1] = 0x00;
+        inputArray[2] = iByte3;
+      
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+        testStep("", "Simulated values: %d, %d, %d", inputArray[0], inputArray[1], iByte3);
+      }
+    
+      if(strlen(buffer)==2)
+      {
+        strncat(byte3,buffer,5);
+        res = strtol(byte3,iByte3);
+      
+        inputArray[0] = 0x00;
+        inputArray[1] = 0x00;
+        inputArray[2] = iByte3;
+      
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+        testStep("", "Simulated values: %d, %d, %d", inputArray[0], inputArray[1], iByte3);
+      }
+      
+      if(strlen(buffer)==3)
+      {
+      
+        // Byte2
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[0]);
+        strncat(byte2,tmp1,4);
+        res = strtol(byte2,iByte2);
+              
+        // Byte3
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[1]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[2]);
+        strncat(byte3,tmp1,4);
+        strncat(byte3,tmp2,5);
+        res = strtol(byte3,iByte3);
+      
+        inputArray[0] = 0x00;
+        inputArray[1] = iByte2;
+        inputArray[2] = iByte3;
+      
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+        testStep("", "Simulated values: %d, %d, %d", inputArray[0], iByte2, iByte3);
+      
+      }
+      
+      if(strlen(buffer)==4)
+      {
+        // Byte2
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[0]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[1]);
+        strncat(byte2,tmp1,4);
+        strncat(byte2,tmp2,5);
+        res = strtol(byte2,iByte2);
+            
+        // Byte3
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[2]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[3]);
+        strncat(byte3,tmp1,4);
+        strncat(byte3,tmp2,5);
+        res = strtol(byte3,iByte3);
+        
+        inputArray[0] = 0x00;
+        inputArray[1] = iByte2;
+        inputArray[2] = iByte3;
+
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+        testStep("", "Simulated values: %d, %d, %d", inputArray[0], iByte2, iByte3);
+      }
+    }
+    
+    if(iSpeed == 0) 
+    {
+      for(iCount=0; iCount<elcount(inputArray); iCount++)
+      {
+        inputArray[iCount] = 0x00;
+      }
+      
+      rs232Send(iHESSport,inputArray,elcount(inputArray));
+    }
+    
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "Simulation done", "Simulated speed: %dmm/s", iSpeed);
+
+  }
+    
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",iHESSport);
+  }
+  
+  TestWaitForTimeout(200);
+  rs232Close(iHESSport);
+  
+}
+
+// <HESS>
+//Examples: // SetBeltSpeed(100,1); // SetBeltSpeed(-100,1);
+void SetBeltSpeed(int iSpeed, int iBlock)
+{ 
+  int  res;
+  int  iCount;
+  long iByte1;
+  long iByte2;
+  long iByte3;
+  long iSerialBytes;
+  long iNumberOfCounts;
+  char tmp1[2];
+  char tmp2[2];
+  char buffer[20];
+  char byte1[5]="0x";
+  char byte2[5]="0x";
+  char byte3[5]="0x";
+  byte inputArray[3] = {0x00, 0x00, 0x00};
+  
+  iSerialBytes = 0;
+  iNumberOfCounts = 0;
+  
+  snprintf(byte1, 3, "%c%c", '0','x');
+  snprintf(byte2, 3, "%c%c", '0','x');
+  snprintf(byte3, 3, "%c%c", '0','x');
+  
+  if (1==rs232Open(iHESSport))
+  {
+    rs232Configure(iHESSport, iBaudrateHESS, iByteSizeHESS, iStopbitHESS, iParityHESS);
+    
+    if (iBlock >= 0 && iBlock < 8)
+    {
+      
+      if(iSpeed > 0)
+      {
+        iNumberOfCounts = iBlock<<21;
+        iSerialBytes = 1048576 | iSpeed | iNumberOfCounts;
+        snprintf(buffer, elCount(buffer), "%02X",iSerialBytes);
+        
+        // Byte1
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[0]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[1]);
+        strncat(byte1,tmp1,4);
+        strncat(byte1,tmp2,5);
+        res = strtol(byte1,iByte1);
+              
+        // Byte2
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[2]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[3]);
+        strncat(byte2,tmp1,4);
+        strncat(byte2,tmp2,5);
+        res = strtol(byte2,iByte2);
+        
+        // Byte3
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[4]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[5]);
+        strncat(byte3,tmp1,4);
+        strncat(byte3,tmp2,5);
+        res = strtol(byte3,iByte3);
+        
+        inputArray[0] = iByte1;
+        inputArray[1] = iByte2;
+        inputArray[2] = iByte3;
+        
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+        testStep("", "Simulated values: %d, %d, %d", iByte1, iByte2, iByte3);
+      }
+      
+      if(iSpeed < 0)
+      {
+        iNumberOfCounts = iBlock<<21;
+  			iSerialBytes = 1048576 | iSpeed | iNumberOfCounts;
+        iSerialBytes = iSpeed*(-1)| iNumberOfCounts;
+        snprintf(buffer, elCount(buffer), "%02X",iSerialBytes);
+        
+        // Byte1
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[0]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[1]);
+        strncat(byte1,tmp1,4);
+        strncat(byte1,tmp2,5);
+        res = strtol(byte1,iByte1);
+              
+        // Byte2
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[2]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[3]);
+        strncat(byte2,tmp1,4);
+        strncat(byte2,tmp2,5);
+        res = strtol(byte2,iByte2);
+        
+        // Byte3
+        snprintf(tmp1, elCount(tmp1), "%c", buffer[4]);
+        snprintf(tmp2, elCount(tmp2), "%c", buffer[5]);
+        strncat(byte3,tmp1,4);
+        strncat(byte3,tmp2,5);
+        res = strtol(byte3,iByte3);
+        
+        inputArray[0] = iByte1;
+        inputArray[1] = iByte2;
+        inputArray[2] = iByte3;
+        
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+        testStep("", "Simulated values: %d, %d, %d", iByte1, iByte2, iByte3);
+      }
+      
+      if (iSpeed == 0)
+      {
+        for(iCount=0; iCount<elcount(inputArray); iCount++)
+        {
+          inputArray[iCount] = 0x00;
+        }
+        
+        rs232Send(iHESSport,inputArray,elcount(inputArray));
+      }
+      
+      testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "Simulation done", "Simulated speed: %dmm/s", iSpeed);
+     }
+    
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Block parameter value invalid", "Value set: %d. Value must be between [0...7]",iBlock);
+    }
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",iHESSport);
+  }
+  
+  TestWaitForTimeout(200);
+  rs232Close(iHESSport);  
+}

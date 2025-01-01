@@ -1,0 +1,330 @@
+/*@!Encoding:1252*/
+
+variables
+{
+  char cDiagnosticTarget[50] = "Front_Left";
+  
+  // <<< AddTestSetupInformation >>>
+  int iTestBenchUsed = 1; // This value is changed in <<< InitTestModule >>> function.
+  //                                  <TestBench 1>          <TestBench 2>          <TestBench 3>         <TestBench 4>
+//  char cTesterName[5][4]     = {"",   "AGR",                 "MTE",                 "VUR",                "SMA"};
+//  char cPCId[5][20]          = {"",   "ART-OF-WD3124",       "ART-OF-WD31**",       "ART-OF-WD3***",      "ART-OF-WD****"};
+//  char cCAN_CaseId[5][11]    = {"",   "RBE-COM-08",          "RBE-COM-02",          "RBE-COM-03",         "RBE-COM-04"};
+//  char cSBC_BOARD[5][50]     = {"",   "19M254",              "19M2**",              "19M***",             "19****"};
+//  char cPowerSupplyId[5][12] = {"",   "RBE-PWR-030",         "RBE-PWR-032",         "RBE-PWR-033",        "RBE-PWR-034"};
+//  char cMOTHER_BOARD[5][50]  = {"",   "AEEC17_0026R",        "AEEC17_002**",        "AEEC17_00***",       "AEEC17_0****"};
+//  char cMCU[5][50]           = {"",   "19M085",              "19M0**",              "19M***",             "19****"};
+//  char cDUT[5][50]           = {"",   "AUDI TR6 PPMI",       "AUDI TR6 PPMI",       "AUDI TR6 PPMI",      "AUDI TR6 PPMI"};
+//  char cHWVersion[5][50]     = {"",   "22/04.00",            "22/04.00",            "22/04.00",           "22/04.00"};
+  
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^Diagnostic requests^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  const iSessionTimeout = 5000; // Timeout for diagnostic session.
+  
+  // <<< Read SW version >>>
+//  byte bReadSWVersionRequest[3]         = {0x22, 0xFD, 0x01};
+//  
+//  // <<< EnterDiagnosticSession >>>
+//  char cAvailableDiagSessions[4][12]    = {"default",    "extended",   "programming", "supplier"};
+//  byte bSessionControlRequests[4][2]    = {{0x10, 0x01}, {0x10, 0x03}, {0x10, 0x02},  {0x10, 0x7E}};
+    
+  //  <<< Read All AEC Status >>>
+  byte bReadAllAECsStatusRequest[3]     = {0x22, 0xFE, 0x00};
+  
+   // <<< ResetECU >>>
+//  byte bHardResetRequest[2]             = {0x11, 0x01};
+//  byte bSoftResetRequest[2]             = {0x11, 0x03};
+//  
+//  // <<< ClearAll >>>
+//  byte bClearAllRequest[4]              = {0x14, 0xFF, 0xFF, 0xFF};
+//  
+//  // <<< CheckDTCPresence >>>
+//  byte bCheckDTCPresenceRequest[3]      = {0x19, 0x02, 0x00};
+  
+  // << Read Memory By Address >>
+  byte bRMBARequest[8] = {0x23, 0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  
+  
+  
+
+//*******************************Function configuration parameters*****************************  
+  // <<< CheckSWVersion >>> and <<< GetSWVersion >>>
+//  char cSwVersion[13]            = "ER01470H.P30";
+//  char cSession_CheckSWVersion[20] = "supplier";  // Needed Session: Set to "none" if no special session is needed.
+//  char cKeepHexFormat[6]          = "false";     // If "_cSwVersion" is in HEX format (e.g "0x16 0x0B 0x00"), set to "true", otherwise set to "false".
+//  
+//  // <<< EnterDiagnosticSession >>>
+//  int iSessionControlVerbosity = 0;  // Controls what is written in the report:
+//                                     // 0 - Only negative response.
+//                                     // 1 - Comment or negative response.
+//                                     // 2 - A testStepPass result or negative response.
+//  
+//  // <<< SetECUMode >>>
+//  char cSession_SetECUMode[20] = "supplier";
+//  byte bLockECU[4]   = {0x31, 0x02 ,0xf7, 0x81};
+//  byte bUnlockECU[4] = {0x31, 0x01, 0xf7, 0x81};
+  
+  // <<< ActivateMeasurementFrame >>>
+//  byte bMS_Per_LSB = 5;  // (Timing resolution 1lsb = 5ms.)
+//  byte bMF_Timing  = 10; // ms.
+//  byte iMFMaxPossibleBlockNr = 24;
+//  byte bWriteMeasurementFramesConfiguration[7] = {0x2E, 0xFE, 0xFF, 0x00, 0x00, 0x00, 0x00};
+  
+  // <<< All Logging functions >>
+//  char cLogPath[500] ="c:\\\\Temp\\\\"; // Default location for logs if no other path is provided before any test starts.
+//                                        // As a recommendation this value should be declared with the desired path at 
+//                                        // the start of each test module.
+//  
+//  // Each of the following test logging block name variables must have their corresponding block defined and configured.
+//  // e.g. an .ASC logging block called "TestLoggingBlock" must be defined in the measurement setup and set to "Test trigger" mode.
+//  char TestLoggingBlock[50] = "TestLoggingBlock"; // Logging block used for .ASC logging.
+//  char TestCaseLogASC[50]   = "TestCaseLogASC";   // Logging block used for .ASC logging of the whole test case (Starts in PreTS, ends in PostTS).
+//  char TestCaseLogBLF[50]   = "TestCaseLogBLF";   // Logging block used for .BLF logging of the whole test case (Starts in PreTS, ends in PostTS).
+//*********************************************************************************************
+ 
+  
+  
+  
+  
+//*********************************AEC configuration parameters********************************
+  // AEC IDs.
+  //const bERR_ADC_OUT_OF_ORDER                  = 0x01;
+  const bERR_MOSFET_HIGH_SC                    = 0x04;
+  const bERR_MOSFET_LOW_SC                     = 0x05;
+  const bERR_MOSFET_OC                         = 0x08;
+  const bERR_HALL_SENSOR                       = 0x0A;
+  const bERR_ENABLE_OUT_OF_ORDER               = 0x03;
+  const bERR_HW_SELF_PROTECTION                = 0x07;
+  const bERR_HIGH_SIDE_SWITCH                  = 0x02;
+//  const bERR_PRELIMINARY_BOOSTER               = 0x09;
+//  const bERR_POWER_BOOSTER                     = 0x0A;
+  const bERR_WARM_RESET                        = 0x1B;
+  const bERR_TEMPERATURE_SENSOR_FAILURE        = 0x0E;
+//  const bERR_EXT_WDG_OUT_OF_ORDER              = 0x0D;
+  const bERR_MOTOR_BLOCKED                     = 0x0C;
+  const bERR_MOTOR_IN_SC                       = 0x0F;
+  const bERR_MOTOR_CURRENT                     = 0x0B;
+  const bERR_MOTOR_DISCONNECTED                = 0x06;
+  const bERR_MOTOR_ORDER                       = 0x10;
+  const bERR_SW_SELF_PROTECTION                = 0x0D;
+//  const bERR_FLS_E_COMPARE                     = 0x14;
+//  const bERR_FLS_E_ERASE                       = 0x15;
+//  const bERR_FLS_E_READ                        = 0x16;
+//  const bERR_FLS_E_WRITE                       = 0x17;
+//  const bERR_FLS_ECC                           = 0x18;
+//  const bERR_NVM_INTEGRITY                     = 0x19;
+//  const bERR_NVM_E_REQ_FAILED                  = 0x1A;
+//  const bERR_NVM_E_WRONG_BLOCK_ID              = 0x1B;
+//  const bERR_NVM_E_VERIFY_FAILED               = 0x1C;
+//  const bERR_NVM_E_LOSS_OF_REDUDANCY           = 0x1D;
+//  const bERR_NVM_E_QUEUE_OVERFLOW              = 0x1E;
+//  const bERR_NVM_E_WRITE_PROTECTED             = 0x1F;
+//  const bERR_NVM_NOT_PROG                      = 0x20;
+//  const bERR_NVM_ECC                           = 0x21;
+//  const bERR_ECUM_E_RAM_CHECK_FAILED           = 0x22;
+//  const bERR_STACK_FULL_USAGE                  = 0x23;
+//  const bERR_RAM_ECC                           = 0x24;
+//  const bERR_ECUM_E_CFG_DATA_INCONSISTENT      = 0x25;
+//  const bERR_MCU_E_CLOCK_FAILURE               = 0x26;
+//  const bERR_INT_WDG                           = 0x27;
+//  const bERR_SPI_E_HW_ERROR                    = 0x28;
+//  const bERR_SBC_MUX_CONFIGURATION_LOST        = 0x29;
+  const bERR_BAT_PWR_OVER_VOLTAGE              = 0x12;
+  const bERR_BAT_PWR_UNDER_VOLTAGE             = 0x11;
+  const bERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS = 0x13;
+  const bERR_BAT_PWR_OVER_VOLTAGE_DURING_TENS  = 0x14;
+//  const bERR_BAT_LOG_OVER_VOLTAGE              = 0x2D;
+//  const bERR_BAT_LOG_UNDER_VOLTAGE             = 0x2E;
+//  const bERR_BAT_LOG_IMPLAUSIBLE               = 0x2F;
+//  const bERR_ECU_KNOCKOUT_TIMEOUT              = 0x30;
+//  const bERR_CANSM_E_BUS_OFF                   = 0x31;
+//  const bERR_HIGH_FORCE_END_OF_LIFE            = 0x32;
+  const bERR_LOW_FORCE_END_OF_LIFE             = 0x1D;
+  const bERR_COMFORT_END_OF_LIFE               = 0x1C;
+//  const bERR_HAPTIC_WARNING_END_OF_LIFE        = 0x35;
+//  const bERR_ADC_CALIBRATION_FAILED            = 0x36;
+//  const bERR_RGS_ANF01_TIMEOUT                 = 0x37;
+  
+  // Functions configured for the following PR Structure: PR & LID; 3 bytes  + (AEC ID; 2 bytes + AEC Status; 1 byte) * Total nr. of AECs.
+  char cSession_ReadAECs[20]   = "supplier";    // Needed Session: Set to "none" if no special session is needed.
+  const iReadAECsResponseSize = 168;         // Total response size. Modify accordingly.
+
+  // Project specific AEC names. Initialized in "InitParameters()".
+  const iNoOfAECs = 55;
+  char[50] cAECName[double, iNoOfAECs];
+  char[50] cAEC_NotExecutedAfterReset[double, iNoOfAECs];
+    
+  // Structure: {AEC_ID, AEC_status}
+  // <<< CheckAECPresence >>> and <<< CheckAECStatus >>>
+  byte bAcceptedAECStatus[2]                       = {0x40, 0x00}; // If an AEC does NOT match at least one defined status, a testStepFail will be reported. 
+  
+  // <<< CheckAECPresence >>>
+  byte bSpecificAECExpectedStatus[1][2]            = {{0xFF, 0x00}}; // If AEC_ID does not have the specified AEC_status, a testStepFail will be reported.
+                                                                                                // Set the first AEC_ID to 0xFF for no special status consideration.
+  // <<< CheckAECPresenceInBenchInit >>>
+  byte bAcceptedAECStatus_BenchInit[2]             = {0x04, 0x40}; // If an AEC does NOT match at least one defined status, a testStepFail will be reported. 
+  byte bSpecificAECExpectedStatus_BenchInit[1][2]  = {{0xFF, 0x00}}; // Specific AEC status takes precedence over accepted status.
+                                                                                                 // Set the first AEC_ID to 0xFF for no special status consideration.
+  // <<< CheckDTCPresenceAfterClear >>>
+  byte bAcceptedAECStatus_AfterClear[2]            = {0x04, 0x40}; // If an AEC does NOT match at least one defined status, a testStepFail will be reported. 
+  byte bSpecificAECExpectedStatus_AfterClear[1][2] = {{0xFF, 0x00}}; // Specific AEC status takes precedence over accepted status.
+                                                                                                 // Set the first AEC_ID to 0xFF for no special status consideration.
+  // <<< ReturnAECStatusChangeTime >>>
+  byte _erh_au8AecStatus[4] = {0xEF, 0x23, 0x00, 0x00}; // RAM address for Autotest Status.
+  char cSecuritySession_RMBA[20] = "supplier";
+  
+  // AEC status definition. -> Status not applicable for DAIMLER. to be deleted.
+//  const bAEC_TestedNotPresent                       = 0x00;
+//  const bAEC_AbsentFailed                           = 0x00;
+//  const bAEC_Qualified                              = 0x2F; 
+//  const bAEC_QualifiedConfirmed                     = 0x2F;
+//  const bAEC_DeskilledFailed                        = 0x2E;
+//  const bAEC_DeskilledFailedConfirmed               = 0x2E;
+//  const bAEC_QualifingInProgress                    = 0x00;
+//  const bAEC_ReQualifingInProgress                  = 0x26;
+//  const bAEC_ReQualifingInProgressConfirmed         = 0x2E;
+//  const bAEC_DeskillingInProgress                   = 0x2E;
+//  const bAEC_DeskillingInProgressConfirmed          = 0x2E;
+//  const bAEC_DeskilledNotFailed                     = 0x20;
+//  const bAEC_DeskilledNotFailedConfirmed            = 0x20;
+//  const bAEC_NotCompletedSinceLastReset             = 0x40;
+//  const bAEC_NotCompletedSinceLastClear             = 0x50;
+//  const bAEC_NotCompletedSinceLastResetAndLastClear = 0x50;
+    const bAEC_NotCompletedSincePowerOffOn            = 0x40;
+//  const bAEC_EverQualified                          = 0x60;
+//  const bAEC_EverQualifiedStartup                   = 0x00;
+//  const bAEC_NotEverQualified                       = 0x00;
+//  const bAEC_NotFailedDeskilledInProgress           = 0x00;
+  
+  // AEC status definition from RAM
+  const bRAM_AEC_Qualified 						        = 0x17;
+  const bRAM_AEC_ReQualifingInProgress			  = 0x1E;
+  const bRAM_AEC_QualifingInProgress				  = 0x1C;
+  const bRAM_AEC_DeskillingInProgress		    	= 0x1F;
+  const bRAM_AEC_DeskilledFailed					    = 0x16;
+  const bRAM_AEC_AbsentFailed					        = 0x14;
+  const bRAM_AEC_DeskilledNotFailed				    = 0x06;
+  const bRAM_AEC_EverQualified					      = 0x02;
+  const bRAM_AEC_EverQualifiedStartup			    = 0x03;
+  const bRAM_AEC_NotEverDeskilled 				    = 0x07;
+  const bRAM_AEC_TestedNotPresent				      = 0x04;
+  const bRAM_AEC_NotEverQualified				      = 0x00;
+  const bRAM_AEC_NotFailedDeskilledInProgress	= 0x0F;
+  
+//*********************************************************************************************  
+    
+ 
+  
+//*********************************DTC configuration parameters********************************
+  // <<< CheckDTCPresence >>>
+//  const iCheckDTCPresence_CDD = 1;    // 0 = CDD is not used. 1 = CDD is used.
+//  byte bRDTCBST_StatusMask    = 0x21; // RDTCBST 0x21 = testFailedSinceLastClear or testFailed.
+//    
+//  char[50] cDTCName[double, 100]; // DTC names. Initialized in "InitParameters()".  
+//  // Config if .CDD is used:  
+//  char RQ_DTCStatusMask[50]                                  = "DTCStatusMask";
+//  char PR_DTCAndStatusRecord[50]                             = "DTCAndStatusRecord";
+//  char PR_DTCRecord[50]                                      = "DTCRecord";
+//  char PR_StatusOfDTC[50]                                    = "StatusOfDTC";
+//  char PR_StatusOfDTC_WarningIndicatorRequested[50]          = "StatusOfDTC.WarningIndicatorRequested";
+//  char PR_StatusOfDTC_TestNotCompletedThisOperationCycle[50] = "StatusOfDTC.TestNotCompletedThisOperationCycle";
+//  char PR_StatusOfDTC_TestFailedSinceLastClear[50]           = "StatusOfDTC.TestFailedSinceLastClear";
+//  char PR_StatusOfDTC_TestNotCompletedSinceLastClear[50]     = "StatusOfDTC.TestNotCompletedSinceLastClear";
+//  char PR_StatusOfDTC_ConfirmedDTC[50]                       = "StatusOfDTC.ConfirmedDTC";
+//  char PR_StatusOfDTC_PendingDTC[50]                         = "StatusOfDTC.PendingDTC";
+//  char PR_StatusOfDTC_TestFailedThisOperationCycle[50]       = "StatusOfDTC.TestFailedThisOperationCycle";
+//  char PR_StatusOfDTC_TestFailed[50]                         = "StatusOfDTC.TestFailed";
+  // Config if .CDD is NOT used:
+  // TBD.
+  
+//*********************************************************************************************
+}
+
+
+void InitParameters()
+{ 
+  // AECs.
+//  strncpy(cAECName[bERR_ADC_OUT_OF_ORDER                  ], "ERR_ADC_OUT_OF_ORDER"           			, 50);
+  strncpy(cAECName[bERR_MOSFET_HIGH_SC                    ], "ERR_MOSFET_HIGH_SC"             			, 50);
+  strncpy(cAECName[bERR_MOSFET_LOW_SC                     ], "ERR_MOSFET_LOW_SC"              			, 50);
+  strncpy(cAECName[bERR_MOSFET_OC                         ], "ERR_MOSFET_OC"                  			, 50);
+  strncpy(cAECName[bERR_HALL_SENSOR                       ], "ERR_HALL_SENSOR"               			  , 50);
+  strncpy(cAECName[bERR_ENABLE_OUT_OF_ORDER               ], "ERR_ENABLE_OUT_OF_ORDER"       			  , 50);
+  strncpy(cAECName[bERR_HW_SELF_PROTECTION                ], "ERR_HW_SELF_PROTECTION"         			, 50);
+  strncpy(cAECName[bERR_HIGH_SIDE_SWITCH                  ], "ERR_HIGH_SIDE_SWITCH"           			, 50);
+//  strncpy(cAECName[bERR_PRELIMINARY_BOOSTER               ], "ERR_PRELIMINARY_BOOSTER"        			, 50);
+//  strncpy(cAECName[bERR_POWER_BOOSTER                     ], "ERR_POWER_BOOSTER"              			, 50);
+  strncpy(cAECName[bERR_WARM_RESET                        ], "ERR_WARM_RESET"                 			, 50);
+  strncpy(cAECName[bERR_TEMPERATURE_SENSOR_FAILURE        ], "ERR_TEMPERATURE_SENSOR_FAILURE" 			, 50);
+//  strncpy(cAECName[bERR_EXT_WDG_OUT_OF_ORDER              ], "ERR_EXT_WDG_OUT_OF_ORDER"       			, 50);
+  strncpy(cAECName[bERR_MOTOR_BLOCKED                     ], "ERR_MOTOR_BLOCKED"              			, 50);
+  strncpy(cAECName[bERR_MOTOR_IN_SC                       ], "ERR_MOTOR_IN_SC"                			, 50);
+  strncpy(cAECName[bERR_MOTOR_CURRENT                     ], "ERR_MOTOR_CURRENT"             			  , 50);
+  strncpy(cAECName[bERR_MOTOR_DISCONNECTED                ], "ERR_MOTOR_DISCONNECTED"         		 	, 50);
+  strncpy(cAECName[bERR_MOTOR_ORDER                       ], "ERR_MOTOR_ORDER"                			, 50);
+  strncpy(cAECName[bERR_SW_SELF_PROTECTION                ], "ERR_SW_SELF_PROTECTION"         			, 50);
+//  strncpy(cAECName[bERR_FLS_E_COMPARE                     ], "ERR_FLS_E_COMPARE"              			, 50);
+//  strncpy(cAECName[bERR_FLS_E_ERASE                       ], "ERR_FLS_E_ERASE"                			, 50);
+//  strncpy(cAECName[bERR_FLS_E_READ                        ], "ERR_FLS_E_READ"                 			, 50);
+//  strncpy(cAECName[bERR_FLS_E_WRITE                       ], "ERR_FLS_E_WRITE"                			, 50);
+//  strncpy(cAECName[bERR_FLS_ECC                           ], "ERR_FLS_ECC"                    			, 50);
+//  strncpy(cAECName[bERR_NVM_INTEGRITY                     ], "ERR_NVM_INTEGRITY"              			, 50);
+//  strncpy(cAECName[bERR_NVM_E_REQ_FAILED                  ], "ERR_NVM_E_REQ_FAILED"           		  , 50);
+//  strncpy(cAECName[bERR_NVM_E_WRONG_BLOCK_ID              ], "ERR_NVM_E_WRONG_BLOCK_ID"       		  , 50);
+//  strncpy(cAECName[bERR_NVM_E_VERIFY_FAILED               ], "ERR_NVM_E_VERIFY_FAILED"        			, 50);
+//  strncpy(cAECName[bERR_NVM_E_LOSS_OF_REDUDANCY           ], "ERR_NVM_E_LOSS_OF_REDUDANCY"    			, 50);
+//  strncpy(cAECName[bERR_NVM_E_QUEUE_OVERFLOW              ], "ERR_NVM_E_QUEUE_OVERFLOW"       			, 50);
+//  strncpy(cAECName[bERR_NVM_E_WRITE_PROTECTED             ], "ERR_NVM_E_WRITE_PROTECTED"      			, 50);
+//  strncpy(cAECName[bERR_NVM_NOT_PROG                      ], "ERR_NVM_NOT_PROG"               			, 50);
+//  strncpy(cAECName[bERR_NVM_ECC                           ], "ERR_NVM_ECC"                   			  , 50);
+//  strncpy(cAECName[bERR_ECUM_E_RAM_CHECK_FAILED           ], "ERR_ECUM_E_RAM_CHECK_FAILED"          , 50);
+//  strncpy(cAECName[bERR_STACK_FULL_USAGE                  ], "ERR_STACK_FULL_USAGE"                 , 50);
+//  strncpy(cAECName[bERR_RAM_ECC                           ], "ERR_RAM_ECC"                          , 50);
+//  strncpy(cAECName[bERR_ECUM_E_CFG_DATA_INCONSISTENT      ], "ERR_ECUM_E_CFG_DATA_INCONSISTENT"     , 50);
+//  strncpy(cAECName[bERR_MCU_E_CLOCK_FAILURE               ], "ERR_MCU_E_CLOCK_FAILURE"              , 50);
+//  strncpy(cAECName[bERR_INT_WDG                           ], "ERR_INT_WDG"                          , 50);
+//  strncpy(cAECName[bERR_SPI_E_HW_ERROR                    ], "ERR_SPI_E_HW_ERROR"                   , 50);
+//  strncpy(cAECName[bERR_SBC_MUX_CONFIGURATION_LOST        ], "ERR_SBC_MUX_CONFIGURATION_LOST"       , 50);
+  strncpy(cAECName[bERR_BAT_PWR_OVER_VOLTAGE              ], "ERR_BAT_PWR_OVER_VOLTAGE"             , 50);
+  strncpy(cAECName[bERR_BAT_PWR_UNDER_VOLTAGE             ], "ERR_BAT_PWR_UNDER_VOLTAGE"            , 50);
+  strncpy(cAECName[bERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS ], "ERR_BAT_PWR_UNDER_VOLTAGE_DURING_TENS", 50);
+//  strncpy(cAECName[bERR_BAT_LOG_OVER_VOLTAGE              ], "ERR_BAT_LOG_OVER_VOLTAGE"             , 50);
+//  strncpy(cAECName[bERR_BAT_LOG_UNDER_VOLTAGE             ], "ERR_BAT_LOG_UNDER_VOLTAGE"            , 50);
+//  strncpy(cAECName[bERR_BAT_LOG_IMPLAUSIBLE               ], "ERR_BAT_LOG_IMPLAUSIBLE"              , 50);
+//  strncpy(cAECName[bERR_ECU_KNOCKOUT_TIMEOUT              ], "ERR_ECU_KNOCKOUT_TIMEOUT"             , 50);
+//  strncpy(cAECName[bERR_CANSM_E_BUS_OFF                   ], "ERR_CANSM_E_BUS_OFF"                  , 50);
+//  strncpy(cAECName[bERR_HIGH_FORCE_END_OF_LIFE            ], "ERR_HIGH_FORCE_END_OF_LIFE"           , 50);
+  strncpy(cAECName[bERR_LOW_FORCE_END_OF_LIFE             ], "ERR_LOW_FORCE_END_OF_LIFE"            , 50);
+  strncpy(cAECName[bERR_COMFORT_END_OF_LIFE               ], "ERR_COMFORT_END_OF_LIFE"              , 50);
+//  strncpy(cAECName[bERR_HAPTIC_WARNING_END_OF_LIFE        ], "ERR_HAPTIC_WARNING_END_OF_LIFE"       , 50);
+//  strncpy(cAECName[bERR_ADC_CALIBRATION_FAILED            ], "ERR_ADC_CALIBRATION_FAILED"           , 50);
+//  strncpy(cAECName[bERR_RGS_ANF01_TIMEOUT                 ], "ERR_RGS_ANF01_TIMEOUT"                , 50);
+    
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_PRELIMINARY_BOOSTER         ], "ERR_PRELIMINARY_BOOSTER"         , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_POWER_BOOSTER               ], "ERR_POWER_BOOSTER"               , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_MOTOR_BLOCKED               ], "ERR_MOTOR_BLOCKED"               , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_FLS_E_COMPARE               ], "ERR_FLS_E_COMPARE"               , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_FLS_E_ERASE                 ], "ERR_FLS_E_ERASE"                 , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_FLS_E_READ                  ], "ERR_FLS_E_READ"                  , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_FLS_E_WRITE                 ], "ERR_FLS_E_WRITE"                 , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_INTEGRITY               ], "ERR_NVM_INTEGRITY"               , 50);
+//  strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_E_REQ_FAILED            ], "ERR_NVM_E_REQ_FAILED"            , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_E_WRONG_BLOCK_ID        ], "ERR_NVM_E_WRONG_BLOCK_ID"        , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_E_VERIFY_FAILED         ], "ERR_NVM_E_VERIFY_FAILED"         , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_E_LOSS_OF_REDUDANCY     ], "ERR_NVM_E_LOSS_OF_REDUDANCY"     , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_E_QUEUE_OVERFLOW        ], "ERR_NVM_E_QUEUE_OVERFLOW"        , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_E_WRITE_PROTECTED       ], "ERR_NVM_E_WRITE_PROTECTED"       , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_NOT_PROG                ], "ERR_NVM_NOT_PROG"                , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_NVM_ECC                     ], "ERR_NVM_ECC,"                    , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_ECUM_E_RAM_CHECK_FAILED     ], "ERR_ECUM_E_RAM_CHECK_FAILED"     , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_STACK_FULL_USAGE            ], "ERR_STACK_FULL_USAGE"            , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_ECUM_E_CFG_DATA_INCONSISTENT], "ERR_ECUM_E_CFG_DATA_INCONSISTENT", 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_MCU_E_CLOCK_FAILURE         ], "ERR_MCU_E_CLOCK_FAILURE"         , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_INT_WDG                     ], "ERR_INT_WDG"                     , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_SBC_MUX_CONFIGURATION_LOST  ], "ERR_SBC_MUX_CONFIGURATION_LOST"  , 50);
+  //strncpy(cAEC_NotExecutedAfterReset[bERR_CANSM_E_BUS_OFF             ], "ERR_CANSM_E_BUS_OFF"             , 50);
+  
+    // DTCs
+//  strncpy(cDTCName[0xA00010], "DTC_POWER_SUPPLY", 50);
+  // strncpy(DTCName[_dDTC_GENERAL_FAILURE], "DTC_GENERAL_FAILURE", 50); 
+}

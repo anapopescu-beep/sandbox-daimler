@@ -1,0 +1,58 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0016, ARCH_SW_MMG_0017, ARCH_SW_MMG_0018, ARCH_SW_MMG_0019, ARCH_SW_MMG_0020, ARCH_SW_MMG_0023, ARCH_SW_MMG_0024, ARCH_SW_MMG_0026, ARCH_SW_MMG_0031, ARCH_SW_MMG_0407
+ARCH_SW_MMG_0016: Buckle Switch State shall represent the 0-1 Bits of Byte 0 from Start and Stop Blocks and shall be saved with the following values: STAT_OK = 0 if the buckle state is buckled; STAT_NOT = 1 if the buckle state is unbuckled; STAT_FLT = 2 if the buckle state is fault; STAT_SNA = 3 if the signal is not available
+ARCH_SW_MMG_0017: Belt Hand Over State shall represent the 2-3 Bits of Byte 0 from Start and Stop Blocks and shall be saved with the following values: RETRACT = 0 if the belt hand over is retracted; OUT_OF_END = 1� if the belt hand over is out of end position; EXTEND = 2 if the belt hand over is extended; SNA = 3 if the signal is not available
+ARCH_SW_MMG_0018: Pre-Safe Level shall represent the 0-3 Bits of Byte1 from Start and Stop Blocks and shall be saved with the following values: None = 0 No pre-safe requested; PRE-SAFE 1 = 1 pre-safe 1 requested; PRE-SAFE 3 = 3 pre-safe 3 requested; PRE-SAFE 4 = 4 pre-safe 4 requested; PRE-SAFE 5 = 5 pre-safe 5 requested; PRE-SAFE 6 = 6 pre-safe 6 requested; PRE-SAFE 7 = 7 pre-safe 7 requested; PRE-SAFE 8 = 8 pre-safe 8 requested; Not Defined 9-13 pre-safe not defined; SNA = 15 if the signal is not available
+ARCH_SW_MMG_0019: Impact X shall represent the 4 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Impact X Crash conditions detected; Yes = 1 if Impact X Crash conditions detected
+ARCH_SW_MMG_0020: Impact X shall represent the 4 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Impact X Crash conditions detected; Yes = 1 if Impact X Crash conditions detected
+ARCH_SW_MMG_0023: ECU Temperature shall represent the Bytes 3-4 from Start and Stop Blocks and shall be saved with the following values: Byte 3: Low-temperature � 0x00 if deficiency level &lt; 1200; Middle-temperature � 0x01 if deficiency level &gt;= 1200 and deficiency level &lt; 32000; High-temperature � 0x02 if deficiency level &gt;= 32000 and deficiency level &lt;150000; Hot-temperature � 0x03 if deficiency level &gt;= 150000 and deficiency level &lt;160000; Over-temperature � 0x04 if deficiency level &gt;= 160000; Invalid � 0xFF Value not available; Byte 4: will always be 0.
+ARCH_SW_MMG_0024: System Timpe shall represent the Bytes 5-9 from Start and Stop Blocks and shall be saved with the following values: Byte 5-8: will represent the current operating time represented in seconds; Byte 9: will always be 0.
+ARCH_SW_MMG_0026: Tensioning State shall represent the 0-1 Bits of Byte 0 from State Block and shall be saved with the following values: Successfull = 0 if a tensioning was started or ended successfull; Not Started = 1 if a tensioning was not started; Aborted = 2 if a tensioning was aborted; Not Defined = 3 not defined.
+ARCH_SW_MMG_0031: Undervoltage / ovelvoltage situation shall represent the 6 Bit of Byte 0 from State Block and shall be saved with the following values: No = 0 if the tensioning was not inhibited/aborted by Ov or UV; Yes = 1 if the tensioning was inhibited/ aborted by Uv or Ov
+ARCH_SW_MMG_0407: StbM_GetCurrentTime shall be called in order to get the system time.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder().
+
+	Step 3: Set a breakpoint in mmg_PreSafe_HandleStartData() at line mmg_stPreSafeStartData.Start2ImpactX = KB_ONE;.
+
+	Step 4: Set a breakpoint in mmg_PreSafe_CopyStartData() at line u8PreSafeRecStart1 = (uint8)(mmg_stPreSafeStartData.Start1BuckleSwitch + (uint8)(mmg_stPreSafeStartData.Start1BeltHandOver << MMG_KU8_SHIFT_BELT_HAND_OVER));.
+
+	Step 5: Start Development Session.
+
+	Step 6: Set signal Impact_X_ST3 to KB_ONE.
+
+	Step 7: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 8: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_NOLVL.
+
+Action: ARCH_SW_MMG_0018, ARCH_SW_MMG_0026
+
+	Step 9: Check if CPU stopped in function MMG_runPreSafeRecorder() at line case KU8_TENSIONING_START:. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_MMG_0019, ARCH_SW_MMG_0020, ARCH_SW_MMG_0407
+
+	Step 10: Check if CPU stopped in function mmg_PreSafe_HandleStartData() at line mmg_stPreSafeStartData.Start2ImpactX = KB_ONE;. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_MMG_0016, ARCH_SW_MMG_0017, ARCH_SW_MMG_0023, ARCH_SW_MMG_0024
+
+	Step 11: Check if CPU stopped in function mmg_PreSafe_CopyStartData() at line u8PreSafeRecStart1 = (uint8)(mmg_stPreSafeStartData.Start1BuckleSwitch + (uint8)(mmg_stPreSafeStartData.Start1BeltHandOver << MMG_KU8_SHIFT_BELT_HAND_OVER));. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 12: Return ECU to default values

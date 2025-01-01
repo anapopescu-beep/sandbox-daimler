@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0039; ARCH_SW_DIA_0174; ARCH_SW_DIA_0175, ARCH_SW_NVP_0012; ARCH_SW_DIA_0176
+ARCH_SW_DIA_0039: Service 0x2E will be implemented for DID FDFF
+ARCH_SW_DIA_0174: Service shall be available in Development session
+ARCH_SW_DIA_0175: Request data shall be 5 bytes long
+ARCH_SW_DIA_0176: Runnable shall write Ram Address and Size stored in NVP_BLOCK_ID_MEASUREMENT_FRAME_12_CONFIG
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFDFF_MeasurementFrameBlock12ConfigWrite*.
+
+Action: ARCH_SW_DIA_0039; ARCH_SW_DIA_0174; ARCH_SW_DIA_0175, ARCH_SW_NVP_0012; ARCH_SW_DIA_0176
+
+	Step 4: Send diag request for 2E FDFF and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFDFF_MeasurementFrameBlock12ConfigWrite was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

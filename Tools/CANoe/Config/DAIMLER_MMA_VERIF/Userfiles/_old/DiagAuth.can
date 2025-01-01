@@ -1,0 +1,326 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  long secDiagPage;
+  diagRequest Backend_CA_Certificate_Identification_Read backendIdReq;
+  byte backendId[20];
+  diagRequest Authenticate_Diagnostic_User_or_Tester_Start authReq;
+  dword certHandle;
+  byte cert[500];
+  dword certLen;
+  byte certSerialNum[16];
+  dword certSerialNumLen;
+  char errorMsg[500];
+  dword errorMsgLen;
+  byte challenge[500];
+  dword challengeLen = 32;
+  byte signature[500];
+  dword signatureLen;
+  enum userRoles {Anybody = 0, Supplier, DevelopmentEnhanced, Production, AfterSalesEnhanced, AfterSalesStandard, AfterSalesBasic, InternalDiagTestTool, ePtiTestTool};
+  enum authReqTasks { Authenticate = 0, Verify_ownership = 1, Deauthenticate = 2};
+  enum authReqTasks currentTask;
+  enum verificationResults {Ownership_verification_necessary = 0, Authentication_successful = 1, Deauthentication_successful = 2,
+    Invalid_time_period = 16, Invalid_signature = 17, Invalid_chain_of_trust = 18, Invalid_type = 19, Invalid_format = 20, Invalid_content = 21, Invalid_scope = 22,
+    Ownership_verification_failed = 32, Deauthentication_failed = 48, Synchronize_Date_and_Time_failed_wrong_nonce = 64};
+  enum verificationResults result;
+  enum authLEDs {ledOff = 0, ledRed, ledYellow, ledGreen};
+}
+
+on start
+{
+  secDiagPage = writeCreate("SecDiag");
+  
+  // Get ZenZefi Version
+  GetVersionAsync();
+}
+
+// on click "Start"
+on sysvar Security::Button_TriggerDiagAuth_Left
+{  
+  if (@this == 1) 
+  {
+    //set target diagnostic name
+    sysSetVariableString("SecVarCodingControl","Target","RBTMFL223"); // needed for variant coding   
+    diagSetTarget("RBTMFL223");
+    diagSetTimeoutHandler("DefaultTimeoutHandler");
+    diagSetTimeout(5000);
+  
+    StartAuthentication();
+  }
+}
+
+on sysvar Security::Button_TriggerDiagAuth_Right
+{  
+  if (@this == 1) 
+  {
+    //set target diagnostic name
+    sysSetVariableString("SecVarCodingControl","Target","RBTMFR223"); // needed for variant coding
+    diagSetTarget("RBTMFR223");
+    diagSetTimeoutHandler("DefaultTimeoutHandler");
+    diagSetTimeout(5000);
+  
+    StartAuthentication();
+  }
+}
+
+
+void StartAuthentication()
+{
+  UpdateLEDs(ledYellow);
+  
+  if (@sysvar::Security::DiagRole == 0)
+  {
+    sendAuthenticationRequest(Deauthenticate);
+  }
+  else
+  {
+    //for getting a valid diagnostic certificate, the integrated certificate chain id is necessary
+    diagSendRequest(backendIdReq);
+  }
+}
+
+
+//ECU responds with integrated certificate chain id
+on diagResponse Backend_CA_Certificate_Identification_Read 
+{
+  char backendIDString[100];
+  
+  diagGetParameterRaw(this, "Backend_CA_SubjectKeyIdentifier", backendId, 20);
+  
+  // Log
+  HexToAscii(backendId, 20, backendIDString);
+  writeLineEx(secDiagPage, 1, "Backend ID: %s", backendIDString);
+  
+  // Start authentication progress
+  sendAuthenticationRequest(Authenticate);
+}
+
+
+//send diagnostic request "Authenticate Diagnostic User or Tester" for different use-cases (authenticate, proof of ownership, deauthenticate)
+void sendAuthenticationRequest(enum authReqTasks task) 
+{  
+  enum userRoles role;
+  
+  // the current task is needed in the callbacks
+  currentTask = task;
+  role = (enum userRoles) @sysvar::Security::DiagRole;
+  writeLineEx(secDiagPage, 1, "sendAuthenticationRequest, Task: %s, Userrole: %s", task.name(), role.name());
+   
+  switch (task) {
+    case Authenticate:
+      // get corresponding certificate from ZenZefi, diag request is sent from callback
+      GetDiagnosticCertificateAsync(backendId, 20, "", "", @sysvar::Security::DiagRole);     
+      break;
+    case Verify_ownership:
+      // check ownership by ZenZefi (challenge is signed), diag request is sent from callback
+      CheckOwnershipASync(backendId, 20, challenge, challengeLen, certSerialNum, certSerialNumLen);
+      break;
+    case Deauthenticate:
+      diagSetParameter(authReq, "Configuration.Uni_or_bidirectional_Authentication", 0);
+      diagSetParameter(authReq, "Task", task);
+      diagSendRequest(authReq);
+      break;
+  }
+}
+
+on diagResponse Authenticate_Diagnostic_User_or_Tester_Start 
+{
+  double verificationResult[1];
+  char challengeString[200];
+  
+  if (this.IsNegativeResponse())
+  {
+    writeLineEx(secDiagPage,3,"[ %8.5f] NRC received!", timeNow()/100000.0);
+    
+    UpdateLEDs(ledRed);
+  }
+  else
+  {
+    diagGetParameter(this, "Verification_Result", verificationResult);
+    result = (enum verificationResults) verificationResult[0];
+    
+    //after verification of diagnostic certificate is sucessfully completed, proof of ownership has to be done
+    switch (result)
+    {
+      case Ownership_verification_necessary:
+      {
+        diagGetComplexParameterRaw(this, "Authentication_Result", 0, "Challenge_Certificate_Proof_of_Ownership", challenge, challengeLen+2);  //get challenge from ECU response
+        memcpy_off(challenge, 0, challenge, 2, challengeLen); //first two byte of diagnostic service parameter are reserverd for length (which is auto-calculated)
+        
+        // Log
+        HexToAscii(challenge, challengeLen, challengeString);
+        writeLineEx(secDiagPage, 0, "Challenge Length: %d, Challenge: %s", challengeLen, challengeString); 
+        
+        sendAuthenticationRequest(Verify_ownership);  //continue by executing the diagnostic service again in task mode "Verify_Ownership"
+        
+        break;
+      }
+      case Authentication_successful:
+      {
+        UpdateLEDs(ledGreen);
+        break;
+      }
+      case Deauthentication_successful:
+      {
+        UpdateLEDs(ledOff);
+        break;
+      }
+      default:
+      {
+        UpdateLEDs(ledRed);
+        break;
+      }
+    }
+    
+    //write actual authentication state (e.g. invalid certificate, ...) to write window 
+    writeLineEx(secDiagPage,1,"Authentication state: %s", result.name());
+  }
+}
+
+DefaultTimeoutHandler() 
+{
+  writeLineEx(secDiagPage,3,"Diagnostic Error: Timeout");
+}
+
+void UpdateLEDs(enum authLEDs led)
+{
+  char targetName[100];
+  
+  sysGetVariableString("SecVarCodingControl","Target",targetName,elCount(targetName));
+  
+  if( strncmp("RBTMFL", targetName, 6) == 0)
+  {
+    // Left
+    @sysvar::Security::LED_DiagAuth_Left_Red = 0;
+    @sysvar::Security::LED_DiagAuth_Left_Yellow = 0;
+    @sysvar::Security::LED_DiagAuth_Left_Green = 0;
+    
+    switch (led)
+    {
+      case ledRed:
+        @sysvar::Security::LED_DiagAuth_Left_Red = 1;
+        break;
+      case ledYellow:
+        @sysvar::Security::LED_DiagAuth_Left_Yellow = 1;
+        break;
+      case ledGreen:
+        @sysvar::Security::LED_DiagAuth_Left_Green = 1;
+        break;
+    }
+  }
+  else
+  {
+    // Right
+    @sysvar::Security::LED_DiagAuth_Right_Red = 0;
+    @sysvar::Security::LED_DiagAuth_Right_Yellow = 0;
+    @sysvar::Security::LED_DiagAuth_Right_Green = 0;
+    
+    switch (led)
+    {
+      case ledRed:
+        @sysvar::Security::LED_DiagAuth_Right_Red = 1;
+        break;
+      case ledYellow:
+        @sysvar::Security::LED_DiagAuth_Right_Yellow = 1;
+        break;
+      case ledGreen:
+        @sysvar::Security::LED_DiagAuth_Right_Green = 1;
+        break;
+    }
+  }
+}
+
+
+// helper function to display binary data as 2digit Ascii per byte
+void HexToAscii(byte HexBuffer[], long HexBufferSize, char AsciiBufferOut[])
+{
+  char HighNibble, LowNibble;
+  long i;
+  
+  for (i = 0; i < HexBufferSize; i++)
+  {
+    HighNibble = HexBuffer[i] >> 4;
+    if (HighNibble <= 9)
+      HighNibble += 48; // number
+    else
+      HighNibble += 55; // letter
+    
+    LowNibble = HexBuffer[i] & 0xF;
+    if (LowNibble <= 9)
+      LowNibble += 48; // number
+    else
+      LowNibble += 55; // letter
+    
+    AsciiBufferOut[i*3] = HighNibble;
+    AsciiBufferOut[i*3+1] = LowNibble;
+    AsciiBufferOut[i*3+2] = ' ';
+  }
+}
+
+
+// ZenZefi Nodelayer callbacks
+long GetVersionCompleted(long statusCode, char apiVersion[], char serverVersion[])
+{
+  writeLineEx(secDiagPage, 1, "Api Version: %s", apiVersion); 
+  writeLineEx(secDiagPage, 1, "Server Version: %s", serverVersion); 
+  
+  return statusCode;
+}
+
+long GetDiagnosticCertificateCompleted(long statusCode, char errorMessage[], byte certificate[], byte serialNumber[])
+{
+  char certString[2000];
+  char serialString[100];
+  
+  diagSetParameter(authReq, "Configuration.Uni_or_bidirectional_Authentication", 0);
+  diagSetParameter(authReq, "Task", currentTask);
+  
+  // Log
+  writeLineEx(secDiagPage, 1, "GetDiagnosticCertificateCompleted: %s", errorMessage); 
+  HexToAscii(certificate, elCount(certificate), certString);
+  writeLineEx(secDiagPage, 0, "Certificate Length: %d, Certificate: %s", elCount(certificate), certString); 
+  
+  // store serial number for later usage
+  memcpy(certSerialNum, serialNumber, elcount(serialNumber));
+  certSerialNumLen = elcount(serialNumber);
+  
+  // Log
+  HexToAscii(certSerialNum, certSerialNumLen, serialString);
+  writeLineEx(secDiagPage, 0, "Certificate Serial Length: %d, Certificate Serial: %s", certSerialNumLen, serialString); 
+   
+  memcpy_off(cert, 2, certificate, 0, elCount(certificate));  //first two byte of diagnostic service parameter are reserverd for length (which is auto-calculated)      
+  diagSetComplexParameterRaw(authReq, "Tester_Authentication", 1, "Challenge_Certificate_Proof_of_Ownership", cert, elCount(certificate)+2); //set certificate as parameter of diagnostic request
+  
+  diagSendRequest(authReq);
+  
+  return statusCode;
+}
+
+long CheckOwnershipCompleted(long statusCode, byte ecuProofOfOwnership[], char msg[])
+{
+  char proofString[2000];
+  
+  diagSetParameter(authReq, "Configuration.Uni_or_bidirectional_Authentication", 0);
+  diagSetParameter(authReq, "Task", currentTask);
+  
+  // Log
+  writeLineEx(secDiagPage, 1, "CheckOwnershipCompleted: %s", msg); 
+  HexToAscii(ecuProofOfOwnership, elCount(ecuProofOfOwnership), proofString);
+  writeLineEx(secDiagPage, 0, "Proof of Ownership Length: %d, Proof of Ownership: %s", elCount(ecuProofOfOwnership), proofString); 
+  
+  memcpy_off(signature, 2, ecuProofOfOwnership, 0, elCount(ecuProofOfOwnership));  //first two byte of diagnostic service parameter are reserverd for length (which is auto-calculated)      
+  diagSetComplexParameterRaw(authReq, "Tester_Authentication", 1, "Challenge_Certificate_Proof_of_Ownership", signature, elCount(ecuProofOfOwnership)+2); //set signed challenge as parameter of diagnostic request
+  
+  diagSendRequest(authReq);
+  
+  return statusCode;
+}
+
+
+      
+

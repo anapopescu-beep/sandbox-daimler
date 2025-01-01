@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>6</x>
+      <y>0</y>
+      <w>1388</w>
+      <h>923</h>
+    </coordinates>
+    <panel_attributes>title:PMP_Autotest_CheckPowerSupplyOV
+Start
+Get Battery ADC autotest status
+Check if ADC autotest is passed
+If
+	[TRUE] Get the filtered physical value measured on ADC Power Vbat pin from PMP 
+	Get the associated AEC status to decide the autotest result 
+	Get the "tensioning" system context status
+	Get status of request
+	Check if AEC is cleared 
+	If
+		[TRUE]
+		Check Status
+		If
+			[Case1]Check if trigger request is active
+			If
+				[TRUE]
+				Check if KL30 DuringTens is over related threshold
+				If
+					[TRUE]
+					Set status as KU8_ATM_TEST_NOK
+
+					[FALSE]
+					Set status as KU8_ATM_TEST_OK
+				EndIf
+			
+				[FALSE]
+				Do nothing
+			EndIf	
+			
+			[Case2]Check if request Mode status is ON	
+			If
+				[TRUE]
+				Check if KL30 DuringTens is over related threshold
+				If
+					[TRUE]
+					Set status as KU8_ATM_TEST_NOK
+
+					[FALSE]
+					Set status as KU8_ATM_TEST_OK
+				EndIf
+			
+				[FALSE]
+				Do nothing
+			EndIf	
+		EndIf
+
+      
+		  
+		[FALSE]
+		Check Status
+		If
+			Check if trigger request is active
+			If
+				[TRUE]
+				Check if KL30 DuringTens is over related threshold
+				If
+					[TRUE]
+					Set status as KU8_ATM_TEST_NOK
+
+					[FALSE]
+					Set status as KU8_ATM_TEST_OK
+				EndIf
+			
+				[FALSE]
+				Check if KL30 DuringTens is over related threshold
+				If
+					[TRUE]
+					Set status as KU8_ATM_TEST_NOK
+
+					[FALSE]
+					Set status as KU8_ATM_TEST_OK
+				EndIf
+					
+EndIf
+
+Return the auto test status
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

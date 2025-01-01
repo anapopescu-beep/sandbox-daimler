@@ -1,0 +1,454 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>DIA</title>
+    <script type="text/javascript">
+      function showTimestamp(timestamp){top.LogFile.showTimestamp(timestamp);}
+    </script>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="extendedNavigation.css">
+  </head>
+  <body>
+    <a name="TOP"></a>
+    <table class="HeadingTable">
+      <tr>
+        <td>
+          <big class="Heading1">Report: DIA</big>
+        </td>
+      </tr>
+    </table>
+    <center>
+      <table class="OverallResultTable">
+        <tr>
+          <td class="NegativeResult">Test failed</td>
+        </tr>
+      </table>
+    </center>
+    <a name="GeneralTestInfo"></a>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <div class="Heading2">General Test Information</div>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation">
+      <div class="Heading4">Test Engineer</div>
+      <div class="Indentation">
+        <table>
+          <tr>
+            <td class="CellNoColor">Windows Login Name: </td>
+            <td class="CellNoColor">g-rbe.electronics</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Test Setup</div>
+      <div class="Indentation">
+        <table>
+          <tr>
+            <td class="CellNoColor">Version: </td>
+            <td class="CellNoColor">CANoe.CAN /pro 15.3.89 (SP3)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Configuration: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\BODY3_11.cfg</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Database BODY3 on BODY3: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTM_FL_FR_STAR_3_Ecu_Extract_2022_17a0_AR43.arxml (2022-09-13 13:54:06)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Diagnostic Description of RBTMFL174: </td>
+            <td class="CellNoColor">V030, en-US, S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTMFL174.cdd (05.05.03, 2022-10-27 15:10:39+03:00)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Diagnostic Description of RBTMFR174: </td>
+            <td class="CellNoColor">V010, en-US, S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Databases\RBTMFR174.cdd (04.03.02, 2022-07-07 19:08:06+03:00)</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Test Module Name: </td>
+            <td class="CellNoColor">DIA</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Test Module File: </td>
+            <td class="CellNoColor">S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Tests\DIA.can</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Last modification of Test Module File: </td>
+            <td class="CellNoColor">2022-12-12, 16:26:01</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Windows Computer Name: </td>
+            <td class="CellNoColor">ART-LA-WD3168</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module DAG_ZenzefiNodeLayer: </td>
+            <td class="CellNoColor">Security Manager ZenZefi Node Layer (Version 2.8.7.0), C:\ProgramData\Vector\Security Manager\DAG\Binaries\ZenzefiNodeLayer\CANoe_13.0.117\Windows-x64\ZenzefiNodeLayer.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module SecMgrCANoeClient: </td>
+            <td class="CellNoColor">Security Manager CANoe Node Layer Client (Version 2.8.7.0), C:\ProgramData\Vector\Security Manager\General\Binaries\SecMgrCANoeClient\CANoe_13.0.117\Windows-x64\SecMgrCANoeClient.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module AsrPDUIL: </td>
+            <td class="CellNoColor">CANoe AutoSAR PDU Interaction Layer NL (General OEM) Version 1.85.67 (Sep 17 2021 15:13:31) , C:\ProgramData\Vector\AddOn Packages\Vector AddOn\vModules\CANoe_14_0\Exec64\AsrPDUIL.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module AsrNM33: </td>
+            <td class="CellNoColor">AsrNM (Version 3.3.72 Windows 64-Bit), C:\ProgramData\Vector\AddOn Packages\Vector AddOn\vModules\CANoe_14_0\Exec64\AsrNM33.dll</td>
+          </tr>
+          <tr>
+            <td class="CellNoColor">Nodelayer Module J1939TestServiceLibraryNL: </td>
+            <td class="CellNoColor">J1939 Test Service Library for CANoe, Version 15.3.89.0, C:\Program Files\Vector CANoe 15\Exec64\J1939TestServiceLibraryNL.dll</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Hardware</div>
+      <div class="Indentation">
+        <div class="Heading4">CAN Channel Interfaces</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <th class="TableHeadingCell">Channel</th>
+              <th class="TableHeadingCell">Device</th>
+              <th class="TableHeadingCell">Serial number</th>
+              <th class="TableHeadingCell">Driver DLL version</th>
+              <th class="TableHeadingCell">Driver version</th>
+            </tr>
+            <tr>
+              <td class="NumberCell">1</td>
+              <td class="NumberCell">VN1611</td>
+              <td class="NumberCell">17703</td>
+              <td class="NumberCell">21.10.20</td>
+              <td class="NumberCell">20.30.14</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="Heading4">Logging and video recordings</div>
+      <div class="Indentation">
+        <table>
+          <th class="TableHeadingCell">Start Time</th>
+          <th class="TableHeadingCell">End Time</th>
+          <th class="TableHeadingCell">Logging/Video File</th>
+          <tr>
+            <td class="NumberCell">Active at test start</td>
+            <td class="NumberCell">Active at test end</td>
+            <td class="NumberCell" style="text-align:left">..\Logs\SW_IT_DIA__Mon_Dec_12_16_26_22_2022_T215.asc</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <a name="TestOverview"></a>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <div class="Heading2">Test Overview</div>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation">
+      <table class="DefaultTable">
+        <tr>
+          <td style="padding-right: 0.5em;" class="CellNoColor">Test begin: </td>
+          <td style="padding-right: 0.5em;" class="CellNoColor">2022-12-12 16:26:22</td>
+          <td class="CellNoColor">(logging timestamp   14.712493)</td>
+        </tr>
+        <tr>
+          <td style="padding-right: 0.5em;" class="CellNoColor">Test end: </td>
+          <td style="padding-right: 0.5em;" class="CellNoColor">2022-12-12 16:28:05</td>
+          <td class="CellNoColor" nowrap>(logging timestamp  117.053186)</td>
+        </tr>
+      </table>
+      <div class="Heading4">Statistics</div>
+      <div class="Indentation">
+        <table class="OverviewTable">
+          <tr>
+            <td class="DefineCell">Overall number of test cases </td>
+            <td class="NumberCell" width="60">6</td>
+            <td class="DefaultCell"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Executed test cases </td>
+            <td class="NumberCell">6</td>
+            <td class="DefaultCell">100% of all test cases</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Not executed test cases </td>
+            <td class="NumberCell">0</td>
+            <td class="DefaultCell">0% of all test cases</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Test cases passed </td>
+            <td class="NumberCellPositiveResult">5</td>
+            <td class="NumberCellPositiveResult">83% of executed test cases</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">Test cases failed </td>
+            <td class="NumberCellNegativeResult">1</td>
+            <td class="NumberCellNegativeResult">17% of executed test cases</td>
+          </tr>
+        </table>
+      </div>
+      <div class="Heading4">Test Case Results</div>
+      <div class="Indentation">
+        <table class="OverviewTable">
+          <tr>
+            <td class="DefineCell">1</td>
+            <td class="DefaultCell">SW_IT_DIA_0001</td>
+            <td class="DefaultCell">
+              <a href="i__-2004532944_9.html">Internal UDS - NVM - Read FD10</a>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">2</td>
+            <td class="DefaultCell">SW_IT_DIA_0002</td>
+            <td class="DefaultCell">
+              <a href="i__-2004532944_1869.html">Internal UDS - Read FD10</a>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">3</td>
+            <td class="DefaultCell">SW_IT_DIA_0003</td>
+            <td class="DefaultCell">
+              <a href="i__-2004532944_4609.html">Internal UDS - NVM - Read FD2A</a>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">4</td>
+            <td class="DefaultCell">SW_IT_DIA_0004</td>
+            <td class="DefaultCell">
+              <a href="i__-2004532944_6469.html">Internal UDS - Read FD2A</a>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell">5</td>
+            <td class="DefaultCell">SW_IT_DIA_0005</td>
+            <td class="DefaultCell">
+              <a href="i__-2004532944_11519.html">Internal UDS - NVM - Read F18C</a>
+            </td>
+            <td class="NegativeResultCell">
+              <a href="i__-2004532944_11519.html#i__-2004532944_13278">fail</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="DefineCell">6</td>
+            <td class="DefaultCell">SW_IT_DIA_0006</td>
+            <td class="DefaultCell">
+              <a href="i__-2004532944_13379.html">Internal UDS - Read F18C</a>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <a name="TestModuleInfo"></a>
+    <table class="SubHeadingTable">
+      <tr>
+        <td>
+          <div class="Heading2">Test Module Information</div>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation">
+      <div class="Heading4">Contents</div>
+      <div class="Indentation">
+        <table>
+          <tr>
+            <td class="DefaultCell">1</td>
+            <td class="TestcaseHeadingPositiveResult">
+              <a href="i__-2004532944_9.html">Internal UDS - NVM - Read FD10</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="DefaultCell">2</td>
+            <td class="TestcaseHeadingPositiveResult">
+              <a href="i__-2004532944_1869.html">Internal UDS - Read FD10</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="DefaultCell">3</td>
+            <td class="TestcaseHeadingPositiveResult">
+              <a href="i__-2004532944_4609.html">Internal UDS - NVM - Read FD2A</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="DefaultCell">4</td>
+            <td class="TestcaseHeadingPositiveResult">
+              <a href="i__-2004532944_6469.html">Internal UDS - Read FD2A</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="DefaultCell">5</td>
+            <td class="TestcaseHeadingNegativeResult">
+              <a href="i__-2004532944_11519.html">Internal UDS - NVM - Read F18C</a>
+            </td>
+          </tr>
+          <tr>
+            <td class="DefaultCell">6</td>
+            <td class="TestcaseHeadingPositiveResult">
+              <a href="i__-2004532944_13379.html">Internal UDS - Read F18C</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

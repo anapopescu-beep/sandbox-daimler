@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0157, ARCH_SW_CIL_0158, ARCH_SW_CIL_0159, ARCH_SW_CIL_0185, ARCH_SW_CIL_0186, ARCH_SW_CIL_0156
+ARCH_SW_CIL_0157: Frame BeltHdOvr_FL_State_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0159: Frame BeltHdOvr_FR_State_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0158: Signal BeltHdOvr_FL_Stat_ST3 shall be send though application when it�s needed (0,1,2,3).
+ARCH_SW_CIL_0185: If values for this signal are different than 0x00= RETRACT (Belt hand over retracted).Then all BSR cycles are inhibitted/aborted if signal is enabled in the coding.
+ARCH_SW_CIL_0186: If values for this signal are different than 0x00= RETRACT (Belt hand over retracted).Then all BSR cycles are inhibitted/aborted if signal is enabled in the coding.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal BeltHdOvr_FL_Stat_ST3 from frame BeltHdOvr_FL_State_ST3 to I_C02_BELTHDOVR_STAT_OUT_OF_END.
+
+	Step 4: Set a breakpoint in function cil_ManageInputSignals at line cil_ManageInhibitConditions();.
+
+Action: ARCH_SW_CIL_0157, ARCH_SW_CIL_0156
+
+	Step 5: Read variable cil_u8BeltHandover 
+		Expected result:  0x1.
+
+	Step 6: Set signal BeltHdOvr_FR_Stat_ST3 from frame BeltHdOvr_FR_State_ST3 to I_C02_BELTHDOVR_STAT_OUT_OF_END.
+
+	Step 7: Set a breakpoint in function cil_ManageInputSignals at line cil_ManageInhibitConditions();.
+
+Action: ARCH_SW_CIL_0159, ARCH_SW_CIL_0158, ARCH_SW_CIL_0186, ARCH_SW_CIL_0185
+
+	Step 8: Read variable cil_u8BeltHandover 
+		Expected result:  0x1.
+
+Postcondition
+
+	Step 9: Return ECU to default values

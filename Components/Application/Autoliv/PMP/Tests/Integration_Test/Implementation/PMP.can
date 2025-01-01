@@ -1,0 +1,2443 @@
+/*@!Encoding:1252*/
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Project_functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\WinIdea_Includes\Debugger_Defines.cin"
+}
+
+/*------------------------------------------------------------------------------
+                                    GLOBALS
+ ------------------------------------------------------------------------------*/
+/* To declare the constants used throurough the entire module, and global variables */
+variables
+{
+  float PN14_SupBat_Volt_ST3_OV = 18.0;
+  float PN14_SupBat_Volt_ST3_UV = 15.0;
+  float fPN14_SupBat_Volt_ST3;
+}
+
+/*------------------------------------------------------------------------------
+                                REPORT INFO
+ ------------------------------------------------------------------------------*/
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation();
+  
+  strncpy(cLogPathAndName, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\PMP\\",  elcount(cLogPathAndName));
+}
+
+/*------------------------------------------------------------------------------
+                                TEST EXECUTION
+------------------------------------------------------------------------------*/
+
+testcase SW_Int_PMP_ComponentInit_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0005");
+  AddRequirementInfo("ARCH_SW_PMP_0005", "PMP sw unit shall be initialized. voltage thresholds are aligned with the ADC format.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+    
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_Init().");
+    debugger_setRelativeFunctionBpAtLine("PMP_Init", "0");
+    /*********************************************************/
+    
+    testStep("", "Reset the debugger.");
+    debugger_reset();
+  
+    testStep("", "Run the debugger.");
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    testCaseComment("Action: ARCH_SW_PAL_0010");
+    testStep("STEP", "Check if CPU has stopped in function PMP_Init(). -->  BP reached");
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "BP reached.");
+    /*********************************************************/
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetBatteryVolatge_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0010");
+  AddRequirementInfo("ARCH_SW_PMP_0010", "PMP shall be providing raw battery voltage value.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0010");
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runPreSafeRecorder at the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "10");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+    
+    debugger_deleteRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage at the RTE Call for AdcIf_runGetKL30_V function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage", "10");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetKL30_V.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable pmp_u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer");
+    debugger_readLocalVariable("pmp_u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "pmp_u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+    testStep("STEP", "Read local variable (pu16Voltage) --> Variable read");
+    debugger_readLocalVariable("*(pu16Voltage)");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+    
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage", "18");
+    testStep("STEP", "Set a breakpoint in function MMG_runPreSafeRecorder after the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "12");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable mmg_u16LocalVoltage --> Variable read is the same from *(pu16Voltage) data pointer");
+    debugger_readLocalVariable("mmg_u16LocalVoltage");
+    ExpectedTestResult(debugger_result, "mmg_u16LocalVoltage", "Variable read is the same from *(pu16Voltage) data pointer");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetBatteryVolatge_20ms_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0011");
+  AddRequirementInfo("ARCH_SW_PMP_0011", "PMP shall be providing filtered battery voltage value every 2ms.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0011");
+  
+    testStep("STEP", "Set a breakpoint in function BFE_runExecuteStandardSteps at the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runExecuteStandardSteps", "26");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+    
+    debugger_deleteRelativeFunctionBpAtLine("BFE_runExecuteStandardSteps", "26");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage_20ms at the RTE Call for AdcIf_runGetKL30_V function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_20ms", "10");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetKL30_V.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_20ms", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage_20ms at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_20ms", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer");
+    debugger_readLocalVariable("u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+    testStep("STEP", "Read local variable (pu16Voltage)");
+    debugger_readLocalVariable("*(pu16Voltage)");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+    
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_20ms", "18");
+    testStep("STEP", "Set a breakpoint in function BFE_runExecuteStandardSteps after the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runExecuteStandardSteps", "29");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable pu16Voltage_b --> Variable read is the same from *(pu16Voltage) data pointer");
+    debugger_readLocalVariable("pu16Voltage_b");
+    ExpectedTestResult(debugger_result, "pu16Voltage_b", "Variable read is the same from *(pu16Voltage) data pointer");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetBatteryVolatge_10ms_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0012");
+  AddRequirementInfo("ARCH_SW_PMP_0012", "PMP shall be providing filtered battery voltage value every 10ms.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0012");
+  
+    testStep("STEP", "Set a breakpoint in function BFE_runScheduleStep at the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runScheduleStep", "30");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+    
+    debugger_deleteRelativeFunctionBpAtLine("BFE_runScheduleStep", "30");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage_10ms at the RTE Call for AdcIf_runGetKL30_V function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_10ms", "10");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetKL30_V.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_10ms", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage_10ms at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_10ms", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable pmp_u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer");
+    debugger_readLocalVariable("pmp_u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "pmp_u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+    testStep("STEP", "Read local variable (pu16Voltage) --> Variable read.");
+    debugger_readLocalVariable("*(pu16Voltage)");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+    
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_10ms", "18");
+    testStep("STEP", "Set a breakpoint in function BFE_runScheduleStep after the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runScheduleStep", "33");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable pu16Voltage_d --> Variable read is the same from *(pu16Voltage) data pointer");
+    debugger_readLocalVariable("pu16Voltage_d");
+    ExpectedTestResult(debugger_result, "pu16Voltage_d", "Variable read is the same from *(pu16Voltage) data pointer");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetBatteryVolatge_100ms_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0014, ARCH_SW_PMP_0020");
+  AddRequirementInfo("ARCH_SW_PMP_0014", "PMP shall be providing filtered battery voltage value every 100ms.");
+  AddRequirementInfo("ARCH_SW_PMP_0020", "The AdcIf_runGetKL30_V_(Ext)* function shall be called to get the sampled value of the KL30 signal.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0014");
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", "47");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+    
+    debugger_deleteRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", "47");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage_100ms at the RTE Call for AdcIf_runGetKL30_V function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_100ms", "10");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetKL30_V.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_100ms", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetBatteryVoltage_100ms at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_100ms", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable pmp_u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer.");
+    debugger_readLocalVariable("pmp_u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "pmp_u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+    testStep("STEP", "Read local variable (pu16Voltage) --> Variable read.");
+    debugger_readLocalVariable("*(pu16Voltage)");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+    
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_100ms", "18");
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC after the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", "51");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0020");
+    testStep("STEP", "Evaluate local variable u16FilteredVbatPowerVoltage_mV --> Variable read is the same from *(pu16Voltage) data pointer");
+    debugger_readLocalVariable("u16FilteredVbatPowerVoltage_mV");
+    ExpectedTestResult(debugger_result, "u16FilteredVbatPowerVoltage_mV", "Variable read is the same from *(pu16Voltage) data pointer");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_GetCorrectedTemperature_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_9014, ARCH_SW_PMP_9009, ARCH_SW_PMP_0265");
+  AddRequirementInfo("ARCH_SW_PMP_9014", "PMP shall provide the corrected temperature of the ECU.");
+  AddRequirementInfo("ARCH_SW_PMP_9009", "The AdcIf_runGetMcu_T_10ms function shall be called to get the sampled value of the unfiltered ECU temperature from the ADC.");
+  AddRequirementInfo("ARCH_SW_PMP_0265", "The PMP_GetCorrectedTemperature function shall be called to get the sampled value of the temperature (measured at MCU level).");
+  AddRequirementInfo("ARCH_SW_PMP_0260", "PMP shall provide the filtered temperature to the rest of the application.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_9014");
+  
+    testStep("STEP", "Set a breakpoint in function BFE_runScheduleStep at the RTE Call for PMP_runGetFilteredTemperature function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runScheduleStep", "36");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+    
+    debugger_deleteRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", "36");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetFilteredTemperature at the pmp_GetCorrectedTemperature function call --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature", "0");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function pmp_GetCorrectedTemperature.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16Temperature --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*pu16Temperature");
+ExpectedTestResult(debugger_result, "pu16Temperature", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature", "0");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetFilteredTemperature at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature", "25");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_9009");
+    testStep("STEP", "Evaluate local variable pmp_u16TemperatureRawValue --> Variable read is the same from *pu16Temperature data pointer.");
+    debugger_readLocalVariable("pmp_u16TemperatureRawValue");
+ExpectedTestResult(debugger_result, "pmp_u16TemperatureRawValue", "Variable read is the same from *pu16Temperature data pointer.");
+  
+    testStep("STEP", "Read local variable pu16FilteredTemperature --> Variable read");
+    debugger_readLocalVariable("*pu16FilteredTemperature");
+ExpectedTestResult(debugger_result, "pu16FilteredTemperature", "Variable read.");
+    
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature", "25");
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC after the RTE Call for PMP_runGetBatteryVoltage function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runScheduleStep", "39");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0265, ARCH_SW_PMP_0260");
+    testStep("STEP", "Evaluate local variable pu16FilteredTemperature_a --> Variable read is the same from *(pu16FilteredTemperature) data pointer");
+    debugger_readLocalVariable("pu16FilteredTemperature_a");
+    ExpectedTestResult(debugger_result, "pu16FilteredTemperature_a", "Variable read is the same from *(pu16FilteredTemperature) data pointer");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runSurveyBatteryVoltage_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0200, ARCH_SW_PMP_0201, ARCH_SW_PMP_0202, ARCH_SW_PMP_0210");
+  AddRequirementInfo("ARCH_SW_PMP_0200", "PMP shall monitor the stability of the battery voltage and update a battery status variable for the rest of application.");
+  AddRequirementInfo("ARCH_SW_PMP_0201", "The NVP_u16KL30MinimumThr parameter  shall be read to detect unstable battery voltage situation.");
+  AddRequirementInfo("ARCH_SW_PMP_0202", "The NVP_u16KL30MaximumThr parameter  shall be read to detect unstable battery voltage situation");
+  AddRequirementInfo("ARCH_SW_PMP_0210", "The AdcIf_runGetKL30_V function shall be called to get the sampled value of the KL30 signal as a raw value function shall be called to get the sampled value of the Cpu regulator signal");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0200, ARCH_SW_PMP_0201, ARCH_SW_PMP_0202");
+  
+    testStep("STEP", "Set a breakpoint in function PMP_runSurveyBatteryVoltage at the RTE Call for AdcIf_runGetKL30_V function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runSurveyBatteryVoltage", "9");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetKL30_V.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel");
+    debugger_readLocalVariable("*pu16SampledSignal");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runSurveyBatteryVoltage", "9");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetFilteredTemperature at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runSurveyBatteryVoltage", "57");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testCaseComment("Action: ARCH_SW_PMP_0210");
+    testStep("STEP", "Evaluate local variable pmp_u16InternalAnalogSignal --> Variable read is the same from *pu16SampledSignal data pointer");
+    debugger_readLocalVariable("pmp_u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "pmp_u16InternalAnalogSignal", "Variable read is the same from *pu16SampledSignal data pointer.");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetFilteredTemperature_deg_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0280, ARCH_SW_PMP_0285");
+  AddRequirementInfo("ARCH_SW_PMP_0280", "PMP shall provide the temperature in Celsius degrees.");
+  AddRequirementInfo("ARCH_SW_PMP_0285", "The PMP_runGetFilteredTemperature function shall be called to get the sampled value of the temperature (measured at MCU level).");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0280");
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetFilteredTemperature_deg function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", "56");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", "56");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetFilteredTemperature_deg at the PMP_runGetFilteredTemperature function call--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature_deg", "0");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    testStep("", "Run Until Return of function PMP_runGetFilteredTemperature_deg");
+    debugger_runUntilReturn("10");
+  
+    testStep("STEP", "Read local variable ps16InternalTemperature_deg --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*ps16InternalTemperature_deg");
+    ExpectedTestResult(debugger_result, "ps16InternalTemperature_deg", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature_deg", "0");
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", "169");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testCaseComment("Action: ARCH_SW_PMP_0210");
+    testStep("STEP", "Evaluate local variable s16ECUInternalTemperature --> Variable read is the same from *ps16InternalTemperature_deg data pointer.");
+    debugger_readLocalVariable("s16ECUInternalTemperature");
+    ExpectedTestResult(debugger_result, "s16ECUInternalTemperature", "Variable read is the same from *ps16InternalTemperature_deg data pointer.");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetDeficiencyLevel_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0320");
+  AddRequirementInfo("ARCH_SW_PMP_0320", "PMP shall provide the estimation of the energy stored in the motor.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0320");
+  
+    testStep("STEP", "Set a breakpoint in function MMG_runPreSafeRecorder at the RTE Call for PMP_runGetDeficiencyLevel function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "8");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+
+    testStep("", "Run until return of function PMP_runGetDeficiencyLevel");
+    debugger_runUntilReturn("10");
+  
+    testStep("STEP", "Read local variable pu32DeficiencyLevel --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*pu32DeficiencyLevel");
+    ExpectedTestResult(debugger_result, "pu32DeficiencyLevel", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "8");
+    testStep("STEP", "Set a breakpoint in function MMG_runPreSafeRecorder at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runPreSafeRecorder", "130");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable mmg_u32DeficiencyLevel --> Variable read is the same from *pu32DeficiencyLevel data pointer.");
+    debugger_readLocalVariable("mmg_u32DeficiencyLevel");
+    ExpectedTestResult(debugger_result, "mmg_u32DeficiencyLevel", "Variable read is the same from *pu32DeficiencyLevel data pointer.");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runComputeDeficiencyLevel_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0340, ARCH_SW_PMP_9006, ARCH_SW_PMP_9007, ARCH_SW_PMP_9008, ARCH_SW_PMP_9004, ARCH_SW_PMP_9005, ARCH_SW_PMP_0341, ARCH_SW_PMP_9001, ARCH_SW_PMP_9002, ARCH_SW_PMP_9003");
+  AddRequirementInfo("ARCH_SW_PMP_0340", "PMP shall compute the estimation of the energy stored in the motor.");
+  AddRequirementInfo("ARCH_SW_PMP_9006", "If the current consumption is different than 0 and temperature is below 35 degrees, the new deficiency level shall be computed by adding the square current to the previous deficiency level.");
+  AddRequirementInfo("ARCH_SW_PMP_9007", "If the current consumption is different than 0 and the temperature is above 35 degrees, the new deficiency level shall be computed using the following formula: new def level= previous def level+ square current * (1+2*(temperature-35)/100).");
+  AddRequirementInfo("ARCH_SW_PMP_9008", "If the current consumption is 0, the deficiency level shall be decreased with the value of  NVP_u8SWThermalProtecDecStep.");
+  AddRequirementInfo("ARCH_SW_PMP_9004", "NVP_u8SWThermalProtecDecStep shall be used to get the decrement step used to decrease the deficiency level when current consumption is 0.");
+  AddRequirementInfo("ARCH_SW_PMP_9005", "NVP_u32SWThermalProtectionValidationThrs shall be used to get the maximum value of the deficiency level to which its value will be saturated.");
+  AddRequirementInfo("ARCH_SW_PMP_0341", "PAL_runReadMotorCurrentInA shall be called to get the measured current in amps.");
+  AddRequirementInfo("ARCH_SW_PMP_9001", "PMP_runGetFilteredTemperature_deg shall be called to get the temperature in degrees.");
+  AddRequirementInfo("ARCH_SW_PMP_9002", "PMP shall compute the estimation of the energy stored in the motor.");
+  AddRequirementInfo("ARCH_SW_PMP_9003", "Rte_IrvWrite_PMP_runComputeDeficiencyLevel_u32DeficiencyLevel shall be used to write the new deficiency level. ");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0340, ARCH_SW_PMP_9006, ARCH_SW_PMP_9007, ARCH_SW_PMP_9008, ARCH_SW_PMP_9004, ARCH_SW_PMP_9005, ARCH_SW_PMP_9002");
+  
+    testStep("STEP", "Set a breakpoint in function PMP_runComputeDeficiencyLevel at the RTE Call for PAL_runReadMotorCurrentInA function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runComputeDeficiencyLevel", "25");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+
+    testStep("", "Run until return of function PAL_runReadMotorCurrentInA");
+    debugger_runUntilReturn("10");
+  
+    testStep("STEP", "Read local variable ps8MotorCurrentInA --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*ps8MotorCurrentInA");
+    ExpectedTestResult(debugger_result, "ps8MotorCurrentInA", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runComputeDeficiencyLevel", "25");
+    testStep("STEP", "Set a breakpoint in function PMP_runComputeDeficiencyLevel at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runComputeDeficiencyLevel", "49");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+
+    testStep("", "Run until return of function PMP_runGetFilteredTemperature_deg");
+    debugger_runUntilReturn("10");
+  
+    testStep("STEP", "Read local variable ps16InternalTemperature_deg --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*ps16InternalTemperature_deg");
+ExpectedTestResult(debugger_result, "ps16InternalTemperature_deg", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runComputeDeficiencyLevel", "49");
+    testStep("STEP", "Set a breakpoint in function PMP_runComputeDeficiencyLevel at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runComputeDeficiencyLevel", "111");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testCaseComment("Action: ARCH_SW_PMP_0341");
+    testStep("STEP", "Evaluate local variable pmp_s8MotorCurrentInA --> Variable read is the same from *ps8MotorCurrentInA data pointer.");
+    debugger_readLocalVariable("pmp_s8MotorCurrentInA");
+ExpectedTestResult(debugger_result, "pmp_s8MotorCurrentInA", "Variable read is the same from *ps8MotorCurrentInA data pointer.");
+  
+    testCaseComment("Action: ARCH_SW_PMP_9001, ARCH_SW_PMP_9003");
+    testStep("STEP", "Evaluate local variable pmp_s16InternalTemperature_deg --> Variable read is the same from *ps16InternalTemperature_deg data pointer.");
+    debugger_readLocalVariable("pmp_s16InternalTemperature_deg");
+ExpectedTestResult(debugger_result, "pmp_s16InternalTemperature_deg", "Variable read is the same from *ps16InternalTemperature_deg data pointer.");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetBoardResistance_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0381, ARCH_SW_PMP_0382");
+  AddRequirementInfo("ARCH_SW_PMP_0381", "This function shall return the NVP Parameter that indicates the ECU resistance.");
+  AddRequirementInfo("ARCH_SW_PMP_0382", "The NVP_u16EcuResistance parameter shall be read.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0381");
+  
+    testStep("STEP", "Set a breakpoint in function BFE_runScheduleStep at the call for M_ManageStepEvents function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runScheduleStep", "173");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    debugger_deleteRelativeFunctionBpAtLine("M_ManageStepEvents", "173");
+    testStep("STEP", "Set a breakpoint in function M_ManageStepEvents at the RTE Call for PMP_runGetBoardResistance function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("M_ManageStepEvents", "207");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+
+    testStep("", "Run until return of function PMP_runGetBoardResistance");
+    debugger_runUntilReturn("10");
+  
+    testStep("STEP", "Overwrite variable NVP_u16EcuResistance with value 0x0030 --> Overwritten global variable with 0x0030");
+    debugger_writeVariable("uint8", "CALIB_BLOCK_ID_ECU_PROPERTIES_RomBlockData,,app.elf", "0", "30");
+    ExpectedTestResult(debugger_result, "0x30", "Overwritten global variable with 0x0030");
+  
+    debugger_deleteRelativeFunctionBpAtLine("M_ManageStepEvents", "207");
+    testStep("STEP", "Set a breakpoint in function after RTE Call for PMP_runGetBoardResistance function--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("M_ManageStepEvents", "213");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0382");
+    testStep("STEP", "Evaluate local variable pu16Resistance_mOhm --> Variable read equal to 0x0030");
+    debugger_readLocalVariable("pu16Resistance_mOhm");
+ExpectedTestResult(debugger_result, "0x0030", "Variable read equal to 0x0030.");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetMotorResistance_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0383, ARCH_SW_PMP_0384, ARCH_SW_PMP_0385");
+  AddRequirementInfo("ARCH_SW_PMP_0383", "This function shall provide the motor resistance compensated in temperature..");
+  AddRequirementInfo("ARCH_SW_PMP_0384", "The NVP_au16MotorResistTempIndex parameter shall be read.");
+  AddRequirementInfo("ARCH_SW_PMP_0385", "The NVP_au8MotorResistReferences parameter shall be read.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0383, ARCH_SW_PMP_0384, ARCH_SW_PMP_0385");
+  
+    testStep("STEP", "Set a breakpoint in function BFE_runScheduleStep at the call for M_ManageStepEvents function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("BFE_runScheduleStep", "173");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    debugger_deleteRelativeFunctionBpAtLine("M_ManageStepEvents", "173");
+    testStep("STEP", "Set a breakpoint in function M_ManageStepEvents at the RTE Call for PMP_runGetMotorResistance function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("M_ManageStepEvents", "201");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+
+    testStep("", "Run until return of function PMP_runGetMotorResistance");
+    debugger_runUntilReturn("10");
+  
+    testStep("STEP", "Read variable pu16Resistance_mOhm --> Variable read");
+    debugger_readLocalVariable("*pu16Resistance_mOhm");
+ExpectedTestResult(debugger_result, "pu16Resistance_mOhm", "Variable read.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("M_ManageStepEvents", "201");
+    testStep("STEP", "Set a breakpoint in function after RTE Call for PMP_runGetMotorResistance function--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("M_ManageStepEvents", "207");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+    testStep("STEP", "Evaluate local variable pu16Resistance_mOhm_a --> Variable read is equal to pu16Resistance_mOhm data pointer contents.");
+    debugger_readLocalVariable("pu16Resistance_mOhm_a");
+ExpectedTestResult(debugger_result, "0x0030", "Variable read is equal to pu16Resistance_mOhm data pointer contents..");
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_Autotest_CheckPowerSupplyOV_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_1000, ARCH_SW_PMP_1001, ARCH_SW_PMP_1005, ARCH_SW_PMP_1007, ARCH_SW_PMP_1008");
+  AddRequirementInfo("ARCH_SW_PMP_1000", "PMP shall check if an overvoltage is detected on the power stage of the battery voltage.");
+  AddRequirementInfo("ARCH_SW_PMP_1001", "NVP parameters shall be used by this auto-tests.");
+  AddRequirementInfo("ARCH_SW_PMP_1005", "PMP_runGetBatteryVoltage_100ms shall be called to get the measured value on the power supply.");
+  AddRequirementInfo("ARCH_SW_PMP_1007", "ATM_runGetTestResult shall be called to get the status oft specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PMP_1008", "ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.");
+
+
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1000, ARCH_SW_PMP_1001");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyOV at the RTE Call for PMP_Autotest_CheckPowerSupplyOV autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyOV", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 2  **************************/
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyOV", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the RTE call for GetTestResult --> BP reached");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "15");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    /*********************  STEP 3  **************************/
+    testStep("", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+  /*********************  STEP 5  **************************/ 
+    testStep("STEP", "Write autotest result with 0x1 --> Variable overwritten with value 0x1");
+    debugger_writeLocalVariable("*u8TestResult", "1");
+    ExpectedTestResult(debugger_result, "1", "Variable overwritten with value 0x1");
+  /*********************************************************/
+  
+  /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "15");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the RTE Call for PMP_runGetBatteryVoltage_100ms --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "23");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_100ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu16Voltage");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+  /*********************************************************/
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "23");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the RTE Call for ERH_runGetAecStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "26");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("pu8AecStatus");
+ExpectedTestResult(debugger_result, "pu8AecStatus", "Variable read.");
+  /*********************************************************/
+  
+  /*********************  STEP 8  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "26");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOV at the return of autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "71");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  /*********************  STEP 9  **************************/
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*pu8TestResult", "1");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is set to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1007");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PreviousADCTestResult --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8PreviousADCTestResult");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is equal to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1008");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u8AECStatus --> Variable is equal to *pmp_u8AECStatus data pointer.");
+    debugger_readLocalVariable("pmp_u8AECStatus");
+    ExpectedTestResult(debugger_result, "pmp_u8AECStatus", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1005");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u16FilteredVbatPowerVoltage --> Variable is equal to *pu16Voltage data pointer.");
+    debugger_readLocalVariable("pmp_u16FilteredVbatPowerVoltage");
+    ExpectedTestResult(debugger_result, "pmp_u16FilteredVbatPowerVoltage", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+  /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOV", "71");
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyOV after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyOV", "7");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8TestResult");
+    ExpectedTestResult(debugger_result, "1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_Autotest_CheckPowerSupplyUV_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_1050, ARCH_SW_PMP_1051, ARCH_SW_PMP_1055, ARCH_SW_PMP_1057, ARCH_SW_PMP_1058, ARCH_SW_PMP_1059");
+  AddRequirementInfo("ARCH_SW_PMP_1050", "PMP shall check if an undervoltage is detected on the power stage of the battery voltage.");
+  AddRequirementInfo("ARCH_SW_PMP_1051", "NVP parameters shall be used by this auto-tests.");
+  AddRequirementInfo("ARCH_SW_PMP_1055", "PMP_runGetBatteryVoltage_100ms shall be called to get the measured value on the power supply.");
+  AddRequirementInfo("ARCH_SW_PMP_1057", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PMP_1058", "MMG_runCheckModeStatus shall be called to get the tensioning state.");
+  AddRequirementInfo("ARCH_SW_PMP_1059", "ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.");
+
+
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1050, ARCH_SW_PMP_1051");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyUV at the RTE Call for PMP_Autotest_CheckPowerSupplyUV autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUV", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 2  **************************/
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUV", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUV at the RTE call for GetTestResult --> BP reached");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "15");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    /*********************  STEP 3  **************************/
+    testStep("", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+  /*********************  STEP 5  **************************/ 
+    testStep("STEP", "Write autotest result with 0x1 --> Variable overwritten with value 0x1");
+    debugger_writeLocalVariable("*u8TestResult", "1");
+    ExpectedTestResult(debugger_result, "1", "Variable overwritten with value 0x1");
+  /*********************************************************/
+  
+  /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "15");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUV at the RTE Call for PMP_runGetBatteryVoltage_100ms --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "23");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_100ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu16Voltage");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+  /*********************************************************/
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "23");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUV at the RTE Call for ERH_runGetAecStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "26");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu8AecStatus");
+ExpectedTestResult(debugger_result, "pu8AecStatus", "Variable read.");
+  /*********************************************************/
+  
+  /*********************  STEP 8  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "26");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUV at the return of autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "71");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  /*********************  STEP 9  **************************/
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*pu8TestResult", "1");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is set to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1057");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PreviousADCTestResult --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8PreviousADCTestResult");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is equal to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1059");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u8AECStatus --> Variable is equal to *pmp_u8AECStatus data pointer.");
+    debugger_readLocalVariable("pmp_u8AECStatus");
+    ExpectedTestResult(debugger_result, "pmp_u8AECStatus", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1055");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u16FilteredVbatPowerVoltage --> Variable is equal to *pu16Voltage data pointer.");
+    debugger_readLocalVariable("pmp_u16FilteredVbatPowerVoltage");
+    ExpectedTestResult(debugger_result, "pmp_u16FilteredVbatPowerVoltage", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+  /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "71");
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyUV after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUV", "7");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8TestResult");
+    ExpectedTestResult(debugger_result, "1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_Autotest_CheckPowerSupplyUVDuringActivation_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_1060, ARCH_SW_PMP_1080, ARCH_SW_PMP_1061, ARCH_SW_PMP_1065, ARCH_SW_PMP_1067, ARCH_SW_PMP_1068, ARCH_SW_PMP_1069, ARCH_SW_PMP_1064");
+  AddRequirementInfo("ARCH_SW_PMP_1060", "PMP shall check if an undervoltage is detected on the power stage of the battery voltage during activation.");
+  AddRequirementInfo("ARCH_SW_PMP_1080", "PMP shall check if an undervoltage is detected on the power stage of the battery voltage at trigger of request.");
+  AddRequirementInfo("ARCH_SW_PMP_1061", "PMP_runGetBatteryVoltage_10ms shall be called to get the measured value on the power supply.");
+  AddRequirementInfo("ARCH_SW_PMP_1067", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PMP_1068", "MMG_runCheckModeStatus shall be called to get the tensioning state.");
+  AddRequirementInfo("ARCH_SW_PMP_1069", "ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.");
+  AddRequirementInfo("ARCH_SW_PMP_1064", "Rte_CIL_psrCustomerSpecific_u8TriggerRequest shall be called to get the status of the request.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1060, ARCH_SW_PMP_1080, ARCH_SW_PMP_1061");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyUVDuringActivation at the RTE Call for CheckPowerSupplyUVDuringActivation autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUVDuringActivation", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 2  **************************/
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUVDuringActivation", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE call for GetTestResult --> BP reached");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "22");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    /*********************  STEP 3  **************************/
+    testStep("", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+  /*********************  STEP 5  **************************/ 
+    testStep("STEP", "Write autotest result with 0x1 --> Variable overwritten with value 0x1");
+    debugger_writeLocalVariable("*u8TestResult", "1");
+    ExpectedTestResult(debugger_result, "1", "Variable overwritten with value 0x1");
+  /*********************************************************/
+  
+      /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "22");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Call for MMG_runCheckModeStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "29");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return MMG_runCheckModeStatus and evaluate *bModeStatus data pointer --> Variable read");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*bModeStatus");
+    ExpectedTestResult(debugger_result, "bModeStatus", "Variable read.");
+  /*********************************************************/
+  
+        /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "29");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Read of status of tensioning request --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "32");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "32");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Call for PMP_runGetBatteryVoltage_10ms --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "35");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu16Voltage");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+  /*********************************************************/
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "35");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Call for ERH_runGetAecStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "38");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu8AecStatus");
+ExpectedTestResult(debugger_result, "pu8AecStatus", "Variable read.");
+  /*********************************************************/
+  
+  /*********************  STEP 8  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "38");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the return of autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUVDuringActivation", "127");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  /*********************  STEP 9  **************************/
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*pu8TestResult", "1");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is set to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1067");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PreviousADCTestResult --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8PreviousADCTestResult");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is equal to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1064");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u8AECStatus --> Variable is equal to *pmp_u8AECStatus data pointer.");
+    debugger_readLocalVariable("pmp_u8AECStatus");
+    ExpectedTestResult(debugger_result, "pmp_u8AECStatus", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1069");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PresafeTriggerRequest --> Variable is equal to u8PresafeTriggerRequest data pointer"); // NOT DONE
+    debugger_readLocalVariable("u8PresafeTriggerRequest");
+ExpectedTestResult(debugger_result, "u8PresafeTriggerRequest", "Variable is equal to u8PresafeTriggerRequest data pointer");
+  /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1061");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u16FilteredVbatPowerVoltage --> Variable is equal to *pu16Voltage data pointer.");
+    debugger_readLocalVariable("u16FilteredVbatPowerVoltage");
+    ExpectedTestResult(debugger_result, "u16FilteredVbatPowerVoltage", "Variable is equal to *pu16Voltage data pointer");
+  /*********************************************************/
+  
+  /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "71");
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyUV after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUV", "7");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8TestResult");
+    ExpectedTestResult(debugger_result, "1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_Autotest_CheckPowerSupplyOVDuringActivation_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "RCH_SW_PMP_1070, ARCH_SW_PMP_1090, ARCH_SW_PMP_1071, ARCH_SW_PMP_1075, ARCH_SW_PMP_1077, ARCH_SW_PMP_1078, ARCH_SW_PMP_1079");
+  AddRequirementInfo("ARCH_SW_PMP_1070", "PMP shall check if an overrvoltage is detected on the power stage of the battery voltage during activation.");
+  AddRequirementInfo("ARCH_SW_PMP_1090", "PMP shall check if an overrvoltage is detected on the power stage of the battery voltage at trigger of request.");
+  AddRequirementInfo("ARCH_SW_PMP_1071", "NVP parameters shall be used by this auto-tests ");
+  AddRequirementInfo("ARCH_SW_PMP_1075", "PMP_runGetBatteryVoltage_100ms shall be called to get the measured value on the power supply");
+  AddRequirementInfo("ARCH_SW_PMP_1077", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PMP_1078", "MMG_runCheckModeStatus shall be called to get the tensioning state.");
+  AddRequirementInfo("ARCH_SW_PMP_1079", "ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1070, ARCH_SW_PMP_1090, ARCH_SW_PMP_1071");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyOVDuringActivation at the RTE Call for CheckPowerSupplyOVDuringActivation autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyOVDuringActivation", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 2  **************************/
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUVDuringActivation", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation at the RTE call for GetTestResult --> BP reached");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "22");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    /*********************  STEP 3  **************************/
+    testStep("", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+  /*********************  STEP 5  **************************/ 
+    testStep("STEP", "Write autotest result with 0x1 --> Variable overwritten with value 0x1");
+    debugger_writeLocalVariable("*u8TestResult", "1");
+    ExpectedTestResult(debugger_result, "1", "Variable overwritten with value 0x1");
+  /*********************************************************/
+  
+      /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "22");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation at the RTE Call for MMG_runCheckModeStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "29");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return MMG_runCheckModeStatus and evaluate *bModeStatus data pointer --> Variable read");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*bModeStatus");
+    ExpectedTestResult(debugger_result, "bModeStatus", "Variable read.");
+  /*********************************************************/
+  
+        /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "29");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation at the RTE Read of status of tensioning request --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "32");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "32");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation at the RTE Call for PMP_runGetBatteryVoltage_100ms --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "35");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_100ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu16Voltage");
+    ExpectedTestResult(debugger_result, "pu16Voltage", "Variable read.");
+  /*********************************************************/
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "35");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation at the RTE Call for ERH_runGetAecStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "38");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu8AecStatus");
+ExpectedTestResult(debugger_result, "pu8AecStatus", "Variable read.");
+  /*********************************************************/
+  
+  /*********************  STEP 8  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "38");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckPowerSupplyOVDuringActivation at the return of autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyOVDuringActivation", "127");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  /*********************  STEP 9  **************************/
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*pu8TestResult", "1");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is set to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1077");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PreviousADCTestResult --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8PreviousADCTestResult");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is equal to 0x1");
+  /*********************************************************/
+  
+  testCaseComment("Action: ARCH_SW_PMP_1079");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u8AECStatus --> Variable is equal to *pmp_u8AECStatus data pointer.");
+    debugger_readLocalVariable("pmp_u8AECStatus");
+    ExpectedTestResult(debugger_result, "pmp_u8AECStatus", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1078");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PresafeTriggerRequest --> Variable is equal to u8PresafeTriggerRequest data pointer."); // NOT DONE
+    debugger_readLocalVariable("u8PresafeTriggerRequest");
+    ExpectedTestResult(debugger_result, "u8PresafeTriggerRequest", "Variable is equal to u8PresafeTriggerRequest data pointer");
+  /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1075");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u16FilteredVbatPowerVoltage --> Variable is equal to *pu16Voltage data pointer.");
+    debugger_readLocalVariable("pmp_u16FilteredVbatPowerVoltage");
+    ExpectedTestResult(debugger_result, "pmp_u16FilteredVbatPowerVoltage", "Variable is equal to *pu16Voltage data pointer");
+  /*********************************************************/
+  
+  /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckPowerSupplyUV", "71");
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckPowerSupplyUV after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckPowerSupplyUV", "7");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8TestResult");
+    ExpectedTestResult(debugger_result, "1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_Autotest_CheckTemperatureSensor_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_1081, ARCH_SW_PMP_1082");
+  AddRequirementInfo("ARCH_SW_PMP_1081", "NVP parameters shall be used by this auto-tests.");
+  AddRequirementInfo("ARCH_SW_PMP_1082", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1081, ARCH_SW_PMP_1082");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckTemperatureSensor at the RTE Call for PMP_cbk_CheckTemperatureSensor autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckTemperatureSensor", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 2  **************************/
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckTemperatureSensor", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckTemperatureSensor at the RTE call for GetTestResult --> BP reached");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckTemperatureSensor", "9");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    /*********************  STEP 3  **************************/
+    testStep("", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+  /*********************  STEP 5  **************************/ 
+    testStep("STEP", "Write autotest result with 0x1 --> Variable overwritten with value 0x1");
+    debugger_writeLocalVariable("*u8TestResult", "1");
+    ExpectedTestResult(debugger_result, "1", "Variable overwritten with value 0x1");
+  /*********************************************************/
+
+  /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckTemperatureSensor", "9");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckTemperatureSensor after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckTemperatureSensor", "30");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+  
+    testCaseComment("Action: ARCH_SW_PMP_1082");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate u8PreviousADCTestResult --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8PreviousADCTestResult");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is equal to 0x1");
+  /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8TestResult");
+    ExpectedTestResult(debugger_result, "1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_Autotest_CheckSystemOV_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_1101, ARCH_SW_PMP_1102, ARCH_SW_PMP_1110, ARCH_SW_PMP_1120");
+  AddRequirementInfo("ARCH_SW_PMP_1110", "PMP shall check if an undervoltage is detected in the system, signal PN14_SupBat_Volt_ST3.");
+  AddRequirementInfo("ARCH_SW_PMP_1120", "PMP shall convert the signal PN14_SupBat_Volt_ST3 in V by using 0.025 V units.");
+  AddRequirementInfo("ARCH_SW_PMP_1101", "Value of signal PN14_SupBat_Volt_ST3 shall be an input.");
+  AddRequirementInfo("ARCH_SW_PMP_1102", "ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.");
+
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1110, ARCH_SW_PMP_1120");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckSystemOV at the RTE Call for CheckSystemOV autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckSystemOV", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckSystemOV", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckSystemOV at the RTE Call for ERH_runGetAecStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemOV", "17");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu8AecStatus");
+ExpectedTestResult(debugger_result, "pu8AecStatus", "Variable read.");
+  /*********************************************************/
+  
+      testCaseComment("Action: ARCH_SW_PMP_1101");
+  /*********************  STEP 7  **************************/ 
+   testStep("STEP", "Write a value greater than 16V on signal PN14_SupBat_Volt_ST3 --> Signal value set to 18.");
+   setSignal(PN14_SupBat_Volt_ST3, PN14_SupBat_Volt_ST3_OV);
+   fPN14_SupBat_Volt_ST3 = getSignal(PN14_SupBat_Volt_ST3);
+  
+    /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemOV", "17");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckSystemOV after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemOV", "62");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+
+    testCaseComment("Action: ARCH_SW_PMP_1102");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u8AECStatus --> Variable is equal to *pmp_u8AECStatus data pointer.");
+    debugger_readLocalVariable("pmp_u8AECStatus");
+    ExpectedTestResult(debugger_result, "pmp_u8AECStatus", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("u8TestResult");
+    ExpectedTestResult(debugger_result, "1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_Autotest_CheckSystemUV_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_1100, ARCH_SW_PMP_1111, ARCH_SW_PMP_1112");
+  AddRequirementInfo("ARCH_SW_PMP_1100", "PMP shall check if an undervoltage is detected in the system, signal PN14_SupBat_Volt_ST3.");
+  AddRequirementInfo("ARCH_SW_PMP_1111", "Value of signal PN14_SupBat_Volt_ST3 shall be an input.");
+  AddRequirementInfo("ARCH_SW_PMP_1112", "ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoints from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+
+  RunPreTs();
+  //====================================================
+
+  testCaseComment("Action: ARCH_SW_PMP_1100, ARCH_SW_PMP_1102");
+    /*********************  STEP 1  **************************/
+    testStep("STEP", "Set a breakpoint in function PMP_cbk_CheckSystemUV at the RTE Call for CheckSystemUV autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_cbk_CheckSystemUV", "4");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    /*********************  STEP 6  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_cbk_CheckSystemUV", "4");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckSystemUV at the RTE Call for ERH_runGetAecStatus --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemUV", "17");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  /*********************************************************/
+  
+    /*********************  STEP 3  **************************/
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+    /*********************************************************/
+  
+    /*********************  STEP 7  **************************/ 
+    testStep("STEP", "Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer --> Variable read from ADC.");
+    debugger_runUntilReturn("10");
+    debugger_readLocalVariable("*pu8AecStatus");
+ExpectedTestResult(debugger_result, "pu8AecStatus", "Variable read.");
+  /*********************************************************/
+  
+      testCaseComment("Action: ARCH_SW_PMP_1101");
+  /*********************  STEP 7  **************************/ 
+   testStep("STEP", "Write a value less than 16V on signal PN14_SupBat_Volt_ST3 --> Signal value set to 15.0.");
+   setSignal(PN14_SupBat_Volt_ST3, PN14_SupBat_Volt_ST3_UV);
+//   CompareToFloat(PN14_SupBat_Volt_ST3_OV, PN14_SupBat_Volt_ST3);
+  
+    /*********************  STEP 10  **************************/ 
+    debugger_deleteRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemUV", "17");
+    testStep("STEP", "Set a breakpoint in function PMP_Autotest_CheckSystemUV after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_Autotest_CheckSystemUV", "63");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    /*********************************************************/
+
+    testCaseComment("Action: ARCH_SW_PMP_1112");
+    /*********************  STEP 9  **************************/
+    testStep("STEP", "Evaluate pmp_u8AECStatus --> Variable is equal to *pmp_u8AECStatus data pointer.");
+    debugger_readLocalVariable("pmp_u8AECStatus");
+    ExpectedTestResult(debugger_result, "pmp_u8AECStatus", "Variable is equal to *pmp_u8AECStatus data pointer");
+  /*********************************************************/
+  
+  /*********************  STEP 11  **************************/ 
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debugger_readLocalVariable("pmp_u8ResultOfAutoTest");
+    ExpectedTestResult(debugger_result, "0x1", "Variable is equal to 0x1");
+  /*********************************************************/
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_PMP_runGetMotorVn_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0021, ARCH_SW_PMP_0022");
+  AddRequirementInfo("ARCH_SW_PMP_0021", "This function shall get ADC value of the Negative Motor Voltage.");
+  AddRequirementInfo("ARCH_SW_PMP_0022", "The AdcIf_runGetMotor_Vn_(Ext)* function shall be called to get the sampled value.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0021");
+  
+    testStep("STEP", "Activate Measurement frame Block 3 --> MF Active.");
+    ActivateMeasurementFrame(3);
+
+    testStep("STEP", "Set a breakpoint in function PMP_runGetMotorVn at the RTE Call for AdcIf_runGetMotor_Vn function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorVn", "10");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetMotor_Vn.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetMotorVn", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetMotorVn at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorVn", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0022");
+    testStep("STEP", "Evaluate local variable u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer.");
+    debugger_readLocalVariable("u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetMotorVp_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0023, ARCH_SW_PMP_0022");
+  AddRequirementInfo("ARCH_SW_PMP_0023", "This function shall get ADC value of the Positive Motor Voltage.");
+  AddRequirementInfo("ARCH_SW_PMP_0024", "The AdcIf_runGetMotor_Vp_(Ext)* function shall be called to get the sampled value.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0023");
+  
+    testStep("STEP", "Activate Measurement frame Block 3 --> MF Active.");
+    ActivateMeasurementFrame(3);
+
+    testStep("STEP", "Set a breakpoint in function PMP_runGetMotorVp at the RTE Call for AdcIf_runGetMotor_Vp function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorVp", "10");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetMotor_Vp.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel.");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetMotorVp", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetMotorVp at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorVp", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0024");
+    testStep("STEP", "Evaluate local variable u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer.");
+    debugger_readLocalVariable("u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetHS1Level_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0203, ARCH_SW_PMP_0204");
+  AddRequirementInfo("ARCH_SW_PMP_0203", "This function shall provide the value of HighSide Switch Voltage from the ADC (not FILTERED).");
+  AddRequirementInfo("ARCH_SW_PMP_0204", "The AdcIf_runGetHS1_V function shall be called to get the sampled value of the HighSide Switch from the ADC.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0203, ARCH_SW_PMP_1054");
+
+    testStep("STEP", "Set a breakpoint in function PMP_runGetHS1Level at the RTE Call for AdcIf_runGetHS1_V function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetHS1Level", "10");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function AdcIf_runGetHS1_V.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu16SampledSignal --> Variable read from ADC channel");
+    debugger_readLocalVariable("*(pu16SampledSignal)");
+    ExpectedTestResult(debugger_result, "pu16SampledSignal", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("PMP_runGetHS1Level", "10");
+    testStep("STEP", "Set a breakpoint in function PMP_runGetHS1Level at the pu16Voltage assignment--> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetHS1Level", "18");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0204");
+    testStep("STEP", "Evaluate local variable u16InternalAnalogSignal --> Variable read is the same from *(pu16SampledSignal) data pointer");
+    debugger_readLocalVariable("u16InternalAnalogSignal");
+    ExpectedTestResult(debugger_result, "u16InternalAnalogSignal", "Variable read is the same from *(pu16SampledSignal) data pointer.");
+  
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+
+testcase SW_Int_PMP_runGetBatteryVoltageSurveyStatus_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PMP_0205, ARCH_SW_PMP_0206");
+  AddRequirementInfo("ARCH_SW_PMP_0205", "This function shall provide the actual battery state.");
+  AddRequirementInfo("ARCH_SW_PMP_0206", "The PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState value shall be sent externally.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  
+  testStep("", "Delete all breakpoint from debugger.");
+  debugger_deleteAllBreakpoints();
+  
+  testStep("STEP", "Reset the debugger.");
+  debugger_reset();
+  
+  testStep("STEP", "Run the debugger.");
+  debugger_run();
+  
+  RunPreTs();
+  //====================================================
+  testCaseComment("Action: ARCH_SW_PMP_0205, ARCH_SW_PMP_0013");
+
+    testStep("STEP", "Set a breakpoint in function mmg_UpdateModeStatus_PowerVoltageUnstable at the RTE Call for PMP_runGetBatteryVoltageSurveyStatus function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerVoltageUnstable", "7");
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+    
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+    /*********************  STEP 4  **************************/ 
+    testStep("", "Run until return in function PMP_runGetBatteryVoltageSurveyStatus.");
+    debugger_runUntilReturn("10");
+    /*********************************************************/
+  
+    testStep("STEP", "Read local variable pu8BatteryVoltageSurveyStatus --> Variable read from ADC channel ");
+    debugger_readLocalVariable("*pu8BatteryVoltageSurveyStatus");
+    ExpectedTestResult(debugger_result, "pu8BatteryVoltageSurveyStatus", "Variable read from ADC channel.");
+  
+    debugger_deleteRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerVoltageUnstable", "7");
+    testStep("STEP", "Set a breakpoint in function mmg_UpdateModeStatus_PowerVoltageUnstable at the end of function --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("mmg_UpdateModeStatus_PowerVoltageUnstable", "23");
+    debugger_run();
+    debugger_waitUntilBPisReached("5000");
+    ExpectedTestResult(debugger_result, IS_CPU_STOP_AT_BP_SUCCESFUL, "CPU is stopped at BP");
+  
+  testCaseComment("Action: ARCH_SW_PMP_0206");
+    testStep("STEP", "Evaluate local variable u8BatteryVoltageSurveyStatus --> Variable read is the same from *(pu8BatteryVoltageSurveyStatus) data pointer");
+    debugger_readLocalVariable("u8BatteryVoltageSurveyStatus");
+    ExpectedTestResult(debugger_result, "u8BatteryVoltageSurveyStatus", "Variable read is the same from *(pu8BatteryVoltageSurveyStatus) data pointer.");
+  
+  
+  //====================================================
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+  
+}
+void MainTest()
+{
+  InitTestModule();
+  SW_Int_PMP_runGetBatteryVolatge_01(); // OK
+  SW_Int_PMP_runGetBatteryVolatge_100ms_01(); // OK
+  SW_Int_PMP_runGetBatteryVolatge_20ms_01(); // OK
+  SW_Int_PMP_runGetBatteryVolatge_10ms_01(); // OK
+  SW_Int_PMP_runGetBatteryVolatge_100ms_01();
+  SW_Int_PMP_GetCorrectedTemperature_01();
+  SW_Int_PMP_runSurveyBatteryVoltage_01();
+  SW_Int_PMP_runGetDeficiencyLevel_01();
+  SW_Int_PMP_runComputeDeficiencyLevel_01(); 
+  SW_Int_PMP_runGetBoardResistance_01();
+  SW_Int_PMP_runGetMotorResistance_01();
+  SW_Int_PMP_Autotest_CheckPowerSupplyOV_01();
+  SW_Int_PMP_Autotest_CheckPowerSupplyUV_01();
+  SW_Int_PMP_Autotest_CheckPowerSupplyUVDuringActivation_01();
+  SW_Int_PMP_Autotest_CheckPowerSupplyOVDuringActivation_01();
+  SW_Int_PMP_Autotest_CheckTemperatureSensor_01();
+  SW_Int_PMP_Autotest_CheckSystemOV_01();
+  SW_Int_PMP_Autotest_CheckSystemUV_01();
+  SW_Int_PMP_runGetMotorVn_01();
+  SW_Int_PMP_runGetMotorVp_01();
+  SW_Int_PMP_runGetHS1Level_01();
+  SW_Int_PMP_runGetBatteryVoltageSurveyStatus_01();
+//  
+  
+}

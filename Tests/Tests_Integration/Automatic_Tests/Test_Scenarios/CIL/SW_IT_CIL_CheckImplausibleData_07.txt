@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0195, ARCH_SW_CIL_0198, ARCH_SW_CIL_500
+ARCH_SW_CIL_0195: Signal CRC_Bckl_Sw_Fx_Stat_Pr5_ST3 shall be evaluated (with help form E2E) to set the specified autotest to OK/NOK.
+ARCH_SW_CIL_0198: CIL shall check if CRC or SQC error is present for Presafe frame.
+ARCH_SW_CIL_500: CIL module shall check if CRC or SQC error is present for Impact3_Pr5_ST3.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal CRC_Bckl_Sw_Fx_Stat_Pr5_ST3 to KU8_ZERO.
+
+	Step 3: Set a breakpoint in function CIL_Autotest_CheckImplausibleData_Buckle() at line *pu8TestResult = cil_u8ResultOfAutoTest;.
+
+Action: ARCH_SW_CIL_0198, ARCH_SW_CIL_500
+
+	Step 4: Check if CPU stopped at line *pu8TestResult = cil_u8ResultOfAutoTest;. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0195
+
+	Step 5: Evaluate variable *pu8TestResult. 
+		Expected result:  KU8_ATM_TEST_OK
+
+Postcondition
+
+	Step 6: Return ECU to default values

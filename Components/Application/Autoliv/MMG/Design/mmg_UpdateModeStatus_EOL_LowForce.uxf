@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>272</x>
+      <y>72</y>
+      <w>621</w>
+      <h>668</h>
+    </coordinates>
+    <panel_attributes>title:mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles
+Start
+
+Check if ModeStatusIsOk is TRUE
+
+If
+	[Mode status is TRUE]
+	Get AEC EOL low and high aec status
+	If
+		[AEC qualified]
+		Set u8ModeStatusIsOk FALSE
+		
+		[AEC not qualified]
+	EndIf
+	
+	[Mode status is FALSE]
+EndIf
+
+Check if u8ModeStatusIsOk is TRUE
+If
+	[Mode status is TRUE]
+	Unset INHIB_TENSIONING_CYCLES system context
+	
+	[Mode status is FALSE]
+	Set INHIB_TENSIONING_CYCLES system context
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

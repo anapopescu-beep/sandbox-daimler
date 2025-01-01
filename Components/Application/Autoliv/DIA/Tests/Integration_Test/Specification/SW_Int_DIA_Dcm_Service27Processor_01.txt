@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0295; ARCH_SW_DIA_0296; ARCH_SW_DIA_0297; ARCH_SW_DIA_0298; ARCH_SW_DIA_0299; ARCH_SW_DIA_0300; ARCH_SW_DIA_0301; ARCH_SW_DIA_0302; ARCH_SW_DIA_0303
+ARCH_SW_DIA_0295: Service 0x27 (Security Access) will be implemented for Get Seed and Send Key.
+ARCH_SW_DIA_0296: The Security Access service shall only be available in the following sessions:Programming Session (0x02).
+ARCH_SW_DIA_0297: Security Access service shall be available under the following forms of Authentication:
+ARCH_SW_DIA_0298: SecurityAccessType of the SecurityAccess service shall be 0x11 for Get Programming Seed.
+ARCH_SW_DIA_0299: Bytes #2-#3:  SecurityAccessType shall be: 0x11.
+ARCH_SW_DIA_0300: Bytes #3-#66:  Shall contain SecuritySeed.
+ARCH_SW_DIA_0301: SecurityAccessType of the SecurityAccess service shall be 0x12 for Get Programming Key.
+ARCH_SW_DIA_0302: The bytes from 3 to 66 shall be reserved for the SecurityKey of the SecurityAccess service.
+ARCH_SW_DIA_0303: Bytes #2-#3:  SecurityAccessType shall be: 0x12.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *Dcm_Service27Processor*.
+
+Action: ARCH_SW_DIA_0295; ARCH_SW_DIA_0296; ARCH_SW_DIA_0297; ARCH_SW_DIA_0298; ARCH_SW_DIA_0299; ARCH_SW_DIA_0300; ARCH_SW_DIA_0301; ARCH_SW_DIA_0302; ARCH_SW_DIA_0303
+
+	Step 3: Send diag request for security access 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function Dcm_Service27Processor was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

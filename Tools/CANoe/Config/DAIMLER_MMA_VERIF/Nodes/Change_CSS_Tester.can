@@ -1,0 +1,1091 @@
+/*@!Encoding:1252*/
+includes
+{
+   #include "Global.cin"
+}
+
+variables
+{
+
+  dword serialNuminLen=9;
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  int testToolVersionMajor = 0;
+  int testToolVersionMinor = 8;
+  int testToolVersionPatch = 2;
+  
+  dword timeReceivedLastTickCountBroadcast;
+	byte receivedTickCountBroadcast[8];
+	byte receivedAuthBroadcast[22];
+  byte receivedVinBroadcast[19];
+  byte receivedRealTimeOffBroadcast[14];
+  byte receivedSharedSecretBroadcast[33];
+  
+  byte receivedIswStat;
+  byte iswStatCheckActive = 0;
+  
+  byte checkBroadcastsInModelActive = 0;
+
+	long testPage;
+
+	byte certSerialNum[16];
+  dword certSerialNumLen;
+  
+  byte basicAclVersion[3];
+  byte basicAclTime[15];
+  byte basicAclHash[64];
+  char givenBackCertIdent[60];
+  byte ecuBackCertIdent[20]={0x80,0xDD,0x45,0x58,0xCC,0x84,0xCC,0x0A,0xC1,0x64,0xD5,0x18,0xEC,0xA6,0x45,0x06,0x5B,0x96,0x14,0x36};
+  byte lastUsedNonce[32];
+  byte ecuSession;
+  
+  long diagChannel;
+  
+  byte noBusComm = 0;
+  byte zenzefiAlive = 1;
+
+  byte broadcastTimeoutReached = 0;
+  
+  enum _secOcManipulation {none = 1, Payload = 2, CMAC = 3, Freshness = 4, posPast = 5, posFuture = 6, negPast = 7, negFuture = 8, DuringSignatureCalculation = 9};
+  enum _secOcManipulation secOcManipulation;
+  enum _secOcManipulation broadcastManipulation;
+  enum _secOcManipulation tickBroadcastManipulation;
+  
+  enum _secOcManipulationType {parallel = 1, sequential = 2};
+  enum _secOcManipulationType secOcManipulationType;
+  
+  enum _teststepDesc {derive = 1, hold = 2, store = 3};
+  enum _renewSharedSecret {useDefaultSharedSecret = 1, useNewSharedSecret = 2, useNewerSharedSecret = 3, useVsmSharedSecret = 4};
+  
+  enum _userroles {useGivenCert = -2, noAuthReq = -1, Anybody = 0, Supplier = 1, Development_Enhanced = 2, Production = 3, Aftersales_Enhanced = 4, Aftersales_Standard = 5, Aftersales_Basic = 6, DOBT = 7, ePTI = 8};
+  enum _userroles diagUserRoleForPrep;
+  
+  enum _certTypes {Backend = 2, ECU = 3, secOcSetupECU = 4, secOcSetupIS = 5, Time = 6, newestDiag = 7, replaceCertEnhRights = 8, replaceCertDiag = 9, replaceCertEcu = 10};
+  
+  enum _certChains {RootTest1 = 1, RootTest2 = 2, AA00001 = 3, TestRoCa = 4};
+  
+  enum _sharedSecretDistributionManipulation {noManipulation = 1, manipulatedNonce = 2, manipulatedCertificate = 3, notMatchingCertificate = 4, manipulatedEncryptedData = 5, manipulatedSignature = 6, noEnhRights = 7, noEnhRightsRequired = 8};
+  
+  byte secOcCheckSendingActive = 0;
+  
+  dword secOcCheckSendingDuration = 4;
+  
+  //Ecu Extract Values
+  word secOcPduArrPos;
+  const word secOcPdusArrLen = 256;
+  enum _routingType {application = 0, routedSecured = 1, routedOnly = 2};
+  enum _timing {unknown = 0, cyclic = 1, dualcyclic = 2, cyclicOnChange = 3, spontaneous = 4, BAF = 5};
+  enum _rxSecVerif {undefined = -1, false = 0, true = 1, unexpected = 2};
+  struct _secOcPduDetails {
+    dword dataId;
+    dword keyChecksum;
+    dword appearanceCnt;
+    dword logCnt;
+    enum _routingType routingType;
+    enum _timing timing;
+    enum _rxSecVerif rxSecVerif;
+    char busName[secOcPdusArrLen];
+    char pduName[secOcPdusArrLen];
+  };
+  struct _secOcPduDetails txSecOcPdus[secOcPdusArrLen];
+  struct _secOcPduDetails rxSecOcPdus[secOcPdusArrLen];
+  word txSecOcPdusCnt[1] = 0;
+  word rxSecOcPdusCnt[1] = 0;
+  word busTxSecOcPdusCnt[1] = 0;
+  word busRxSecOcPdusCnt[1] = 0;
+  word busTxSecOcRoutedOnlyCnt = 0;
+  word busRxSecOcRoutedOnlyCnt = 0;
+  word busTxSecOcRoutedSecCnt = 0;
+  word busRxSecOcRoutedSecCnt = 0;
+  word busTxSecOcApplCnt = 0;
+  word busRxSecOcApplCnt = 0;
+  word busRxSecOcApplNoVerifCnt = 0;
+  
+  //VH1150 Init
+  //Set 1 if VH1150 is avaiable and connected according to the manual
+  byte VH1150 = 0;
+  
+  //Enter voltage required by the ECU
+  double VH1150_voltage = 12.8;
+  
+  long vh1150Handle = 0;
+  enum eTerminalType {R_30 = 0, R_15, R_31};
+  
+  //Fix values  
+  byte basicAclVersion_122[3] = {0x11, 0x11, 0x01};
+  
+  byte basicAclTime_122[15] = {0x32, 0x30, 0x31, 0x37, 0x30, 0x37, 0x30, 0x34, 0x31, 0x34, 0x35, 0x37, 0x33, 0x35, 0x5A};
+  
+  byte basicAclHash_122[64] = {
+    0x64, 0xB1, 0xA3, 0x33, 0x74, 0x0B, 0x5D, 0x34, 0xE5, 0x23, 0x1E, 0xF3, 0xAF, 0x84, 0xB5, 0xBD, 
+    0xE7, 0x1B, 0xFC, 0x98, 0xEC, 0x18, 0xFD, 0xC3, 0xDC, 0xE0, 0x72, 0xC9, 0x51, 0xF8, 0x08, 0x6D, 
+    0x00, 0x39, 0xD1, 0xFD, 0xF2, 0x5E, 0x0A, 0x43, 0xEF, 0x96, 0x45, 0x6B, 0xA1, 0xA8, 0xFD, 0x32, 
+    0x11, 0x4D, 0x1D, 0xCD, 0xEB, 0x07, 0x47, 0x2B, 0x14, 0x33, 0xE8, 0x14, 0xC5, 0xC4, 0xC9, 0xAA
+  };
+  
+  byte basicAclVersion_132[3] = {0x11, 0x20, 0x01};
+  
+  byte basicAclTime_132[15] = {0x32, 0x30, 0x31, 0x37, 0x31, 0x31, 0x31, 0x37, 0x31, 0x32, 0x32, 0x31, 0x35, 0x37, 0x5A};
+  
+  byte basicAclHash_132[64] = {
+    0XE7, 0XC3, 0X63, 0X59, 0X63, 0X97, 0X18, 0X71, 0X1A, 0X1B, 0XA2, 0X80, 0X44, 0X58, 0XF6, 0X87,
+    0XCE, 0X93, 0X29, 0XE9, 0XE4, 0XCE, 0X97, 0X78, 0XF4, 0XEB, 0XDF, 0X1D, 0X9C, 0X4D, 0X1, 0XFA,
+    0X23, 0XAF, 0XA9, 0XB, 0X21, 0XE4, 0X5A, 0X45, 0XC8, 0X4, 0X4A, 0X63, 0X32, 0XF0, 0X7D, 0XDF,
+    0X2B, 0X75, 0XC0, 0X1F, 0X9E, 0X21, 0X23, 0XBA, 0X7C, 0X32, 0X23, 0X96, 0XD8, 0X4D, 0XB7, 0XB5
+  };
+  
+  byte basicAclVersion_135[3] = {0x12, 0x11, 0x02};
+  
+  byte basicAclTime_135[15] = {0x32, 0x30, 0x31, 0x38, 0x30, 0x36, 0x32, 0x35, 0x30, 0x38, 0x34, 0x37, 0x35, 0x39, 0x5A};
+  
+  byte basicAclHash_135[64] = {
+    0x96, 0x1B, 0x13, 0x9A, 0xD1, 0x83, 0xF6, 0x98, 0x76, 0x5C, 0x43, 0x9C, 0x6E, 0x65, 0xD9, 0xBA, 
+    0xB2, 0xCA, 0x64, 0x17, 0x1D, 0xBD, 0x9A, 0xB8, 0x71, 0x77, 0xF6, 0xB8, 0xA1, 0xC5, 0x4E, 0xFE, 
+    0x9E, 0x8D, 0x5E, 0x0B, 0xBE, 0x9B, 0x25, 0xE8, 0xBA, 0x59, 0xCF, 0x98, 0x66, 0xB1, 0xA2, 0xEA, 
+    0x76, 0xCF, 0xB7, 0x74, 0xC0, 0x62, 0xFE, 0x59, 0x02, 0x33, 0x6E, 0x4A, 0xFD, 0x66, 0x8E, 0x74
+  };
+  
+  byte basicAclVersion_136[3] = {0x12, 0x2B, 0x01};
+  
+  byte basicAclTime_136[15] = {0x32, 0x30, 0x31, 0x38, 0x31, 0x31, 0x31, 0x39, 0x30, 0x39, 0x32, 0x37, 0x32, 0x35, 0x5A};
+  
+  byte basicAclHash_136[64] = {
+    0xA7, 0x47, 0x55, 0x51, 0x1C, 0x2A, 0xF9, 0x47, 0x3B, 0x4E, 0xBE, 0x7E, 0x80, 0x7F, 0x7C, 0x1A, 
+    0xFD, 0xD9, 0x2E, 0x1C, 0xE0, 0xF5, 0x65, 0xC6, 0x57, 0x89, 0x40, 0xBB, 0x3B, 0xB3, 0x28, 0xEA, 
+    0x9E, 0x07, 0xF1, 0xA4, 0x4F, 0x3B, 0x82, 0x94, 0xF6, 0x3D, 0xC8, 0x73, 0xE2, 0xA8, 0xB7, 0x1C, 
+    0xE9, 0xD2, 0x41, 0x09, 0x80, 0x67, 0x28, 0xB0, 0x7C, 0xF5, 0xBC, 0x38, 0xA8, 0xB4, 0x6B, 0x90
+  };
+  
+  char backCertIdent_series_AB00001[60] = "80-DD-45-58-CC-84-CC-0A-C1-64-D5-18-EC-A6-45-06-5B-96-14-36";
+  char backCertIdent_series_TestBaCa[60] = "D7-48-F0-5C-8F-10-DF-57-F5-C1-62-40-FD-AB-B0-AB-05-AA-B7-5A";
+  char backCertIdent_dev_BackTest1[60] = "51-82-B1-C2-D6-8C-F7-9A-52-EC-83-4A-1A-80-82-8F-0C-53-58-D4";
+  char backCertIdent_dev_BackTestARoot2[60] = "0B-78-20-44-05-62-14-34-45-07-C4-82-CA-6B-D2-B2-6C-4A-EA-1D";
+  
+  byte rootCert_series_AA00001[366] = {
+    0x30, 0x82, 0x01, 0x6A, 0x30, 0x82, 0x01, 0x12, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x01, 0x01, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 
+    0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x30, 0x12, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04, 0x03, 
+    0x0C, 0x07, 0x41, 0x41, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x20, 0x17, 0x0D, 0x31, 0x38, 0x30, 0x36, 0x31, 0x35, 0x31, 0x33, 0x30, 
+    0x36, 0x34, 0x33, 0x5A, 0x18, 0x0F, 0x39, 0x39, 0x39, 0x39, 0x31, 0x32, 0x33, 0x31, 0x32, 0x32, 0x35, 0x39, 0x35, 0x39, 0x5A, 0x30, 
+    0x12, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04, 0x03, 0x0C, 0x07, 0x41, 0x41, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x34, 0x30, 
+    0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x21, 0x00, 0x3E, 0x4B, 0x5B, 
+    0x6E, 0x49, 0xFC, 0x41, 0xC1, 0xE2, 0x46, 0xA4, 0x05, 0x95, 0xDD, 0x8D, 0x92, 0x2D, 0x10, 0xF3, 0x14, 0x87, 0xD8, 0xA9, 0x10, 0xF1, 
+    0xC0, 0xF6, 0x25, 0x0A, 0x09, 0x4F, 0xAD, 0xA3, 0x77, 0x30, 0x75, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 
+    0x03, 0x06, 0x83, 0x7D, 0x05, 0x65, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x01, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 
+    0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6B, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x00, 0x30, 0x1D, 0x06, 0x03, 0x55, 
+    0x1D, 0x0E, 0x04, 0x16, 0x04, 0x14, 0x5F, 0x86, 0x6B, 0xAB, 0x6B, 0x87, 0x12, 0xED, 0x2C, 0xF5, 0x47, 0x70, 0xDF, 0xCD, 0xA1, 0x40, 
+    0x7B, 0x96, 0xB0, 0xAB, 0x30, 0x12, 0x06, 0x03, 0x55, 0x1D, 0x13, 0x01, 0x01, 0xFF, 0x04, 0x08, 0x30, 0x06, 0x01, 0x01, 0xFF, 0x02, 
+    0x01, 0x01, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x1D, 0x0F, 0x01, 0x01, 0xFF, 0x04, 0x04, 0x03, 0x02, 0x02, 0x04, 0x30, 0x0F, 0x06, 0x0D, 
+    0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x41, 0x00, 0x0B, 0x34, 0x62, 0x99, 0xEA, 0xFF, 
+    0xBB, 0x0A, 0xDC, 0xD5, 0x3C, 0x72, 0x9A, 0x28, 0xE4, 0x99, 0x6E, 0x3B, 0x8E, 0x50, 0xEE, 0xA1, 0x3E, 0x1F, 0x1E, 0x9F, 0xE9, 0x88, 
+    0xE8, 0x66, 0x2D, 0x05, 0x40, 0xE0, 0xF9, 0xF2, 0x1E, 0xBA, 0x1D, 0x69, 0xB6, 0x71, 0xC3, 0x5B, 0x5B, 0x23, 0x40, 0x8B, 0x35, 0x6C, 
+    0xE5, 0x22, 0xC6, 0x68, 0xB7, 0x98, 0xC2, 0x53, 0x76, 0x50, 0xEB, 0x69, 0xC0, 0x0D 
+  };
+  
+  byte rootCert_series_TestRoCa[377] = {
+    0x30, 0x82, 0x01, 0x75, 0x30, 0x82, 0x01, 0x1D, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x02, 0x01, 0x04, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 
+    0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x30, 0x17, 0x31, 0x15, 0x30, 0x13, 0x06, 0x03, 0x55, 0x04, 
+    0x03, 0x0C, 0x0C, 0x54, 0x65, 0x73, 0x74, 0x52, 0x6F, 0x43, 0x61, 0x5F, 0x31, 0x2E, 0x30, 0x30, 0x20, 0x17, 0x0D, 0x31, 0x39, 0x30, 
+    0x32, 0x30, 0x34, 0x31, 0x36, 0x31, 0x39, 0x34, 0x37, 0x5A, 0x18, 0x0F, 0x39, 0x39, 0x39, 0x39, 0x31, 0x32, 0x33, 0x31, 0x32, 0x32, 
+    0x35, 0x39, 0x35, 0x39, 0x5A, 0x30, 0x17, 0x31, 0x15, 0x30, 0x13, 0x06, 0x03, 0x55, 0x04, 0x03, 0x0C, 0x0C, 0x54, 0x65, 0x73, 0x74, 
+    0x52, 0x6F, 0x43, 0x61, 0x5F, 0x31, 0x2E, 0x30, 0x30, 0x34, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 
+    0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x21, 0x00, 0x98, 0xCE, 0x77, 0xAE, 0x88, 0x58, 0x0E, 0xE9, 0xBA, 0x33, 0x7E, 0xB2, 0x02, 0x76, 
+    0x1F, 0x90, 0xC1, 0xA3, 0x81, 0x05, 0x9C, 0x12, 0xD6, 0x81, 0x97, 0x47, 0xE4, 0x3F, 0x5B, 0x0B, 0x28, 0xA6, 0xA3, 0x77, 0x30, 0x75, 
+    0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x65, 0x01, 0x01, 0xFF, 0x04, 0x03, 
+    0x04, 0x01, 0x01, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6B, 0x01, 0x01, 
+    0xFF, 0x04, 0x03, 0x04, 0x01, 0x00, 0x30, 0x1D, 0x06, 0x03, 0x55, 0x1D, 0x0E, 0x04, 0x16, 0x04, 0x14, 0x81, 0xFB, 0xCE, 0x59, 0xE4, 
+    0x85, 0xDB, 0xE1, 0xF9, 0x86, 0x81, 0x5D, 0x74, 0xF2, 0xA1, 0x9F, 0xF9, 0x9E, 0x22, 0xA1, 0x30, 0x12, 0x06, 0x03, 0x55, 0x1D, 0x13, 
+    0x01, 0x01, 0xFF, 0x04, 0x08, 0x30, 0x06, 0x01, 0x01, 0xFF, 0x02, 0x01, 0x01, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x1D, 0x0F, 0x01, 0x01, 
+    0xFF, 0x04, 0x04, 0x03, 0x02, 0x02, 0x04, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 
+    0x05, 0x6E, 0x03, 0x41, 0x00, 0xC7, 0x58, 0xF4, 0x02, 0x41, 0x78, 0x17, 0x0C, 0xD8, 0x75, 0xA7, 0x7F, 0x2C, 0xB2, 0x9D, 0x16, 0xBA, 
+    0xB3, 0x6D, 0x20, 0x04, 0xF7, 0x83, 0xDF, 0x5C, 0x9A, 0x7D, 0x36, 0xD9, 0xE5, 0x5A, 0x42, 0xAA, 0x57, 0xEA, 0x23, 0x1C, 0xF2, 0x42, 
+    0xBF, 0x7D, 0x32, 0x16, 0xF4, 0x78, 0xBD, 0xD7, 0x38, 0x3B, 0xB1, 0x98, 0x97, 0x02, 0x46, 0xEA, 0xB7, 0x8D, 0x50, 0xB9, 0xDA, 0x83, 
+    0xFF, 0x5C, 0x09
+  };
+  
+  //to delete
+  byte rootLink_AA00001_TestRoCa[404] = {
+    0x30, 0x82, 0x01, 0x90, 0x30, 0x82, 0x01, 0x38, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x01, 0x02, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 
+    0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x30, 0x12, 0x31, 0x10, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x04, 0x03, 
+    0x0C, 0x07, 0x41, 0x41, 0x30, 0x30, 0x30, 0x30, 0x31, 0x30, 0x1E, 0x17, 0x0D, 0x31, 0x39, 0x30, 0x32, 0x30, 0x34, 0x31, 0x36, 0x31, 
+    0x39, 0x34, 0x37, 0x5A, 0x17, 0x0D, 0x31, 0x39, 0x30, 0x37, 0x30, 0x33, 0x32, 0x32, 0x30, 0x30, 0x30, 0x30, 0x5A, 0x30, 0x17, 0x31, 
+    0x15, 0x30, 0x13, 0x06, 0x03, 0x55, 0x04, 0x03, 0x0C, 0x0C, 0x54, 0x65, 0x73, 0x74, 0x52, 0x6F, 0x43, 0x61, 0x5F, 0x31, 0x2E, 0x30, 
+    0x30, 0x34, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x21, 0x00, 
+    0x98, 0xCE, 0x77, 0xAE, 0x88, 0x58, 0x0E, 0xE9, 0xBA, 0x33, 0x7E, 0xB2, 0x02, 0x76, 0x1F, 0x90, 0xC1, 0xA3, 0x81, 0x05, 0x9C, 0x12, 
+    0xD6, 0x81, 0x97, 0x47, 0xE4, 0x3F, 0x5B, 0x0B, 0x28, 0xA6, 0xA3, 0x81, 0x99, 0x30, 0x81, 0x96, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x1D, 
+    0x0F, 0x01, 0x01, 0xFF, 0x04, 0x04, 0x03, 0x02, 0x02, 0x04, 0x30, 0x12, 0x06, 0x03, 0x55, 0x1D, 0x13, 0x01, 0x01, 0xFF, 0x04, 0x08, 
+    0x30, 0x06, 0x01, 0x01, 0xFF, 0x02, 0x01, 0x01, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 
+    0x7D, 0x05, 0x65, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x0A, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 
+    0x03, 0x06, 0x83, 0x7D, 0x05, 0x6B, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x00, 0x30, 0x1D, 0x06, 0x03, 0x55, 0x1D, 0x0E, 0x04, 
+    0x16, 0x04, 0x14, 0x81, 0xFB, 0xCE, 0x59, 0xE4, 0x85, 0xDB, 0xE1, 0xF9, 0x86, 0x81, 0x5D, 0x74, 0xF2, 0xA1, 0x9F, 0xF9, 0x9E, 0x22, 
+    0xA1, 0x30, 0x1F, 0x06, 0x03, 0x55, 0x1D, 0x23, 0x04, 0x18, 0x30, 0x16, 0x80, 0x14, 0x5F, 0x86, 0x6B, 0xAB, 0x6B, 0x87, 0x12, 0xED, 
+    0x2C, 0xF5, 0x47, 0x70, 0xDF, 0xCD, 0xA1, 0x40, 0x7B, 0x96, 0xB0, 0xAB, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 
+    0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x41, 0x00, 0x06, 0xB4, 0x18, 0x6B, 0x2A, 0xD3, 0x46, 0x94, 0x19, 0x9C, 0xF4, 0x71, 
+    0xF0, 0x70, 0x53, 0xCB, 0x15, 0x1E, 0x5F, 0x96, 0x75, 0xFB, 0xCD, 0xF5, 0xDE, 0xA4, 0xCB, 0xD2, 0xF6, 0xBC, 0x19, 0xBA, 0x85, 0x90, 
+    0xC5, 0x5F, 0xDA, 0x83, 0xDB, 0xCF, 0xBE, 0x03, 0xBD, 0x52, 0xD9, 0xBC, 0x1B, 0x9C, 0x65, 0x6D, 0x2B, 0x3F, 0xBA, 0x2A, 0x64, 0x29, 
+    0x16, 0xC5, 0xA8, 0xC3, 0x67, 0xC2, 0xE9, 0x09 
+  };
+  
+  byte rootCert_dev_RootTest1[370] = {
+    0x30, 0x82, 0x01, 0x6E, 0x30, 0x82, 0x01, 0x16, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x01, 0x01, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06,
+    0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x30, 0x14, 0x31, 0x12, 0x30, 0x10, 0x06, 0x03, 0x55, 0x04, 0x03,
+    0x0C, 0x09, 0x52, 0x6F, 0x6F, 0x74, 0x54, 0x65, 0x73, 0x74, 0x31, 0x30, 0x20, 0x17, 0x0D, 0x31, 0x36, 0x31, 0x32, 0x30, 0x31, 0x32,
+    0x33, 0x30, 0x30, 0x30, 0x30, 0x5A, 0x18, 0x0F, 0x39, 0x39, 0x39, 0x39, 0x31, 0x32, 0x33, 0x31, 0x32, 0x33, 0x35, 0x39, 0x35, 0x39,
+    0x5A, 0x30, 0x14, 0x31, 0x12, 0x30, 0x10, 0x06, 0x03, 0x55, 0x04, 0x03, 0x0C, 0x09, 0x52, 0x6F, 0x6F, 0x74, 0x54, 0x65, 0x73, 0x74,
+    0x31, 0x30, 0x34, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x21,
+    0x00, 0x8E, 0x7F, 0xC2, 0xD6, 0xFF, 0x15, 0xA7, 0x87, 0x73, 0x61, 0xE0, 0xB9, 0x0D, 0x14, 0xF6, 0x94, 0x8F, 0x1C, 0x4D, 0x3E, 0x02,
+    0xCF, 0xC7, 0x20, 0x73, 0xA2, 0x2C, 0x26, 0x54, 0x04, 0x23, 0x7C, 0xA3, 0x77, 0x30, 0x75, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01,
+    0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x65, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x01, 0x30, 0x17, 0x06, 0x0D,
+    0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6B, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x00, 0x30,
+    0x1D, 0x06, 0x03, 0x55, 0x1D, 0x0E, 0x04, 0x16, 0x04, 0x14, 0xF7, 0x65, 0x21, 0x26, 0x94, 0x4A, 0x09, 0xDB, 0x90, 0xB1, 0x0F, 0xA7,
+    0x56, 0x9B, 0x4B, 0x7E, 0x55, 0xC5, 0xEC, 0xB0, 0x30, 0x12, 0x06, 0x03, 0x55, 0x1D, 0x13, 0x01, 0x01, 0xFF, 0x04, 0x08, 0x30, 0x06,
+    0x01, 0x01, 0xFF, 0x02, 0x01, 0x01, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x1D, 0x0F, 0x01, 0x01, 0xFF, 0x04, 0x04, 0x03, 0x02, 0x02, 0x04,
+    0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x41, 0x00, 0x82, 0x82,
+    0x3B, 0xCE, 0x7C, 0x08, 0xA9, 0x29, 0x54, 0x9A, 0x72, 0x4B, 0xB9, 0x2A, 0x60, 0x0C, 0x62, 0x75, 0x52, 0x4D, 0x56, 0x34, 0x20, 0x53,
+    0x21, 0x8A, 0x19, 0x6D, 0xD1, 0x61, 0xB3, 0x86, 0x6E, 0xCF, 0xCB, 0xF8, 0x57, 0x84, 0x1A, 0xE1, 0x75, 0x62, 0x1D, 0x0E, 0xFA, 0xCE,
+    0xCB, 0x3F, 0xEA, 0x0E, 0x24, 0x06, 0x1B, 0x9F, 0x00, 0xBF, 0x6D, 0xB5, 0x2B, 0xDB, 0xE3, 0x20, 0x16, 0x08
+  };
+  
+  byte rootCert_dev_RootTest2[370] = {
+    0x30, 0x82, 0x01, 0x6E, 0x30, 0x82, 0x01, 0x16, 0xA0, 0x03, 0x02, 0x01, 0x02, 0x02, 0x01, 0x02, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 
+    0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x30, 0x14, 0x31, 0x12, 0x30, 0x10, 0x06, 0x03, 0x55, 0x04, 0x03, 
+    0x0C, 0x09, 0x52, 0x6F, 0x6F, 0x74, 0x54, 0x65, 0x73, 0x74, 0x32, 0x30, 0x20, 0x17, 0x0D, 0x31, 0x36, 0x31, 0x32, 0x30, 0x31, 0x32, 
+    0x33, 0x30, 0x30, 0x30, 0x30, 0x5A, 0x18, 0x0F, 0x39, 0x39, 0x39, 0x39, 0x31, 0x32, 0x33, 0x31, 0x32, 0x33, 0x35, 0x39, 0x35, 0x39, 
+    0x5A, 0x30, 0x14, 0x31, 0x12, 0x30, 0x10, 0x06, 0x03, 0x55, 0x04, 0x03, 0x0C, 0x09, 0x52, 0x6F, 0x6F, 0x74, 0x54, 0x65, 0x73, 0x74, 
+    0x32, 0x30, 0x34, 0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x21, 
+    0x00, 0xBB, 0xD4, 0x20, 0xAA, 0xF8, 0x27, 0x11, 0x8E, 0x50, 0x4C, 0x92, 0x62, 0x44, 0x8B, 0x87, 0x02, 0x34, 0x09, 0xB6, 0xD2, 0xAA, 
+    0x7A, 0x39, 0xAC, 0xBE, 0x78, 0x2A, 0xDB, 0x44, 0x19, 0xEC, 0x70, 0xA3, 0x77, 0x30, 0x75, 0x30, 0x17, 0x06, 0x0D, 0x2B, 0x06, 0x01, 
+    0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x65, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x01, 0x30, 0x17, 0x06, 0x0D, 
+    0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6B, 0x01, 0x01, 0xFF, 0x04, 0x03, 0x04, 0x01, 0x00, 0x30, 
+    0x1D, 0x06, 0x03, 0x55, 0x1D, 0x0E, 0x04, 0x16, 0x04, 0x14, 0x41, 0x3A, 0x80, 0xF8, 0x38, 0xD5, 0x3E, 0x09, 0x23, 0xB6, 0x25, 0xB6, 
+    0xAA, 0xCF, 0x34, 0x4B, 0x56, 0x2A, 0x83, 0x1B, 0x30, 0x12, 0x06, 0x03, 0x55, 0x1D, 0x13, 0x01, 0x01, 0xFF, 0x04, 0x08, 0x30, 0x06, 
+    0x01, 0x01, 0xFF, 0x02, 0x01, 0x01, 0x30, 0x0E, 0x06, 0x03, 0x55, 0x1D, 0x0F, 0x01, 0x01, 0xFF, 0x04, 0x04, 0x03, 0x02, 0x02, 0x04, 
+    0x30, 0x0F, 0x06, 0x0D, 0x2B, 0x06, 0x01, 0x04, 0x01, 0x96, 0x64, 0x03, 0x06, 0x83, 0x7D, 0x05, 0x6E, 0x03, 0x41, 0x00, 0xD0, 0x53, 
+    0xB3, 0x2C, 0x2F, 0x8E, 0x8B, 0x01, 0x65, 0xC1, 0xD9, 0x00, 0x51, 0x25, 0x13, 0x10, 0x07, 0xF3, 0x37, 0xCD, 0xB2, 0x08, 0x1D, 0x15, 
+    0x68, 0xAD, 0x7A, 0xB6, 0xA2, 0x25, 0x19, 0x38, 0x89, 0xFF, 0x86, 0x3E, 0x69, 0x7D, 0xD2, 0xD2, 0x10, 0x3D, 0x2C, 0x86, 0x79, 0x4F, 
+    0xAB, 0x05, 0x97, 0x85, 0xF7, 0x41, 0x14, 0xEC, 0xD7, 0xC1, 0x65, 0x4B, 0x76, 0x71, 0x5C, 0xCE, 0x68, 0x01 
+  };
+  
+  byte ownEphPrivateKey[32] = {0x77, 0x07, 0x6d, 0x0a, 0x73, 0x18, 0xa5, 0x7d, 0x3c, 0x16, 0xc1, 0x72, 0x51, 0xb2, 0x66, 0x45, 0xdf, 0x4c, 0x2f, 0x87, 0xeb, 0xc0, 0x99, 0x2a, 0xb1, 0x77, 0xfb, 0xa5, 0x1d, 0xb9, 0x2c, 0x2a};
+  byte ownEphPublicKey[32] = {0x85, 0x20, 0xf0, 0x09, 0x89, 0x30, 0xa7, 0x54, 0x74, 0x8b, 0x7d, 0xdc, 0xb4, 0x3e, 0xf7, 0x5a, 0x0d, 0xbf, 0x3a, 0x0d, 0x26, 0x38, 0x1a, 0xf4, 0xeb, 0xa4, 0xa9, 0x8e, 0xaa, 0x9b, 0x4e, 0x6a};    
+  
+  byte hli223SerialNum_series[5] = {0x05, 0x5C, 0x00, 0x00, 0x02};
+  byte gw223SerialNum_series[5] = {0x05, 0x8E, 0x00, 0x00, 0x02};
+  byte gw223SerialNum_dev[5] = {0x01, 0x11, 0x00, 0x00, 0x01};
+  
+  byte defaultCarSpecificSecret[32] = { 
+    0x55, 0x77, 0x65, 0x4d, 0x61, 0x72, 0x74, 0x69, 0x6e, 0x4a, 0x75, 
+    0x6c, 0x69, 0x61, 0x6e, 0x41, 0x6e, 0x64, 0x72, 0x65, 0x61, 0x73, 
+    0x4d, 0x61, 0x72, 0x6b, 0x75, 0x73, 0x32, 0x30, 0x31, 0x36
+  };
+  
+  //32x 'A'
+  byte newCarSpecificSecret[32] = {
+    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41,
+    0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41, 0x41
+  };
+  
+  //32x 'B'
+  byte newerCarSpecificSecret[32] = {
+    0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42,
+    0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42,
+    0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42
+  };
+  
+  struct _secOcPduDetails broadcastDataIdsKeyChecksums[4] =
+  {{0xFFFC, 0x516ED4E4, 0, 0, application, spontaneous, true, "", "secured authentication"}, 
+   {0xFFFD, 0xDDA0B593, 0, 0, application, spontaneous, true, "", "secured VIN"},
+   {0xFFFE, 0xA220926A, 0, 0, application, spontaneous, true, "", "secured realtime offset"}, 
+   {0xFFFF, 0x28D5F8FF, 0, 0, application, spontaneous, true, "", "secured tickcount"}};
+ 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
+  char zzApiVersion[20];
+  char zzServerVersion[20];
+  char h2a[3]={0x00,0x00,0x00};
+    
+  diagRequest ECU_Certificate_Read read_ecu_cert;
+  diagRequest SecOC_ECU_Shared_Secret_Distribution_Start req_share_secret_distr;
+  diagResponse ECU_Certificate_Read read_ecu_cert_res;
+  diagResponse SecOC_ECU_Shared_Secret_Distribution_Start res_share_secret_distr;
+  byte aNonce[32];
+  //byte lenght=32;
+  dword SharedSecretLenght=32;
+ // dword initVectorLenght=16;
+  dword EncryptedDataLenght=80;
+  dword EncKeyLenght=16;
+  dword aNonceandsharedsecretLenght=64;
+  dword CMACbufferLenght=64;
+  dword CMACLenght;
+  dword ECUPrvKeyLength=32;
+  dword DataToSignLength=129;
+  byte aEphPubKeyECU[32];
+
+  byte aEphPrvKeyVSM[32]={0x77, 0x07, 0x6d, 0x0a, 0x73, 0x18, 0xa5, 0x7d, 0x3c, 0x16, 0xc1, 0x72, 0x51, 0xb2, 0x66, 0x45, 0xdf, 0x4c, 0x2f, 0x87, 0xeb, 0xc0, 0x99, 0x2a, 0xb1, 0x77, 0xfb, 0xa5, 0x1d, 0xb9, 0x2c, 0x2a}; //not very ephemeral...
+  byte aEphPubKeyVSM[32]={0x85, 0x20, 0xf0, 0x09, 0x89, 0x30, 0xa7, 0x54, 0x74, 0x8b, 0x7d, 0xdc, 0xb4, 0x3e, 0xf7, 0x5a, 0x0d, 0xbf, 0x3a, 0x0d, 0x26, 0x38, 0x1a, 0xf4, 0xeb, 0xa4, 0xa9, 0x8e, 0xaa, 0x9b, 0x4e, 0x6a}; //not very ephemeral...
+  byte aSharedSecret[32]={0x55,0x77,0x65,0x4d,0x61,0x72,0x74,0x69,0x6e,0x4a,0x75,0x6c,0x69,0x61,0x6e,0x41,0x6e,0x64,0x72,0x65,0x61,0x73,0x4d,0x61,0x72,0x6b,0x75,0x73,0x32,0x30,0x31,0x36}; //ECU will be set to this CSS
+
+  byte aECDH_Z[32];
+  byte temp[64];
+  byte hash[64];
+  dword hashlenght=64;
+  byte aEncKey[16];
+  dword i=0;
+  char str[500];
+  char str2[1000];
+ // char chr[8];
+  //long base=16;
+  byte aNonceandsharedsecret[(32+32)];
+  byte initVector[16];
+  byte aEncryptedData[80];
+  byte aDataToSign[129];
+  byte aDateAndTime[7]={0x07,0xE3,0x01,0x01,0x01,0x01,0x01};
+  byte aTickCount[5]={0x00,0x00,0x00,0x00,0x00};
+  byte aTickCountOffset[5]={0x00,0x00,0x00,0x00,0x00};
+  byte aCMAC[64]; //war 64
+  
+  byte authorityKeyIdentifier[20]={0x80,0xDD,0x45,0x58,0xCC,0x84,0xCC,0x0A,0xC1,0x64,0xD5,0x18,0xEC,0xA6,0x45,0x06,0x5B,0x96,0x14,0x36}; //Authority Key Ident
+  
+  dword authorityKeyIdentifierLength=20;
+    byte serialNum[16];
+  dword serialNumLen;
+
+
+  dword serialNumOutLenght;
+
+  byte ecuCert[501];
+  dword ecuCertLen;
+  char zzErrorMessage[500];
+      byte zzSecOcIsCert[800];
+   dword zzSecOcIsCertLen;
+  int64 zzExpirationDate;
+  char description[60];
+
+    long zzRespCode;
+  char targetBackSerialNum[48];
+    char signingEcuId[30];
+  char routine_res[100];
+    char routine_res2[100];
+    byte routine_res_raw[2];
+}
+
+
+testcase ChangeCSS_left()
+{
+
+  diagSetTarget("RBTMFL223");
+  
+  diagSendRequest(read_ecu_cert);
+  testWaitForDiagResponse(read_ecu_cert,4000);
+  diagGetLastResponse(read_ecu_cert,read_ecu_cert_res);
+  
+   searchCert(description, secOcSetupECU, noManipulation, authorityKeyIdentifier, serialNum, serialNumLen, signingEcuId) ;    
+    i=0;
+  strncpy(str,"",500);
+  while(i<serialNumLen)
+  {
+    hex2ascii(serialNum[i]);
+    strncat(str,h2a,500);    
+    i++;
+  }
+  write("SerialNum of VSM Cert=%s",str);
+  
+  
+  diagGetParameterRaw(read_ecu_cert_res,"Nonce",aNonce,32);
+  i=0;
+   while(i<32)
+  {
+    hex2ascii(aNonce[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("Nonce=%s",str);
+
+  diagGetParameterRaw(read_ecu_cert_res,"Ephemeral_ECU_Public_Key",aEphPubKeyECU,32);  
+  i=0;
+  strncpy(str,"",500);
+  while(i<32)
+  {
+
+    hex2ascii(aEphPubKeyECU[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("ECU_Public_Key=%s",str);
+
+  i=0;
+  strncpy(str,"",500);
+  while(i<7)
+  {
+    hex2ascii(aDateAndTime[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("TimeAndDate=%s",str); //
+  
+  
+  LocalSecurityGenerateSharedSecretECDH(aEphPubKeyECU,elcount(aEphPubKeyECU),aEphPrvKeyVSM,elcount(aEphPrvKeyVSM),aECDH_Z,SharedSecretLenght);
+  memcpy(temp,aNonce,SharedSecretLenght);
+  memcpy_off(temp,SharedSecretLenght,aECDH_Z,0,SharedSecretLenght);
+  SecurityLocalGenerateSHA512(temp,64,hash,hashlenght); //lenght??? workaround, aber warum?
+  i=0;
+  strncpy(str,"",500);
+  while(i<64)
+  {
+    hex2ascii(hash[i]);
+    strncat(str,h2a,500);    
+    i++;
+  }
+  write("Shared Secret Hash=%s",str);
+  
+  
+  memcpy(aEncKey,hash,16);
+  i=0;
+  strncpy(str,"",500);
+  while(i<16)
+  {
+    hex2ascii(aEncKey[i]);
+    strncat(str,h2a,500);      
+    i++;
+  }
+  write("Encryption Key=%s",str);
+  testStepPass("EncKey","calculated EncKey");
+  memcpy(aNonceandsharedsecret,aNonce,32);
+  memcpy_off(aNonceandsharedsecret,32,aSharedSecret,0,SharedSecretLenght); 
+  i=0;
+  strncpy(str,"",500);
+  while(i<64)
+  {
+    hex2ascii(aNonceandsharedsecret[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("Nonce + Shared Secret=%s",str);
+  testStepPass("Nonce_and_SharedS","Nonce_and_SharedS");
+  
+  memcpy_off(initVector, 0, hash, 48, elcount(initVector));
+   testStepPass("memcpy_initVector","memcpy_initVector");
+  LocalSecurityEncryptAES128CBC(aEncKey,EncKeyLenght,aNonceandsharedsecret,aNonceandsharedsecretLenght,initVector,elcount(initVector),aEncryptedData,EncryptedDataLenght);
+  testStepPass("Enc","calculated Enc");
+  i=0;
+  strncpy(str,"",500);
+  while(i<80)
+  {
+    hex2ascii(aEncryptedData[i]);
+    strncat(str,h2a,500);   
+    i++;
+  }
+  write("Encrypted Data=%s",str);
+  
+  
+  memcpy(aDataToSign,aDateAndTime,7);
+  memcpy_off(aDataToSign,7,aTickCount,0,5);
+  memcpy_off(aDataToSign,12,aTickCountOffset,0,5);
+  memcpy_off(aDataToSign,17,aEncryptedData,0,80);
+  memcpy_off(aDataToSign,97,aEphPubKeyVSM,0,32);
+  i=0;
+  strncpy(str,"",500);
+  while(i<129)
+  {
+    hex2ascii(aDataToSign[i]);
+    strncat(str,h2a,500);  
+    i++;
+  }
+  write("Data2Sign=%s",str); 
+  
+  testStepPass("StartSign","start signing");
+  //if(200 != (SignECUSync(authorityKeyIdentifier, authorityKeyIdentifierLength,serialNumin, 9, "VSM-Simulation", aDataToSign, elcount(aDataToSign), aCMAC, CMACbufferLenght, CMACLenght, ecuCert, 800, ecuCertLen, serialNum, 16, serialNumOutLenght, zzExpirationDate, zzErrorMessage, 500)))
+  if(200 != (SignECUSync(authorityKeyIdentifier, authorityKeyIdentifierLength,serialNum, serialNumLen, "VSM-Simulation", aDataToSign, elcount(aDataToSign), aCMAC, CMACbufferLenght, CMACLenght, ecuCert, 800, ecuCertLen, serialNum, 16, serialNumOutLenght, zzExpirationDate, zzErrorMessage, 500)))
+
+  {
+   write("error Signing");
+  }
+  else
+  {  
+    testStepPass("FinishSign","finishedSigning");
+    i=0;
+    strncpy(str,"",500);
+    while(i<64)
+    {
+      hex2ascii(aCMAC[i]);
+      strncat(str,h2a,500);  
+      i++;
+    }
+    write("Signature=%s",str); 
+      
+    i=0;
+    strncpy(str2,"",1000);
+    while(i<ecuCertLen)
+    {
+      hex2ascii(ecuCert[i]);
+      strncat(str2,h2a,1000);  
+      i++;
+    }
+    write("VSM_Cert=%s",str2);  
+    write("VSM_Cert_lenght=%d",ecuCertLen);
+    
+    memcpy_off(ecuCert, 2, ecuCert, 0, ecuCertLen);
+    diagSetParameterRaw(req_share_secret_distr,"Date_and_Time",aDateAndTime,7);
+    diagSetParameterRaw(req_share_secret_distr,"Tick_Count",aTickCount,5);
+    diagSetParameterRaw(req_share_secret_distr,"Tick_Count_Offset",aTickCountOffset,5);
+    diagSetParameterRaw(req_share_secret_distr,"Encrypted_Nonce_and_Shared_Secret",aEncryptedData,80);
+    diagSetParameterRaw(req_share_secret_distr,"Ephemeral_VSM_Public_Key",aEphPubKeyVSM,32); 
+    diagSetParameterRaw(req_share_secret_distr,"Data_Signature",aCMAC,64);  
+    diagSetParameterRaw(req_share_secret_distr,"VSMs_ECU_Certificate",ecuCert,(ecuCertLen+2));   
+    diagSendRequest(req_share_secret_distr);
+     testWaitForDiagResponse(req_share_secret_distr,4000);
+  diagGetLastResponse(req_share_secret_distr,res_share_secret_distr);
+
+    diagGetParameterRaw(res_share_secret_distr,"Verification_Result",routine_res_raw,2);
+    if(diagIsPositiveResponse(res_share_secret_distr)&&routine_res_raw[0]==0x00)
+    {
+      write("got pos. Response");
+      diagGetParameter(res_share_secret_distr,"routineInfo",routine_res,100);
+      diagGetParameter(res_share_secret_distr,"Verification_Result",routine_res2,100);    
+      write("routineInfo=%s",routine_res);
+      write("Verification_Result=%s",routine_res2);
+      if(routine_res_raw[0]==0x00)
+      {
+        testStepPass("Change of CSS", "routineInfo: %s, Verification_Result%s",routine_res,routine_res);
+      }
+      else{
+        testStepFail("Change of CSS", "routineInfo: %s, Verification_Result%s",routine_res,routine_res);
+      }
+    }
+    else{
+         write("got neg. Response");
+       testStepFail("Change of CSS", "got NRC");
+    }
+   
+  }
+}
+
+
+testcase ChangeCSS_right()
+{
+  diagSetTarget("RBTMFR223");
+  
+//  //ZenZefi Verbindung aufbauen
+//  zzRespCode = GetVersionSync(zzApiVersion, elCount(zzApiVersion), zzServerVersion, elCount(zzServerVersion));
+//  if (200 != zzRespCode) {
+//    zzRespCode = GetVersionSync(zzApiVersion, elCount(zzApiVersion), zzServerVersion, elCount(zzServerVersion));
+//  }
+//  if (200 != zzRespCode) {
+//    testStepFail("Preparation", "Connection to ZenZefi server could not be established. Please check ZenZefi installation.");
+//  } else {
+//    testStepPass("Preparation", "Connection to ZenZefi server (version %s) established.", zzServerVersion);
+//  }
+//  
+//  SetZenZefiClientTimeout(60000);
+//  
+  
+  
+  diagSendRequest(read_ecu_cert);
+  testWaitForDiagResponse(read_ecu_cert,4000);
+  diagGetLastResponse(read_ecu_cert,read_ecu_cert_res);
+  
+  
+   searchCert(description, secOcSetupECU, noManipulation, authorityKeyIdentifier, serialNum, serialNumLen, signingEcuId) ;    
+    i=0;
+  strncpy(str,"",500);
+  while(i<serialNumLen)
+  {
+    hex2ascii(serialNum[i]);
+    strncat(str,h2a,500);    
+    i++;
+  }
+  write("SerialNum of VSM Cert=%s",str);
+  
+  diagGetParameterRaw(read_ecu_cert_res,"Nonce",aNonce,32);
+  i=0;
+   while(i<32)
+  {
+    hex2ascii(aNonce[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("Nonce=%s",str);
+
+  diagGetParameterRaw(read_ecu_cert_res,"Ephemeral_ECU_Public_Key",aEphPubKeyECU,32);  
+  i=0;
+  strncpy(str,"",500);
+  while(i<32)
+  {
+
+    hex2ascii(aEphPubKeyECU[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("ECU_Public_Key=%s",str);
+
+  i=0;
+  strncpy(str,"",500);
+  while(i<7)
+  {
+    hex2ascii(aDateAndTime[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("TimeAndDate=%s",str); //
+  
+  
+  LocalSecurityGenerateSharedSecretECDH(aEphPubKeyECU,elcount(aEphPubKeyECU),aEphPrvKeyVSM,elcount(aEphPrvKeyVSM),aECDH_Z,SharedSecretLenght);
+  memcpy(temp,aNonce,SharedSecretLenght);
+  memcpy_off(temp,SharedSecretLenght,aECDH_Z,0,SharedSecretLenght);
+  SecurityLocalGenerateSHA512(temp,64,hash,hashlenght); //lenght??? workaround, aber warum?
+  i=0;
+  strncpy(str,"",500);
+  while(i<64)
+  {
+    hex2ascii(hash[i]);
+    strncat(str,h2a,500);    
+    i++;
+  }
+  write("Shared Secret Hash=%s",str);
+  
+  
+  memcpy(aEncKey,hash,16);
+  i=0;
+  strncpy(str,"",500);
+  while(i<16)
+  {
+    hex2ascii(aEncKey[i]);
+    strncat(str,h2a,500);      
+    i++;
+  }
+  write("Encryption Key=%s",str);
+  testStepPass("EncKey","calculated EncKey");
+  memcpy(aNonceandsharedsecret,aNonce,32);
+  memcpy_off(aNonceandsharedsecret,32,aSharedSecret,0,SharedSecretLenght); 
+  i=0;
+  strncpy(str,"",500);
+  while(i<64)
+  {
+    hex2ascii(aNonceandsharedsecret[i]);
+    strncat(str,h2a,500);
+    i++;
+  }
+  write("Nonce + Shared Secret=%s",str);
+   testStepPass("Nonce_and_SharedS","Nonce_and_SharedS");
+  
+  memcpy_off(initVector, 0, hash, 48, elcount(initVector));
+   testStepPass("memcpy_initVector","memcpy_initVector");
+  LocalSecurityEncryptAES128CBC(aEncKey,EncKeyLenght,aNonceandsharedsecret,aNonceandsharedsecretLenght,initVector,elcount(initVector),aEncryptedData,EncryptedDataLenght);
+   testStepPass("Enc","calculated Enc");
+  i=0;
+  strncpy(str,"",500);
+  while(i<80)
+  {
+    hex2ascii(aEncryptedData[i]);
+    strncat(str,h2a,500);   
+    i++;
+  }
+  write("Encrypted Data=%s",str);
+  
+  
+  memcpy(aDataToSign,aDateAndTime,7);
+  memcpy_off(aDataToSign,7,aTickCount,0,5);
+  memcpy_off(aDataToSign,12,aTickCountOffset,0,5);
+  memcpy_off(aDataToSign,17,aEncryptedData,0,80);
+  memcpy_off(aDataToSign,97,aEphPubKeyVSM,0,32);
+  i=0;
+  strncpy(str,"",500);
+  while(i<129)
+  {
+    hex2ascii(aDataToSign[i]);
+    strncat(str,h2a,500);  
+    i++;
+  }
+  write("Data2Sign=%s",str); 
+  
+  testStepPass("StartSign","start signing");
+  if(200 != (SignECUSync(authorityKeyIdentifier, authorityKeyIdentifierLength,serialNum, serialNumLen, "VSM-Simulation", aDataToSign, elcount(aDataToSign), aCMAC, CMACbufferLenght, CMACLenght, ecuCert, 800, ecuCertLen, serialNum, 16, serialNumOutLenght, zzExpirationDate, zzErrorMessage, 500)))
+  //if(200 !=  SignECUSync(authorityKeyIdentifier, elcount(authorityKeyIdentifier), serialNumin, serialNumLen, signingEcuId, aDataToSign, elcount(nonce)+elcount(ownEphPublicKey), zzSignature, elcount(zzSignature), zzSignatureLen, ecuCert, elcount(ecuCert), ecuCertLen, serialNum, elcount(serialNum), serialNumLen, zzExpirationDate, zzErrorMessage, elcount(zzErrorMessage))) {
+
+  {
+   write("error Signing");
+  }
+  else
+  {  
+    testStepPass("FinishSign","finishedSigning");
+    i=0;
+    strncpy(str,"",500);
+    while(i<64)
+    {
+      hex2ascii(aCMAC[i]);
+      strncat(str,h2a,500);  
+      i++;
+    }
+    write("Signature=%s",str); 
+      
+    i=0;
+    strncpy(str2,"",1000);
+    while(i<ecuCertLen)
+    {
+      hex2ascii(ecuCert[i]);
+      strncat(str2,h2a,1000);  
+      i++;
+    }
+    write("VSM_Cert=%s",str2);  
+    write("VSM_Cert_lenght=%d",ecuCertLen);
+    
+    memcpy_off(ecuCert, 2, ecuCert, 0, ecuCertLen);
+    diagSetParameterRaw(req_share_secret_distr,"Date_and_Time",aDateAndTime,7);
+    diagSetParameterRaw(req_share_secret_distr,"Tick_Count",aTickCount,5);
+    diagSetParameterRaw(req_share_secret_distr,"Tick_Count_Offset",aTickCountOffset,5);
+    diagSetParameterRaw(req_share_secret_distr,"Encrypted_Nonce_and_Shared_Secret",aEncryptedData,80);
+    diagSetParameterRaw(req_share_secret_distr,"Ephemeral_VSM_Public_Key",aEphPubKeyVSM,32); 
+    diagSetParameterRaw(req_share_secret_distr,"Data_Signature",aCMAC,64);  
+    diagSetParameterRaw(req_share_secret_distr,"VSMs_ECU_Certificate",ecuCert,(ecuCertLen+2));   
+    diagSendRequest(req_share_secret_distr);
+     testWaitForDiagResponse(req_share_secret_distr,4000);
+     diagGetLastResponse(req_share_secret_distr,res_share_secret_distr);
+
+    diagGetParameterRaw(res_share_secret_distr,"Verification_Result",routine_res_raw,2);
+    if(diagIsPositiveResponse(res_share_secret_distr)&&routine_res_raw[0]==0x00)
+    {
+      write("got pos. Response");
+      diagGetParameter(res_share_secret_distr,"routineInfo",routine_res,100);
+      diagGetParameter(res_share_secret_distr,"Verification_Result",routine_res2,100);    
+      write("routineInfo=%s",routine_res);
+      write("Verification_Result=%s",routine_res2);
+      if(routine_res_raw[0]==0x00)
+      {
+        testStepPass("Change of CSS", "routineInfo: %s, Verification_Result%s",routine_res,routine_res);
+      }
+      else{
+        testStepFail("Change of CSS", "routineInfo: %s, Verification_Result%s",routine_res,routine_res);
+      }
+    }
+    else{
+         write("got neg. Response");
+       testStepFail("Change of CSS", "got NRC");
+    }    
+  }
+}
+
+void hex2ascii(byte number)
+{
+  byte x=0;
+ // char output[2]={0x30,0x30};
+  h2a[2]='\0';
+  x=0;
+ while (number>15)
+  {
+    number=number-16;
+    x=x+1;
+  }
+
+  if(x>9)
+  {
+    h2a[0]=0x41+(x-10);
+  }
+  else{
+        h2a[0]=0x30+x;
+  }
+  x=0;
+  while (number>0)
+  {
+    number=number-1;
+    x=x+1;
+  }
+
+  if(x>9)
+  {
+    h2a[1]=0x41+(x-10);
+  }
+  else{
+        h2a[1]=0x30+x;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+qword searchCert(char description[], enum _certTypes type, enum _sharedSecretDistributionManipulation manipulationIn, byte authorityKeyIdentifierOut[], byte serialNumOut[], dword &serialNumLenOut, char uniqueEcuIdOut[]) {
+  dword i;
+  qword validFrom;
+  byte nonce[32];
+  byte step;
+  byte backCertId[20];
+  char ecuSearchStr[40];
+  char typeSearchStr[40];
+  char parentId[60];
+  byte secOcSetupEcuCert[800];
+  dword secOcSetupEcuCertLen;
+  char lastReceivedVIN[18];
+  byte notNecessary[800];
+  dword notNecessaryLen;
+  //ZenZefi parameter
+  long zzRespCode;
+  dword zzCountOfCertificatesOut;
+  char zzErrorMessage[500];
+  const long ZenZefiCertificateStringBufferSize = 256;
+  struct unixTime
+  {
+    dword year;
+    byte month;
+    byte day;
+    byte hour;
+    byte minute;
+    byte second;
+  } time;
+  struct ZenZefiCertificate
+  {
+    char algorithmIdentifier[ZenZefiCertificateStringBufferSize];
+    char authorityKeyIdentifier[ZenZefiCertificateStringBufferSize];
+    char baseCertificateID[ZenZefiCertificateStringBufferSize];
+    char basicConstraintsText[ZenZefiCertificateStringBufferSize];
+    char id[ZenZefiCertificateStringBufferSize];
+    char issuer[ZenZefiCertificateStringBufferSize];
+    char issuerSerialNumber[ZenZefiCertificateStringBufferSize];
+    char keyUsageText[ZenZefiCertificateStringBufferSize];
+    char nonce[ZenZefiCertificateStringBufferSize];
+    char parentId[ZenZefiCertificateStringBufferSize];
+    char pkirole[ZenZefiCertificateStringBufferSize];
+    char prodQualifier[ZenZefiCertificateStringBufferSize];
+    char serialNo[ZenZefiCertificateStringBufferSize];
+    char services[ZenZefiCertificateStringBufferSize];
+    char signature[ZenZefiCertificateStringBufferSize];
+    char signatureBase64[ZenZefiCertificateStringBufferSize];
+    char specialECU[ZenZefiCertificateStringBufferSize];
+    char state[ZenZefiCertificateStringBufferSize];
+    char subject[ZenZefiCertificateStringBufferSize];
+    char subjectKeyIdentifier[ZenZefiCertificateStringBufferSize];
+    char subjectPublicKey[ZenZefiCertificateStringBufferSize];
+    char targetECU[ZenZefiCertificateStringBufferSize];
+    char targetSubjectKeyIdentifier[ZenZefiCertificateStringBufferSize];
+    char targetVIN[ZenZefiCertificateStringBufferSize];
+    char type[ZenZefiCertificateStringBufferSize];
+    char uniqueECUID[ZenZefiCertificateStringBufferSize];
+    char userRole[ZenZefiCertificateStringBufferSize];
+    char validityStrengthColor[ZenZefiCertificateStringBufferSize];
+    char version[ZenZefiCertificateStringBufferSize];
+    int64 validFrom;
+    int64 validTo;
+    long activeForTesting;
+    long hasChildren;
+    long manualTestingActive;
+    long secOCISCert;
+  } zzEcuCertData;
+  
+  
+  char diagTarget[30]="VSM_Simulation";
+  strncpy(ecuSearchStr, "\\b", elcount(ecuSearchStr));
+  strncat(ecuSearchStr, diagTarget, elcount(ecuSearchStr));
+  strncat(ecuSearchStr, "\\b", elcount(ecuSearchStr));
+  
+  switch(type) {
+    case Time:
+      strncpy(typeSearchStr, "TIME_CERTIFICATE", elcount(typeSearchStr));
+    break;
+    case newestDiag:
+      strncpy(typeSearchStr, "DIAGNOSTIC_AUTHENTICATION_CERTIFICATE", elcount(typeSearchStr));
+    break;
+    case secOcSetupECU:
+      hexStringToByteArray(backCertIdent_dev_BackTest1, backCertId, elcount(backCertId));
+    break;
+    case replaceCertEnhRights:
+    case replaceCertDiag:
+      strncpy(typeSearchStr, "ENHANCED_RIGHTS_CERTIFICATE", elcount(typeSearchStr));
+    break;
+  }
+  step = 0;
+  validFrom = 0;
+
+  //check for ECU certificate data matching diagTarget in ZenZefi
+  zzRespCode = GetFirstCertificateSync(ZenZefiCertificateStringBufferSize, zzCountOfCertificatesOut, zzEcuCertData.algorithmIdentifier, zzEcuCertData.authorityKeyIdentifier, zzEcuCertData.baseCertificateID, zzEcuCertData.basicConstraintsText,
+    zzEcuCertData.id, zzEcuCertData.issuer, zzEcuCertData.issuerSerialNumber, zzEcuCertData.keyUsageText, zzEcuCertData.nonce, zzEcuCertData.parentId, zzEcuCertData.pkirole, zzEcuCertData.prodQualifier, zzEcuCertData.serialNo, zzEcuCertData.services, zzEcuCertData.signature,
+    zzEcuCertData.signatureBase64, zzEcuCertData.specialECU, zzEcuCertData.state, zzEcuCertData.subject, zzEcuCertData.subjectKeyIdentifier, zzEcuCertData.subjectPublicKey, zzEcuCertData.targetECU, zzEcuCertData.targetSubjectKeyIdentifier, zzEcuCertData.targetVIN,
+    zzEcuCertData.type, zzEcuCertData.uniqueECUID, zzEcuCertData.userRole, zzEcuCertData.validityStrengthColor, zzEcuCertData.version, zzEcuCertData.validFrom, zzEcuCertData.validTo, zzEcuCertData.activeForTesting, zzEcuCertData.hasChildren, 
+    zzEcuCertData.manualTestingActive, zzEcuCertData.secOCISCert);
+  if(200 != zzRespCode) {
+    zzRespCode = GetFirstCertificateSync(ZenZefiCertificateStringBufferSize, zzCountOfCertificatesOut, zzEcuCertData.algorithmIdentifier, zzEcuCertData.authorityKeyIdentifier, zzEcuCertData.baseCertificateID, zzEcuCertData.basicConstraintsText,
+      zzEcuCertData.id, zzEcuCertData.issuer, zzEcuCertData.issuerSerialNumber, zzEcuCertData.keyUsageText, zzEcuCertData.nonce, zzEcuCertData.parentId, zzEcuCertData.pkirole, zzEcuCertData.prodQualifier, zzEcuCertData.serialNo, zzEcuCertData.services, zzEcuCertData.signature,
+      zzEcuCertData.signatureBase64, zzEcuCertData.specialECU, zzEcuCertData.state, zzEcuCertData.subject, zzEcuCertData.subjectKeyIdentifier, zzEcuCertData.subjectPublicKey, zzEcuCertData.targetECU, zzEcuCertData.targetSubjectKeyIdentifier, zzEcuCertData.targetVIN,
+      zzEcuCertData.type, zzEcuCertData.uniqueECUID, zzEcuCertData.userRole, zzEcuCertData.validityStrengthColor, zzEcuCertData.version, zzEcuCertData.validFrom, zzEcuCertData.validTo, zzEcuCertData.activeForTesting, zzEcuCertData.hasChildren, 
+      zzEcuCertData.manualTestingActive, zzEcuCertData.secOCISCert);
+  }
+  if(200 != zzRespCode) {
+    testStepFail(description, "No certificates available in ZenZefi or no connection to ZenZefi server could be established.");
+    return 1;
+  } else {
+    for(i=1; i<=zzCountOfCertificatesOut; i++) {
+      switch(type) {
+        /*case Root:
+      	  if(0 == strncmp(zzEcuCertData.subjectKeyIdentifier, givenRootCertIdent, elcount(givenRootCertIdent))) {
+            //convert char array to byte array to use GetCertificateSync
+            hexStringToByteArray(zzEcuCertData.authorityKeyIdentifier, authorityKeyIdentifierOut, elcount(authorityKeyIdentifierOut));
+            serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+            testStep(description, "%s Root CA Certificate available within ZenZefi.", CertType.name());
+            return 0;
+          } else if(i==zzCountOfCertificatesOut) {
+            testStepFail(description, "No %s Root CA Certificate available within ZenZefi.", CertType.name());
+            return 1;
+          }
+        break;*/
+        case Backend:
+          if(0 == strncmp(zzEcuCertData.subjectKeyIdentifier, givenBackCertIdent, elcount(givenBackCertIdent))) {
+            //convert char array to byte array to use GetCertificateSync
+            hexStringToByteArray(zzEcuCertData.authorityKeyIdentifier, authorityKeyIdentifierOut, elcount(authorityKeyIdentifierOut));
+            serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+            testStep(description, "%s Backend CA Certificate available within ZenZefi.", CertType.name());
+            return 0;
+          } else if(i==zzCountOfCertificatesOut) {
+            testStepFail(description, "No %s Backend CA Certificate available within ZenZefi.", CertType.name());
+            return 1;
+          }
+        break;
+        case ECU:
+          serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+          if(-1 != strstr_regex(zzEcuCertData.uniqueECUID, ecuSearchStr) && (0 == strncmp(zzEcuCertData.authorityKeyIdentifier, backCertIdent_dev_BackTest1, elcount(backCertIdent_dev_BackTest1)) || (0 != memcmp(serialNumOut, hli223SerialNum_series, serialNumLenOut) && 0 != memcmp(serialNumOut, gw223SerialNum_series, serialNumLenOut))) && 0 == strncmp(zzEcuCertData.authorityKeyIdentifier, givenBackCertIdent, elcount(givenBackCertIdent))) {
+            //convert char array to byte array to use GetCertificateSync
+            hexStringToByteArray(zzEcuCertData.authorityKeyIdentifier, authorityKeyIdentifierOut, elcount(authorityKeyIdentifierOut));
+            testStep(description, "ECU Certificate matching %s available within ZenZefi.", diagTarget);
+            return 0;
+          } else if(i==zzCountOfCertificatesOut) {
+            testStepFail(description, "No ECU Certificate matching %s available within ZenZefi.", diagTarget);
+            return 1;
+          }
+        break;
+        case secOcSetupECU:
+          hexStringToByteArray(zzEcuCertData.authorityKeyIdentifier, authorityKeyIdentifierOut, elcount(authorityKeyIdentifierOut));
+          if(EcuType != VSM) {
+            if(manipulationIn == notMatchingCertificate) {
+              serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+              if(0 == memcmp(ecuBackCertIdent, backCertId, elcount(ecuBackCertIdent))) {
+                //use GW from development
+                if(0 == memcmp(serialNumOut, gw223SerialNum_dev, serialNumLenOut) && 0 == memcmp(authorityKeyIdentifierOut, ecuBackCertIdent, elcount(ecuBackCertIdent))) {
+                  strncpy(uniqueEcuIdOut, zzEcuCertData.uniqueECUID, elcount(zzEcuCertData.uniqueECUID));
+                  testStep(description, "ECU Certificate matching GW223 available within ZenZefi.");
+                  return 0;
+                } else if(i==zzCountOfCertificatesOut) {
+                  testStepFail(description, "No ECU Certificate matching GW223 available within ZenZefi.");
+                  return 1;
+                }
+              } else {
+                //use GW from series
+                if(0 == memcmp(serialNumOut, gw223SerialNum_series, serialNumLenOut) && 0 == memcmp(authorityKeyIdentifierOut, ecuBackCertIdent, elcount(ecuBackCertIdent))) {
+                  strncpy(uniqueEcuIdOut, zzEcuCertData.uniqueECUID, elcount(zzEcuCertData.uniqueECUID));
+                  testStep(description, "ECU Certificate matching GW223 available within ZenZefi.");
+                  return 0;
+                } else if(i==zzCountOfCertificatesOut) {
+                  testStepFail(description, "No ECU Certificate matching GW223 available within ZenZefi.");
+                  return 1;
+                }
+              }
+            } else {
+              if(0 == strncmp(zzEcuCertData.specialECU, "1", elcount(zzEcuCertData.specialECU)) && 0 == strncmp(zzEcuCertData.pkirole, "ECU Certificate", elcount(zzEcuCertData.pkirole)) && 0 == memcmp(authorityKeyIdentifierOut, ecuBackCertIdent, elcount(ecuBackCertIdent))) {
+                serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+                strncpy(uniqueEcuIdOut, zzEcuCertData.uniqueECUID, elcount(zzEcuCertData.uniqueECUID));
+                testStep(description, "VSM Certificate available within ZenZefi.");
+                return 0;
+              } else if(i==zzCountOfCertificatesOut) {
+                testStepFail(description, "No VSM Certificate available within ZenZefi.");
+                return 1;
+              }
+            }
+          } else {
+            if(manipulationIn == notMatchingCertificate) {
+              if(-1 != strstr_regex(zzEcuCertData.uniqueECUID, "\\bHLI_FL223\\b") && 0 == memcmp(authorityKeyIdentifierOut, ecuBackCertIdent, elcount(ecuBackCertIdent))) {
+                serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+                strncpy(uniqueEcuIdOut, zzEcuCertData.uniqueECUID, elcount(zzEcuCertData.uniqueECUID));
+                testStep(description, "ECU Certificate matching HLI223 available within ZenZefi.");
+                return 0;
+              } else if(i==zzCountOfCertificatesOut) {
+                testStepFail(description, "No ECU Certificate matching HLI223 available within ZenZefi.");
+                return 1;
+              }
+            } else {
+              if(-1 != strstr_regex(zzEcuCertData.uniqueECUID, "\\bGW223\\b") && 0 == memcmp(authorityKeyIdentifierOut, ecuBackCertIdent, elcount(ecuBackCertIdent))) {
+                serialNumLenOut = hexStringToByteArray(zzEcuCertData.serialNo, serialNumOut, elcount(serialNumOut));
+                strncpy(uniqueEcuIdOut, zzEcuCertData.uniqueECUID, elcount(zzEcuCertData.uniqueECUID));
+                testStep(description, "ECU Certificate matching GW223 available within ZenZefi.");
+                return 0;
+              } else if(i==zzCountOfCertificatesOut) {
+                testStepFail(description, "No ECU Certificate matching GW223 available within ZenZefi.");
+                return 1;
+              }
+            }
+          }
+        break;
+     
+        
+      }
+      
+      GetNextCertificateSync(ZenZefiCertificateStringBufferSize, zzEcuCertData.algorithmIdentifier, zzEcuCertData.authorityKeyIdentifier, zzEcuCertData.baseCertificateID, zzEcuCertData.basicConstraintsText,
+        zzEcuCertData.id, zzEcuCertData.issuer, zzEcuCertData.issuerSerialNumber, zzEcuCertData.keyUsageText, zzEcuCertData.nonce, zzEcuCertData.parentId, zzEcuCertData.pkirole, zzEcuCertData.prodQualifier, zzEcuCertData.serialNo, zzEcuCertData.services, zzEcuCertData.signature,
+        zzEcuCertData.signatureBase64, zzEcuCertData.specialECU, zzEcuCertData.state, zzEcuCertData.subject, zzEcuCertData.subjectKeyIdentifier, zzEcuCertData.subjectPublicKey, zzEcuCertData.targetECU, zzEcuCertData.targetSubjectKeyIdentifier, zzEcuCertData.targetVIN,
+        zzEcuCertData.type, zzEcuCertData.uniqueECUID, zzEcuCertData.userRole, zzEcuCertData.validityStrengthColor, zzEcuCertData.version, zzEcuCertData.validFrom, zzEcuCertData.validTo, zzEcuCertData.activeForTesting, zzEcuCertData.hasChildren, 
+        zzEcuCertData.manualTestingActive, zzEcuCertData.secOCISCert);
+    }
+    if(validFrom > 0) {
+      //convert milliseconds to seconds
+      validFrom = validFrom/1000;
+      convertGPSTimestamp(validFrom, time.year, time.month, time.day, time.hour, time.minute, time.second);
+      testStep(description, "Newest Diagnostic Authentication Certificate valid from %02d.%02d.%04d %02d:%02d:%02d available within ZenZefi.", time.day, time.month, time.year, time.hour, time.minute, time.second);
+      return validFrom;
+    }
+    testStepFail(description, "No certificate matching the criterias available in ZenZefi.");
+    return 1;
+  }
+}
+
+
+
+//returns actual length of byte stream
+dword hexStringToByteArray(char hexStr[], byte array[], dword arrayLen) {
+  char hexChars[5] = "0x";
+  long hexVal;
+  int i;
+  long len;
+  
+  len = 1;
+  
+  hexChars[2] = hexStr[0];
+  hexChars[3] = hexStr[1];
+  hexChars[4] = 0;
+  strtol(hexChars, hexVal);
+  array[0] = (byte) hexVal;
+  
+  for(i=0; i<arrayLen-1; i++) {
+  	if(hexStr[i*3+2] == 0 || hexStr[i*3+3] == 0 || hexStr[i*3+4] == 0) { // abort on null byte
+      break;
+    }
+    hexChars[2] = hexStr[i*3+3];
+    hexChars[3] = hexStr[i*3+4];
+    strtol(hexChars, hexVal);
+    array[i+1] = (byte) hexVal;
+	  len += 1;
+  }
+  return len;
+}
+

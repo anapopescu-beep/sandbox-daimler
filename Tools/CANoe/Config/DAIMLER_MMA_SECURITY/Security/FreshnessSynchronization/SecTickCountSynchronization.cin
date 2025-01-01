@@ -1,0 +1,85 @@
+/*@!Encoding:1252*/
+//////////////////////////////////////////////////////////////
+// SecTickCountSynchronization.cin
+//
+// Adapter to put the new freshnessvalue (read from the ECUs)
+// into the VSM simulation.
+// An additonal offset is added to consider some delays 
+// 
+//
+//////////////////////////////////////////////////////////////
+includes
+{
+  #include "..\..\CAPL\VSM.cin"
+}
+
+on sysvar_update sysvar::SeckTickSynchronization::CalculatedSecTickCountWithOffset
+{
+  SetLocalTickCount(@this); // function is defined in VSM.cin
+}
+
+on sysvar_update sysvar::SeckTickSynchronization::Button_TriggerManualSeckTickCountUpdate
+{
+  if( @this == 1 )
+  {
+    SetLocalTickCount(@sysvar::SeckTickSynchronization::ManualUpdateValue);
+  }
+}
+
+on sysvar_update sysvar::SeckTickSynchronization::Button_ReadSeckTickCount
+{
+  if(@this == 1)
+    ReadSecTickCount();  
+}
+
+void ReadSecTickCount()
+{
+  @sysvar::SeckTickSynchronization::ReadSeckTickCountOnly = 1; // configures test module
+  
+  @sysvar::SeckTickSynchronization::TriggerSecTickCountRead = 1; //starts test module 
+}
+
+on sysvar_update sysvar::SeckTickSynchronization::Button_SecTickCountSync
+{
+  if( @this==1)
+  {
+    @sysvar::SeckTickSynchronization::ReadSeckTickCountOnly = 0; // configures test module
+    @sysvar::SeckTickSynchronization::TriggerSecTickCountRead = 1; //starts test module
+  }
+}
+
+on sysvar_update sysvar::SeckTickSynchronization::Button_SignTickCountOffset
+{
+  if(@this == 1 )
+  {
+    if( @sysvar::SeckTickSynchronization::SignTickCountOffset == 0 )
+    {
+      @sysvar::SeckTickSynchronization::SignTickCountOffset = 1;
+      putValueToControl("SecTickCountSynchronization","SignTickCountOffset","+");
+    }
+    else
+    {
+      @sysvar::SeckTickSynchronization::SignTickCountOffset = 0;
+      putValueToControl("SecTickCountSynchronization","SignTickCountOffset","-");
+    }
+      
+  }
+}
+
+on Start
+{
+  if( @sysvar::SeckTickSynchronization::ReadSecTickCountAtStart == 1 )
+  {
+    ReadSecTickCount();
+  }
+  UpdateSeckTickCountSyncPanel();
+}
+
+void UpdateSeckTickCountSyncPanel()
+{
+  if( @sysvar::SeckTickSynchronization::SignTickCountOffset == 1 )
+    putValueToControl("SecTickCountSynchronization","SignTickCountOffset","+");
+  else if (@sysvar::SeckTickSynchronization::SignTickCountOffset == 0 )
+    putValueToControl("SecTickCountSynchronization","SignTickCountOffset","-");  
+}
+

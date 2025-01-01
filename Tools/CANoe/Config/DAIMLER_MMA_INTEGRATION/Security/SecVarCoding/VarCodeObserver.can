@@ -1,0 +1,98 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "SecVarCodingValues.cin"
+}
+
+variables
+{
+  char cNodeName[25] = "Variant Coding Observer";
+  int debug = 0; // acivates debug write messages
+}
+
+on preStart
+{
+  setControlVisibility("SecVarCodingControl","LEDControlBufferLimit",0);
+}
+
+on start
+{
+  @sysvar::SecVarCodingPanel::MaxWriteReqBuffer = cMaxBufferSize;
+}
+
+on diagRequest VarCoding::*
+{
+  
+  byte buffer[cMaxBufferSize];
+  long pr;
+  long dataSize;
+  char ecu[100];
+  long respSize; 
+  char respName[100];
+
+ 
+  if( CheckCurrentDiagTarget() == 1 )
+  {
+    if( @sysvar::SecVarCodingControl::SecVarCodingSequence == WriteData )
+    {
+      pr = DiagGetPrimitiveByte(this, 0);
+      if( pr == 0x2E ) // only write request are relevant
+      {
+        respSize = DiagGetPrimitiveSize(this);
+        if(debug)write("%s: Primitive revceived: 0x%02X length: %i",cNodeName, pr, respSize);
+        
+        if( respSize > cMaxBufferSize ) // check buffer size
+        {
+          setControlVisibility("SecVarCodingControl","LEDControlBufferLimit",1);
+          DiagGetObjectName( this, respName, elcount( respName));
+          writeLineEx(0,3,"%s: Coding write request (%s) cannot copied to internal buffer. cMaxBufferSize in VarCodeObserver.can must be increased.",cNodeName,respName);
+          @sysvar::SecVarCodingPanel::LED_BufferLimitReached = 1;
+          @sysvar::SecVarCodingPanel::Button_CancelSequence = 1;
+        }
+        else
+        {
+          setControlVisibility("SecVarCodingControl","LEDControlBufferLimit",0);
+        }
+        
+        // transfer coding data
+        dataSize = diagGetPrimitiveData(this, buffer, elcount(buffer));
+        @sysvar::SecVarCodingControl::CodingVariantWriteDataLength = respSize;
+        sysSetVariableData("SecVarCodingControl","CodingVariantWriteData",buffer,dataSize);
+        
+        // parameter for timeout handling
+        diagGetCurrentEcu( ecu, elcount(ecu));
+        sysSetVariableString("CodingTimeout","TimeoutEcuQualifier",ecu);
+      }
+    }
+  }
+  else
+  {
+    _TestStepFail("Mismatch between target ECU and response ECU ");
+  }
+  
+  output(this); // necessary to pass event to windows behind this block
+}
+
+int CheckCurrentDiagTarget()
+{
+  char qualifier[100]; 
+  dword bufferLen = 100;
+  char targetName[100];
+  
+  diagGetCurrentEcu ( qualifier,  bufferLen);
+  sysGetVariableString("LocalAuthentication","DiagTarget",targetName,elCount(targetName));
+  
+  if( strncmp(qualifier, targetName ,strlen(qualifier) )== 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+void _TestStepFail ( char msg[])
+{
+  writeLineEx(0,3,"%s: %s",cNodeName,msg);
+}

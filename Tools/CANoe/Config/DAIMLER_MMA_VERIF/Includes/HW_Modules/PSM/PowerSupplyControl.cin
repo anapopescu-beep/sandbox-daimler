@@ -1,0 +1,481 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  // Serial Port settings
+  int Baudrate = 9600;
+  int Parity = 0;	
+  int Stopbit = 1;
+	int ByteSize = 8;
+  
+  //Power Supply Sintax
+	char SintaxVoltage[20] = ":CHAN1:VOLT";
+	char SintaxReadVoltage[20] = ":CHAN1:MEAS:VOLT?\r\n";
+	char SintaxReadCurrent[20] = ":CHAN1:MEAS:CURR?\r\n";
+	char SintaxCurrent[20] = ":CHAN1:CURR";
+	char SintaxPowerOn[20] = ":OUTP:STAT 1\r\n";
+	char SintaxReadPowerState[20] = ":OUTP:STAT?\r\n";
+	char SintaxPowerOff[20] = ":OUTP:STAT 0\r\n";
+	char NewLine[10] = "\r\n";
+ 
+   // Used for panel output.
+  char cPowerSupplyPannel[50] = "Power Supply";
+  
+  long PASS_Color    = 0x00FF00; // Lime.
+  long WARNING_Color = 0xFFFF00; // Yellow.
+  long FAIL_Color    = 0xFF0000; // Red.
+  long WHITE_Color   = 0xFFFFFF; // White.
+  msTimer closeRsPortTimer;
+  msTimer readRsPortTimer;
+  
+  const int PS_SERIAL_PR   = 1;
+  const int PS_SERIAL_FAIL = -1;
+  
+  const cREAD_NONE    = 0;
+  const cREAD_STATE   = 1;
+  const cREAD_VOLTAGE = 2;
+  const cREAD_CURRENT = 3;
+  int iReadType = cREAD_NONE;
+}
+
+
+on timer closeRsPortTimer
+{
+  RS232Close(@sysvar::PSM::sysCOMPort);
+}
+
+on timer readRsPortTimer
+{
+  byte SerialBufferRead[10];
+  RS232Receive(@sysvar::PSM::sysCOMPort, SerialBufferRead, 10);
+}
+
+RS232OnReceive( dword port, byte buffer[], dword number )
+{
+  int iCount;
+  char cOutput[50] = "";
+  int iStatus;
+  stack char cPanelOutput[200];
+  
+  for (iCount=0;iCount<number;iCount++)
+  {
+    cOutput[iCount]=buffer[iCount];
+  }
+  
+  str_replace(cOutput,"\n","");
+  
+  if(iReadType == cREAD_STATE)
+  {
+    iStatus= _atoi64(cOutput);
+
+    switch (iStatus)
+    {
+      case 1: 
+      {
+        if(@sysvar::PSM::sysPSM != sysvar::PSM::sysPSM::Live_Update && @sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(WHITE_Color, "Power supply state is ON.");
+        }
+        
+        testStep(@sysvar::CORE::sysLevelOfDetailStep, "PS","Power supply state is on.");
+        break;
+      } 
+      case 0: 
+      {
+        if(@sysvar::PSM::sysPSM != sysvar::PSM::sysPSM::Live_Update && @sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(WHITE_Color, "Power supply state is OFF.");
+        }
+        
+        testStep(@sysvar::CORE::sysLevelOfDetailStep, "PS","Power supply state is OFF.");
+        break;
+      }
+      default:
+      {
+        if(@sysvar::PSM::sysPSM != sysvar::PSM::sysPSM::Live_Update && @sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(FAIL_Color, "Error occured while reading power supply status.");
+        }
+        
+         testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS", "Error occured while reading power supply status.");
+        break;
+      }
+    }
+
+    @sysvar::PSM::sysPowerSupplyState = iStatus;
+  }
+  else if(iReadType == cREAD_VOLTAGE)
+  {
+      @sysvar::PSM::sysVoltageDisplay = atodbl(cOutput); 
+      if(@sysvar::PSM::sysPSM != sysvar::PSM::sysPSM::Live_Update && @sysvar::PSM::sysPSEnablePanelOutput == 1)
+      {
+        snprintf(cPanelOutput, elcount(cPanelOutput), "Power supply voltage is %.2f V.", @sysvar::PSM::sysVoltageDisplay);
+        PSM_Output_View(WHITE_Color, cPanelOutput);
+      }
+  }
+  else if(iReadType == cREAD_CURRENT)
+  {
+      @sysvar::PSM::sysCurrentDisplay = atodbl(cOutput);
+      if(@sysvar::PSM::sysPSM != sysvar::PSM::sysPSM::Live_Update && @sysvar::PSM::sysPSEnablePanelOutput == 1)
+      {
+        snprintf(cPanelOutput, elcount(cPanelOutput), "Power supply current is %.2f A.", @sysvar::PSM::sysCurrentDisplay);
+        PSM_Output_View(WHITE_Color, cPanelOutput);
+//        @sysvar::PSM::sysCurrentDisplay = 0;
+      }
+  }
+  else
+  {
+    /* do nothing */
+  }
+  
+  iReadType = cREAD_NONE;
+}
+
+
+int PS_OpenPort()
+{
+  stack char cPanelOutput[200];
+  
+  if (rs232Open(@sysvar::PSM::sysCOMPort) == PS_SERIAL_PR)
+  {
+    rs232Configure(@sysvar::PSM::sysCOMPort, Baudrate, ByteSize, Stopbit, Parity);
+    return PS_SERIAL_PR;
+  }
+  else
+  {
+    snprintf(cPanelOutput, elcount(cPanelOutput), "Error: Can't open COM port: %i.", @sysvar::PSM::sysCOMPort);
+    PSM_Output_View(WARNING_Color, "Error: Can't open COM port.");
+    
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS","Can't open COM port: %i",@sysvar::PSM::sysCOMPort);
+    return PS_SERIAL_FAIL;
+  }
+}
+
+int PS_RS232Send(char cSerialRequest[])
+{
+  stack byte bSerialBuffer[50];
+  stack char cPanelOutput[200];
+  
+  memcpy(bSerialBuffer, cSerialRequest, strlen(cSerialRequest));
+  
+  if(RS232Send(@sysvar::PSM::sysCOMPort, bSerialBuffer, strlen(cSerialRequest)) == PS_SERIAL_PR)
+  {
+    return PS_SERIAL_PR;
+  }
+
+  snprintf(cPanelOutput, elcount(cPanelOutput), "Error when sending serial request on port: [%i].", @sysvar::PSM::sysCOMPort);
+  PSM_Output_View(WARNING_Color, cPanelOutput);
+ 
+  testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS", cPanelOutput);
+  return PS_SERIAL_FAIL;
+}
+
+void PowerOn()
+{
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  stack char cPanelOutput[200];
+  
+  if(isTimerActive(closeRsPortTimer) != 0)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = 1;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if(PS_RS232Send(SintaxPowerOn) == PS_SERIAL_PR)
+    {
+      testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "PS","Power-On request succesfully sent to the power supply.");
+      
+//      testWaitForTimeout(250);
+    }
+    setTimer(closeRsPortTimer, 350);
+  }
+}
+
+void PowerOff()
+{
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  stack char cPanelOutput[200];
+  
+  if(isTimerActive(closeRsPortTimer) != 0)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = 1;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if(PS_RS232Send(SintaxPowerOff) == PS_SERIAL_PR)
+    {
+      testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "PS","Power-Off request succesfully sent to the power supply.");
+      
+      testWaitForTimeout(100);
+    }
+    setTimer(closeRsPortTimer, 350);
+  }
+}
+
+void MakePowerOffOn(int iTime)
+{
+  PowerOff();
+  TestWaitForTimeout(iTime);
+  PowerOn();
+}
+
+void ReadPowerSupplyState()
+{
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  
+  if(isTimerActive(closeRsPortTimer) == 1)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = PS_SERIAL_PR;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  iReadType = cREAD_STATE;
+  
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if ((PS_RS232Send(SintaxReadPowerState) == PS_SERIAL_PR) )
+    {
+     setTimer(readRsPortTimer, 80);
+      
+     TestWaitForTimeout(100);
+   }
+   setTimer(closeRsPortTimer, 350);
+  }
+}
+
+void SetVoltage(double dVoltage)
+{
+  char SpaceCharacter[2]=" ";
+  char tempSintaxVoltage[20]="";
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  stack char cPanelOutput[200];
+  stack char VoltageCharBuffer[6];
+  
+  if(isTimerActive(closeRsPortTimer) == 1)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = PS_SERIAL_PR;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  strncpy(tempSintaxVoltage,SintaxVoltage,strlen(SintaxVoltage)+1);
+  snprintf(VoltageCharBuffer,elcount(VoltageCharBuffer),"%.2f",dVoltage);
+  
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if (dVoltage<=@sysvar::PSM::sysMaxVoltage)
+    {
+      strncat(tempSintaxVoltage,SpaceCharacter,strlen(tempSintaxVoltage)+strlen(SpaceCharacter)+1);
+      strncat(tempSintaxVoltage,VoltageCharBuffer,strlen(tempSintaxVoltage)+strlen(VoltageCharBuffer)+1);
+      strncat(tempSintaxVoltage,NewLine,strlen(tempSintaxVoltage)+strlen(NewLine)+1);
+      
+      if ((PS_RS232Send(tempSintaxVoltage) == PS_SERIAL_PR))
+      {
+        snprintf(cPanelOutput, elcount(cPanelOutput), "%s V set request succesfully sent to the power supply.", VoltageCharBuffer);
+        if(@sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(WHITE_Color, cPanelOutput);
+        }
+        
+        testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "PS", cPanelOutput, VoltageCharBuffer);
+        @sysvar::PSM::sysVoltageDisplay = dVoltage;
+      }
+      else
+      {
+        snprintf(cPanelOutput, elcount(cPanelOutput), "%s V request FAILED to be sent to the power supply.", VoltageCharBuffer);
+        if(@sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(FAIL_Color, cPanelOutput);
+        }
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS", cPanelOutput);
+      }
+      
+      TestWaitForTimeout(100);
+    }
+   else
+    {
+      snprintf(cPanelOutput, elcount(cPanelOutput), "%s V set request is higher then maximum allowed on power supply: %i V", VoltageCharBuffer, @sysvar::PSM::sysMaxCurrent);
+      if(@sysvar::PSM::sysPSEnablePanelOutput == 1)
+      {
+       PSM_Output_View(FAIL_Color, cPanelOutput);
+      }
+      
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS", cPanelOutput);
+    }
+    setTimer(closeRsPortTimer, 350);
+  }
+}
+
+
+void SetCurrent(double dCurrent)
+{
+  char SpaceCharacter[2]=" ";
+  char tempSintaxCurrent[20]="";
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  stack char cPanelOutput[200];
+  stack char CurrentCharBuffer[6];
+  
+  if(isTimerActive(closeRsPortTimer) == 1)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = PS_SERIAL_PR;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  strncpy(tempSintaxCurrent,SintaxCurrent,strlen(SintaxCurrent)+1);
+  snprintf(CurrentCharBuffer,elcount(CurrentCharBuffer),"%.2f",dCurrent);
+ 
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if (dCurrent <= @sysvar::PSM::sysMaxCurrent)
+    {
+      strncat(tempSintaxCurrent,SpaceCharacter,strlen(tempSintaxCurrent)+strlen(SpaceCharacter)+1);
+      strncat(tempSintaxCurrent,CurrentCharBuffer,strlen(tempSintaxCurrent)+strlen(CurrentCharBuffer)+1);
+      strncat(tempSintaxCurrent,NewLine,strlen(tempSintaxCurrent)+strlen(NewLine)+1);
+          
+      if ((PS_RS232Send(tempSintaxCurrent) == PS_SERIAL_PR))
+      {
+        snprintf(cPanelOutput, elcount(cPanelOutput), "%s A set request succesfully sent to the power supply.", CurrentCharBuffer);
+        if(@sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(WHITE_Color, cPanelOutput);
+        }
+        
+        testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "PS", cPanelOutput, CurrentCharBuffer);
+        @sysvar::PSM::sysCurrentDisplay = dCurrent;
+      }
+      else
+      {
+        snprintf(cPanelOutput, elcount(cPanelOutput), "%s A set request FAILED to be sent to the power supply.", CurrentCharBuffer);
+        if(@sysvar::PSM::sysPSEnablePanelOutput == 1)
+        {
+          PSM_Output_View(FAIL_Color, cPanelOutput);
+        }
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS", cPanelOutput);
+      }
+      
+      TestWaitForTimeout(100);
+    }
+    else
+    {
+      snprintf(cPanelOutput, elcount(cPanelOutput), "%s A set request is higher then maximum allowed on power supply: %i A", CurrentCharBuffer, @sysvar::PSM::sysMaxCurrent);
+      if(@sysvar::PSM::sysPSEnablePanelOutput == 1)
+      {
+        PSM_Output_View(FAIL_Color, cPanelOutput);
+      }
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "PS", cPanelOutput);
+    }
+  }
+}
+
+double ReadVoltage()
+{
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  
+  if(isTimerActive(closeRsPortTimer) == 1)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = PS_SERIAL_PR;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  iReadType = cREAD_VOLTAGE;
+  
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if ((PS_RS232Send(SintaxReadVoltage) == PS_SERIAL_PR) )
+    {
+     setTimer(readRsPortTimer, 80);
+     
+     TestWaitForTimeout(100);
+   }
+  setTimer(closeRsPortTimer, 350);
+  }
+  
+  return @sysvar::PSM::sysVoltageDisplay;
+}
+
+double ReadCurrent()
+{
+  stack int iOpenPort = PS_SERIAL_FAIL;
+  
+  if(isTimerActive(closeRsPortTimer) == 1)
+  {
+    cancelTimer(closeRsPortTimer);
+    iOpenPort = PS_SERIAL_PR;
+  }
+  else
+  {
+    iOpenPort = PS_OpenPort();
+    testWaitForTimeout(100);
+  }
+  
+  iReadType = cREAD_CURRENT;
+  
+  if (iOpenPort == PS_SERIAL_PR)
+  {
+    if ((PS_RS232Send(SintaxReadCurrent) == PS_SERIAL_PR) )
+    {
+     setTimer(readRsPortTimer, 80);
+      
+     TestWaitForTimeout(100);
+   }
+  setTimer(closeRsPortTimer, 350);
+  }
+  
+  return @sysvar::PSM::sysCurrentDisplay;
+}
+
+
+void PSM_Output_View(long lRGB_CODE, char cInputText[])
+{
+  char cOutput_View[500];
+  float fTime;
+  
+  fTime = (timenow() / 100000.0);
+  
+  strncpy(cOutput_View, "", 1);
+  snprintf(cOutput_View, elcount(cOutput_View), "[%.3f] %s\n",fTime , cInputText);
+  
+  SetControlBackColor(cPowerSupplyPannel, "PS_Output",lRGB_CODE);
+  
+  putValueToControl(cPowerSupplyPannel, "PS_Output", cOutput_View);
+  
+  // Set color back to white.
+  SetControlBackColor(cPowerSupplyPannel, "PS_Output", makeRGB(255,255,255));
+}

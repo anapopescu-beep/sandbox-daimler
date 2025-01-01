@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0320
+ARCH_SW_MMG_0320: The Ignition signal from CIL shall be an input for MMG_KU32_MASK_ENABLE_IGNITION_ON context qualification.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set Ignition signal to ON.
+
+	Step 3: Set a breakpoint in function MMG_runUpdateModeStatus() at line 'mmg_CheckIgnitionON();'.
+
+	Step 4: Check if CPU stopped in function MMG_runUpdateModeStatus() at line 'mmg_CheckIgnitionON();'.
+
+	Step 5: Step in function mmg_CheckIgnitionON().
+
+	Step 6: Set a breakpoint in function mmg_CheckIgnitionON() at line '(void)Rte_Read_pclIgnitionStatus_b8TriggerIgnitionStatusEnableStorageCondition(&u8IgnitionStatus);'.
+
+Action: ARCH_SW_MMG_0320
+
+	Step 7: Check if CPU stopped in function mmg_CheckIgnitionON() at line '(void)Rte_Read_pclIgnitionStatus_b8TriggerIgnitionStatusEnableStorageCondition(&u8IgnitionStatus);'.
+
+	Step 8: Set a breakpoint in function mmg_CheckIgnitionON() at line 'M_SET_MODE_MASK_ON(MMG_KU32_MASK_ENABLE_IGNITION_ON);'.
+
+Action: ARCH_SW_MMG_0320
+
+	Step 9: Check if CPU stopped in function mmg_CheckIgnitionON() at line 'M_SET_MODE_MASK_ON(MMG_KU32_MASK_ENABLE_IGNITION_ON);'.
+
+Postcondition
+
+	Step 10: Return ECU to default values

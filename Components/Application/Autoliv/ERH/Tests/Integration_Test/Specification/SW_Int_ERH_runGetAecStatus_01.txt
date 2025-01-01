@@ -1,0 +1,28 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0064, ARCH_SW_ERH_0090
+ARCH_SW_ERH_0064: All AECs status and counters shall be initialized with 0x00.
+ARCH_SW_ERH_0090: The AEC group status shall be an ouput for the ERH_runGetAecGroupStatus function.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_runGetAecStatus() at line (*pu8AecStatus) = ERH_KU8_AEC_UNPLAUSIBLE_STATUS;.
+
+Action: ARCH_SW_ERH_0064, ARCH_SW_ERH_0090
+
+	Step 3: Check if CPU stopped in function ERH_runGetAecStatus() at line (*pu8AecStatus) = ERH_KU8_AEC_UNPLAUSIBLE_STATUS;. 
+		Expected result:  CPU stopped in function ERH_Init(
+
+Postcondition
+
+	Step 4: Return ECU to default values

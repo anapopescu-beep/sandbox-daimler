@@ -1,0 +1,747 @@
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "..\Includes\SW_Modules\SW_Modules_Project\Project_Includes_Configuration.cin"
+}
+
+ 
+
+
+variables
+{
+  int64 debugger_variable = 0;
+  int64 debuggerResultVariable = 0;
+  int64 debuggerResultVariableToCompare = 0;
+  int64 debuggerResultVariableToCompare1 = 0;
+  int64 debuggerResultVariableToCompare2 = 0;
+  byte bWriteStepsLibraryRequest[3] = {0x2E, 0xFD, 0x2A};
+}
+
+ 
+
+
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation(CGA);
+  
+  strncpy(cLogPath, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",  elcount(cLogPath));
+}
+
+ 
+
+testcase SW_IT_EOL_runMainFunction_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0001, ARCH_SW_EOL_0008, ARCH_SW_EOL_0015, ARCH_SW_EOL_0020");
+  AddRequirementInfo("ARCH_SW_EOL_0001", "The EOL_runMainFunction function shall update the high force cycle counter when tensioning cycles 2 and 3 are executed.");
+  AddRequirementInfo("ARCH_SW_EOL_0008", "The Low Force Counter shall be incremented if High Force Counter is incremented. NVP_au32ExecutedCycleCounters NVM parameter shall be used.");
+  AddRequirementInfo("ARCH_SW_EOL_0015", "Rte_Call_pclNvmServicesExecutionCounters_SetRamBlockStatus shall be called in order to set the RAM block status.");
+  AddRequirementInfo("ARCH_SW_EOL_0020", "If the associated cycle counter configuration value is 4 then the max force counter will be incremented.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+  testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL4 (0x4).");
+  setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_LVL4);
+  testWaitForTimeout(500);
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle2_b8CycleValidity(&u8CycleValidityStatus);.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 195);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+  
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_EOL_0001");
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters()");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_EOL_0001, ARCH_SW_EOL_0020");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'if (KU8_NB_MONITORED_CYCLES > u8ExecutedCycleNumber)'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 28);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  debugger_writeLocalVariable("u8ExecutedCycleNumber", 0x1F); 
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_EOL_0001, ARCH_SW_EOL_0020");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_HIGH_FORCE_LEVEL:'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 77);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_EOL_0008");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_LOW_FORCE_LEVEL:'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 96);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+  RunPostTs();
+}
+
+
+testcase SW_IT_EOL_runMainFunction_02()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0002, ARCH_SW_EOL_0018");
+  AddRequirementInfo("ARCH_SW_EOL_0002", "The EOL_runMainFunction function shall update the low force cycle counter when HWA profiles (cycles 18, 20, 22 and 24) or tensioning cycles 0 and 1 are executed.");
+  AddRequirementInfo("ARCH_SW_EOL_0018", "If the associated cycle counter configuration value is 1 then the low force counter will be incremented.");
+  //***************************************************************************************
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+  testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).");
+  setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_LVL1);
+  testWaitForTimeout(500);
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle0_b8CycleValidity(&u8CycleValidityStatus);.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 115);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+  testCaseComment("Action: ARCH_SW_EOL_0002");
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+  debugger_deleteAllBP();
+
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'if (KU8_NB_MONITORED_CYCLES > u8ExecutedCycleNumber)'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 28);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  testStep("STEP", "Set variable u8ExecutedCycleNumber to KU8_ONE.");
+  debugger_writeLocalVariable("u8ExecutedCycleNumber", 0x1);
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_EOL_0002, ARCH_SW_EOL_0018");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_LOW_FORCE_LEVEL:'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 96);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  testCaseComment("Action: ARCH_SW_EOL_0002");
+  testStep("STEP", "Evaluate if u8PreSafeLvl variable is 1 --> 0x1");
+  debuggerResultVariable = debugger_readLocalVariable("u8PreSafeLvl");
+  EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+  setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_runMainFunction_03()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0003");
+  AddRequirementInfo("ARCH_SW_EOL_0003", "The EOL_runMainFunction function shall update the comfort cycle counter when BSR profiles (cycles 26,27 and 28) and PRE-SAFE CURVE 1-4 profiles are executed.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  testStep("STEP", "Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE21.");
+  setSignal(BODY3::RBTMFL_SP_Lvl_Rq_ST35, 21);
+  testWaitForTimeout(100);
+
+  testStep("STEP", "Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE22.");
+  setSignal(BODY3::RBTMFL_SP_Lvl_Rq_ST35, 22);
+  testWaitForTimeout(500);
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE22:.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 660);
+
+  testStep("STEP", "Check if CPU is stopped in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE22:.");
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+  testCaseComment("Action: ARCH_SW_EOL_0003");
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+  debugger_deleteAllBP();
+
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'if (KU8_NB_MONITORED_CYCLES > u8ExecutedCycleNumber)'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 28);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_EOL_0003");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_COMFORT_LEVEL:'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 41);
+  debugger_run();
+  debugger_WaitUntilBPisReached(5000);
+
+  setSignal(BODY3::RBTMFL_SP_Lvl_Rq_ST35, 0);
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_runMainFunction_05()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0017");
+  AddRequirementInfo("ARCH_SW_EOL_0017", "The EOL_runMainFunction function shall update the associated cycle counter (low, high, max, comfort) when tensioning cycles 7, 8, 9, 10, 11, 12 and 13 are executed.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 0);
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+  
+  testStep("STEP", "Set variable u8CycleRequest to 0xD.");
+  debugger_writeLocalVariable("u8CycleRequest", 0xD);
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle11_b8CycleValidity(&u8CycleValidityStatus);.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 437);
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+  debugger_deleteAllBP();
+
+  testStep("STEP", "Set a breakpoint in eol_ManageCycleCounters at the end of the function.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 129);
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_runMainFunction_06()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0019");
+  AddRequirementInfo("ARCH_SW_EOL_0019", "If the associated cycle counter configuration value is 2 then the high force counter will be incremented.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  testStep("STEP", "Set signal Presf_Lvl_ST3 to 0x2.");
+  setSignal(BODY3::Presf_Lvl_ST3, 0x2);
+  testWaitForTimeout(500);
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles under case I_C04_PRESF_LVL_V2_LVL2:.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 134);
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+  testCaseComment("Action: ARCH_SW_EOL_0019");
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction.");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+
+  testCaseComment("Action: ARCH_SW_EOL_0019");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_HIGH_FORCE_LEVEL:'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 77);
+  debugger_run();
+  debugger_WaitUntilBPisReached(2000);
+
+  setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_runMainFunction_07()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0021");
+  AddRequirementInfo("ARCH_SW_EOL_0021", "If the associated cycle counter configuration value is 8 then the comfort force counter will be incremented.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  testStep("STEP", "Set signal Presf_Lvl_ST3 to 0x8.");
+  setSignal(BODY3::Presf_Lvl_ST3, 0x8);
+  testWaitForTimeout(500);
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles under case I_C04_PRESF_LVL_V2_LVL8:.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 310);
+  debugger_run();
+  debugger_waitUntilBPisReached(2000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+  testCaseComment("Action: ARCH_SW_EOL_0021");
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction.");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_waitUntilBPisReached(2000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+  
+  testCaseComment("Action: ARCH_SW_EOL_0021");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_COMFORT_LEVEL:'.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 41);
+  debugger_run();
+  debugger_WaitUntilBPisReached(2000);
+  
+  setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_NOLVL);
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_CheckProductEndOfLifeLowForce_01()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0004");
+  AddRequirementInfo("ARCH_SW_EOL_0004", "EOL_Autotest_CheckProductEndOfLifeLowForce function shall verify if the Low Force counter has exceeded the Low Force EOL threshold(NVP_u32LowForceEOLThrs = 10000).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  testStep("STEP", "Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeLowForce.");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeLowForce", 19);
+  debugger_reset();
+  debugger_run();
+  testCaseComment("Action: ARCH_SW_EOL_0004");
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_Autotest_CheckProductEndOfLifeLowForce");
+
+  testStep("STEP", "Evaluate if u8ResultOfAutoTest is 0x1 --> u8ResultOfAutoTest == 0x1");
+  debuggerResultVariable = debugger_readLocalVariable("u8ResultOfAutoTest");
+  EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+
+testcase SW_IT_EOL_CheckProductEndOfLifeHighForce_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0005");
+  AddRequirementInfo("ARCH_SW_EOL_0005", "EOL_Autotest_CheckProductEndOfLifeHighForce function shall verify if the High Force counter has exceeded the High Force EOL threshold(NVP_u32HighForceEOLThrs = 1500).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+
+  testStep("STEP", "Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeHighForce.");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeHighForce", 20);
+
+  testCaseComment("Action: ARCH_SW_EOL_0005");
+  testStep("STEP", "Check if CPU is stopped at line *pu8TestResult = u8ResultOfAutoTest;. --> CPU stopped at BP");
+  debugger_run();
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_Autotest_CheckProductEndOfLifeHighForce");
+  
+  testStep("STEP", "Evaluate if u8ResultOfAutoTest is 0x1 --> u8ResultOfAutoTest == 0x1");
+  debuggerResultVariable = debugger_readLocalVariable("u8ResultOfAutoTest");
+  EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_CheckProductEndOfLifeComfort_01()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0006");
+  AddRequirementInfo("ARCH_SW_EOL_0006", "EOL_Autotest_CheckProductEndOfLifeComfort function shall verify if the Comfort counter has exceeded the Comfort EOL threshold(NVP_u32ComfortCyclesEOLThrs = 60000).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  testStep("STEP", "Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeComfort.");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeComfort", 20);
+  debugger_reset();
+  debugger_run();
+  testCaseComment("Action: ARCH_SW_EOL_0006");
+  testStep("STEP", "Check if CPU is stopped at line *pu8TestResult = u8ResultOfAutoTest;. --> CPU stopped at BP");
+  debugger_waitUntilBPisReached(5000);
+  debugger_isCPUStoppedAtFunction("EOL_Autotest_CheckProductEndOfLifeComfort");
+
+  testCaseComment("Action: ARCH_SW_EOL_0006");
+  testStep("STEP", "Evaluate if u8ResultOfAutoTest is 0x1 --> u8ResultOfAutoTest == 0x1");
+  debuggerResultVariable = debugger_readLocalVariable("u8ResultOfAutoTest");
+  EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+testcase SW_IT_EOL_runMainFunction_04()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0010, ARCH_SW_EOL_0011, ARCH_SW_EOL_0022"); 
+  AddRequirementInfo("ARCH_SW_EOL_0010", "The EOL_runMainFunction function shall update the max force cycle counter when tensioning cycles 4 5 and 6 are executed.");
+  AddRequirementInfo("ARCH_SW_EOL_0011", "The EOL_runMainFunction function shall update the request counter when HWA profile or tensioning cycles 0-6 are executed.");
+  AddRequirementInfo("ARCH_SW_EOL_0022", "If the associated cycle counter configuration value is different than 1,2,4,8 the low force counter will be incremented.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+ 
+
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 0);
+  debugger_run();
+  debugger_waitUntilBPisReached(1000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+
+  testStep("STEP", "Set variable u8CycleRequest to 0x6.");
+  debugger_writeLocalVariable("u8CycleRequest", 0x6);
+
+  testCaseComment("Action: ARCH_SW_EOL_0022");
+  testStep("STEP", "Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle4_b8CycleValidity(&u8CycleValidityStatus);.");
+  debugger_setRelativeFunctionBpAtLine("cil_TriggerProfiles", 236);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  debugger_isCPUStoppedAtFunction("cil_TriggerProfiles");
+
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_WaitUntilBPisReached(2000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+
+  testCaseComment("Action: ARCH_SW_EOL_0010, ARCH_SW_EOL_0011");
+  testStep("STEP", "Set a breakpoint in eol_ManageCycleCounters at the end of the function.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 129);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  debugger_isCPUStoppedAtFunction("eol_ManageCycleCounters");
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+ 
+
+
+testcase SW_IT_EOL_CheckProductEndOfLifeMaxForce_01()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0012");
+  AddRequirementInfo("ARCH_SW_EOL_0012", "EOL_Autotest_CheckProductEndOfLifeMaxForce function shall verify if the Max Force counter has exceeded the Max Force EOL threshold(NVP_u32MaxForceEOLThrs = 50).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+
+  testCaseComment("Action: ARCH_SW_EOL_0012");
+  testStep("STEP", "Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeMaxForce at line *pu8TestResult = u8ResultOfAutoTest;");
+  debugger_setRelativeFunctionBpAtLine("EOL_Autotest_CheckProductEndOfLifeMaxForce", 18);
+  debugger_reset();
+  debugger_run();
+  debugger_WaitUntilBPisReached(2000);
+  debugger_isCPUStoppedAtFunction("EOL_Autotest_CheckProductEndOfLifeMaxForce");
+
+  testCaseComment("Action: ARCH_SW_EOL_0012");
+  testStep("STEP", "Evaluate if u8ResultOfAutoTest is 0x1 --> u8ResultOfAutoTest == 0x1");
+  debuggerResultVariable = debugger_readLocalVariable("u8ResultOfAutoTest");
+  EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+ testcase SW_IT_EOL_ManageCycleCounters_01()
+{
+//***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_EOL_0007, ARCH_SW_EOL_0009, ARCH_SW_EOL_0013, ARCH_SW_EOL_0014, ARCH_SW_EOL_0016");
+  AddRequirementInfo("ARCH_SW_EOL_0007", "In order to increment the corresponding counter the current executed cycle from BFE shall be an input. NVP_au32ExecutedCycleCounters NVM parameter shall be used.");
+  AddRequirementInfo("ARCH_SW_EOL_0009", "Rte_BFE_psrExecutedCycle_u8CycleNumber shall be read to get executed cycle number.");
+  AddRequirementInfo("ARCH_SW_EOL_0013", "Rte_Read_prrCustomerSpecific_u8TriggerRequest shall be read to get the status of a requested presafe level.");
+  AddRequirementInfo("ARCH_SW_EOL_0014", "Rte_Read_prrPreSafeLvl_u8PreSafeLvl shall be read to get the actual level of a requested presaf.");
+  AddRequirementInfo("ARCH_SW_EOL_0016", "Rte_Write_EOL_AC_EndOfLifeManagement_ObsolescenceDataBlockNumber_BlockNumber  shall be called in order to write the obsolence data block number.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+
+  testStep("STEP", "Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();");
+  debugger_setRelativeFunctionBpAtLine("EOL_runMainFunction", 0);
+  debugger_run();
+  debugger_WaitUntilBPisReached(2000);
+  debugger_isCPUStoppedAtFunction("EOL_runMainFunction");
+
+
+  testStep("STEP", "Step in eol_ManageCycleCounters function.");
+  debugger_stepIn();
+
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_EOL_0016");
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber);.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 0);
+
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line (void)Rte_Read_prrCustomerSpecific_u8TriggerRequest(&u8CILTriggerRequest);.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 2);
+
+  testStep("STEP", "Set a breakpoint in function eol_ManageCycleCounters at line Rte_Read_prrPreSafeLvl_u8PreSafeLvl(&u8PreSafeLvl);.");
+  debugger_setRelativeFunctionBpAtLine("eol_ManageCycleCounters", 6);
+
+  debugger_run();
+
+  testCaseComment("Action: ARCH_SW_EOL_0007, ARCH_SW_EOL_0009");
+  testStep("STEP", "Check if CPU stopped in function eol_ManageCycleCounters at line Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber); --> CPU stopped at BP.");
+  debugger_waitUntilBPisReached(1000);
+
+  debugger_run();
+
+  testCaseComment("Action: ARCH_SW_EOL_0013");
+  testStep("STEP", "Check if CPU stopped in function eol_ManageCycleCounters at line (void)Rte_Read_prrCustomerSpecific_u8TriggerRequest(&u8CILTriggerRequest); --> CPU stopped at BP.");
+  debugger_waitUntilBPisReached(1000);
+
+  debugger_run();
+
+  testCaseComment("Action: ARCH_SW_EOL_0014");
+  testStep("STEP", "Check if CPU stopped in function eol_ManageCycleCounters at line Rte_Read_prrPreSafeLvl_u8PreSafeLvl(&u8PreSafeLvl); --> CPU stopped at BP.");
+  debugger_waitUntilBPisReached(1000);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+void MainTest()
+{
+  InitTestModule();
+//  SW_IT_EOL_runMainFunction_01();
+//  SW_IT_EOL_runMainFunction_02();
+//  SW_IT_EOL_runMainFunction_03();
+//  SW_IT_EOL_runMainFunction_05();
+//  SW_IT_EOL_runMainFunction_06();
+//  SW_IT_EOL_runMainFunction_07();
+//  SW_IT_EOL_CheckProductEndOfLifeLowForce_01();
+//  SW_IT_EOL_CheckProductEndOfLifeHighForce_01();
+//  SW_IT_EOL_CheckProductEndOfLifeComfort_01();
+//  SW_IT_EOL_runMainFunction_04();
+//  SW_IT_EOL_CheckProductEndOfLifeMaxForce_01();
+//  SW_IT_EOL_ManageCycleCounters_01();
+  
+}

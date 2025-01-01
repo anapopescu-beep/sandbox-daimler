@@ -1,0 +1,98 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_1060, ARCH_SW_PMP_1080, ARCH_SW_PMP_1061, ARCH_SW_PMP_1065, ARCH_SW_PMP_1067, ARCH_SW_PMP_1068, ARCH_SW_PMP_1069, ARCH_SW_PMP_1064
+ARCH_SW_PMP_1060: PMP shall check if an undervoltage is detected on the power stage of the battery voltage during activation.
+ARCH_SW_PMP_1080: PMP shall check if an undervoltage is detected on the power stage of the battery voltage at trigger of request.
+ARCH_SW_PMP_1061: PMP_runGetBatteryVoltage_10ms shall be called to get the measured value on the power supply.
+ARCH_SW_PMP_1067: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PMP_1068: MMG_runCheckModeStatus shall be called to get the tensioning state.
+ARCH_SW_PMP_1069: ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.
+ARCH_SW_PMP_1064: Rte_CIL_psrCustomerSpecific_u8TriggerRequest shall be called to get the status of the request.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PMP_1060, ARCH_SW_PMP_1080, ARCH_SW_PMP_1061
+
+	Step 3: Set a breakpoint in function PMP_cbk_CheckPowerSupplyUVDuringActivation at the RTE Call for CheckPowerSupplyUVDuringActivation autotest 
+		Expected result:  BP reached.
+
+	Step 4: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE call for GetTestResult 
+		Expected result:  BP reached
+
+	Step 5: Write autotest result with 0x1 
+		Expected result:  Variable overwritten with value 0x1
+
+	Step 6: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Call for MMG_runCheckModeStatus 
+		Expected result:  BP reached.
+
+	Step 7: Step in.
+
+	Step 8: Run until return MMG_runCheckModeStatus and evaluate *bModeStatus data pointer 
+		Expected result:  Variable read
+
+	Step 9: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Read of status of tensioning request 
+		Expected result:  BP reached.
+
+	Step 10: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Call for PMP_runGetBatteryVoltage_10ms 
+		Expected result:  BP reached.
+
+	Step 11: Step in.
+
+	Step 12: Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 13: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the RTE Call for ERH_runGetAecStatus 
+		Expected result:  BP reached.
+
+	Step 14: Step in.
+
+	Step 15: Run until return ERH_runGetAecStatus and evaluate *pu8AecStatus data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 16: Set a breakpoint in function PMP_Autotest_CheckPowerSupplyUVDuringActivation at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 17: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PMP_1067
+
+	Step 18: Evaluate u8PreviousADCTestResult 
+		Expected result:  Variable is equal to 0x1.
+
+Action: ARCH_SW_PMP_1064
+
+	Step 19: Evaluate pmp_u8AECStatus 
+		Expected result:  Variable is equal to *pmp_u8AECStatus data pointer.
+
+Action: ARCH_SW_PMP_1069
+
+	Step 20: Evaluate u8PresafeTriggerRequest 
+		Expected result:  Variable is equal to u8PresafeTriggerRequest data pointer
+
+Action: ARCH_SW_PMP_1061
+
+	Step 21: Evaluate pmp_u16FilteredVbatPowerVoltage 
+		Expected result:  Variable is equal to *pu16Voltage data pointer.
+
+	Step 22: Set a breakpoint in function PMP_cbk_CheckPowerSupplyUV after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 23: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 24: Return ECU to default values

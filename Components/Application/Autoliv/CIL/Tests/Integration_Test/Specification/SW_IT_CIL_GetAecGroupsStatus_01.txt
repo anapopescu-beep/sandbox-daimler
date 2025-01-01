@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0366, ARCH_SW_CIL_0367, ARCH_SW_CIL_0368, ARCH_SW_CIL_0560
+ARCH_SW_CIL_0366: ERH_runGetAecGroupsStatus shall be called to get the inhibition and abortion conditions for PRE_SAFE and request tensioning cycles.
+ARCH_SW_CIL_0367: ERH_runGetAecGroupsStatus shall be called to get the inhibition conditions for PRE-SAFE6/7/8 request cycles.
+ARCH_SW_CIL_0368: ERH_runGetAecGroupsStatus shall be called to get the abortion conditions for PRE_SAFE request tensioning cycles.
+ARCH_SW_CIL_0369: ERH_runGetAecGroupsStatus shall be called to get the inhibition and abortion conditions for ORC request tensioning cycle.
+ARCH_SW_CIL_0560: Function ERH_runGetAecGroupsStatus shall be called to get the specific group (DTC) status with warning indicator active.
+ARCH_SW_CIL_0370: ERH_GetAecStatus shall be called to get the TIMEOUT ERROR ON API frame that will abort all profiles requested on API.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C04_PRESF_LVL_V2_NOLVL.
+
+	Step 3: Set a breakpoint in the function cil_ManageInputSignals at line cil_ManageInhibitConditions().
+
+	Step 4: Set a breakpoint in the function cil_ManageInhibitConditions at line Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);.
+
+Action: ARCH_SW_CIL_0366, ARCH_SW_CIL_0367, ARCH_SW_CIL_0368, ARCH_SW_CIL_0369, ARCH_SW_CIL_0370, ARCH_SW_CIL_0560
+
+	Step 5: Check if CPU stopped at line Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);.
+
+Postcondition
+
+	Step 6: Return ECU to default values

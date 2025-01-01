@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0074
+ARCH_SW_ERH_0074: The erh_CheckAecId function shall be called to check the validity of all AEC identifiers and to get the counter index and the status array of each AEC.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_ResetAllAECStatus() at line (void) erh_CheckAecId(u8AECIndex, &u8OutputIndex, &stAecData);.
+
+	Step 3: Start Development Session.
+
+	Step 4: Send diagnostic request 14 FF FF FF.
+
+Action: ARCH_SW_ERH_0074
+
+	Step 5: Check if CPU stopped in function ERH_ResetAllAECStatus() at line (void) erh_CheckAecId(u8AECIndex, &u8OutputIndex, &stAecData);. 
+		Expected result:  CPU stopped in function ERH_ResetAllAECStatus()
+
+Postcondition
+
+	Step 6: Return ECU to default values

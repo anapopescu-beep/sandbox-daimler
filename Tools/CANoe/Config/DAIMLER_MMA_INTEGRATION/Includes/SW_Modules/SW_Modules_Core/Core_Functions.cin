@@ -1,0 +1,4425 @@
+/*@!Encoding:1252*/
+
+includes
+{
+}
+
+variables
+{
+  enum bool {TRUE, FALSE};
+  // Logging functions.
+  char cLogName[500];
+  int iOriginalTestCaseTitleLength = 0; // Used to help test case name modifications in case logging is started before RunPreTS().
+                                        // Variable should be set back to 0 in PostTs().
+  
+  // Variables used for requirements table.
+  char cOriginalTestCaseTitle[1000];
+  char cAllRequirements[70][400];
+  char cAllRequirementsDescription[70][5000];
+  int iRequirementsIndex = 0;
+  
+  const DIAG_SEND_OR_RECEIVE_ERROR = -1;
+  byte bEmptyBuffer[2000];
+  
+  // Inputs for CheckDTCStatus.
+  char DTC_PRESENT[8]           = "present";
+  char DTC_NOT_PRESENT[12]      = "not_present";
+  char DTC_EXPECTED[9]          = "expected";
+  char DTC_NOT_EXPECTED[13]     = "not_expected";
+  char DTC_BITWISE[8]           = "bitwise";
+  char DTC_BITWISE_EXPECTED[17] = "bitwise_expected";
+}
+
+/// <CORE_Basic_Diagnostics/Overloads>
+// Example: CheckPositiveResponse(dDefaultSessionRequest, dDefaultSessionResponse);
+// Returns: 1 - positive response.
+//          0 - negative response, invalid function call.
+int CheckPositiveResponse(diagRequest * dRequest, diagResponse * dResponse)
+{
+  if (DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsPositiveResponse(dResponse) == 0)
+    {
+      return 0;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "CheckPositiveResponse: Response service id is not a valid response for the request.");
+   return 0;
+  }
+}
+
+/// <CORE_Basic_Diagnostics/Overloads>
+// Example: CheckNegativeResponse("Check positive response", dDefaultSessionRequest, dDefaultSessionResponse);
+// Output: -1 - positive response, invalid function call.
+//          1 - negative response.
+int CheckNegativeResponse(diagRequest * dRequest, diagResponse * dResponse)
+{
+  if (DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsNegativeResponse(dResponse) == 0) 
+    {
+      testReportWriteDiagResponse(dRequest);
+      return -1;
+    }
+    else
+    {
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckNegativeResponse: Diagnostic request and response objects do not match.");
+   return -1;
+  }
+}
+
+/// <CORE_Basic_Diagnostics/Overloads>
+// Send diagnostic request and receive reponse; Overload for byte array diagnostic request parameter.
+// Example: SendDiagnosticRequest(dDefaultSessionRequest, dDefaultSessionResponse, bDefaultSessionResponse)
+// Return: 0 - timeout received for response
+//         1 - request sent and response received
+//        -1 - Error received during sending request or during receiving response 
+int SendDiagnosticRequest(diagRequest * dRequest, diagResponse * dResponse, byte bRequest[])
+{
+  stack int iErrHandle = 0;
+  
+  // Configure diagnostic object.
+  if(diagResize(dRequest, elcount(bRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"SendDiagnosticRequest: Error when creating diagnostic object.");
+    return -1;
+  }
+  
+  if(diagSetPrimitiveData(dRequest, bRequest, elcount(bRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"SendDiagnosticRequest: Error when creating diagnostic object.");
+    return -1;
+  }
+  
+  diagSendRequest(dRequest);
+  
+  iErrHandle = testWaitForDiagRequestSent(dRequest, dDiagRequestSentTimeout);
+
+  switch(iErrHandle)
+  {
+    case 1: 
+      iErrHandle = testWaitForDiagResponse(dRequest, dDiagResponseReceiveTimeout);
+  
+      switch(iErrHandle)
+      {
+        case 1: 
+            diagGetLastResponse(dRequest, dResponse);
+            return 1;
+          break;
+        case 0:
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Diagnostic response is not received in [%lu] ms.", dDiagResponseReceiveTimeout);
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+        default:
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Error occured while receiving diagnostic response.");
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            testReportWriteDiagObject(dRequest);
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+      }
+      break;
+    case 0:
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Diagnostic request was not sent in [%lu] ms.", dDiagRequestSentTimeout);
+        dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+      break;
+    default:
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Error occured while sending diagnostic request.");
+        dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+      break;
+  }
+}
+
+/// <CORE_Basic_Diagnostics>
+// Sets the diagnostic target.
+void SetDiagTarget(char cECUQualifier[])
+{
+ stack dword dErrorCode;
+  
+ dErrorCode = diagSetTarget(cECUQualifier);
+ if(dErrorCode != 0)
+ {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Error when setting diag target: [%d].", dErrorCode);
+ }
+ else
+ {
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", "Diag target successfully set to [%s].", cECUQualifier);
+ }
+}
+
+/// <CORE_Basic_Diagnostics>
+// Check if diagnostic response is positive or not with verdict
+// Example: CheckPositiveResponse("Check positive response.", dDefaultSessionRequest, dDefaultSessionResponse);
+// Output: testStepPass - positive response (returns 1).
+//         testStepFail - negative response or invalid function call (returns 0).
+int CheckPositiveResponse(char cInputString[], diagRequest * dRequest, diagResponse * dResponse)
+{
+  if (DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsPositiveResponse(dResponse) == 0)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "%s", cInputString);
+      testReportWriteDiagResponse(dRequest);
+      return 0;
+    }
+    else
+    {
+      testStepPass(@sysvar::CORE::sysLevelOfDetailPass,"", "%s", cInputString);
+      testReportWriteDiagResponse(dRequest);
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckPositiveResponse: Response service id is not a valid response for the request.");
+   return 0;
+  }
+}
+
+/// <CORE_Basic_Diagnostics>
+// Send diagnostic request and receive reponse
+// Example: SendDiagnosticRequest(dDefaultSessionRequest, dDefaultSessionResponse)
+// Return: 0 - timeout received for response
+//         1 - request sent and response received
+//        -1 - Error received during sending request or during receiving response 
+int SendDiagnosticRequest(diagRequest * dRequest, diagResponse * dResponse)
+{
+  stack int iErrHandle = 0;
+  
+  diagSendRequest(dRequest);
+  
+  iErrHandle = testWaitForDiagRequestSent(dRequest, dDiagRequestSentTimeout);
+  
+  switch(iErrHandle)
+  {
+    case 1:
+      iErrHandle = testWaitForDiagResponse(dRequest, dDiagResponseReceiveTimeout);
+       
+      switch(iErrHandle)
+      {
+        case 1: 
+            // Diagnostic response is received. Nothing is displayed.
+            diagGetLastResponse(dRequest, dResponse);
+            return 1;
+          break;
+        case 0:
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Diagnostic response is not received in [%lu] ms.", dDiagResponseReceiveTimeout);
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+        default:
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Error occured while receiving diagnostic response.");
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            testReportWriteDiagObject(dRequest);
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+      }
+      break;
+    case 0:
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Diagnostic request was not sent in [%lu] ms.", dDiagRequestSentTimeout);
+        dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+      break;
+    default:
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Error occured while sending diagnostic request.");
+        dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+      break;
+  }
+}
+
+// Send diagnostic request and receive reponse. Has the option to return a passed step if timeout occured (for debugger)
+// Example: SendDiagnosticRequest(dDefaultSessionRequest, dDefaultSessionResponse, TRUE)
+// Return: 0 - timeout received for response
+//         1 - request sent and response received
+//        -1 - Error received during sending request or during receiving response 
+int SendDiagnosticRequest(diagRequest * dRequest, diagResponse * dResponse, enum bool isTimeoutExpected)
+{
+  stack int iErrHandle = 0;
+  
+  diagSendRequest(dRequest);
+  
+  iErrHandle = testWaitForDiagRequestSent(dRequest, dDiagRequestSentTimeout);
+  
+  switch(iErrHandle)
+  {
+    case 1:
+      iErrHandle = testWaitForDiagResponse(dRequest, dDiagResponseReceiveTimeout);
+       
+      switch(iErrHandle)
+      {
+        case 1: 
+            // Diagnostic response is received. Nothing is displayed.
+            diagGetLastResponse(dRequest, dResponse);
+            return 1;
+          break;
+        case 0:
+          if(isTimeoutExpected == TRUE)
+          {
+            testStepPass(@sysvar::CORE::sysLevelOfDetailFail, "", "Diagnostic response is not received in [%lu] ms as expected.", dDiagResponseReceiveTimeout);
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          }
+          else
+          {
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Diagnostic response is not received in [%lu] ms.", dDiagResponseReceiveTimeout);
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          }
+          
+          break;
+        default:
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Error occured while receiving diagnostic response.");
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            testReportWriteDiagObject(dRequest);
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          break;
+      }
+      break;
+    case 0:
+          if(isTimeoutExpected == TRUE)
+          {
+            testStepPass(@sysvar::CORE::sysLevelOfDetailFail, "", "Diagnostic response is not received in [%lu] ms as expected.", dDiagResponseReceiveTimeout);
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          }
+          else
+          {
+            testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Diagnostic response is not received in [%lu] ms.", dDiagResponseReceiveTimeout);
+            dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+            return DIAG_SEND_OR_RECEIVE_ERROR;
+          }
+          
+      break;
+    default:
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Error occured while sending diagnostic request.");
+        dResponse.SetPrimitiveData(bEmptyBuffer, dRequest.GetRespPrimitiveSize());
+        return DIAG_SEND_OR_RECEIVE_ERROR;
+      break;
+  }
+}
+
+/// <CORE_Basic_Diagnostics>
+// Example: CheckNegativeResponse("Check positive response", dDefaultSessionRequest, dDefaultSessionResponse);
+// Output: -1 - positive response, invalid function call (Test report: failed step).
+//          1 - negative response (Test report: passed step).
+int CheckNegativeResponse(char sInputString[], diagRequest * dRequest, diagResponse * dResponse)
+{
+  if (DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (diagIsNegativeResponse(dResponse) == 0) 
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "%s", sInputString);
+      testReportWriteDiagResponse(dRequest);
+      return -1;
+    }
+    else
+    {
+      testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", "%s", sInputString);
+      return 1;
+    }
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckNegativeResponse: Diagnostic request and response objects do not match.");
+   return -1;
+  }
+}
+
+
+
+/// <CORE_Basic_Diagnostics>
+// Check if the expected NRC is received for the input diagnostic request and response.
+// Example: CheckNegativeResponseCode("Check negative response.", dDefaultSessionRequest, dDefaultSessionResponse);
+// Output: -1 - positive response or invalid function call or wrong NRC (Test report: failed step).
+//          1 - negative response received (Test report: passed step).
+int CheckNegativeResponseCode(diagRequest * dRequest, diagResponse * dResponse, byte bNRC)
+{
+  stack byte response[20];
+  stack char dResponseName[1000];
+  stack char output[20];
+  stack long table = 0;
+  
+  if (DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    if (dResponse.GetResponseCode() != -1)
+    {
+      if (dResponse.GetResponseCode() != bNRC)
+      {
+        table = testInfoTable("Wrong negative response code received.");
+        testInfoHeadingBegin(table, 0);
+        testInfoCell(table, "Actual");
+        testInfoCell(table, "Expected");
+        testInfoHeadingEnd(table);
+        
+        testInfoRow(table, 0);
+        snprintf(output, elCount(output), "0x%02x", dResponse.GetResponseCode());
+        testInfoCell(table,  output);
+        snprintf(output, elCount(output), "0x%02x", bNRC);
+        testInfoCell(table, output);
+        
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", table);
+        return -1;
+      }
+      else
+      {
+        dResponse.GetObjectName(dResponseName, elcount(dResponseName));
+        testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", "NRC 0x%02x was received for '%s' diagnostic request.", dResponse.GetResponseCode(), dResponseName);
+        return 1;
+      }
+    }
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Response is positive.");
+      return -1;
+    }
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckNegativeResponseCode: Diagnostic request and response objects do not match.");
+   return -1;
+  }
+}
+
+/// <CORE_Basic_Diagnostics>
+// Check if the response length is the expected one for and input diagnostic request and response.
+void CheckResponseLength(diagRequest * dRequest, diagResponse * dResponse, long iExpectedLength)
+{
+  stack char output[20];
+  stack long table = 0;
+  
+  if (DiagCheckObjectMatch(dRequest, dResponse) == 1)
+  {
+    EvalManStepEqual("Response length has the expected value.", dResponse.GetPrimitiveSize() - 3, iExpectedLength);
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "CheckResponseLength: Diagnostic request and response objects do not match.");
+  }
+}
+
+/// <CORE_ECU_State>
+// ECU reset.
+// Option 1: ResetECU("soft");
+// Option 2: ResetECU("hard");
+void ResetECU(char cReset[])
+{
+  diagRequest        * dHardResetRequest;
+  stack diagResponse * dHardResetResponse;
+  
+  diagRequest        * dSoftResetRequest;
+  stack diagResponse * dSoftResetResponse;
+  
+  stack char cResetType[50];
+  
+  toUpper(cResetType, cReset, elcount(cReset));
+  
+  if(strncmp(cResetType, "SOFT", strlen(cResetType)) == 0)
+  {    
+    diagResize(dSoftResetRequest , elcount(bSoftResetRequest));
+    diagSetPrimitiveData(dSoftResetRequest, bSoftResetRequest, elcount(bSoftResetRequest));
+
+    // Diag Error Handling.
+    if(SendDiagnosticRequest(dSoftResetRequest, dSoftResetResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ResetECU: Diagnostic request send or receive error.");
+      return;
+    }
+  
+    CheckPositiveResponse("Soft reset performed to ECU.", dSoftResetRequest, dSoftResetResponse);
+  }
+  else
+  {
+    if(strncmp(cResetType, "HARD", strlen(cResetType)) == 0)
+    {
+      diagResize(dHardResetRequest , elcount(bHardResetRequest));
+      diagSetPrimitiveData(dHardResetRequest, bHardResetRequest, elcount(bHardResetRequest));
+      
+      // Diag Error Handling.
+      if(SendDiagnosticRequest(dHardResetRequest, dHardResetResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+      {
+       testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ResetECU: Diagnostic request send or receive error.");
+       return;
+      }
+    
+      CheckPositiveResponse("Hard reset performed to ECU.", dHardResetRequest, dHardResetResponse);
+    }
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Invalid parameter for ResetECU function: [%s].", cReset);
+    }
+  }
+}
+
+/// <CORE_Test_Traceability>
+// Enters a diagnostic session.
+// Example: EnterDiagnosticSession("default");
+// Return: 1 - Positive Response
+//        -1 - Negative Response/incorrect input.
+int EnterDiagnosticSession(char cSession[])
+{  
+  diagRequest        * dSessionRequest;
+  stack diagResponse * dSessionResponse;
+  
+  int index;
+  stack char cSessionBuffer[100];
+  
+  toLower(cSessionBuffer, cSession, elcount(cSessionBuffer));
+  
+  if(strncmp(cSessionBuffer, "none" , 5) == 0)
+  {
+    return 1;
+  }
+  
+  for(index = 0; index <= (elcount(cAvailableDiagSessions) - 1); index++)
+  {
+    if(strncmp(cSessionBuffer, cAvailableDiagSessions[index], strlen(cSessionBuffer)) == 0)
+    {
+      dSessionRequest.Resize(elcount(bSessionControlRequests[index]));
+      dSessionRequest.SetPrimitiveData(bSessionControlRequests[index], elcount(bSessionControlRequests[index]));
+      
+      // Diag Error Handling.
+      if(SendDiagnosticRequest(dSessionRequest, dSessionResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"EnterDiagnosticSession: Diagnostic request send or receive error.");
+        return - 1;
+      }
+      
+      // Diag Error Handling.
+      if (diagIsPositiveResponse(dSessionResponse) == 0)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Enter [%s] session: Negative response received: [0x%X].", cSessionBuffer, dSessionResponse.GetResponseCode());
+        testReportWriteDiagResponse(dSessionRequest);
+        return -1;
+      }
+      else if(iSessionControlVerbosity == 1)
+      {
+        testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "Entered [%s] session.", cSessionBuffer);
+        return 1;
+      }
+      else if(iSessionControlVerbosity == 2)
+      {
+        testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", "Enter [%s] session request: Positive response received.", cSessionBuffer);
+        return 1;
+      }
+    }
+  }
+  
+  testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Error", "Invalid parameter for EnterDiagnosticSession function: [%s].", cSession);
+  return - 1;
+}
+
+/// <CORE_ECU_State>
+// Lock/Unlock ECU.
+// Option 1: SetECUMode("lock");
+// Option 2: SetECUMode("unlock");
+void SetECUMode(char cECUMode[])
+{
+  diagRequest        * dSetECUModeRequest;
+  stack diagResponse * dSetECUModeResponse;
+  
+  toLower(cECUMode, cECUMode, elcount(cECUMode));
+  
+  if(bGetSecurityAccess_SetECUMode)
+  {
+    GetSecurityAccess(cSession_SetECUMode);
+  }
+  
+  if(strncmp(cECUMode, cLock, strlen(cECUMode)) == 0)
+  {
+    // Diag Error Handling.
+    if(SendDiagnosticRequest(dSetECUModeRequest, dSetECUModeResponse, bLockECU) == DIAG_SEND_OR_RECEIVE_ERROR) 
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"SetECUMode: Diagnostic request send or receive error.");
+      return;
+    }
+    
+    CheckPositiveResponse("Lock ECU.", dSetECUModeRequest, dSetECUModeResponse);
+  }
+  else
+  {
+    if(strncmp(cECUMode, cUnlock, strlen(cECUMode)) == 0)
+    {
+      // Diag Error Handling.
+      if(SendDiagnosticRequest(dSetECUModeRequest, dSetECUModeResponse, bUnlockECU) == DIAG_SEND_OR_RECEIVE_ERROR) 
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"SetECUMode: Diagnostic request send or receive error.");
+        return;
+      }
+      
+      CheckPositiveResponse("Unlock ECU.", dSetECUModeRequest, dSetECUModeResponse);
+    }
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "SetECUMode: Invalid parameter for SetECUMode function: [%s].", cECUMode);
+    }
+  }
+}
+
+/// <CORE_ECU_State>
+// Get security access
+// Option 1: GetSecurityAccess("supplier");
+// Option 2: GetSecurityAccess("programming"); 
+void GetSecurityAccess(char session[])
+{
+  diagRequest        * dRequestSecurityKeyRequest;
+  stack diagResponse * dRequestSecurityKeyResponse;
+  byte bSecurityProgrammingRequest[2] = {0x27, 0x11};
+  byte bSecuritySupplierRequest[2]    = {0x27, 0x61};
+  stack byte seed[8];
+  stack int index;
+  
+  toLower(session, session, elcount(session));
+  if(strncmp(session, "programming", strlen(session)) == 0)
+  {
+    EnterDiagnosticSession("default");
+    EnterDiagnosticSession("extended");
+    EnterDiagnosticSession("programming");
+    
+    // Diag Error Handling.
+    if(SendDiagnosticRequest(dRequestSecurityKeyRequest, dRequestSecurityKeyResponse, bSecurityProgrammingRequest) == DIAG_SEND_OR_RECEIVE_ERROR)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"SetECUMode: Diagnostic request send or receive error.");
+      return;
+    }
+    
+     // Diag Error Handling.
+    if (diagIsPositiveResponse(dRequestSecurityKeyResponse) == 0)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "GetSecurityAccess: Negative response received for Get Security Access Seed in Programming session: [0x%X].", dRequestSecurityKeyResponse.GetResponseCode());
+      testReportWriteDiagResponse(dRequestSecurityKeyRequest);
+      return;
+    }
+    
+    for(index = 0; index < 4; index++)
+    {
+      seed[index] = (byte)diagGetRespPrimitiveByte(dRequestSecurityKeyRequest, (index+2));
+    }
+    
+    securityAlgoProgramming(seed);
+
+    diagResize(dRequestSecurityKeyRequest,6);                  //UDS request size
+    diagSetPrimitiveByte(dRequestSecurityKeyRequest, 0, 0x27); //SID
+    diagSetPrimitiveByte(dRequestSecurityKeyRequest, 1, 0x12); //Send Key
+    diagSetPrimitiveByte(dRequestSecurityKeyRequest, 2, securityAlgoDataBuffer[0]); //Key Byte 0
+    diagSetPrimitiveByte(dRequestSecurityKeyRequest, 3, securityAlgoDataBuffer[1]); //Key Byte 1
+    diagSetPrimitiveByte(dRequestSecurityKeyRequest, 4, securityAlgoDataBuffer[2]); //Key Byte 2
+    diagSetPrimitiveByte(dRequestSecurityKeyRequest, 5, securityAlgoDataBuffer[3]); //Key Byte 3
+
+    SendDiagnosticRequest(dRequestSecurityKeyRequest, dRequestSecurityKeyResponse);
+    // Diag Error Handling.
+    if (diagIsPositiveResponse(dRequestSecurityKeyResponse) == 0)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "GetSecurityAccess: Security Access in Programming session not granted; Negative response received: [0x%X].", dRequestSecurityKeyResponse.GetResponseCode());
+      testReportWriteDiagResponse(dRequestSecurityKeyRequest);
+      return;
+    }
+  }
+  else
+  {
+    if (strncmp(session, "supplier", strlen(session)) == 0)
+    {
+      EnterDiagnosticSession("default");
+      EnterDiagnosticSession("supplier");
+      
+       // Diag Error Handling.
+      if(SendDiagnosticRequest(dRequestSecurityKeyRequest, dRequestSecurityKeyResponse, bSecuritySupplierRequest) == DIAG_SEND_OR_RECEIVE_ERROR)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"GetSecurityAccess: Diagnostic request send or receive error.");
+        return;
+      }
+      
+       // Diag Error Handling.
+      if (diagIsPositiveResponse(dRequestSecurityKeyResponse) == 0)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "GetSecurityAccess: Negative response received for Get Security Access Seed in Supplier session: [0x%X].", dRequestSecurityKeyResponse.GetResponseCode());
+        testReportWriteDiagResponse(dRequestSecurityKeyRequest);
+        return;
+      }
+      
+      for(index = 0; index < 8; index++)
+      {
+        seed[index] = (byte)diagGetRespPrimitiveByte(dRequestSecurityKeyRequest, (index+2));
+      }
+      
+      securityAlgoSupplier(seed);
+      
+      diagResize(dRequestSecurityKeyRequest,10);                  //UDS request size
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 0, 0x27); //SID
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 1, 0x62); //Send Key
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 2, securityAlgoDataBuffer[0]); //Key Byte 0
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 3, securityAlgoDataBuffer[1]); //Key Byte 1
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 4, securityAlgoDataBuffer[2]); //Key Byte 2
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 5, securityAlgoDataBuffer[3]); //Key Byte 3
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 6, securityAlgoDataBuffer[4]); //Key Byte 3
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 7, securityAlgoDataBuffer[5]); //Key Byte 3
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 8, securityAlgoDataBuffer[6]); //Key Byte 3
+      diagSetPrimitiveByte(dRequestSecurityKeyRequest, 9, securityAlgoDataBuffer[7]); //Key Byte 3
+      
+      SendDiagnosticRequest(dRequestSecurityKeyRequest, dRequestSecurityKeyResponse);
+      // Diag Error Handling.
+      if (diagIsPositiveResponse(dRequestSecurityKeyResponse) == 0)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "GetSecurityAccess: Security Access in Supplier session not granted; Negative response received: [0x%X].", dRequestSecurityKeyResponse.GetResponseCode());
+        testReportWriteDiagResponse(dRequestSecurityKeyRequest);
+        return;
+      }
+    }
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "GetSecurityAccess: Invalid parameter: [%s].", session);
+    }
+  }
+}
+
+/// <CORE_ECU_State>
+// Security algorithm for programming session 
+void securityAlgoProgramming(byte data[])
+{ 
+  stack dword temp;
+  stack int i, Carry;
+  
+  temp =  data[0]*16777216 + data[1]*65536 + data[2] * 256 + data[3];
+  
+  i = 5;
+  while(i>0)
+  {
+    Carry = 0;
+    if(temp>= 0xE0D1C2B3)
+    {
+      Carry = 1;
+    }
+    
+    temp+= 0x1F2E3D4C;
+    
+    if(Carry == 1)
+    {
+      temp = (temp << 1) + ((temp & 0x80000000)?1:0);
+    }
+    temp ^=0x4D5E234B;
+    i--;
+  }
+  securityAlgoDataBuffer[0] = ((temp) & 0xFF000000)>>24;
+  securityAlgoDataBuffer[1] = ((temp) & 0xFF0000)>>16;
+  securityAlgoDataBuffer[2] = ((temp) & 0xFF00)>>8;
+  securityAlgoDataBuffer[3] = ((temp) & 0xFF);
+}
+
+/// <CORE_ECU_State>
+// Security algorithm for programming session 
+void securityAlgoSupplier(byte data[])
+{ 
+  stack byte temp[8];
+  stack int i, Carry;
+  
+  temp[0] = (0xFF ^ data[0]) + 0x01; 
+  temp[1] = (0xFF ^ data[1]) + 0x01; 
+  temp[2] = (0xFF ^ data[2]) + 0x01; 
+  temp[3] = (0xFF ^ data[3]) + 0x01; 
+  temp[4] = (0xFF ^ data[4]) + 0x01; 
+  temp[5] = (0xFF ^ data[5]) + 0x01; 
+  temp[6] = (0xFF ^ data[6]) + 0x01; 
+  temp[7] = (0xFF ^ data[7]) + 0x01; 
+  
+  securityAlgoDataBuffer[0] = temp[0];
+  securityAlgoDataBuffer[1] = temp[1];
+  securityAlgoDataBuffer[2] = temp[2];
+  securityAlgoDataBuffer[3] = temp[3];
+  securityAlgoDataBuffer[4] = temp[4];
+  securityAlgoDataBuffer[5] = temp[5];
+  securityAlgoDataBuffer[6] = temp[6];
+  securityAlgoDataBuffer[7] = temp[7];
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two int64 values provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The int64 for the received result.
+// "aExpectedResult" = The int64 for the expected result.
+// Example:          EvalManStepEqual("Check byte value", 0x0F, 0x0F); => pass.
+void EvalManStepEqual(char aActionName[], int64 I64ReceivedResult, int64 I64ExpectedResult)
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp_Received[500];
+  stack char tmp_Expected[500];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  if(I64ExpectedResult <= 0xFF)
+  {
+    snprintf(tmp_Received, elcount(tmp_Received), "%lld (0x%02X)", I64ReceivedResult, I64ReceivedResult); // Convert to char for table compatibility.
+    snprintf(tmp_Expected, elcount(tmp_Expected), "%lld (0x%02X)", I64ExpectedResult, I64ExpectedResult);
+  }
+  else
+  {
+    snprintf(tmp_Received, elcount(tmp_Received), "%lld", I64ReceivedResult); // Convert to char for table compatibility.
+    snprintf(tmp_Expected, elcount(tmp_Expected), "%lld", I64ExpectedResult);
+  }
+  
+  TestInfoCell(EvalManStepTable, tmp_Received);
+  TestInfoCell(EvalManStepTable, tmp_Expected);
+  
+  if(I64ExpectedResult != I64ReceivedResult)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+// Evaluates the two int64 values provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The int64 for the received result.
+// "aExpectedResult" = The int64 for the expected result.
+// Example:          EvalManStepEqual("Check byte value", 0x0F, 0x0F); => pass.
+void EvalManStepEqual(char aActionName[], int64 I64ReceivedResult)
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp_Received[500];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  if(I64ReceivedResult <= 0xFF)
+  {
+    snprintf(tmp_Received, elcount(tmp_Received), "%lld (0x%02X)", I64ReceivedResult, I64ReceivedResult); // Convert to char for table compatibility.
+  }
+  else
+  {
+    snprintf(tmp_Received, elcount(tmp_Received), "%lld", I64ReceivedResult); // Convert to char for table compatibility.
+  }
+  
+  TestInfoCell(EvalManStepTable, tmp_Received);
+  
+  TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two byte arrays provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The byte array for the received result.
+// "aExpectedResult" = The byte array for the expected result.
+// Example:          arr1 = {0x02, 0x03}; arr2 = {0x02, 0x03}.
+//                   EvalManStepEqual("Check byte array values", arr1, arr2); => pass.
+void EvalManStepEqual(char aActionName[], byte bReceivedResult[], byte bExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp[10000];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  ConvertByteArrInCharArr(bReceivedResult, tmp, 0, elcount(bReceivedResult) - 1, "true"); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  ConvertByteArrInCharArr(bExpectedResult, tmp, 0, elcount(bExpectedResult) - 1, "true");
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(memcmp(bExpectedResult, bReceivedResult, elcount(bReceivedResult)) !=0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two char arrays provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The char array for the received result.
+// "aExpectedResult" = The char array for the expected result.
+// Example:          EvalManStepEqual("Check Software Version", "ER01473H.P30", "ER01473H.P30"); => pass.
+void EvalManStepEqual(char aActionName[], char cReceivedResult[], char cExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cReceivedResult);
+  TestInfoCell(EvalManStepTable, cExpectedResult);
+
+ if(strncmp(cExpectedResult, cReceivedResult, elcount(cExpectedResult)) != 0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the diag response object and the byte array provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "dResponse"       = The diagnostic response object for the received result.
+// "bExpectedResult" = The byte array for the expected result.
+// Example:          dResponse = dSessionResponse = PR for Read ECU Location: 0x62 0xFD 0x2F 0x99
+//                   bExpectedResult[4] = {0x62, 0xFD, 0x2F, 0x99};
+//                   EvalManStepEqual("Check byte array values", dSessionResponse, bExpectedResult); => pass.
+void EvalManStepEqual(char aActionName[], diagResponse * dResponse, byte bExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  stack byte bResponse[2000];
+  stack char cResponse[10000];
+  stack char cExpectedResult[10000];
+  
+  diagGetPrimitiveData(dResponse, bResponse, DiagGetPrimitiveSize(dResponse));
+  
+  ConvertByteArrInCharArr(bResponse      , cResponse      , 0, DiagGetPrimitiveSize(dResponse) - 1, "true");
+  ConvertByteArrInCharArr(bExpectedResult, cExpectedResult, 0, elcount(bExpectedResult) - 1       , "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse);
+  TestInfoCell(EvalManStepTable, cExpectedResult);
+  
+  if(strncmp(cExpectedResult, cResponse, elcount(cResponse)) != 0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the diag response object and the char array provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "dResponse"       = The diagnostic response object for the received result.
+// "aExpectedResult" = The char array for the expected result.
+// Example:          dResponse = dSessionResponse = PR for Read ECU Location: 0x62 0xFD 0x2F 0x99
+//                   EvalManStepEqual("Check byte array values", dSessionResponse, "0x62 0xFD 0x2F 0x99"); => pass.
+void EvalManStepEqual(char aActionName[], diagResponse * dResponse, char cExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  stack byte bResponse[2000];
+  stack char cResponse[10000];
+  
+  diagGetPrimitiveData(dResponse, bResponse, DiagGetPrimitiveSize(dResponse));
+  ConvertByteArrInCharArr(bResponse, cResponse, 0, DiagGetPrimitiveSize(dResponse) - 1, "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse);
+  TestInfoCell(EvalManStepTable, cExpectedResult);
+
+ if(strncmp(cExpectedResult, cResponse, elcount(cResponse)) != 0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+  
+/// <CORE_Evaluation>
+// Evaluates the diag response objects provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"                = The Action name which will appear inside the report.
+// "dResponse_1" & "dResponse_2"  = Diagnostic response objects.
+void EvalManStepEqual(char aActionName[], diagResponse * dResponse_1, diagResponse * dResponse_2)
+{
+  stack long EvalManStepTable = 0;
+  stack byte bResponse_1[2000];
+  stack byte bResponse_2[2000];
+  stack char cResponse_1[10000];
+  stack char cResponse_2[10000];
+  
+  diagGetPrimitiveData(dResponse_1, bResponse_1, DiagGetPrimitiveSize(dResponse_1));
+  diagGetPrimitiveData(dResponse_2, bResponse_2, DiagGetPrimitiveSize(dResponse_2));
+  
+  ConvertByteArrInCharArr(bResponse_1, cResponse_1, 0, DiagGetPrimitiveSize(dResponse_1)-1, "true");
+  ConvertByteArrInCharArr(bResponse_2, cResponse_2, 0, DiagGetPrimitiveSize(dResponse_2)-1, "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse_1);
+  TestInfoCell(EvalManStepTable, cResponse_2);
+  
+ if(strncmp(cResponse_1, cResponse_2, elcount(cResponse_2)) != 0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two float numbers provided as parameters and sets the test result to passed if they are equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The float for the received result.
+// "aExpectedResult" = The float for the expected result.
+// Example:          EvalManStepEqual("Check float value", 420, 420); => pass.
+void EvalManStepEqual(char aActionName[], float fReceivedResult, float fExpectedResult)
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp[30];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "%.3f ", fReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "%.3f ", fExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+  
+ if(abs(fExpectedResult - fReceivedResult) > 0.00000001)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two char arrays provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The char array for the received result.
+// "aExpectedResult" = The char array for the expected result.
+// Example:          EvalManStepEqual("Check Software Version", "ER01473H.P30", "ER01473H.P30"); => fail.
+void EvalManStepUnEqual(char aActionName[], char cReceivedResult[], char cExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected to be different than");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cReceivedResult);
+  TestInfoCell(EvalManStepTable, cExpectedResult);
+  
+ if(strncmp(cExpectedResult, cReceivedResult, elcount(cExpectedResult)) == 0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two int64 values provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The int64 for the received result.
+// "aExpectedResult" = The int64 for the expected result.
+// Example:          EvalManStepUnEqual("Check byte value", 0x0F, 0x0B); => pass.
+void EvalManStepUnEqual(char aActionName[], int64 bReceivedResult, int64 bExpectedResult)
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp[200];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "0x%02X ", bReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "0x%02X ", bExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+  
+ if(bExpectedResult == bReceivedResult)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two float numbers provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The float for the received result.
+// "aExpectedResult" = The float for the expected result.
+// Example:          EvalManStepUnEqual("Check float value", 420, 421); => pass.
+void EvalManStepUnEqual(char aActionName[], float fReceivedResult, float fExpectedResult)
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp[30];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  snprintf(tmp, elcount(tmp), "%.2f ", fReceivedResult); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  snprintf(tmp, elcount(tmp), "%.2f ", fExpectedResult);  
+  TestInfoCell(EvalManStepTable, tmp);
+  
+ if(fExpectedResult == fReceivedResult)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the two byte arrays provided as parameters and sets the test result to passed if they are unequal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The byte array for the received result.
+// "aExpectedResult" = The byte array for the expected result.
+// Example:          arr1 = {0x01, 0x02}; arr2 = {0x02, 0x03}.
+//                   EvalManStepUnEqual("Check byte array values", arr1, arr2); => pass.
+void EvalManStepUnEqual(char aActionName[], byte bReceivedResult[], byte bExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  stack char tmp[10000];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  
+  ConvertByteArrInCharArr(bReceivedResult, tmp, 0, elcount(bReceivedResult) - 1, "true"); // Convert to char for table compatibility.
+  TestInfoCell(EvalManStepTable, tmp);
+  ConvertByteArrInCharArr(bExpectedResult, tmp, 0, elcount(bExpectedResult) - 1, "true");
+  TestInfoCell(EvalManStepTable, tmp);
+
+ if(memcmp(bExpectedResult, bReceivedResult, elcount(bReceivedResult)) == 0)
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the diag response object and the byte array provided as parameters and sets the test result to passed if they are NOT equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "dResponse"       = The diagnostic response object for the received result.
+// "bExpectedResult" = The byte array for the expected result.
+// Example:          dResponse = dSessionResponse = PR for Read ECU Location: 0x62 0xFD 0x2F 0x99
+//                   bExpectedResult[4] = {0x62, 0xFD, 0x2F, 0x99};
+//                   EvalManStepEqual("Check byte array values", dSessionResponse, bExpectedResult); => fail.
+void EvalManStepUnEqual(char aActionName[], diagResponse * dResponse, byte bExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  stack byte bResponse[2000];
+  stack char cResponse[10000];
+  stack char cExpectedResult[10000];
+  diagGetPrimitiveData(dResponse, bResponse, DiagGetPrimitiveSize(dResponse));
+  
+  ConvertByteArrInCharArr(bResponse      , cResponse      , 0, DiagGetPrimitiveSize(dResponse) - 1, "true");
+  ConvertByteArrInCharArr(bExpectedResult, cExpectedResult, 0, elcount(bExpectedResult) - 1       , "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse);
+  TestInfoCell(EvalManStepTable, cExpectedResult);
+  
+ if(strncmp(cExpectedResult, cResponse, elcount(cResponse)) != 0)
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+  
+/// <CORE_Evaluation>
+// Evaluates the diag response object response data (i.e not including PR) and the byte array provided as parameters and sets the test result to passed if they are NOT equal.
+// "aActionName"     = The Action name which will appear inside the report.
+// "dResponse"       = The diagnostic response object for the received result.
+// "bExpectedResult" = The byte array for the expected result.
+// Example:          dResponse = dSessionResponse = PR for Read ECU Location: 0x62 0xFD 0x2F 0x99
+//                   EvalManStepEqual("Check byte array values", dSessionResponse, "0x62 0xFD 0x2F 0x99"); => FAIL.
+void EvalManStepUnEqual(char aActionName[], diagResponse * dResponse, char cExpectedResult[])
+{
+  stack long EvalManStepTable = 0;
+  stack byte bResponse[2000];
+  stack char cResponse[10000];
+  
+  diagGetPrimitiveData(dResponse, bResponse, DiagGetPrimitiveSize(dResponse));
+  ConvertByteArrInCharArr(bResponse, cResponse, 0, DiagGetPrimitiveSize(dResponse) - 1, "true");
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cResponse);
+  TestInfoCell(EvalManStepTable, cExpectedResult);
+
+ if(strncmp(cExpectedResult, cResponse, elcount(cResponse)) != 0)
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Evaluation>
+// Evaluates the one int64 provided as parameters and sets the test result to passed if they are certain range.
+// "aActionName"     = The Action name which will appear inside the report.
+// "aReceivedResult" = The char array for the received result.
+// "aExpectedResultMin" = The int64 for the expected result, minumum value.
+// "aExpectedResultMax" = The int64 for the expected result, maximum value.
+// Example:          EvalManStepRange("Qualification time", "20", "10","30"); => pass.
+// Example:          EvalManStepRange("Qualification time", "20", "400","30"); => fail.
+void EvalManStepRange(char aActionName[],  int64 iReceivedResult, int64 iExpectedResultMin, int64 iExpectedResultMax)
+{
+  stack long EvalManStepTable = 0;
+  stack char aReceivedResult[50];
+  stack char aExpectedResultMin[50];
+  stack char aExpectedResultMax[50];
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(aActionName);
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Received");
+  TestInfoCell(EvalManStepTable, "MinExpected");
+  TestInfoCell(EvalManStepTable, "MaxExpected");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  // row 1 
+  ltoa(iReceivedResult,aReceivedResult,10);
+  ltoa(iExpectedResultMin,aExpectedResultMin,10);
+  ltoa(iExpectedResultMax,aExpectedResultMax,10);
+  
+  TestInfoRow(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, aReceivedResult);
+  TestInfoCell(EvalManStepTable, aExpectedResultMin);
+  TestInfoCell(EvalManStepTable, aExpectedResultMax);
+  
+  if((iReceivedResult<iExpectedResultMin)||(iReceivedResult>iExpectedResultMax))
+  {
+    TestStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    TestStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+// Check all AEC status and report all that do not have the expected status.
+void CheckAECPresence()
+{
+  diagRequest        * dReadAllAECsStatusReq;
+  stack diagResponse * dReadAllAECsStatusResp;
+  
+  stack int iIndex                = 1;
+  stack int iFound_SpecificStatus = 0;
+  stack int iAECIndex             = 0;
+  stack int iAutotestErrorFlag    = 0;
+  stack int iErrorFlag            = 0;
+  stack int iIgnoredAECFound      = 0;
+  stack long EvalManStepTable     = 0;
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[100];
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+  
+  // Configure diagnostic object.
+  if(diagResize(dReadAllAECsStatusReq, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReadAllAECsStatusReq, bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(bGetSecurityAccess_CheckAECPresence)
+  {
+    GetSecurityAccess(cSession_ReadAECs);
+  }
+  else if(bEnterSessionEnabled_CheckAECPresence)
+  {
+    EnterDiagnosticSession(cSession_ReadAECs);
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusReq, dReadAllAECsStatusResp) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResp) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckAECPresence: Negative response received for Read All AEC Status request: [0x%X].", dReadAllAECsStatusResp.GetResponseCode());
+    testReportWriteDiagResponse(dReadAllAECsStatusReq);
+    return;
+  }
+
+  diagGetPrimitiveData(dReadAllAECsStatusResp, bAllAec, elcount(bAllAec));
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusReq.GetPrimitiveSize())/3; iIndex++)
+  {
+    iAutotestErrorFlag = 0;
+    
+    for(iAECIndex = 0; iAECIndex <= (elcount(bIgnoredAECS) - 1); iAECIndex++)
+    {
+      if(bAllAec[iIndex*3 + iAECBytePosition] == bIgnoredAECS[iAECIndex])
+      {
+        iIgnoredAECFound = 1;
+        break;
+      }
+    }
+    if(iIgnoredAECFound == 1)
+    {
+      iIgnoredAECFound = 0;
+      continue;
+    }
+    
+    for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus) - 1); iAECIndex++)
+    {
+      if(bAllAec[iIndex*3+2] != bAcceptedAECStatus[iAECIndex])
+      {
+        iAutotestErrorFlag+= 1;
+      }
+    }
+    
+    if(iAutotestErrorFlag == elcount(bAcceptedAECStatus)) // If no accepted status is found.
+    {
+      if(bSpecificAECExpectedStatus[0][0] == 0xFF)  
+      {
+        // No special AEC status is considered.
+      }
+      else // Check specific AEC status.
+      {
+        iFound_SpecificStatus = 0;
+        for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus) - 1); iAECIndex++)
+        {
+          if(bAllAec[iIndex*3 + iAECBytePosition] == bSpecificAECExpectedStatus[iAECIndex][0])
+          {
+            iFound_SpecificStatus = 1;
+            if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus[iAECIndex][1])
+            {
+              TestInfoRow(EvalManStepTable, 0);
+              snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+              TestInfoCell(EvalManStepTable, cAEC);
+              TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+              snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+              TestInfoCell(EvalManStepTable, cStatusByte);
+              snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus[iAECIndex][1]);
+              TestInfoCell(EvalManStepTable, cExpectedStatus);
+              
+              iErrorFlag = 1;
+            }
+            break;
+          }
+        }
+     }
+    
+      // If the AEC does not have a specific expected status value.
+      if (iFound_SpecificStatus == 0)
+      {
+        TestInfoRow(EvalManStepTable, 0);
+        snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+        TestInfoCell(EvalManStepTable, cAEC);
+        TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+        snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+        TestInfoCell(EvalManStepTable, cStatusByte);
+        TestInfoCell(EvalManStepTable, cExpectedStatuses);
+        
+        iErrorFlag = 1;
+      }
+    }
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "AEC", "All autotests are passed.");
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status.
+// Example: CheckAECStatus("ERR_MOSFET_OC", 0x2F);
+CheckAECStatus(char cAutotestName[], byte bExpectedStatus)
+{
+  CheckAECStatus(cAutotestName, bExpectedStatus, 0xFF, 0xFF, 0xFF);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status.
+// Example: CheckAECStatus("ERR_MOSFET_OC", 0x2F, bERR_BAT_PWR_UNDER_VOLTAGE);
+CheckAECStatus(char cAutotestName[], byte bExpectedStatus, byte bIgnored_Autotest_1)
+{
+  CheckAECStatus(cAutotestName, bExpectedStatus, bIgnored_Autotest_1, 0xFF, 0xFF);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status.
+// Example: CheckAECStatus("ERR_MOSFET_OC", 0x2F, bERR_BAT_PWR_UNDER_VOLTAGE, bERR_BAT_LOG_UNDER_VOLTAGE);
+CheckAECStatus(char cAutotestName[], byte bExpectedStatus, byte bIgnored_Autotest_1, byte bIgnored_Autotest_2)
+{
+  CheckAECStatus(cAutotestName, bExpectedStatus, bIgnored_Autotest_1, bIgnored_Autotest_2, 0xFF);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status.
+// Example: CheckAECStatus(bERR_MOSFET_OC, 0x2F ,bERR_BAT_PWR_UNDER_VOLTAGE, bERR_BAT_LOG_UNDER_VOLTAGE, bERR_BAT_PWR_OVER_VOLTAGE);
+CheckAECStatus(byte bAutotestID, byte bExpectedStatus)
+{
+  CheckAECStatus(cAECName[bAutotestID], bExpectedStatus, 0xFF);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status. Ignored autotests will not be considered in this evaluation.
+// Example: bAutotestID         = bERR_MOSFET_OC.
+//          bExpectedStatus     = 0x2F.
+//          bIgnored_Autotest_1 = bERR_BAT_PWR_UNDER_VOLTAGE;
+void CheckAECStatus(byte bAutotestID, byte bExpectedStatus, byte bIgnored_Autotest_1)
+{
+  CheckAECStatus(cAECName[bAutotestID], bExpectedStatus, bIgnored_Autotest_1, 0xFF, 0xFF);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status. Ignored autotests will not be considered in this evaluation.
+// Example: bAutotestID         = bERR_MOSFET_OC.
+//          bExpectedStatus     = 0x2F.
+//          bIgnored_Autotest_1 = bERR_BAT_PWR_UNDER_VOLTAGE;
+//          bIgnored_Autotest_2 = bERR_BAT_LOG_UNDER_VOLTAGE; 
+void CheckAECStatus(byte bAutotestID, byte bExpectedStatus, byte bIgnored_Autotest_1, byte bIgnored_Autotest_2)
+{
+  CheckAECStatus(cAECName[bAutotestID], bExpectedStatus, bIgnored_Autotest_1, bIgnored_Autotest_2, 0xFF);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected status. Ignored autotests will not be considered in this evaluation.
+// Example: bAutotestID         = bERR_MOSFET_OC.
+//          bExpectedStatus     = 0x2F.
+//          bIgnored_Autotest_1 = bERR_BAT_PWR_UNDER_VOLTAGE;
+//          bIgnored_Autotest_2 = bERR_BAT_LOG_UNDER_VOLTAGE; 
+//          bIgnored_Autotest_3 = bERR_BAT_PWR_OVER_VOLTAGE; 
+void CheckAECStatus(byte bAutotestID, byte bExpectedStatus, byte bIgnored_Autotest_1, byte bIgnored_Autotest_2, byte bIgnored_Autotest_3)
+{
+  CheckAECStatus(cAECName[bAutotestID], bExpectedStatus, bIgnored_Autotest_1, bIgnored_Autotest_2, bIgnored_Autotest_3);
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+// Check that an AEC has the expected status. Ignored autotests will not be considered in this evaluation.
+// Example: cAutotestName       = "ERR_MOSFET_OC".
+//          bExpectedStatus     = 0x2F.
+//          bIgnored_Autotest_1 = bERR_BAT_PWR_UNDER_VOLTAGE;
+//          bIgnored_Autotest_2 = bERR_BAT_LOG_UNDER_VOLTAGE; 
+//          bIgnored_Autotest_3 = bERR_BAT_PWR_OVER_VOLTAGE; 
+void CheckAECStatus(char cAutotestName[], byte bExpectedStatus, byte bIgnored_Autotest_1, byte bIgnored_Autotest_2, byte bIgnored_Autotest_3)
+{
+  diagRequest        * dReadAllAECsStatusReq;
+  stack diagResponse * dReadAllAECsStatusResp;
+  
+  stack int iIndex                = 0;
+  stack int iIgnoredIndex         = 0;
+  stack int iFoundAsIgnored       = 0;
+  stack int iAutotestErrorFlag    = 0;
+  stack int iAECIndex             = 0;
+  stack long EvalManStepTable     = 0;
+  stack byte bTableEvaluation     = 1;
+  stack byte bAdditionalAECHeader = 1;
+  stack int iIgnoredAECFound      = 0;
+  stack int iFound_SpecificStatus = 0; 
+  stack byte bAutotest_IDs_Ignored[3] = {bIgnored_Autotest_1, bIgnored_Autotest_2, bIgnored_Autotest_3};
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+  stack char cExpectedStatus[100];
+  stack char cExpectedStatuses[300];
+  stack char cAcceptedStatus[100];
+  stack char cAcceptedStatuses[300];
+  stack int i;
+  stack char cTableHeader[300];
+  
+  if(bGetSecurityAccess_ReadAECs)
+  {
+    GetSecurityAccess(cSession_ReadAECs);
+  }
+  else if(bEnterSessionEnabled_CheckAECStatus)
+  {
+    EnterDiagnosticSession(cSession_ReadAECs);
+  }
+  
+  // Configure diagnostic object.
+  if(diagResize(dReadAllAECsStatusReq, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReadAllAECsStatusReq, bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusReq, dReadAllAECsStatusResp) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECStatus: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResp) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckAECStatus: Negative response received for Read All AEC Status request: [0x%X].", dReadAllAECsStatusResp.GetResponseCode());
+    testReportWriteDiagResponse(dReadAllAECsStatusReq);
+    return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResp, bAllAec, elcount(bAllAec));
+  
+   // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bSpecificAECExpectedStatus); iIndex++)
+  {
+    if (iIndex == (elcount(bSpecificAECExpectedStatus) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus[iIndex][1]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bSpecificAECExpectedStatus[iIndex][1]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusReq.GetPrimitiveSize())/3; iIndex++)
+  {
+    if (strncmp(cAutotestName, cAECName[bAllAec[iIndex*3 + iAECBytePosition]], elcount(cAECName[bAllAec[iIndex*3 + iAECBytePosition]])) == 0)
+    {
+      // Begin table
+      snprintf(cTableHeader, elcount(cTableHeader), "Check [%s] - [0x%02X] AEC status.", cAutotestName, iIndex);
+      
+      EvalManStepTable = TestInfoTable(cTableHeader);
+
+      // Header
+      TestInfoHeadingBegin(EvalManStepTable, 0);
+      TestInfoCell(EvalManStepTable, "AEC ID");
+      TestInfoCell(EvalManStepTable, "AEC name");
+      TestInfoCell(EvalManStepTable, "AEC status");
+      TestInfoCell(EvalManStepTable, "AEC expected status");
+      TestInfoCell(EvalManStepTable, "Result");
+      TestInfoHeadingEnd(EvalManStepTable);
+      
+      TestInfoRow(EvalManStepTable, 0);
+      snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+      TestInfoCell(EvalManStepTable, cAEC);
+      TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+      snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+      TestInfoCell(EvalManStepTable, cStatusByte);
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bExpectedStatus);
+      TestInfoCell(EvalManStepTable, cExpectedStatus);
+      
+      if (bAllAec[iIndex*3+2] == bExpectedStatus)
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        bTableEvaluation = 0;
+      }
+      
+      for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusReq.GetPrimitiveSize())/3; iIndex++)
+      {
+        if (strncmp(cAutotestName, cAECName[bAllAec[iIndex*3 + iAECBytePosition]], elcount(cAECName[bAllAec[iIndex*3+ iAECBytePosition]])) != 0)
+        {
+          for(iAECIndex = 0; iAECIndex <= (elcount(bIgnoredAECS) - 1); iAECIndex++)
+          {
+            if(bAllAec[iIndex*3 + iAECBytePosition] == bIgnoredAECS[iAECIndex])
+            {
+              iIgnoredAECFound = 1;
+              break;
+            }
+          }
+          if(iIgnoredAECFound == 1)
+          {
+            iIgnoredAECFound = 0;
+            continue;
+          }
+          
+          
+          iAutotestErrorFlag = 0;
+          for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus) - 1); iAECIndex++)  // Check if any AEC status is unexpected.
+          {
+            if(bAllAec[iIndex*3+2] != bAcceptedAECStatus[iAECIndex])
+            {
+              iAutotestErrorFlag+= 1;
+            }
+          }
+          
+          if (iAutotestErrorFlag == elcount(bAcceptedAECStatus))
+          {
+            iFoundAsIgnored = 0;
+            
+            if(bAdditionalAECHeader == 1) // Only add row once.
+            {
+              TestInfoRow(EvalManStepTable, 0);
+              TestInfoCell(EvalManStepTable, "Additional AECs found:", 5);
+              bAdditionalAECHeader = 0;
+            }
+            
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+             
+            for(iIgnoredIndex = 0; iIgnoredIndex < elcount(bAutotest_IDs_Ignored); iIgnoredIndex++)
+            {
+              // Check if AEC status is ignored.
+              if (strncmp(cAECName[bAutotest_IDs_Ignored[iIgnoredIndex]], cAECName[bAllAec[iIndex*3 + iAECBytePosition]], elcount(cAECName[bAllAec[iIndex*3 + iAECBytePosition]])) == 0)  
+              {        
+                TestInfoCell(EvalManStepTable, "Any (Ignored).");
+                TestInfoCell(EvalManStepTable, "pass");
+                iFoundAsIgnored = 1;
+              }
+            }
+            
+            if (iFoundAsIgnored == 0) // If AEC status is not ignored.
+            {
+              if(bSpecificAECExpectedStatus[0][0] == 0xFF)  
+              {
+                
+              }
+              else // Check specific AEC status.
+              {
+                iFound_SpecificStatus = 0;
+                for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus) - 1); iAECIndex++)
+                {
+                  if(bAllAec[iIndex*3 + iAECBytePosition] == bSpecificAECExpectedStatus[iAECIndex][0])
+                  {
+                    iFound_SpecificStatus = 1;
+                    snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus[iAECIndex][1]);
+                    TestInfoCell(EvalManStepTable, cExpectedStatus);
+                    if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus[iAECIndex][1])
+                    {
+                      TestInfoCell(EvalManStepTable, "fail");
+                      bTableEvaluation = 0;
+                    }
+                    else
+                    {
+                      TestInfoCell(EvalManStepTable, "pass");
+                    }
+                    break;
+                  }
+                }
+              }
+              
+              // Format expected AEC status byte(s).
+              if (iFound_SpecificStatus == 0) // If no specific status is found.
+              {
+                for (i = 0; i < elcount(bAcceptedAECStatus); i++)
+                {
+                  if (i == (elcount(bAcceptedAECStatus) - 1))
+                  {
+                    snprintf(cAcceptedStatus, elcount(cAcceptedStatus), "0x%02X", bAcceptedAECStatus[i]);
+                  }
+                  else
+                  {
+                    snprintf(cAcceptedStatus, elcount(cAcceptedStatus), "0x%02X or ", bAcceptedAECStatus[i]);
+                  }
+                  strncat(cAcceptedStatuses, cAcceptedStatus, elcount(cAcceptedStatuses));
+                }
+                
+                TestInfoCell(EvalManStepTable, cAcceptedStatuses);
+                TestInfoCell(EvalManStepTable, "fail");
+                bTableEvaluation = 0;
+                strncpy(cAcceptedStatuses, "", elcount(cAcceptedStatuses));
+              }
+            }
+          }
+        }
+      }
+      
+     if(bTableEvaluation == 0) // If any row has a failed result.
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable); 
+      }
+      else
+      {
+        testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable); 
+      }
+      
+      return;
+    }
+ }
+  
+ testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckAECStatus: INVALID AEC Name: [%s] -> Please check function input.", cAutotestName);
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check the duration in which the AEC status is changed.
+int64 ReturnAECStatusChangeTime(int iAutotestID, byte bExpectedStatus, int iCheckInterval, float fMaxTime)
+{
+  return ReturnAECStatusChangeTime(cAECName[iAutotestID], bExpectedStatus, iCheckInterval, fMaxTime);
+}
+/// <CORE_Fault_Management/CORE_AECs>
+// Check the duration in which the AEC status is changed.
+int64 ReturnAECStatusChangeTime(char cAutotestName[], byte bExpectedStatus, int iCheckInterval, float fMaxTime)
+{
+  diagRequest        * dReadMemoryByAddressReq;
+  stack diagResponse * dReadMemoryByAddressResp;
+  
+  stack int iIndex            = 0;
+  stack float fTimeSinceStart = 0;
+  stack float fStartTime      = timeNow()/100;
+  stack char cAutotestName_Buffer[300];
+  stack long bBuffer;
+  
+  if(iCheckInterval < 10 || iCheckInterval > fMaxTime)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnAECStatusChangeTime: Incorrect Check time interval: [%i]. Must be greater or equal to 10 ms and smaller than iMaxTime.", iCheckInterval);
+    return -1;
+  }
+  
+  toUpper(cAutotestName_Buffer, cAutotestName, elcount(cAutotestName_Buffer));
+  
+  dReadMemoryByAddressReq.Resize(elcount(bRMBARequest));
+  diagSetPrimitiveData(dReadMemoryByAddressReq, bRMBARequest, elcount(bRMBARequest));
+  
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 2, _erh_au8AecStatus[0]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 3, _erh_au8AecStatus[1]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 4, _erh_au8AecStatus[2]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 5, _erh_au8AecStatus[3]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 6, 0x00);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 7, 0x01);
+  
+  if(bGetSecurityAccess_ReturnAECStatusChangeTime)
+  {
+    GetSecurityAccess(cSession_ReadAECs);
+  }
+  else if(bEnterSessionEnabled_ReturnAECStatusChangeTime)
+  {
+    EnterDiagnosticSession(cSession_ReadAECs);
+  }
+  
+  for(iIndex = 0; iIndex < iNoOfAECs; iIndex++)
+  {  
+    if (strncmp(cAutotestName_Buffer, cAECName[iIndex], elcount(cAECName[iIndex])) == 0)
+    {
+      // Set RAM address.
+      bBuffer = iIndex - 1 + _erh_au8AecStatus[3] + (_erh_au8AecStatus[2] << 8);
+      DiagSetPrimitiveByte(dReadMemoryByAddressReq, 4, ((bBuffer & 0xFF00) >> 8));
+      DiagSetPrimitiveByte(dReadMemoryByAddressReq, 5, bBuffer & 0xFF);
+      
+      fTimeSinceStart = timeNow() / 100;
+      
+      while ((fTimeSinceStart - fStartTime) <= fMaxTime)
+      {
+        // Diag Error Handling.
+        if(SendDiagnosticRequest(dReadMemoryByAddressReq, dReadMemoryByAddressResp) == DIAG_SEND_OR_RECEIVE_ERROR) 
+        {
+          testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnAECStatusChangeTime: Diagnostic request send or receive error.");
+          return -1;
+        }
+  
+        // Diag Error Handling.
+        if (diagIsPositiveResponse(dReadMemoryByAddressResp) == 0)
+        {
+          testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "ReturnAECStatusChangeTime: Negative response received for Read Memory By Address request: [0x%X].", dReadMemoryByAddressResp.GetResponseCode());
+          testReportWriteDiagResponse(dReadMemoryByAddressReq);
+          return -1;
+        }
+        
+        if (DiagGetPrimitiveByte(dReadMemoryByAddressResp, 1) == bExpectedStatus)
+        {
+          testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "The status of the AEC [0x%02X] - [%s] was changed to [0x%02X] in [%.0f] ms.", iIndex, cAECName[iIndex] , DiagGetPrimitiveByte(dReadMemoryByAddressResp, 1), (fTimeSinceStart - fStartTime));
+          return (fTimeSinceStart - fStartTime);
+        }
+        else
+        {
+          testWaitForTimeoutSilent(iCheckInterval);
+          fTimeSinceStart = timeNow() / 100;
+        }
+      }
+      
+     fTimeSinceStart = timeNow()/100;
+    }
+    
+    if ((fTimeSinceStart - fStartTime) > fMaxTime)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "The status of the AEC [0x%02X] - [%s] was NOT changed into [0x%02X] after [%.0f] ms.",iIndex, cAECName[iIndex], bExpectedStatus, (fTimeSinceStart - fStartTime));
+      return -1;
+    }
+  }
+  
+  testStepFail(@sysvar::CORE::sysLevelOfDetailStep, "", "ReturnAECStatusChangeTime: AEC name is not valid -> [%s]. Please input a valid AEC name.", cAutotestName);
+  return -1;
+}
+
+/// <CORE_Fault_Management/CORE_AECs/Overloads>
+// Check that an AEC has the expected RAM status.
+void CheckAECStatusFromRAM(int iAutotestID, byte bExpectedStatus)
+{
+  CheckAECStatusFromRAM(cAECName[iAutotestID], bExpectedStatus);
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+// Check that an AEC has the expected RAM status.
+void CheckAECStatusFromRAM(char cAutotestName[], byte bExpectedStatus)
+{
+  diagRequest        * dReadMemoryByAddressReq;
+  stack diagResponse * dReadMemoryByAddressResp;
+  
+  stack int iIndex            = 0;
+  stack long EvalManStepTable = 0;
+  
+  stack char cAutotestName_Buffer[300];
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack char cAEC[300];
+  stack char cStatusByte[200];
+  stack char cExpectedStatus[100];
+  stack char cTableHeader[500];
+  stack long bBuffer;
+  
+  toUpper(cAutotestName_Buffer, cAutotestName, elcount(cAutotestName_Buffer));
+  
+  dReadMemoryByAddressReq.Resize(elcount(bRMBARequest));
+  diagSetPrimitiveData(dReadMemoryByAddressReq, bRMBARequest, elcount(bRMBARequest));
+  
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 2, _erh_au8AecStatus[0]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 3, _erh_au8AecStatus[1]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 4, _erh_au8AecStatus[2]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 5, _erh_au8AecStatus[3]);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 6, 0x00);
+  DiagSetPrimitiveByte(dReadMemoryByAddressReq, 7, 0x01);
+  
+  if(bGetSecurityAccess_CheckAECStatusFromRAM)
+  {
+    GetSecurityAccess(cSession_ReadAECs);
+  }
+  else if(bEnterSessionEnabled_CheckAECStatusFromRAM)
+  {
+    EnterDiagnosticSession(cSession_ReadAECs);
+  }
+  
+  for(iIndex = 1; iIndex < iNoOfAECs; iIndex++)
+  {  
+    if (strncmp(cAutotestName_Buffer, cAECName[iIndex], elcount(cAECName[iIndex])) == 0)
+    {
+      // Begin table
+      snprintf(cTableHeader, elcount(cTableHeader), "Check [%s] - [0x%02X] AEC status from RAM.", cAutotestName, iIndex);
+      EvalManStepTable = TestInfoTable(cTableHeader);
+
+      // Header
+      TestInfoHeadingBegin(EvalManStepTable, 0);
+      TestInfoCell(EvalManStepTable, "AEC ID");
+      TestInfoCell(EvalManStepTable, "AEC name");
+      TestInfoCell(EvalManStepTable, "AEC status");
+      TestInfoCell(EvalManStepTable, "AEC expected status");
+      TestInfoHeadingEnd(EvalManStepTable);
+      
+      // Set RAM address.
+      bBuffer = iIndex - 1 + _erh_au8AecStatus[3] + (_erh_au8AecStatus[2] << 8);
+      DiagSetPrimitiveByte(dReadMemoryByAddressReq, 4, ((bBuffer & 0xFF00) >> 8));
+      DiagSetPrimitiveByte(dReadMemoryByAddressReq, 5, bBuffer & 0xFF);
+      
+      // Diag Error Handling.
+      if(SendDiagnosticRequest(dReadMemoryByAddressReq, dReadMemoryByAddressResp) == DIAG_SEND_OR_RECEIVE_ERROR) 
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECStatusFromRAM: Diagnostic request send or receive error.");
+        return;
+      }
+
+      // Diag Error Handling.
+      if (diagIsPositiveResponse(dReadMemoryByAddressResp) == 0)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckAECStatusFromRAM: Negative response received for Read Memory By Address request: [0x%X].", dReadMemoryByAddressResp.GetResponseCode());
+        testReportWriteDiagResponse(dReadMemoryByAddressReq);
+        return;
+      }
+      
+      TestInfoRow(EvalManStepTable, 0);
+      snprintf(cAEC, elcount(cAEC), "0x%02X", iIndex);
+      TestInfoCell(EvalManStepTable, cAEC);
+      TestInfoCell(EvalManStepTable, cAECName[iIndex]);
+      snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", DiagGetPrimitiveByte(dReadMemoryByAddressResp, 1));
+      TestInfoCell(EvalManStepTable, cStatusByte);
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bExpectedStatus);
+      TestInfoCell(EvalManStepTable, cExpectedStatus);
+      
+      if (DiagGetPrimitiveByte(dReadMemoryByAddressResp, 1) == bExpectedStatus)
+      {
+        testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable); 
+      }
+      else
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable); 
+      }
+      return;
+    }
+  }
+  
+ testStepFail(@sysvar::CORE::sysLevelOfDetailStep, "", "CheckAECStatusFromRAM: AEC name is not valid -> [%s]. Please input a valid AEC name.", cAutotestName);
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+// Check all AEC status and report all that do not have the expected status during bench initialization.
+// Any accepted AEC status is preceeded by a specific AEC expected status.
+void CheckAECPresenceInBenchInit()
+{
+  diagRequest        * dReadAllAECsStatusReq;
+  stack diagResponse * dReadAllAECsStatusResp;
+  
+  stack int iErrorFlag             = 0;
+  stack int iIndex                 = 1;
+  stack int iAECIndex              = 0;
+  stack int iFound_SpecificStatus  = 0; 
+  stack int iAutotestErrorFlag     = 0;
+  stack int iIgnoredAECFound       = 0;
+  
+  stack byte bAllAec[iReadAECsResponseSize];
+  
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[100];
+  stack long EvalManStepTable = 0;
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus_BenchInit); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus_BenchInit) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus_BenchInit[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus_BenchInit[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence In Bench Init.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // Configure diagnostic object.
+  if(diagResize(dReadAllAECsStatusReq, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReadAllAECsStatusReq, bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+    return;
+  }
+    
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusReq, dReadAllAECsStatusResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresenceInBenchInit: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresenceInBenchInit: Negative response received for Read All AEC Status request: 0x%X.", dReadAllAECsStatusResp.GetResponseCode());
+   testReportWriteDiagResponse(dReadAllAECsStatusReq);
+   return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResp, bAllAec, elcount(bAllAec));
+  
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusReq.GetPrimitiveSize())/3; iIndex++) // Loop through all read AECs.
+  {
+    for(iAECIndex = 0; iAECIndex <= (elcount(bIgnoredAECS) - 1); iAECIndex++)
+    {
+      if(bAllAec[iIndex*3 + iAECBytePosition] == bIgnoredAECS[iAECIndex])
+      {
+        iIgnoredAECFound = 1;
+        break;
+      }
+    }
+    if(iIgnoredAECFound == 1)
+    {
+      iIgnoredAECFound = 0;
+      continue;
+    }
+    
+    if((strncmp(cAEC_NotExecutedAfterReset[bAllAec[iIndex*3 + iAECBytePosition]], cAECName[bAllAec[iIndex*3 + iAECBytePosition]], elcount(cAECName[bAllAec[iIndex*3 + iAECBytePosition]])) == 0) && (bAllAec[iIndex*3+2] == bAEC_NotCompletedSincePowerOffOn))
+    {
+      // If AEC should not and is not executed after reset, do nothing.
+    }
+    else
+    {  
+      iAutotestErrorFlag = 0;
+      for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus_BenchInit) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+2] != bAcceptedAECStatus_BenchInit[iAECIndex]) // Check if AEC status is accepted during bench initialization.
+        {
+           iAutotestErrorFlag+= 1;
+        }
+      }
+      
+      if(iAutotestErrorFlag == elcount(bAcceptedAECStatus_BenchInit)) // If no accepted status is found.
+      {
+        iFound_SpecificStatus = 0;
+        // Check if the AEC has a specific expected status value.
+        for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus_BenchInit) - 1); iAECIndex++)
+        {
+          if(bAllAec[iIndex*3 + iAECBytePosition] == bSpecificAECExpectedStatus_BenchInit[iAECIndex][0])
+          {
+            iFound_SpecificStatus = 1;
+            if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus_BenchInit[iAECIndex][1])
+            {
+              TestInfoRow(EvalManStepTable, 0);
+              snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+              TestInfoCell(EvalManStepTable, cAEC);
+              TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+              snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+              TestInfoCell(EvalManStepTable, cStatusByte);
+              snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus_BenchInit[iAECIndex][1]);
+              TestInfoCell(EvalManStepTable, cExpectedStatus);
+              
+              iErrorFlag = 1;
+            }
+            break;
+          }
+        }
+        
+        // If the AEC does not have a specific expected status value.
+        if(iFound_SpecificStatus == 0)
+        {
+          TestInfoRow(EvalManStepTable, 0);
+          snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+          TestInfoCell(EvalManStepTable, cAEC);
+          TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+          snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+          TestInfoCell(EvalManStepTable, cStatusByte);
+          TestInfoCell(EvalManStepTable, cExpectedStatuses);
+          
+          iErrorFlag = 1;
+        }
+      }
+    }
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "AEC", "CheckAECPresenceInBenchInit: All autotests are passed or have the expected status.");
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Fault_Management/CORE_AECs>
+// Check all AEC status and report all that do not have the expected status after Clear All or Soft Reset.
+// Any accepted AEC status is preceeded by a specific AEC expected status.
+void CheckAECPresenceAfterClear()
+{
+  diagRequest        * dReadAllAECsStatusReq;
+  stack diagResponse * dReadAllAECsStatusResp;
+  
+  stack int iErrorFlag = 0;  
+  stack int iIndex = 1;
+  stack int iAECIndex = 0;
+  stack int iFound_SpecificStatus  = 0; 
+  stack int iAutotestErrorFlag= 0;
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack int iIgnoredAECFound      = 0;
+  
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[100];
+  stack long EvalManStepTable = 0;
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus_AfterClear); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus_AfterClear) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence After Clear.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // Configure diagnostic object.
+  if(diagResize(dReadAllAECsStatusReq, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReadAllAECsStatusReq, bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusReq, dReadAllAECsStatusResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresenceAfterClear: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresenceAfterClear: Negative response received for Read All AEC Status request: 0x%X.", dReadAllAECsStatusResp.GetResponseCode());
+   testReportWriteDiagResponse(dReadAllAECsStatusReq);
+   return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResp, bAllAec, elcount(bAllAec));
+  
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusReq.GetPrimitiveSize())/3; iIndex++) // Loop through all read AECs.
+  {
+    for(iAECIndex = 0; iAECIndex <= (elcount(bIgnoredAECS) - 1); iAECIndex++)
+    {
+      if(bAllAec[iIndex*3 + iAECBytePosition] == bIgnoredAECS[iAECIndex])
+      {
+        iIgnoredAECFound = 1;
+        break;
+      }
+    }
+    if(iIgnoredAECFound == 1)
+    {
+      iIgnoredAECFound = 0;
+      continue;
+    }
+    
+    if((strncmp(cAEC_NotExecutedAfterReset[bAllAec[iIndex*3 + iAECBytePosition]], cAECName[bAllAec[iIndex*3 + iAECBytePosition]], elcount(cAECName[bAllAec[iIndex*3 + iAECBytePosition]])) == 0) && (bAllAec[iIndex*3+2] == bAEC_NotCompletedSincePowerOffOn))
+    {
+      // If AEC should not and is not executed after reset, do nothing.
+    }
+    else
+    {  
+      iAutotestErrorFlag = 0;
+      for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus_AfterClear) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+2] != bAcceptedAECStatus_AfterClear[iAECIndex]) // Check if AEC status is accepted during bench initialization.
+        {
+           iAutotestErrorFlag+= 1;
+        }
+      }
+      
+      if(iAutotestErrorFlag == elcount(bAcceptedAECStatus_BenchInit)) // If no accepted status is found.
+      {
+        iFound_SpecificStatus = 0;
+        // Check if the AEC has a specific expected status value.
+        for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus_AfterClear) - 1); iAECIndex++)
+        {
+          if(bAllAec[iIndex*3 + iAECBytePosition] == bSpecificAECExpectedStatus_AfterClear[iAECIndex][0])         
+          {
+            iFound_SpecificStatus = 1;
+            if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus_AfterClear[iAECIndex][1])
+            {
+              TestInfoRow(EvalManStepTable, 0);
+              snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+              TestInfoCell(EvalManStepTable, cAEC);
+              TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+              snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+              TestInfoCell(EvalManStepTable, cStatusByte);
+              snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus_AfterClear[iAECIndex][1]);
+              TestInfoCell(EvalManStepTable, cExpectedStatus);
+              
+              iErrorFlag = 1;
+            }
+            break;
+          }
+         }
+        
+          // If the AEC does not have a specific expected status value.
+          if(iFound_SpecificStatus == 0)
+          {
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+            TestInfoCell(EvalManStepTable, cExpectedStatuses);
+            
+            iErrorFlag = 1;
+          }
+      }
+    }
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "AEC", "CheckAECPresenceAfterClear: All autotests are passed or have the expected status.");
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+// Check all DTC status and report all that are qualified.
+// Ignored DTCs will not be considered in this evaluation.
+void CheckDTCPresence()
+{
+  CheckDTCPresence(bRDTCBST_StatusMask); // testFailedSinceLastClear or testFailed.
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+// Check all DTC status and report all that are qualified.
+// Ignored DTCs will not be considered in this evaluation.
+void CheckDTCPresence(dword DTCStatusMask)
+{
+  diagRequest        * dReportDTCByStatusMaskReq;
+  stack diagResponse * dReportDTCByStatusMaskResp;
+  
+  stack int iLength;
+  stack int i;
+  stack byte bStatusByte;
+  stack dword DTC;
+  stack long EvalManStepTable = 0;
+  stack char cDTC[300];
+  stack char cStatusByte[200];
+  stack char cTmp[500];
+  stack int iIgnoredDTCFound;
+  stack int iIgnoredDTCIndex;
+  stack int iAllDTCsFoundAreIgnored = 1;
+  stack char cIgnoredDTC[500];
+  stack int iAcceptedDTCFound;
+  stack int iAcceptedDTCIndex;
+  
+  // begin table
+  EvalManStepTable = TestInfoTable("CheckDTCPresence");
+
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "DTC");
+  TestInfoCell(EvalManStepTable, "DTC name");
+  TestInfoCell(EvalManStepTable, "DTC status");
+  TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+  TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+  TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+  TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+  TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+  TestInfoCell(EvalManStepTable, "PendingDTC");
+  TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+  TestInfoCell(EvalManStepTable, "TestFailed");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCByStatusMaskReq, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCByStatusMaskReq, bCheckDTCPresenceRequest, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveByte(dReportDTCByStatusMaskReq, 2, DTCStatusMask) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReportDTCByStatusMaskResp) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresence: Negative response received for RDTCBST Status request: [0x%X].", dReportDTCByStatusMaskResp.GetResponseCode());
+    testReportWriteDiagResponse(dReportDTCByStatusMaskReq);
+    return;
+  }
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord);
+  
+  if (iLength < 0)
+  {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresence: Error code obtained for diagGetIterationCount: [%i].", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "DTC", "All autotests are passed.");
+  }
+  else
+  {
+   for(i = 0; i < iLength; i++)
+   {
+    DTC = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_DTCRecord);
+    bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_StatusOfDTC);
+  
+    iIgnoredDTCFound = 0;
+    for(iIgnoredDTCIndex = 0; iIgnoredDTCIndex < elcount(bIgnoredDTCS); iIgnoredDTCIndex++)
+    {
+      if(DTC == bDTCID[bIgnoredDTCS[iIgnoredDTCIndex]])
+      {
+        iIgnoredDTCFound = 1;
+        break;
+      }
+    }
+    
+    iAcceptedDTCFound = 0;
+    for(iAcceptedDTCIndex = 0; iAcceptedDTCIndex < elcount(bAcceptedDTCStatus); iAcceptedDTCIndex++)
+    {
+      if(DTC == bDTCID[bAcceptedDTCStatus[iAcceptedDTCIndex][0]])
+      {
+        if(bStatusByte == bAcceptedDTCStatus[iAcceptedDTCIndex][1])
+        {
+          iAcceptedDTCFound = 1;
+        }
+        break;
+      }
+    }
+    
+    // row 1
+    TestInfoRow(EvalManStepTable, 0);
+    snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+    TestInfoCell(EvalManStepTable, cDTC);
+    TestInfoCell(EvalManStepTable, cDTCName[(double)DTC]);
+    snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+    TestInfoCell(EvalManStepTable, cStatusByte);
+    
+    if(iIgnoredDTCFound == 1)
+    {
+     snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] but you chose to ignore it.", DTC, cDTCName[DTC], bStatusByte);
+     TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+    }
+	  else if(iAcceptedDTCFound == 1)
+    {
+     snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] (accepted status).", DTC, cDTCName[DTC], bStatusByte);
+     TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+    }
+    else
+    {
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_WarningIndicatorRequested, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedThisOperationCycle, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedSinceLastClear, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedSinceLastClear, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_ConfirmedDTC, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_PendingDTC, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedThisOperationCycle, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);  
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailed, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      iAllDTCsFoundAreIgnored = 1;
+    }
+   }
+  
+   if (iAllDTCsFoundAreIgnored == 0)
+   {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+   }
+   else
+   {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+   }
+  }
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+// Returns DTC status using "ReportDTCExtendedDataByDTCNbr" (0x06) sub-service.
+// "dERR_ID" = Associated AEC ID. 
+// Returns 0 if the status could not be obtained.
+long GetDTCStatusByExtendedData(dword dERR_ID)
+{
+  diagRequest        * dReportDTCExtendedDataByDTCNbrReq;
+  stack diagResponse * dReportDTCExtendedDataByDTCNbrResp;
+  
+  if(bDTCID[dERR_ID] == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "GetDTCByExtendedData: Input Error code has no associated DTC - [0x%02X].", dERR_ID);
+    return 0;
+  }
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCExtendedDataByDTCNbrReq, elcount(bReportDTCExtendedDataByDTCNbrRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"GetDTCByExtendedData: Error when creating diagnostic object.");
+    return 0;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCExtendedDataByDTCNbrReq, bReportDTCExtendedDataByDTCNbrRequest, elcount(bReportDTCExtendedDataByDTCNbrRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"GetDTCByExtendedData: Error when creating diagnostic object.");
+    return 0;
+  }
+  
+  if(diagSetParameter(dReportDTCExtendedDataByDTCNbrReq, PR_DTCRecordExtended, bDTCID[dERR_ID]) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"GetDTCByExtendedData: Error when creating diagnostic object.");
+    return 0;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCExtendedDataByDTCNbrReq, dReportDTCExtendedDataByDTCNbrResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"GetDTCByExtendedData: Diagnostic request send or receive error.");
+    return 0;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReportDTCExtendedDataByDTCNbrReq, dReportDTCExtendedDataByDTCNbrResp) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"GetDTCByExtendedData: Negative response received when reading DTCExtendedDataByDTCNbr: [0x%X].", dReportDTCExtendedDataByDTCNbrResp.GetResponseCode());
+    return 0;
+  }
+  
+  return diagGetParameter(dReportDTCExtendedDataByDTCNbrResp, PR_StatusOfDTCExtended);
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+// Check DTC status using "ReportDTCExtendedDataByDTCNbr" (0x06) sub-service.
+// "cDescription"  = Description that will appear inside the report.
+// "dERR_ID"       = Associated AEC ID. 
+// "bExpectedMask" = Expected DTC status.
+// Example:  CheckDTCStatusExtended("Check that ERR_MOSFET_LOW_SC associated DTC is qualified.", bERR_MOSFET_LOW_SC, bDTC_Qualified);
+void CheckDTCStatusExtended(char cDescription[], dword dERR_ID, byte bExpectedMask)
+{
+  diagRequest        * dReportDTCExtendedDataByDTCNbrReq;
+  stack diagResponse * dReportDTCExtendedDataByDTCNbrResp;
+  
+  stack int iLength;
+  stack int i;
+  stack byte bStatusByte;
+  stack dword dResponseDTC;
+  stack char cObtained[500];
+  stack char cExpected[500];
+  
+  if(bDTCID[dERR_ID] == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCStatus: Input Error code has no associated DTC - [0x%02X].", dERR_ID);
+    return;
+  }
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCExtendedDataByDTCNbrReq, elcount(bReportDTCExtendedDataByDTCNbrRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCExtendedDataByDTCNbrReq, bReportDTCExtendedDataByDTCNbrRequest, elcount(bReportDTCExtendedDataByDTCNbrRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetParameter(dReportDTCExtendedDataByDTCNbrReq, PR_DTCRecordExtended, bDTCID[dERR_ID]) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCExtendedDataByDTCNbrReq, dReportDTCExtendedDataByDTCNbrResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReportDTCExtendedDataByDTCNbrReq, dReportDTCExtendedDataByDTCNbrResp) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Negative response received when reading DTCExtendedDataByDTCNbr: [0x%X].", dReportDTCExtendedDataByDTCNbrResp.GetResponseCode());
+    return;
+  }
+  
+  dResponseDTC = diagGetParameter(dReportDTCExtendedDataByDTCNbrResp, PR_DTCRecordExtended);
+  bStatusByte = diagGetParameter(dReportDTCExtendedDataByDTCNbrResp, PR_StatusOfDTCExtended);
+ 
+  snprintf(cObtained, elcount(cObtained), "DTC [0x%lX] status = [0x%02X]", bDTCID[dERR_ID], bStatusByte);
+  snprintf(cExpected, elcount(cExpected), "DTC [0x%lX] status = [0x%02X]", dResponseDTC, bExpectedMask);
+  
+  EvalManStepEqual(cDescription, cObtained, cExpected);
+}
+
+/// <CORE_Fault_Management>
+///Clear all errors.
+void ClearAll()
+{
+  diagRequest        * dClearAllDTCsRequest;
+  stack diagResponse * dClearAllDTCsResponse;
+  
+  // Configure diagnostic object.
+  if(diagResize(dClearAllDTCsRequest, elcount(bClearAllRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ClearAll: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dClearAllDTCsRequest, bClearAllRequest, elcount(bClearAllRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ClearAll: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dClearAllDTCsRequest, dClearAllDTCsResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ClearAll: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  CheckPositiveResponse("Clear all errors.", dClearAllDTCsRequest, dClearAllDTCsResponse);
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+// Check DTC status change time using "ReportDTCExtendedDataByDTCNbr" (0x06) sub-service.
+// Returns: the status change time OR -1 if status change was not detected or an error occured.
+int64 ReturnDTCStatusChangeTime(dword dERR_ID, byte bExpectedMask, int iCheckInterval, float iMaxTime)
+{
+  diagRequest        * dReportDTCExtendedDataByDTCNbrReq;
+  stack diagResponse * dReportDTCExtendedDataByDTCNbrResp;
+  
+  stack byte bStatusByte;
+  stack dword dResponseDTC;
+  stack float fStartTime = 0;
+  stack float fTimeSinceStart = 0;
+  
+  if(iCheckInterval < 10 || iCheckInterval > iMaxTime)
+  {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Incorrect Check time interval: [%i]. Must be greater or equal to 10 ms and smaller than [%.0f] (iMaxTime).", iCheckInterval, iMaxTime);
+      return -1;
+  }
+  
+  if(bDTCID[dERR_ID] == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "ReturnDTCStatusChangeTime: Input Error code has no associated DTC - [0x%02X].", dERR_ID);
+    return -1;
+  }
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCExtendedDataByDTCNbrReq, elcount(bReportDTCExtendedDataByDTCNbrRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Error when creating diagnostic object.");
+    return -1;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCExtendedDataByDTCNbrReq, bReportDTCExtendedDataByDTCNbrRequest, elcount(bReportDTCExtendedDataByDTCNbrRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Error when creating diagnostic object.");
+    return -1;
+  }
+  
+  if(diagSetParameter(dReportDTCExtendedDataByDTCNbrReq, PR_DTCRecordExtended, bDTCID[dERR_ID]) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Error when creating diagnostic object.");
+    return -1;
+  }
+  
+  fStartTime = timeNow() / 100;
+  
+  while(fTimeSinceStart < iMaxTime)
+  {
+    // Diag Error Handling.
+    if(SendDiagnosticRequest(dReportDTCExtendedDataByDTCNbrReq, dReportDTCExtendedDataByDTCNbrResp) == DIAG_SEND_OR_RECEIVE_ERROR) 
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Diagnostic request send or receive error.");
+      return -1;
+    }
+    
+    // Diag Error Handling.
+    if(CheckPositiveResponse(dReportDTCExtendedDataByDTCNbrReq, dReportDTCExtendedDataByDTCNbrResp) == 0)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReturnDTCStatusChangeTime: Negative response received when reading DTCExtendedDataByDTCNbr: [0x%X].", dReportDTCExtendedDataByDTCNbrResp.GetResponseCode());
+      return -1;
+    }
+  
+    bStatusByte = diagGetParameter(dReportDTCExtendedDataByDTCNbrResp, PR_StatusOfDTCExtended);
+    
+    fTimeSinceStart =  (timeNow() / 100) - fStartTime;
+    
+    if(bExpectedMask != bStatusByte)
+    {     
+      testWaitForTimeout(iCheckInterval);
+    }
+    else
+    {
+      dResponseDTC = diagGetParameter(dReportDTCExtendedDataByDTCNbrResp, PR_DTCRecordExtended);
+      testStep("", "The status of the DTC [0x%lX] - [%s] was changed into [0x%02X] in [%.0f] ms.", bDTCID[dERR_ID], cDTCName[bDTCID[dERR_ID]], bStatusByte, fTimeSinceStart);
+      return fTimeSinceStart;
+    }
+  }
+  
+  testStepFail("", "The status of the DTC [0x%lX] - [%s] was NOT changed into [0x%02X] in [%.0f] ms.", bDTCID[dERR_ID], cDTCName[bDTCID[dERR_ID]], bExpectedMask, fTimeSinceStart);
+  return -1;
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+// Reads DTC fault memory using "ReportDTCByStatusMask" (0x02) sub-service and a given "bMask" status mask then evaluates the result.
+// "cDescription" = Description that will appear inside the report.
+// "dERR_ID"      = Associated AEC ID. 
+// "bMask"        = Expected DTC status. Used as mask to read the fault memory.
+// "cPresence"    = Describes evaluation method. Available inputs:
+//                      1. "present"         - DTC is present with the "bMask" bits active.
+//                                             Result is PASSED if all "bMask" status bits are active even if other status bits are active.
+//                      2. "not_present"     - DTC is not present.
+//                                             Result is PASSED if DTC is not present in fault memory.     
+//                      3. "expected"        - DTC is present with only "bMask" bits active.
+//                                             Result is PASSED if only "bMask" status bits are active.
+//                      4. "not_expected"    - DTC is present but with different status.
+//                                             Result is PASSED if "bMask" is different than the actual DTC mask.
+//                      5. "bitwise"         - Output is a table with a pass or fail result for each status bit and an overall pass/fail result.
+//                                             Only bits set to 1 must be equal for pass result.
+//                      6. "bitwise_expected"- Output is a table with a pass or fail result for each status bit and an overall pass/fail result.
+//                                             All bits must be equal for pass result.
+// Ignored DTCs will not be considered in this evaluation.
+void CheckDTCStatus(char cDescription[], dword dERR_ID, byte bMask, char cPresence[])
+{
+  diagRequest        * dReportDTCByStatusMaskReq;
+  stack diagResponse * dReportDTCByStatusMaskResp;
+  
+  stack int iLength;
+  stack int i;
+  stack int iFound = 0;
+  stack int bResponseStatus = -1;
+  stack dword dResponseDTC;
+  stack char cObtained[1000];
+  stack char cExpected[1000];
+  stack long EvalManStepTable;
+  stack int iIgnoredDTCFound;
+  stack int iIgnoredDTCIndex;
+  stack int iAcceptedDTCFound;
+  stack int iAcceptedDTCIndex;
+  
+  toUpper(cPresence, cPresence, elcount (cPresence));
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCByStatusMaskReq, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCByStatusMaskReq, bCheckDTCPresenceRequest, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Set to avaiability mask in order to read status even if not executed
+  if(diagSetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask, bDTC_AvailableStatusMask) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCStatus: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCStatus: Negative response received for RDTCBST Status request: [0x%X].", dReportDTCByStatusMaskResp.GetResponseCode());    
+   return;
+  }
+  
+  // Set to input mask for evaluation purposes.
+  diagSetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask, bMask);
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord);
+  if (iLength < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCStatus: Error code obtained for diagGetIterationCount: [%i].", iLength);
+    return;
+  }
+  
+  if((bDTCID[dERR_ID] == 0))
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCStatus: Input Error code has no associated DTC - [0x%02X].", dERR_ID);
+    return;
+  }
+  
+  for(i = 0; i < iLength; i++)
+  {
+   dResponseDTC = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_DTCRecord);
+   bResponseStatus = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_StatusOfDTC);
+   
+   if((dResponseDTC == bDTCID[dERR_ID]))
+   {
+    iFound = 1;
+    if(strncmp(cPresence, "PRESENT", elcount(cPresence)) == 0) // 1. DTC is present with the "bMask" bits active.
+    {
+      if((bMask & bResponseStatus) == bMask)
+      {
+        if(bMask | bResponseStatus != bMask) // Extra status bits are present.
+        {
+          snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: [0x%lX] - [0x%02X]. Extra active and accepted status bits: [0x%02X].", dResponseDTC, bResponseStatus, (bResponseStatus - bMask));
+          snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: [0x%lX] - [0x%02X].", bDTCID[dERR_ID], bMask);
+          EvalManStepUnEqual(cDescription, cObtained, cExpected);
+        }
+        else
+        {
+          snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: [0x%lX] - [0x%02X].", dResponseDTC, bResponseStatus);
+          snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: [0x%lX] - [0x%02X].", bDTCID[dERR_ID], bMask);
+          EvalManStepEqual(cDescription, cObtained, cExpected);
+        }
+      }
+      else
+      {
+        snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: [0x%lX] - [0x%02X]. Not all expected status bits are active: [0x%02X].", dResponseDTC, bResponseStatus, (bMask - (bMask & bResponseStatus)));
+        snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: [0x%lX] - [0x%02X].", bDTCID[dERR_ID], bMask);
+        EvalManStepEqual(cDescription, cObtained, cExpected);
+      }
+    }
+    else if(strncmp(cPresence, "EXPECTED", elcount(cPresence)) == 0) // 3. DTC is present with only "bMask" bits active.
+    {
+      snprintf(cObtained, elcount(cObtained), "DTC present in fault memory: [0x%lX] - [0x%02X].", dResponseDTC, bResponseStatus);
+      snprintf(cExpected, elcount(cExpected), "DTC present in fault memory: [0x%lX] - [0x%02X].", bDTCID[dERR_ID], bMask);
+      EvalManStepEqual(cDescription, cObtained, cExpected);
+    }
+    else if(strncmp(cPresence, "NOT_EXPECTED", elcount(cPresence)) == 0) // 4. DTC is present but with different status.
+    {
+      if(bMask && bResponseStatus == bMask)
+      {
+       snprintf(cObtained, elcount(cObtained), "DTC present in fault memory with same status: [0x%lX] - [0x%02X].", dResponseDTC, bResponseStatus);
+       snprintf(cExpected, elcount(cExpected), "DTC present in fault memory but with different status: [0x%lX] - [0x%02X].", bDTCID[dERR_ID], bMask);
+       EvalManStepEqual(cDescription, cObtained, cExpected);
+      }
+      else
+      {
+       snprintf(cObtained, elcount(cObtained), "DTC present in fault memory with different status: [0x%lX] - [0x%02X].", dResponseDTC, bResponseStatus);
+       snprintf(cExpected, elcount(cExpected), "DTC present in fault memory but with different status: [0x%lX] - [0x%02X].", bDTCID[dERR_ID], bMask);
+       EvalManStepUnEqual(cDescription, cObtained, cExpected);
+      }
+    }
+    else if(strncmp(cPresence, "NOT_PRESENT", elcount(cPresence)) == 0)  // 2. DTC is not present.
+    { 
+      snprintf(cObtained, elcount(cObtained), "DTC [0x%lX] is present in fault memory with status [0x%02X].", dResponseDTC, bResponseStatus);
+      snprintf(cExpected, elcount(cExpected), "DTC [0x%lX] is not present in fault memory (read mask = [0x%02X]).", bDTCID[dERR_ID], bMask);
+      EvalManStepEqual(cDescription, cObtained, cExpected);
+    }  
+    else if (strncmp(cPresence, "BITWISE", elcount(cPresence)) == 0)  // 5. Table output.
+    {    
+      DTCStatusBitwiseCompare(cDescription, dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp, i, 0);
+    }
+    else if (strncmp(cPresence, "BITWISE_EXPECTED", elcount(cPresence)) == 0)  // 6. Table output.
+    {    
+      DTCStatusBitwiseCompare(cDescription, dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp, i, 1);
+    }
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Incorrect input for CheckDTCStatus function");
+    }
+   }
+   else
+   {
+    iIgnoredDTCFound = 0;
+    for(iIgnoredDTCIndex = 0; iIgnoredDTCIndex < elcount(bIgnoredDTCS); iIgnoredDTCIndex++)
+    {
+      if(dResponseDTC == bDTCID[bIgnoredDTCS[iIgnoredDTCIndex]])
+      {
+        iIgnoredDTCFound = 1;
+        break;
+      }
+    }
+    
+    iAcceptedDTCFound = 0;
+    for(iAcceptedDTCIndex = 0; iAcceptedDTCIndex < elcount(bAcceptedDTCStatus); iAcceptedDTCIndex++)
+    {
+      if(dResponseDTC == bDTCID[bAcceptedDTCStatus[iAcceptedDTCIndex][0]])
+      {
+        if(bResponseStatus == bAcceptedDTCStatus[iAcceptedDTCIndex][1])
+        {
+           iAcceptedDTCFound = 1;
+        }
+        break;
+      }
+    }
+    
+    if(iIgnoredDTCFound == 1)
+    {
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] but you chose to ignore it.", dResponseDTC, cDTCName[dResponseDTC], bResponseStatus);
+    }
+	  else if(iAcceptedDTCFound == 1)
+    {
+     testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] (accepted status).", dResponseDTC, cDTCName[dResponseDTC], bResponseStatus);
+    }
+    else
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "Unexpected DTC: [0x%lX] - [%s] is present in fault memory with status [0x%02X].", dResponseDTC, cDTCName[dResponseDTC], bResponseStatus);
+    }
+   }
+  }
+  
+  if (iFound == 0)
+  {
+    if(strncmp(cPresence, "NOT_PRESENT", elcount(cPresence)) == 0)  // 2. DTC is not present.
+    {
+      snprintf(cObtained, elcount(cObtained), "DTC [0x%lX] is not present in fault memory with status [0x%02X].", bDTCID[dERR_ID], bMask);
+      EvalManStepEqual(cDescription, cObtained, cObtained);
+    }
+    else
+    {
+      snprintf(cObtained, elcount(cObtained), "DTC [0x%lX] is NOT present in fault memory with status [0x%02X].", bDTCID[dERR_ID], bMask);
+      snprintf(cExpected, elcount(cExpected), "DTC [0x%lX] is present in fault memory with status [0x%02X].", bDTCID[dERR_ID], bMask);
+      EvalManStepEqual(cDescription, cObtained, cExpected);
+    }
+  }
+}
+
+/// <CORE_Fault_Management/CORE_DTCs/Helpers>
+// CheckDTCStatus function diagnostic request/response needed as input.
+// Output is a table.
+void DTCStatusBitwiseCompare(char cDescription[], diagRequest * dReportDTCByStatusMaskReq, diagResponse * dReportDTCByStatusMaskResp, int iIteration, byte bIsResultRelevant)
+{
+  stack char cTmpObtained[100];
+  stack char cTmpExpected[100];
+  stack char cAvailabilityMask[100];
+  stack long  EvalManStepTable = 0;
+  stack int iTableResult = 0;
+  stack byte bResponseStatus = 0xFF;
+  stack byte bExpectedStatus = 0xFF;
+  stack dword dResponseDTC;
+  
+  dResponseDTC    = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_DTCRecord);
+  bResponseStatus = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC);
+  bExpectedStatus = diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask);
+  snprintf(cTmpObtained, elcount(cTmpObtained), "DTC [0x%lX] is present in fault memory with status [0x%02X] expected [0x%02X].", dResponseDTC, bResponseStatus, bExpectedStatus);
+  
+  // begin table
+  EvalManStepTable = TestInfoTable(cDescription);   
+  
+  // header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, cTmpObtained, 1);
+  TestInfoHeadingEnd(EvalManStepTable);
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "Status bit");
+  TestInfoCell(EvalManStepTable, "Obtained");
+  TestInfoCell(EvalManStepTable, "Expected");
+  TestInfoCell(EvalManStepTable, "Result");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_WarningIndicatorRequested, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_WarningIndicatorRequested, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_WarningIndicatorRequested, cAvailabilityMask, elcount(cAvailabilityMask));
+        
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_TestNotCompletedThisOperationCycle, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_TestNotCompletedThisOperationCycle, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_TestNotCompletedThisOperationCycle, cAvailabilityMask, elcount(cAvailabilityMask));
+
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_TestFailedSinceLastClear, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_TestFailedSinceLastClear, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_TestFailedSinceLastClear, cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_TestNotCompletedSinceLastClear, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_TestNotCompletedSinceLastClear, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_TestNotCompletedSinceLastClear, cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_ConfirmedDTC, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_ConfirmedDTC, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_ConfirmedDTC, cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_PendingDTC, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_PendingDTC, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_PendingDTC, cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_TestFailedThisOperationCycle, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationCycle");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_TestFailedThisOperationCycle, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_TestFailedThisOperationCycle, cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  diagGetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask_TestFailed, cTmpExpected, elcount(cTmpExpected));
+  if((bIsResultRelevant == 1) || (strncmp(cTmpExpected, "true", elcount(cTmpExpected)) == 0))
+  {
+    TestInfoRow(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, iIteration, PR_StatusOfDTC_TestFailed, cTmpObtained, elcount(cTmpObtained));
+    TestInfoCell(EvalManStepTable, cTmpObtained);
+    TestInfoCell(EvalManStepTable, cTmpExpected);
+    
+    diagGetParameter(dReportDTCByStatusMaskResp, PR_DTCAvailabilityMask_TestFailed, cAvailabilityMask, elcount(cAvailabilityMask));
+    
+    if(strncmp(cTmpObtained, cTmpExpected, elcount(cTmpObtained)) == 0)
+    {
+      TestInfoCell(EvalManStepTable, "pass");
+    }
+    else
+    {
+      if((strncmp(cAvailabilityMask, "0x00", elcount(cAvailabilityMask)) == 0) && (strncmp(cTmpExpected, "false", elcount(cTmpExpected)) == 0))
+      {
+        TestInfoCell(EvalManStepTable, "pass");
+      }
+      else
+      {
+        TestInfoCell(EvalManStepTable, "fail");
+        iTableResult -= 1;
+      }
+    }
+  }
+  
+  if(iTableResult < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+  }
+  else
+  {
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+  }
+}
+
+/// <CORE_Fault_Management/CORE_DTCs>
+//Check all DTC status and report all that are qualified
+void CheckDTCPresenceInBenchInit()
+{
+  diagRequest        * dReportDTCByStatusMaskReq;
+  stack diagResponse * dReportDTCByStatusMaskResp;
+  
+  stack int iLength;
+  stack int i;
+  stack byte bStatusByte;
+  stack byte bBit;
+  stack dword DTC;
+  stack long EvalManStepTable = 0;
+  stack char cDTC[200];
+  stack char cStatusByte[200];
+  stack char cTmp[200];
+  stack int iIgnoredDTCFound;
+  stack int iIgnoredDTCIndex;
+  stack int iAcceptedDTCFound;
+  stack int iAcceptedDTCIndex;
+  stack int iAllDTCsFoundAreIgnored = 1;
+  stack char cIgnoredDTC[500];
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCByStatusMaskReq, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceInBenchInit: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCByStatusMaskReq, bCheckDTCPresenceRequest, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceInBenchInit: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Set read mask.
+  if(diagSetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask, bRDTCBST_StatusMask_Init) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceInBenchInit: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceInBenchInit: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresenceInBenchInit: Negative response received for RDTCBST Status request: [0x%X].", dReportDTCByStatusMaskResp.GetResponseCode());    
+   return;
+  }
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord);
+  if (iLength < 0)
+  {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresenceInBenchInit: Error code obtained for diagGetIterationCount: [%i]", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "DTC", "All autotests are passed.");
+  }
+  else
+  {
+    // begin table
+    EvalManStepTable = TestInfoTable("CheckDTCPresenceInBenchInit");
+
+    // header
+    TestInfoHeadingBegin(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "DTC");
+    TestInfoCell(EvalManStepTable, "DTC name");
+    TestInfoCell(EvalManStepTable, "DTC status");
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    TestInfoHeadingEnd(EvalManStepTable);
+    
+   for(i = 0; i < iLength; i++)
+   {
+    DTC = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_DTCRecord);
+    bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_StatusOfDTC);
+    
+    iIgnoredDTCFound = 0;
+    for(iIgnoredDTCIndex = 0; iIgnoredDTCIndex < elcount(bIgnoredDTCS); iIgnoredDTCIndex++)
+    {
+      if(DTC == bDTCID[bIgnoredDTCS[iIgnoredDTCIndex]])
+      {
+        iIgnoredDTCFound = 1;
+        break;
+      }
+    }
+    
+    iAcceptedDTCFound = 0;
+    for(iAcceptedDTCIndex = 0; iAcceptedDTCIndex < elcount(bAcceptedDTCStatus); iAcceptedDTCIndex++)
+    {
+      if(DTC == bDTCID[bAcceptedDTCStatus[iAcceptedDTCIndex][0]])
+      {
+        if(bStatusByte == bAcceptedDTCStatus[iAcceptedDTCIndex][1])
+        {
+          iAcceptedDTCFound = 1;
+        }
+        break;
+      }
+    }
+    
+    // row 1
+    TestInfoRow(EvalManStepTable, 0);
+    snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+    TestInfoCell(EvalManStepTable, cDTC);
+    TestInfoCell(EvalManStepTable, cDTCName[DTC]);
+    snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+    TestInfoCell(EvalManStepTable, cStatusByte);
+    
+    if(iIgnoredDTCFound == 1)
+    {
+     snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] but you chose to ignore it.", DTC, cDTCName[DTC], bStatusByte);
+     TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+    }
+    else if((iAcceptedDTCFound == 1))
+    {
+     snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] (accepted status).", DTC, cDTCName[DTC], bStatusByte);
+     TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+    }
+    else
+    {
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_WarningIndicatorRequested, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedThisOperationCycle, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedSinceLastClear, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedSinceLastClear, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_ConfirmedDTC, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_PendingDTC, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedThisOperationCycle, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);  
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailed, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      
+      iAllDTCsFoundAreIgnored = 0;
+    }
+   }
+   if (iAllDTCsFoundAreIgnored == 0)
+   {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+   }
+   else
+   {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+   }
+  }
+}
+
+
+/// <CORE_Fault_Management/CORE_DTCs>
+//Check all DTC status and report all that are qualified.
+void CheckDTCPresenceAfterClear()
+{
+  diagRequest        * dReportDTCByStatusMaskReq;
+  stack diagResponse * dReportDTCByStatusMaskResp;
+  
+  stack int iLength;
+  stack int i;
+  stack byte bStatusByte;
+  stack byte bBit;
+  stack dword DTC;
+  stack long EvalManStepTable = 0;
+  stack char cDTC[200];
+  stack char cStatusByte[200];
+  stack char cTmp[200];
+  stack int iIgnoredDTCFound;
+  stack int iIgnoredDTCIndex;
+  stack int iAcceptedDTCFound;
+  stack int iAcceptedDTCIndex;
+  stack int iAllDTCsFoundAreIgnored = 1;
+  stack char cIgnoredDTC[500];
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCByStatusMaskReq, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceAfterClear: Error when creating diagnostic object.");
+    return;
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCByStatusMaskReq, bCheckDTCPresenceRequest, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceAfterClear: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Set read mask.
+  if(diagSetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask, bRDTCBST_StatusMask_AfterClear) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceAfterClear: Error when creating diagnostic object.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresenceAfterClear: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresenceAfterClear: Negative response received for RDTCBST Status request: [0x%X].", dReportDTCByStatusMaskResp.GetResponseCode());    
+   return;
+  }
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord);
+  if (iLength < 0)
+  {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresenceAfterClear: Error code obtained for diagGetIterationCount: [%i]", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "DTC", "All autotests are passed.");
+  }
+  else
+  {        
+    // begin table
+    EvalManStepTable = TestInfoTable("CheckDTCPresenceAfterClear");
+    
+    // header
+    TestInfoHeadingBegin(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "DTC");
+    TestInfoCell(EvalManStepTable, "DTC name");
+    TestInfoCell(EvalManStepTable, "DTC status");
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    TestInfoHeadingEnd(EvalManStepTable);
+    
+   for(i = 0; i < iLength; i++)
+   {
+    DTC = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_DTCRecord);
+    bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_StatusOfDTC);
+    
+    iIgnoredDTCFound = 0;
+    for(iIgnoredDTCIndex = 0; iIgnoredDTCIndex < elcount(bIgnoredDTCS); iIgnoredDTCIndex++)
+    {
+      if(DTC == bDTCID[bIgnoredDTCS[iIgnoredDTCIndex]])
+      {
+        iIgnoredDTCFound = 1;
+        break;
+      }
+    }
+    
+    iAcceptedDTCFound = 0;
+    for(iAcceptedDTCIndex = 0; iAcceptedDTCIndex < elcount(bAcceptedDTCStatus); iAcceptedDTCIndex++)
+    {
+      if(DTC == bDTCID[bAcceptedDTCStatus[iAcceptedDTCIndex][0]])
+      {
+        if(bStatusByte == bAcceptedDTCStatus[iAcceptedDTCIndex][1])
+        {
+          iAcceptedDTCFound = 1;
+        }
+        break;
+      }
+    }
+    
+    // row 1
+    TestInfoRow(EvalManStepTable, 0);
+    snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+    TestInfoCell(EvalManStepTable, cDTC);
+    TestInfoCell(EvalManStepTable, cDTCName[DTC]);
+    snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+    TestInfoCell(EvalManStepTable, cStatusByte);
+    
+    if(iIgnoredDTCFound == 1)
+    {
+     snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] but you chose to ignore it.", DTC, cDTCName[DTC], bStatusByte);
+     TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+    }
+	  else if(iAcceptedDTCFound == 1)
+    {
+     snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] (accepted status).", DTC, cDTCName[DTC], bStatusByte);
+     TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+    }
+    else
+    {
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_WarningIndicatorRequested, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedThisOperationCycle, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedSinceLastClear, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedSinceLastClear, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_ConfirmedDTC, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_PendingDTC, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedThisOperationCycle, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);  
+      diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailed, cTmp, elcount(cTmp));
+      TestInfoCell(EvalManStepTable, cTmp);
+      
+      iAllDTCsFoundAreIgnored = 0;
+    }
+   }
+   if (iAllDTCsFoundAreIgnored == 0)
+   {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+   }
+   else
+   {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+   }
+  }
+}
+
+/// <CORE_Helpers/MessageBox>
+// Creates a messagebox for tester confirmation (Yes or No) then evaluates the response.
+// 'cInquiry'        = Question to be answered in the messagebox.
+// 'cExpectedResult' = Expected result: 'Yes' or 'No'.
+// 'dTimeout'        = Available time for tester response.
+void TesterConfirmation(char cInquiry[], char cExpectedResult[], dword dTimeout)
+{
+  stack dword returnvalue;
+  
+  returnvalue = TestWaitForTesterConfirmation(cInquiry, dTimeout);
+  
+  switch(returnvalue)
+  {
+    case 0: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation: Timeout occurred.");
+      break;
+    case 1: EvalManStepEqual(cInquiry, "Yes", cExpectedResult);
+      break;
+    case 2: EvalManStepEqual(cInquiry, "No", cExpectedResult);
+      break;
+    case -1: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation: General error, e.g. due to a call outside of a test sequence.");
+      break;
+    case -2: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation: Constraint occurred.");
+      break; 
+    default: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "TesterConfirmation: Unknown error.");
+      break;
+  }
+}
+
+/// <CORE_Helpers>
+// Waits the designated time and outputs a message in the test report.
+void Wait(dword fWaitTime)
+{
+  stack int iErrCode;
+  
+  testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "Wait %lu ms.", fWaitTime);
+  iErrCode = testWaitForTimeout(fWaitTime);
+  
+  if(iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "testWaitForTimeout error code: [%i].", iErrCode); 
+  }
+}
+
+/// <CORE_Helpers>
+// Converts a byte array to a char array.
+// "inputArr[]"   = Input byte array.
+// "cOutputArray" = Char array where output will be saved.
+// "StartIndex"   = Conversion start index. Starts from 0.
+// "StopIndex"    = Conversion stop index.
+// "cFormat"      Option 1: "true"  = keep hex format.
+//                Option 2: "false" = convert to char.
+// Example:       Software Version diag response = {62, fd, 01, 45, 52, 30, 31, 34, 37, 33, 48, 2e, 50, 33, 30}.
+//                ConvertArrByteInArrChar(bSoftwareVersion, cSoftwareVersion, ReadSWVersionReq.GetPrimitiveSize(), elcount(bSoftwareVersion) - 1, true)
+// Result:        Option 1: bSoftwareVersion converted to char array "0x45 0x52 0x30 0x31 0x34 0x37 0x33 0x48 0x2E 0x50 0x33 0x30" and assigned to cOutputArray.
+//                Option 2: bSoftwareVersion converted to char array "ER01473H.P30" and assigned to cOutputArray.
+void ConvertByteArrInCharArr(byte bInputArr[], char cOutputArray[], int iStartIndex, int iStopIndex, char cFormat[])
+{
+  stack char tmp[6];
+  stack int iOptionOneIndex;
+  stack char cFormatBuffer[10];
+  
+  strncpy(cOutputArray, "", elcount(cOutputArray));
+  
+  toLower(cFormatBuffer, cFormat, elcount(cFormat));
+  
+  if(iStartIndex > (elcount(bInputArr) - 1) || iStartIndex < 0 || iStopIndex >= elcount(bInputArr) || iStartIndex > iStopIndex) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "-", "Incorrect index or array size; Please check parameters for ConvertByteArrInCharArr function.");
+  }
+  else
+  {
+    if(strncmp(cFormatBuffer, "true", elcount(cFormatBuffer)) == 0)
+    {
+      iOptionOneIndex = (iStopIndex - iStartIndex + 1) * 5;
+      for(iStartIndex; iStartIndex <= iStopIndex; iStartIndex++)
+      {
+        snprintf(tmp, elcount(tmp), "0x%02X ", bInputArr[iStartIndex]);  
+        strncat(cOutputArray, tmp, elcount(cOutputArray)); 
+      }
+      snprintf(cOutputArray, iOptionOneIndex, "%s", cOutputArray); // removes last empty character.
+    }
+    // Make sure "cOutputArray" is large enough.
+    else if ((strncmp(cFormatBuffer, "false", elcount(cFormatBuffer)) == 0) && (elcount(cOutputArray) >= iStopIndex - iStartIndex + 2)) 
+         {
+          for(iStartIndex; iStartIndex <= iStopIndex; iStartIndex++)
+          {
+            snprintf(tmp,elcount(tmp), "%c", bInputArr[iStartIndex]);  
+            strncat(cOutputArray, tmp, elcount(cOutputArray)); 
+          }
+         }
+    else 
+        {
+          testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "-", "Incorrect format sellection or output array size; Please check parameters for ConvertByteArrInCharArr function.");
+        }
+  }
+}
+
+/// <CORE_Helpers>
+// Output will be saved in "bInput".
+void SwapBytes(byte bInput[])
+{
+  stack int i;
+  stack byte bTemp;
+
+  for(i = 0; i < (elcount(bInput) / 2); i++)
+  {
+    bTemp = bInput[i];
+    bInput[i] = bInput[elcount(bInput) - 1 - i];
+    bInput[elcount(bInput) - 1 - i] = bTemp;
+  }
+}
+
+/// <CORE_Helpers>
+// Concatenate two byte arrays and returns the length of the output array.
+long ConcatenateTwoByteArrays(byte bByteArray1[], byte bByteArray2[], byte bByteArrayOut[])
+{
+  stack int i;
+  stack int j;
+  stack long iSize = 0;
+  
+  for (i = 0; i < elcount(bByteArray1); i++)
+  {
+    bByteArrayOut[i] = bByteArray1[i];
+    iSize += 1;
+  }
+  for (j = 0; j < elcount(bByteArray2)-1; j++)
+  {
+    bByteArrayOut[iSize] = bByteArray2[j];
+    iSize += 1;
+  }
+  
+  return iSize+1;
+}
+
+/// <CORE_Logging>
+// Generates the full log path including name for .asc log.
+void SetLoggingFile(char cFullLogPath[], char cLogName[])
+{
+  stack char cTimeBuffer[64];
+  
+  strncpy(cFullLogPath, "", 1);
+  
+  getLocalTimeString(cTimeBuffer);
+  str_replace(cTimeBuffer, " ", "_");
+  str_replace(cTimeBuffer, ":", "_");
+  str_replace(cTimeBuffer, "__", "_");
+
+  strncat(cLogName, "_", elcount(cLogName));
+  strncat(cLogName, cTimeBuffer, elcount(cLogName));
+  strncat(cLogName, ".asc", elcount(cLogName));
+  
+  strncat(cFullLogPath, cLogPath, elcount(cFullLogPath));
+  strncat(cFullLogPath, cLogPath, elcount(cFullLogPath));
+}
+
+/// <CORE_Logging>
+// Starts an .ASC log with the {TestCaseTitle}_{LocalTimeString}.asc
+// Log location is taken from "cLogPath" variable in "Core_Functions_Configuration.cin".
+// The log name is written after the requirements table with a hyperlink to the log file.
+// Example output log name: "TR6_EXT_TF_B_SW_RGS_xy_keineStraffungUeberspg_Cyclic_Thu_Nov_18_13_32_49_2021.asc"
+void StartLoggingASC()
+{
+  stack char cTestCaseTitle[1000];
+  
+  testGetCurrentTestCaseTitle(cTestCaseTitle, elcount(cTestCaseTitle));
+  
+  if (iOriginalTestCaseTitleLength == 0)
+  {
+    strncpy(cLogName, cTestCaseTitle, elcount(cLogName));  // Logging is started before PreTs(). No title length change.
+  }
+  else
+  {
+    strncpy(cLogName, cTestCaseTitle, iOriginalTestCaseTitleLength + 1); // Logging is started after PreTs(). Only copy original title.    
+  }
+  
+  SetLoggingFile(cLogPath, cLogName);
+  setLogFileName(TestLoggingBlock, cLogPath);
+  startLogging(TestLoggingBlock);
+  
+  TestReportAddExtendedInfo("html", "<A HREF=\'%s'>Log file: %s </A>", cLogPath, cLogName);
+}
+
+/// <CORE_Logging/Overloads>
+// Starts an .ASC log with the {cInputLogName}_{LocalTimeString}.asc
+// Log location is taken from "cLogPath" variable in "Core_Functions_Configuration.cin".
+// The log name is written after the requirements table with a hyperlink to the log file.
+// Example output log name: "{cInputLogName}_Thu_Nov_18_13_32_49_2021.asc"
+void StartLoggingASC(char cInputLogName[])
+{ 
+  strncpy(cLogName, cInputLogName, (elcount(cInputLogName)));
+
+  SetLoggingFile(cLogPath, cLogName);
+  setLogFileName(TestLoggingBlock, cLogPath);
+  startLogging(TestLoggingBlock);
+  
+  TestReportAddExtendedInfo("html", "<A HREF=\'%s'>Log file: %s </A>", cLogPath, cLogName);
+}
+
+/// <CORE_Logging>
+// Stops the log generation of the 'TestLoggingBlock'.
+void StopLoggingASC()
+{
+  stopLogging(TestLoggingBlock);
+}
+
+/// <CORE_Logging>
+// Function used in PreTS for logging of the whole test case.
+// Log types: .ASC and .BLF
+// Log location is taken from "cLogPath" variable in "Core_Functions_Configuration.cin".
+// The log name is written after the requirements table with a hyperlink to the log file.
+// Two testing blocks are needed for the function to work properly.
+// If the testing blocks are disabled/not defined, a warning will appear in the write window
+// and the test log links from the report will be invalid.
+// Example output logs name: "{TestCaseTitle}_Thu_Nov_18_13_32_49_2021.asc"
+//                           "{TestCaseTitle}_Thu_Nov_18_13_32_49_2021.blf"
+void PreTS_StartLogging()
+{
+  stack char cTimeBuffer_PreTS[64];
+  stack char cLogName_ASC[500];
+  stack char cLogName_BLF[500];
+  stack char cFullLogPath_PreTS_ASC[1000];
+  stack char cFullLogPath_PreTS_BLF[1000];
+  stack char cTestCaseTitle_PreTS[500];
+
+  testGetCurrentTestCaseTitle(cTestCaseTitle_PreTS, elcount(cTestCaseTitle_PreTS));
+
+  getLocalTimeString(cTimeBuffer_PreTS);
+  str_replace(cTimeBuffer_PreTS, " ", "_");
+  str_replace(cTimeBuffer_PreTS, ":", "_");
+  str_replace(cTimeBuffer_PreTS, "__", "_");
+  
+  if (iOriginalTestCaseTitleLength == 0)
+  {
+    strncpy(cLogName_ASC, cTestCaseTitle_PreTS, elcount(cLogName_ASC));  // Logging is started before title is changed.
+  }
+  else
+  {
+    strncpy(cLogName_ASC, cTestCaseTitle_PreTS, iOriginalTestCaseTitleLength + 1); // Logging is started after title is changed.    
+  } 
+  
+  strncat(cLogName_ASC, "_", elcount(cLogName_ASC));
+  strncat(cLogName_ASC, cTimeBuffer_PreTS, elcount(cLogName_ASC));
+  
+  strncpy(cLogName_BLF, cLogName_ASC, elcount(cLogName_BLF));
+  
+  strncat(cLogName_ASC, ".asc", elcount(cLogName_ASC));
+  strncat(cLogName_BLF, ".blf", elcount(cLogName_BLF));
+  
+  strncat(cFullLogPath_PreTS_ASC, cLogPath, elcount(cFullLogPath_PreTS_ASC));
+  strncat(cFullLogPath_PreTS_ASC, cLogName_ASC, elcount(cFullLogPath_PreTS_ASC));
+  
+  strncat(cFullLogPath_PreTS_BLF, cLogPath, elcount(cFullLogPath_PreTS_BLF));
+  strncat(cFullLogPath_PreTS_BLF, cLogName_BLF, elcount(cFullLogPath_PreTS_BLF));
+  
+  setLogFileName(TestCaseLogASC, cFullLogPath_PreTS_ASC);
+  startLogging(TestCaseLogASC);
+  
+  setLogFileName(TestCaseLogBLF, cFullLogPath_PreTS_BLF);
+  startLogging(TestCaseLogBLF);
+  
+  TestReportAddExtendedInfo("html", "<A HREF=\'%s'>Log file: %s </A>", cFullLogPath_PreTS_ASC, cLogName_ASC);
+  TestReportAddExtendedInfo("html", "<A HREF=\'%s'>Log file: %s </A>", cFullLogPath_PreTS_BLF, cLogName_BLF);
+}
+
+/// <CORE_Logging>
+// Function used to stop logging started in PreTS.
+void PostTS_StopLogging()
+{
+  stopLogging(TestCaseLogASC);
+  stopLogging(TestCaseLogBLF);
+}
+
+
+/// <CORE_Signal_Evaluation/Overloads>
+// Overload with no signal name.
+void CheckSignalValueViolation(signal * sSignal, float fExpectedInitialValue, float iCheckDuration)
+{
+  CheckSignalValueViolation(sSignal, sSignal.name, fExpectedInitialValue, iCheckDuration);
+}
+
+/// <CORE_Signal_Evaluation>
+// Function which checks that the specified input signal does not change its value for a specififc duration.
+// This is not a parrallel check (i.e. Check ends after 'iCheckDuration' is elapsed).
+// "sSignal"               = signal to be checked.
+// "cSignalName"           = signal name (OPTIONAL - see overload).
+// "fExpectedInitialValue" = signal initial value.
+// "iCheckDuration"        = duration of the check.
+// Example:   CheckSignalValueViolation(Bckl_Sw_D_Stat_ST3, 2, 10000);
+// Result: Inserts check details in report for both 'pass' and 'fail'.
+//         1. Pass: Pass step in the report: All values of signal [CAN1::BODY3::Bckl_Sw_Fx_Stat_ST3::Bckl_Sw_D_Stat_ST3] were received with value [2] for [10000] ms.
+//         2. Fail: Fail step in report: "Condition violation" No Value Change (2.1#1): Signal value changed to: 0.
+//                  Fail step in report: Signal [CAN1::BODY3::Bckl_Sw_Fx_Stat_ST3::Bckl_Sw_D_Stat_ST3] value changed to [0] within [868] ms.
+void CheckSignalValueViolation(signal * sSignal, char cSignalName[], float fExpectedInitialValue, float iCheckDuration)
+{
+  stack int iValueChanges;
+  stack int iErrCode;
+  stack dword CheckID[1];
+  stack char cEventStatus[1000];
+  stack float fSignalValue;
+  stack float fStartTime; // Simulation time in ms.
+  stack float fTransitionTime;
+  stack float fLastInvalidValue[1];
+  stack long  lCheckFailTimestamp;
+  stack float fRemainingCheckDuration;
+  
+  fSignalValue = getsignal(sSignal);
+  if(fSignalValue != fExpectedInitialValue)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "Check not started: Signal [%s] has the initial value [%.3f] instead of the expected value [%.3f].", cSignalName, fSignalValue, fExpectedInitialValue);
+    return;
+  }
+  
+  // Precision of the test is set to ms.
+  chkConfig_SetPrecision(3);
+  
+  // Create check.
+  CheckID[0] = ChkStart_SignalValueChange(sSignal);
+  if(CheckID[0] == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkStart_SignalValueChange: Check could not be created and must not be referenced.");
+    return;
+  }
+  ChkQuery_EventStatus(CheckID[0], cEventStatus, elcount(cEventStatus));
+  testStep(@sysvar::CORE::sysLevelOfDetailStep, "CHK", cEventStatus); // Write CHK details to report.
+  
+  ChkQuery_EventStatusToLog(CheckID[0]); // Write CHK details to log.
+  
+  // Start check.
+  iErrCode = TestAddCondition(CheckID[0]);
+  if (iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkStart_SignalValueChange: Test Add condition error code: [%i].", iErrCode);
+   return;
+  }
+  
+  fStartTime = timeNow() / 100; // Start time.
+  
+  // Wait for the input time to elapse.
+  while(((timeNow() / 100) - fStartTime) < iCheckDuration)
+  {
+    if(ChkQuery_NumEvents(CheckID[0]) != 0)
+    {
+      break; // CHK already failed.
+    }
+    
+    fRemainingCheckDuration = iCheckDuration - ((timeNow() / 100) - fStartTime);
+    if((fRemainingCheckDuration < 100) && (fRemainingCheckDuration > 0))
+    {
+      testWaitForTimeoutSilent(fRemainingCheckDuration);
+    }
+    else
+    {
+      testWaitForTimeoutSilent(100);
+    }
+  }
+  
+  iErrCode = TestRemoveCondition(CheckID[0]);
+  if (iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkStart_SignalValueChange: Remove constraint error code: [%i].", iErrCode);
+   return;
+  }
+  
+  // Stop check. 
+  iErrCode = ChkControl_Stop(CheckID[0]);
+  if (iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkCreate_SignalValueChange: Stop check error code: [%i].", iErrCode);
+   return;
+  }
+  
+  if(ChkQuery_NumEvents(CheckID[0]) == 0)
+  {
+   testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "CHK", "All values of signal [%s] were received with value [%.0f] for [%.0f] ms.", cSignalName, fExpectedInitialValue, iCheckDuration);
+  }
+  else
+  {
+   ChkQuery_EventSignalValue(CheckID[0], fLastInvalidValue);
+   lCheckFailTimestamp = ChkQuery_EventTimestamp(CheckID[0]) - fStartTime;
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "Signal [%s] value changed to [%.0f] within [%.0f] ms.", cSignalName, fLastInvalidValue[0], lCheckFailTimestamp);
+  }
+}
+
+
+/// <CORE_Signal_Evaluation/Overloads>
+// Overload with no signal name.
+void CheckSignalValueRangeViolation(signal * sSignal, float bAcceptedValue_1, float bAcceptedValue_2, float iCheckDuration)
+{
+  CheckSignalValueRangeViolation(sSignal, sSignal.name, bAcceptedValue_1, bAcceptedValue_2, iCheckDuration);
+}
+
+/// <CORE_Signal_Evaluation>
+// Function which checks that the specified input signal is within the specified accepted value range for a specififc duration.
+// This is not a parrallel check (i.e. Check ends after 'iCheckDuration' is elapsed).
+// "sSignal"               = signal to be checked.
+// "cSignalName"           = signal name (OPTIONAL - see overload).
+// "fExpectedInitialValue" = signal initial value.
+// "bAcceptedValue_1"      = accepted value interval start.
+// "bAcceptedValue_2"      = accepted value interval end.
+// "iCheckDuration"        = duration of the check.
+// Example: CheckSignalValueRangeViolation(Bckl_Sw_D_Stat_ST3, 1,2, 20000);
+// Result: Inserts check details in report for both 'pass' and 'fail'.
+//         1. Pass: Pass step in the report: 	All values of signal [CAN1::BODY3::Bckl_Sw_Fx_Stat_ST3::Bckl_Sw_D_Stat_ST3] were within the defined interval: [1, 2] for [20000] ms.
+//         2. Fail: Fail step in report: "Condition violation" Value Valid (2.1#1): Measured ' = 0, condition: 1 <= value <= 2'.
+//                  Fail step in report: Signal [CAN1::BODY3::Bckl_Sw_Fx_Stat_ST3::Bckl_Sw_D_Stat_ST3] value changed to [0] within [1938] ms and did not remain within the accepted inteval [1, 2].
+void CheckSignalValueRangeViolation(signal * sSignal, char cSignalName[], float bAcceptedValue_1, float bAcceptedValue_2, float iCheckDuration)
+{
+  stack int iValueChanges;
+  stack int iErrCode;
+  stack dword CheckID[1];
+  stack char cEventStatus[1000];
+  stack float fStartTime; // Simulation time in ms.
+  stack float fLastInvalidValue[1];
+  stack long  lCheckFailTimestamp;
+  stack float fRemainingCheckDuration;
+  stack float fBuffer;
+  stack float fSignalValue;
+  
+  if(bAcceptedValue_1 > bAcceptedValue_2)
+  {
+    fBuffer = bAcceptedValue_2;
+    bAcceptedValue_1 = bAcceptedValue_2;
+    bAcceptedValue_2 = fBuffer;
+  }
+  
+  fSignalValue = getsignal(sSignal);
+  if((fSignalValue < bAcceptedValue_1) | (fSignalValue > bAcceptedValue_2))
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "Check not started: Signal [%s] has the initial value [%.3f] instead of a value within the expected range [%.3f, %.3f].", cSignalName, fSignalValue, bAcceptedValue_1, bAcceptedValue_2);
+    return;
+  }
+  
+  // Precision of the test is set to ms.
+  chkConfig_SetPrecision(3);
+  
+  // Create check.
+  CheckID[0] = ChkStart_MsgSignalValueRangeViolation(sSignal, bAcceptedValue_1, bAcceptedValue_2);
+  ChkQuery_EventStatus(CheckID[0], cEventStatus, elcount(cEventStatus));
+  testStep(@sysvar::CORE::sysLevelOfDetailStep, "CHK", cEventStatus); // Write CHK details to report.
+  
+  ChkQuery_EventStatusToLog(CheckID[0]); // Write CHK details to log.
+  
+  // Start check.
+  iErrCode = TestAddCondition(CheckID[0]);
+  if (iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkStart_MsgSignalValueRangeViolation: Test Add condition error code: [%i].", iErrCode);
+   return;
+  }
+  
+  fStartTime = timeNow() / 100; // Start time.
+  
+  // Wait for the input time to elapse.
+  while(((timeNow() / 100) - fStartTime) < iCheckDuration)
+  {
+    if(ChkQuery_NumEvents(CheckID[0]) != 0)
+    {
+      break; // CHK already failed.
+    }
+    
+    fRemainingCheckDuration = iCheckDuration - (timeNow() / 100) - fStartTime;
+    if((fRemainingCheckDuration < 100) && (fRemainingCheckDuration > 0))
+    {
+      testWaitForTimeoutSilent(fRemainingCheckDuration);
+    }
+    else
+    {
+      testWaitForTimeoutSilent(100);
+    }
+  }
+  
+  iErrCode = TestRemoveCondition(CheckID[0]);
+  if (iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkStart_MsgSignalValueRangeViolation: Remove constraint error code: [%i].", iErrCode);
+   return;
+  }
+  
+  // Stop check. 
+  iErrCode = ChkControl_Stop(CheckID[0]);
+  if (iErrCode != 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "ChkStart_MsgSignalValueRangeViolation: Stop check error code: [%i].", iErrCode);
+   return;
+  }
+  
+  if(ChkQuery_NumEvents(CheckID[0]) == 0)
+  {
+   testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "CHK", "All values of signal [%s] were within the defined interval: [%.0f,  %.3f] for [%.0f] ms.", cSignalName, bAcceptedValue_1, bAcceptedValue_2, iCheckDuration);
+  }
+    else
+  {
+   ChkQuery_EventSignalValue(CheckID[0], fLastInvalidValue);
+   lCheckFailTimestamp = ChkQuery_EventTimestamp(CheckID[0]) - fStartTime;
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "CHK", "Signal [%s] value changed to [%.3f] in [%.0f] ms and did not remain within the accepted inteval [%.3f,  %.3f].", cSignalName, fLastInvalidValue[0], lCheckFailTimestamp, bAcceptedValue_1, bAcceptedValue_2);
+  }
+}
+
+/// <CORE_Signal_Evaluation/Overloads>
+// Overload with no signal name.
+int64 GetSignalTransitionTime(signal * sSignal, float fExpectedInitialValue, float fTransitionValue_1, float fTransitionValue_2, float fMaxWaitTime)
+{
+  return GetSignalTransitionTime(sSignal, sSignal.name, fExpectedInitialValue, fTransitionValue_1, fTransitionValue_2, fMaxWaitTime);
+}
+
+/// <CORE_Signal_Evaluation/Overloads>
+// Overload with no signal name.
+int64 GetSignalTransitionTime(signal * sSignal, float fExpectedInitialValue, float fTransitionValue, float fMaxWaitTime)
+{
+  return GetSignalTransitionTime(sSignal, sSignal.name, fExpectedInitialValue, fTransitionValue, fMaxWaitTime);
+}
+
+/// <CORE_Signal_Evaluation/Overloads>
+// Function that returns the time needed for the signal value transition.
+// "sSignal"               = signal to be checked.
+// "cSignalName"           = signal name (OPTIONAL - see overloads).
+// "fExpectedInitialValue" = signal initial value.
+// "fTransitionValue_1"    = first signal transition value.
+// "fTransitionValue_2"    = second signal transition value (OPTIONAL - see overloads).
+// "iMaxWaitTime"          = maximum time alloted for transition(s) to happen.
+// Example: GetSignalTransitionTime(Bckl_Sw_D_Stat_ST3, "Buckle Status", 0, 1, 2, 20000);
+// Result: 1. Pass: Returns transition duration and inserts 'testStep(s)' in the report:
+//                  [Buckle Status] value changed from [0] to [1] in [5165] ms.
+//                  [Buckle Status] value changed from [1] to [2] in [3493] ms.
+//                  [Buckle Status] value changed from [0] to [2] in [8658] ms.
+//         2. Fail: Returns -1 and inserts a 'testStepFail' in the report.
+//                  [Buckle Status] value changed to [2] instead of [1] within [4536] ms.
+//                  OR
+//                  [Buckle Status] value did not change to [1] within [20000] ms.
+int64 GetSignalTransitionTime(signal * sSignal, char cSignalName[], float fExpectedInitialValue, float fTransitionValue_1, float fTransitionValue_2, float fMaxWaitTime)
+{
+  stack float iTimeToFirstTransition;
+  stack float iTimeToSecondTransition;
+  stack float iTimeInitToSecondTransition;
+  
+  iTimeToFirstTransition = GetSignalTransitionTime(sSignal, cSignalName, fExpectedInitialValue, fTransitionValue_1, fMaxWaitTime);
+  if(iTimeToFirstTransition != -1)
+  {
+    iTimeToSecondTransition =  GetSignalTransitionTime(sSignal, cSignalName, fTransitionValue_1, fTransitionValue_2, (fMaxWaitTime - iTimeToFirstTransition));
+    if(iTimeToSecondTransition != -1)
+    {
+      iTimeInitToSecondTransition = iTimeToFirstTransition + iTimeToSecondTransition;
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "[%s] value changed from [%.3f] to [%.3f] within [%.0f] ms.", cSignalName, fExpectedInitialValue, fTransitionValue_2, iTimeInitToSecondTransition);
+      return (iTimeToFirstTransition + iTimeToSecondTransition);
+    }
+  }
+  return -1;
+}
+
+/// <CORE_Signal_Evaluation>
+// Function that returns the time needed for the signal value transition.
+// "sSignal"               = signal to be checked.
+// "cSignalName"           = signal name (OPTIONAL - see overloads).
+// "fExpectedInitialValue" = signal initial value.
+// "fTransitionValue_1"    = first signal transition value.
+// "iMaxWaitTime"          = maximum time alloted for transition to happen.
+// Example: GetSignalTransitionTime(Bckl_Sw_D_Stat_ST3, "Buckle Status", 0, 1, 20000);
+// Result: 1. Pass: Returns transition duration and inserts 'testStep(s)' in the report:
+//                  [Buckle Status] value changed from [0] to [1] in [5165] ms.
+//         2. Fail: Returns -1 and inserts a 'testStepFail' in the report.
+//                  [Buckle Status] value changed to [2] instead of [1] within [4536] ms.
+//                  OR
+//                  [Buckle Status] value did not change to [1] within [20000] ms.
+int64 GetSignalTransitionTime(signal * sSignal, char cSignalName[], float fExpectedInitialValue, float fTransitionValue, float fMaxWaitTime)
+{
+  stack int iReturnCode;
+  stack char EvalManStepString[1000];
+  stack float fInitialSignalValue;
+  stack float fSignalValue;
+  stack float fStartTime; // Simulation time in ms.
+  stack float fTransitionTime;
+  
+  fInitialSignalValue = getSignal(sSignal);
+  if(fInitialSignalValue != fExpectedInitialValue)
+  {
+   snprintf(EvalManStepString, elcount(EvalManStepString), "[%s] does not have the expected initial value.", cSignalName);
+   EvalManStepEqual(EvalManStepString, fInitialSignalValue, fExpectedInitialValue);
+   return -1;
+  }
+  
+  fStartTime = timeNow() / 100; // Start time.
+  
+  iReturnCode = TestWaitForSignalChange(sSignal, fMaxWaitTime);
+  
+  switch(iReturnCode)
+  {
+    case -2: 
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "WaitForSignalMatch: TestWaitForSignalChange - Signal is not valid.");
+      return -1;
+      break;
+    case -1: 
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "WaitForSignalMatch: TestWaitForSignalChange - General error.");
+      return -1;
+      break;
+    case 0: // Wait state is exited due to a timeout.
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "[%s] value did not change to [%.3f] within [%.0f] ms.", cSignalName, fTransitionValue, fMaxWaitTime);
+      return -1;
+      break;
+    case 1: // Wait state is exited due to condition fulfillment.
+      fSignalValue = getSignal(sSignal);
+      if(fSignalValue == fTransitionValue)
+      {
+        fTransitionTime = (timenow() / 100) - fStartTime;
+        testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "[%s] value changed from [%.3f] to [%.3f] in [%.0f] ms.", cSignalName, fExpectedInitialValue, fTransitionValue, fTransitionTime);
+        return fTransitionTime;
+      }
+      else
+      {
+       testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "[%s] value changed to [%.3f] instead of [%.3f] in [%.0f] ms.", cSignalName, fSignalValue, fTransitionValue, ((timenow() / 100) - fStartTime));
+       return -1;
+      }
+      break;
+    default:
+      break;
+   }
+  
+  return -1;
+}
+
+/// <CORE_Signal_Evaluation/Overloads>
+// Waits for a message transmission/reception.
+// iMessage_ID = ID of the message.
+// dTimeout    = message wait time (ms).
+// Output: "Pass" (return 1) step in the report if message was received, otherwise "Failed" (return -1).
+int WaitforMessage(int64 iMessage_ID, dword dTimeout)
+{
+  stack char cMessageName[300]; 
+  getMessageName(iMessage_ID, 1, cMessageName, elcount(cMessageName));
+  return WaitforMessage(iMessage_ID, cMessageName, dTimeout, 1);
+}
+
+/// <CORE_Signal_Evaluation/Overloads>
+int WaitforMessage(int64 iMessage_ID, char cMessageName[], dword dTimeout)
+{
+  return WaitforMessage(iMessage_ID, cMessageName, dTimeout, 1);
+}
+
+/// <CORE_Signal_Evaluation/Overloads>
+int WaitforMessage(int64 iMessage_ID, dword dTimeout, int iMaxRepetition)
+{
+  stack char cMessageName[300]; 
+  getMessageName(iMessage_ID, 1, cMessageName, elcount(cMessageName));
+  return WaitforMessage( iMessage_ID, cMessageName, dTimeout, iMaxRepetition);
+}
+
+/// <CORE_Signal_Evaluation>
+// Waits for a message transmission/reception.
+// iMessage_ID = ID of the message.
+// dTimeout    = message wait time (ms).
+// iRepetition = how many messages to wait for.
+// Output: "Pass" step in the report if message was received, otherwise "Failed".
+// Example: WaitforMessage(0x695, 300, 4) -> Waits until the message is transmitted 4 times and outputs a 'pass' (return 1) or 'fail' (return -1) result in the report.
+// Function stops at the first reception/transmission error.
+int WaitforMessage(int64 iMessage_ID, char cMessageName[], dword dTimeout, int iMaxRepetition)
+{
+  stack int iReceived_Count;
+  stack int i;
+  
+  for(i = 1; i <= iMaxRepetition; i++)
+  {
+    switch(testWaitForMessage(iMessage_ID, dTimeout))
+    {
+      case 0:  testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "","WaitforMessage: Resume due to timeout. Message [%s] - [0x%I64x] was detected [%i] time(s).", cMessageName, iMessage_ID, iReceived_Count); return - 1;
+        break;
+      case 1: iReceived_Count++;
+        break;
+      case -1: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "","WaitforMessage: General error."); return -1;
+        break;
+      case -2: testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "","WaitforMessage: Resume due to constraint violation."); return -1;
+        break;
+    }
+  }
+  testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "","Message [%s] - [0x%I64x] was detected succesfully [%i] time(s).", cMessageName, iMessage_ID, iReceived_Count);
+  return 1;
+}
+  
+/// <CORE_Test_Traceability>
+// Reads the software version and compares the result with the expected software version defined in Core_Functions_Configuration.cin: 'cSwVersion'.
+void CheckSWVersion()
+{
+  diagRequest        * dReadSWVersionRequest;
+  stack diagResponse * dReadSWVersionResponse; 
+  
+  stack byte bSWVPositiveResponse[100];
+  stack char cSoftwareVersion[500];
+  
+  EnterDiagnosticSession(cSession_CheckSWVersion);
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadSWVersionRequest, dReadSWVersionResponse, bReadSWVersionRequest) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckSWVersion: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReadSWVersionRequest, dReadSWVersionResponse) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckSWVersion: Negative response received when reading software version: [0x%X].", dReadSWVersionResponse.GetResponseCode());
+    return;
+  }
+  
+  dReadSWVersionResponse.GetPrimitiveData(bSWVPositiveResponse, elcount(bSWVPositiveResponse));
+  ConvertByteArrInCharArr(bSWVPositiveResponse, cSoftwareVersion, dReadSWVersionRequest.GetPrimitiveSize(), dReadSWVersionResponse.GetPrimitiveSize() - 1, cKeepHexFormat);
+  
+  EvalManStepEqual("Check Software Version.", cSoftwareVersion, cSwVersion); 
+}
+
+/// <CORE_Test_Traceability>
+// Reads the Software version.
+// "cSoftwareVersion" = Char array where SW version will be saved.
+// Example:    CheckSwVersion(cObtainedSWVersion) => "ER01473H.P30" char array assigned to "cObtainedSWVersion".
+void GetSWVersion(char cSoftwareVersion[])
+{
+  stack diagRequest  * dReadSWVersionRequest;
+  stack diagResponse * dReadSWVersionResponse; 
+  
+  stack byte bSWVPositiveResponse[100];
+  
+  EnterDiagnosticSession(cSession_CheckSWVersion);
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadSWVersionRequest, dReadSWVersionResponse, bReadSWVersionRequest) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" , "GetSWVersion: Diagnostic request send or receive error.");
+    return;
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReadSWVersionRequest, dReadSWVersionResponse) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" , "GetSWVersion: Negative response received when reading software version: [0x%X].", dReadSWVersionResponse.GetResponseCode());
+    return;
+  }
+  
+  dReadSWVersionResponse.GetPrimitiveData(bSWVPositiveResponse, elcount(bSWVPositiveResponse));
+  ConvertByteArrInCharArr(bSWVPositiveResponse, cSoftwareVersion, dReadSWVersionRequest.GetPrimitiveSize(),dReadSWVersionResponse.GetPrimitiveSize() - 1, cKeepHexFormat);
+}
+
+/// <CORE_Test_Traceability>
+// Sets the data for a requirements table row.
+// "cRequirement"            = requirement under test.
+// "cRequirementDescription" = requirement description.
+void AddRequirementInfo(char cRequirement[], char cRequirementDescription[])
+{
+  strncpy(cAllRequirements[iRequirementsIndex], cRequirement, elcount(cAllRequirements[iRequirementsIndex]));
+  strncpy(cAllRequirementsDescription[iRequirementsIndex], cRequirementDescription, elcount(cAllRequirementsDescription[iRequirementsIndex]));
+  iRequirementsIndex++;
+}
+
+/// <CORE_Test_Traceability>
+// Used in <<< PreTS >>> function.
+void AddTestSetupInformation()
+{
+  TestReportAddMiscInfoBlock("Test equipment");
+  TestReportAddMiscInfo("Tester Name",      cTesterName[iTestBenchUsed]);
+  TestReportAddMiscInfo("CAN case ID",      cCAN_CaseId[iTestBenchUsed]);
+  TestReportAddMiscInfo("SBC Board",        cSBC_BOARD[iTestBenchUsed]);
+  TestReportAddMiscInfo("Power supply ID",  cPowerSupplyId[iTestBenchUsed]);
+  TestReportAddMiscInfo("Motherboard",      cMOTHER_BOARD[iTestBenchUsed]);
+  TestReportAddMiscInfo("MCU",              cMCU[iTestBenchUsed]);
+  TestReportAddMiscInfo("DUT",              cDUT[iTestBenchUsed]);
+  TestReportAddMiscInfo("HW Info",          cHWVersion[iTestBenchUsed]); 
+}
+
+/// <CORE_Test_Traceability>
+// Used in "InitTestModule" test.
+// 'iInputTestBenchUsed' = test bench number from Core_Functions_Configuration.cin.
+void ConfigureTestModuleInformation(int iInputTestBenchUsed)
+{
+  iTestBenchUsed = iInputTestBenchUsed;
+  
+  InitParameters();
+  
+  TestReportAddEngineerInfo("Tester Name",  cTesterName[iTestBenchUsed]);
+  TestReportAddSetupInfo("CAN case ID",     cCAN_CaseId[iTestBenchUsed]);
+  TestReportAddSetupInfo("Power supply ID", cPowerSupplyId[iTestBenchUsed]);
+  TestReportAddSetupInfo("Motherboard",     cMOTHER_BOARD[iTestBenchUsed]);
+  TestReportAddSetupInfo("SBC Board",       cSBC_BOARD[iTestBenchUsed]);
+  TestReportAddSetupInfo("MCU",             cMCU[iTestBenchUsed]);
+  TestReportAddSUTInfo("DUT",               cDUT[iTestBenchUsed]);
+  TestReportAddSUTInfo("HW Info",           cHWVersion[iTestBenchUsed]); 
+}
+
+
+/// <CORE_Test_Traceability>
+// Displays the test header based on data added with "AddRequirementInfo" function.
+void DisplayRequirementsInfo()
+{
+  stack int i;
+  stack char cTimeBuffer[64];
+  stack char cTestCaseTitle[1000];
+  
+  TestReportAddExtendedInfo("html", "<table>"
+                                        "<tr>"
+                                          "<th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>%s</th>"
+                                          "<th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>%s</th>"
+                                        "</tr>"
+                                    "</table>"
+                                    , cAllRequirements[0], cAllRequirementsDescription[0]);
+  
+  TestReportAddExtendedInfo("html", "<table> <tr>"
+                                         "<th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th>"
+                                         "<th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th>"
+                                    "</tr>");
+  
+  for(i = 1; i < iRequirementsIndex; i++)
+  {
+    TestReportAddExtendedInfo("html", "<tr>"
+                                          "<td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>%s</td>"
+                                          "<td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>%s</td>" 
+                                      "</tr>"
+                                      , cAllRequirements[i], cAllRequirementsDescription[i]);
+  }
+  TestReportAddExtendedInfo("html", "</table>");
+  
+  iRequirementsIndex = 0;
+  // Add timestamp to test case name.
+  
+  getLocalTimeString(cTimeBuffer);
+  str_replace(cTimeBuffer, " ", "_");
+  str_replace(cTimeBuffer, ":", "_");
+  str_replace(cTimeBuffer, "__", "_");
+  
+  if (strstr_regex(cTimeBuffer, "[a-z]_[0-9]_") != -1)
+  {
+    str_replace(cTimeBuffer, (strstr_regex(cTimeBuffer, "[a-z]_[0-9]_") + 1), "_0", 1); // Sets day number on two characters.
+  }
+   
+  testGetCurrentTestCaseTitle(cTestCaseTitle, elcount(cTestCaseTitle));
+  iOriginalTestCaseTitleLength = strlen(cTestCaseTitle);
+
+  strncat(cTestCaseTitle, "_", elcount(cTestCaseTitle));
+  strncat(cTestCaseTitle, cTimeBuffer, elcount(cTestCaseTitle));
+  
+  TestCaseTitle("", cTestCaseTitle);
+}

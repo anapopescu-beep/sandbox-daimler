@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>5</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>400</x>
+      <y>55</y>
+      <w>447</w>
+      <h>894</h>
+    </coordinates>
+    <panel_attributes>title:cil_Update_07Cx_Block05_InfosToSend
+Start
+
+Call Rte_Call_pclMotor_P_GetPowerOrder function
+Check if PWM Duty Cycle is signed
+If
+	[TRUE]
+	s16PWMDutyCycle 6 right shift
+		 
+	[FALSE]
+	s16PWMDutyCycle 6 right shift
+EndIf
+
+Check if there is no overflow
+If
+	[s16PWMDutyCycle &gt; KS16_MAX_S8]
+	Set s16PWMDutyCycle to MAX_S8
+		 
+	[s16PWMDutyCycle &lt; KS16_MIN_S8]
+	Set s16PWMDutyCycle to MIN_S8
+
+	[ELSE]
+	QAC
+EndIf
+
+Cast s16PWMDutyCycle to uint8
+Call Rte_Call_pclMotor_I_Get_mA function
+
+Call Rte_Call_pclMotor_Vp_Get function
+
+Check if motor Vp is higher than 25.5V
+If
+	[TRUE]
+	Set u16MotorPlus to 25.5V
+		 
+	[FALSE]
+	QAC
+
+EndIf
+
+Convert motor Vp in dV
+
+Call Rte_Call_pclMotor_Vn_Get function
+
+Check if motor Vn is higher than 25.5V
+If
+	[TRUE]
+	Set u16MotorMinus to 25.5V
+		 
+	[FALSE]
+	QAC
+
+EndIf
+
+Convert motor Vn in dV
+
+   
+
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_01 = CU8_BLOCK_ID_05;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_02 = u8PWMDutyCycle;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_03 = u8ScaledMotorCurrentMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_04 = u8ScaledMotorCurrentLSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_05 = u8MotorPlus;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_06 = u8MotorMinus;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_07 = u8BobbinPositionMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_08 = u8BobbinPositionLSB;
+
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

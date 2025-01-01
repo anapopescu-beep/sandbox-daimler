@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0010, ARCH_SW_PAL_0110
+ARCH_SW_PAL_0010: Check if the component is initialized.
+ARCH_SW_PAL_0110: The component shall initialize the auto tests data.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_Init() at line 'pal_Cfg_Init ();'.
+
+	Step 3: Check if CPU has stopped in function PAL_Init() at line 'pal_Cfg_Init ();'.
+
+Action: ARCH_SW_PAL_0010
+
+	Step 4: Step in function pal_Cfg_Init(). 
+		Expected result:  Stepped in pal_Cfg_Init()
+
+	Step 5: Check if CPU stopped in function pal_Cfg_Init().
+
+	Step 6: Set a breakpoint in function pal_Cfg_Init() at line 'pal_AT_Init ();' and press run.
+
+	Step 7: Check if CPU stopped in function pal_Cfg_Init() at line 'pal_AT_Init ();'.
+
+Action: ARCH_SW_PAL_0110
+
+	Step 8: Step in function pal_AT_Init(). 
+		Expected result:  Stepped in function pal_AT_Init()
+
+	Step 9: Check if CPU stopped in function pal_AT_Init().
+
+Postcondition
+
+	Step 10: Return ECU to default values

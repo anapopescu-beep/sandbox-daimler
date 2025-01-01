@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0815; ARCH_SW_DIA_0816; ARCH_SW_DIA_0817; ARCH_SW_DIA_0818; ARCH_SW_DIA_0819; ARCH_SW_DIA_0820; ARCH_SW_DIA_0821; ARCH_SW_DIA_0822; ARCH_SW_DIA_0823
+ARCH_SW_DIA_0805: Service 0x31 (Routine Control) 0x31 01 Start for RID 0x0203 (Check Reprogramming Preconditions) will be implemented 
+ARCH_SW_DIA_0816: RoutineIdentifier shall be 0x0207.
+ARCH_SW_DIA_0817: The folowing request shall be available for this RID: - Start Routine (01) 
+ARCH_SW_DIA_0818: Regarding the SW/SW and HW/SW compatibility checks the same algorithms shall be used like for RoutineControl checkProgrammingDependencies
+ARCH_SW_DIA_0819: Contrary to RoutineControl checkProgrammingDependencies, this service shall not change any ECU flags
+ARCH_SW_DIA_0820: Routine Start shall be available in the following diagnostic sessions: ?Programming Session ?Extended Session ?Development Session 
+ARCH_SW_DIA_0821: Routine Start shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED 
+ARCH_SW_DIA_0822: Routine Start shall be responsible to check if any system or ECU conditions to successfully reprogram the ECU are not fulfilled. RID specific Control Options Record shall be represented by the following: Byte 0: Precheck Informations 
+ARCH_SW_DIA_0823: RID specific Routine Start Result shall be represented by the following: ?Byte 0: Dependencies Verification Check Result 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+Action: ARCH_SW_DIA_0815; ARCH_SW_DIA_0816; ARCH_SW_DIA_0817; ARCH_SW_DIA_0818; ARCH_SW_DIA_0819; ARCH_SW_DIA_0820; ARCH_SW_DIA_0821; ARCH_SW_DIA_0822; ARCH_SW_DIA_0823
+
+	Step 3: Send diag request for RID 02 03 Start 
+		Expected result:  Request Sent.
+
+Postcondition
+
+	Step 4: Return ECU to default values

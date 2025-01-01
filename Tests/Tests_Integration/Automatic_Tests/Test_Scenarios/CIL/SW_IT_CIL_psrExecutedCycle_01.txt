@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0303, ARCH_SW_CIL_0559
+ARCH_SW_CIL_0303: Read Rte_BFE_psrExecutedCycle_u8CycleNumber shall be read to get executed cycle number.
+ARCH_SW_CIL_0559: Read Rte_BFE_psrExecutedCycle_u8CycleNumber shall be read to get executed cycle number.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE20.
+
+	Step 3: Set a breakpoint in the function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 5: Step in function cil_ManageInputSignals.
+
+	Step 6: Set a breakpoint in the function cil_ManageInhibitConditions() at line '(void)Rte_Read_prrCycleNumber_u8CycleNumber(&u8ExecutedCycle);'.
+
+Action: ARCH_SW_CIL_0303, ARCH_SW_CIL_0559
+
+	Step 7: Check if CPU stopped in function CIL_runCANToAppli() at line '(void)Rte_Read_prrCycleNumber_u8CycleNumber(&u8ExecutedCycle);'.
+
+Postcondition
+
+	Step 8: Return ECU to default values

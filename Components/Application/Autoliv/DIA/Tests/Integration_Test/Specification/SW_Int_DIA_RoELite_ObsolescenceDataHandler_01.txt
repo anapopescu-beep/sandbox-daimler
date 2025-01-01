@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0420; ARCH_SW_DIA_0421; ARCH_SW_DIA_0422; ARCH_SW_DIA_0423; ARCH_SW_DIA_0424; ARCH_SW_DIA_0425; ARCH_SW_DIA_0426
+ARCH_SW_DIA_0420: RoELite for ObsolescenceData will be implemented
+ARCH_SW_DIA_0421: Frame contents shall be transmitted depending on the event detect (Type). 
+ARCH_SW_DIA_0422: If more than one RoE-lite PDU needs to be transmitted within one Transmission Cycle, the associated RoE-Lite PDUs shall be transmitted as depicted in figure [Transmitting RoE-lite PDUs from the transmission queue].
+ARCH_SW_DIA_0423: ROE_0_RBTM_xy_ST3 (Byte 1) signal shall be transmitted with the value 0x02 - Obsolescence_DATA if availability data has been changed. Byte 2 of the ROE_RBTM_xy_ST3 frame shall contain the block number. Bytes 3-4 of the ROE_RBTM_xy_ST3 frame shall contain the current value Bytes 5-6 of the ROE_RBTM_xy_ST3 frame shall be threshold Green to Yellow Bytes 7-8 of the ROE_RBTM_xy_ST3 frame shall be threshold Yellow to Red
+ARCH_SW_DIA_0424: Block number: BSR: 0x00 PRE-SAFE 1-3: 0x01 PRE-SAFE 4-5: 0x02 PRE-SAFE 6-8: 0x03 
+ARCH_SW_DIA_0425: Threshold Green to Yellow = Yellow to Red = 0
+ARCH_SW_DIA_0426: Only when the Obsolescence changes from - �Green� to �Red� the ECU shall send the corresponding RoE-Lite PDU. 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *RoELite_ObsolescenceDataHandler*.
+
+Action: ARCH_SW_DIA_0420; ARCH_SW_DIA_0421; ARCH_SW_DIA_0422; ARCH_SW_DIA_0423; ARCH_SW_DIA_0424; ARCH_SW_DIA_0425; ARCH_SW_DIA_0426
+
+	Step 3: Send diag request for 22 01 40 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function RoELite_ObsolescenceDataHandler was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

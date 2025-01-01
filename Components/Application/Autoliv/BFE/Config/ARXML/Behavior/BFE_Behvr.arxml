@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 autosar_4-2-2.xsd">
+<AR-PACKAGES>
+    <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="9cdef9bd-8821-4850-a989-8664b8fe0fc9">
+      <SHORT-NAME>AUTOLIV</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="d3b9ce57-25ba-4618-8593-0d6cac410bb6">
+          <SHORT-NAME>SoftwareComponents</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="2b030cd5-377b-4281-b1fc-00d074ba111a">
+              <SHORT-NAME>BFE</SHORT-NAME>
+              <ELEMENTS>
+                <APPLICATION-SW-COMPONENT-TYPE T="2017-01-04T08:25:38+01:00" UUID="6e7acb06-eacf-4c77-b85b-823868380483">
+                  <SHORT-NAME>BFE_AC_BeltFunctionExecution</SHORT-NAME>
+                  <CATEGORY>SWC</CATEGORY>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR T="2017-03-30T16:36:40+02:00" UUID="5003c1dc-22c4-4c00-ad98-ace4772e8b29">
+                      <SHORT-NAME>BFE_IB_BeltFunctionExecution</SHORT-NAME>
+                      <CONSTANT-VALUE-MAPPING-REFS>
+                        <CONSTANT-VALUE-MAPPING-REF DEST="CONSTANT-SPECIFICATION-MAPPING-SET">/AUTOLIV/GlobalDictionary/Constants/ConstantsMappingSet_PP4G</CONSTANT-VALUE-MAPPING-REF>
+                      </CONSTANT-VALUE-MAPPING-REFS>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/AUTOLIV/GlobalDictionary/DataTypeMappingSet/DataTypeMappingSet_PP4G</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="DCE:9b429cd3-2c4c-4926-ba10-6887aeae763d">
+                          <SHORT-NAME>BFE_EXCLUSIVE_AREA</SHORT-NAME>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <EVENTS>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="baa31baa-7f4d-41f0-a007-0c59ce6e8e96">
+                          <SHORT-NAME>BFE_evExecuteEmergencyBrakingSequence</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_runExecuteEmergencyBrakingSequence</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pseSynchronousMotorControl</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsSynchronousMotorControl/ExecuteEmergencyBrakingSequence</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="894c5a9b-49ba-47fd-a1f8-b5d6634d3d58">
+                          <SHORT-NAME>BFE_evExecuteHighPowerSteps</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_runExecuteHighPowerStep</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pseSynchronousMotorControl</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsSynchronousMotorControl/ExecuteHighPowerStep</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <TIMING-EVENT T="2017-01-04T08:25:38+01:00" UUID="bfcd1825-7f27-4504-9899-02bcd3dec9dc">
+                          <SHORT-NAME>BFE_evExecuteStandardSteps</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_runExecuteStandardSteps</START-ON-EVENT-REF>
+                          <PERIOD>0.002</PERIOD>
+                        </TIMING-EVENT>
+                        <OPERATION-INVOKED-EVENT T="2017-01-04T08:25:38+01:00" UUID="338eefe9-51f5-4490-9935-e5a5ff377b25">
+                          <SHORT-NAME>BFE_evResetMotorStageStatus</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_runResetMotorStageStatus</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pseSynchronousMotorControl</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsSynchronousMotorControl/ResetMotorStageStatus</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                        <TIMING-EVENT T="2017-01-04T08:25:38+01:00" UUID="26250964-768c-41f3-b971-f47e6075954b">
+                          <SHORT-NAME>BFE_evScheduleStep</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_runScheduleStep</START-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </TIMING-EVENT>
+                      </EVENTS>
+                      <EXPLICIT-INTER-RUNNABLE-VARIABLES>
+                        <VARIABLE-DATA-PROTOTYPE T="2017-01-04T08:25:38+01:00" UUID="659f0fcd-3f53-40ce-9fa1-0f5b312198a6">
+                          <SHORT-NAME>s16MotorPowerOrder</SHORT-NAME>
+                          <SW-DATA-DEF-PROPS T="2015-10-20T08:04:53+02:00">
+                            <SW-DATA-DEF-PROPS-VARIANTS>
+                              <SW-DATA-DEF-PROPS-CONDITIONAL T="2015-10-20T08:04:53+02:00">
+                                <STEP-SIZE>0.0</STEP-SIZE>
+                                <SW-CALIBRATION-ACCESS>READ-ONLY</SW-CALIBRATION-ACCESS>
+                                <SW-IMPL-POLICY>STANDARD</SW-IMPL-POLICY>
+                              </SW-DATA-DEF-PROPS-CONDITIONAL>
+                            </SW-DATA-DEF-PROPS-VARIANTS>
+                          </SW-DATA-DEF-PROPS>
+                          <TYPE-TREF DEST="APPLICATION-PRIMITIVE-DATA-TYPE">/AUTOLIV/GlobalDictionary/ApplicationDataTypes/s16MotorPowerOrderType_Appl</TYPE-TREF>
+                          <INIT-VALUE>
+                            <CONSTANT-REFERENCE T="2015-10-07T08:44:43+02:00">
+                              <CONSTANT-REF DEST="CONSTANT-SPECIFICATION">/AUTOLIV/GlobalDictionary/Constants/APPLINIT_KS16_MOTOR_POWER_ORDER_ZERO</CONSTANT-REF>
+                            </CONSTANT-REFERENCE>
+                          </INIT-VALUE>
+                        </VARIABLE-DATA-PROTOTYPE>
+                        <VARIABLE-DATA-PROTOTYPE T="2017-01-04T08:25:38+01:00" UUID="e618fb53-a7a6-40c8-986e-538ad316d6d0">
+                          <SHORT-NAME>s32FirstOrderValue</SHORT-NAME>
+                          <SW-DATA-DEF-PROPS T="2015-10-20T08:05:06+02:00">
+                            <SW-DATA-DEF-PROPS-VARIANTS>
+                              <SW-DATA-DEF-PROPS-CONDITIONAL T="2015-10-20T08:05:06+02:00">
+                                <STEP-SIZE>0.0</STEP-SIZE>
+                                <SW-CALIBRATION-ACCESS>READ-ONLY</SW-CALIBRATION-ACCESS>
+                                <SW-IMPL-POLICY>STANDARD</SW-IMPL-POLICY>
+                              </SW-DATA-DEF-PROPS-CONDITIONAL>
+                            </SW-DATA-DEF-PROPS-VARIANTS>
+                          </SW-DATA-DEF-PROPS>
+                          <TYPE-TREF DEST="APPLICATION-PRIMITIVE-DATA-TYPE">/AUTOLIV/GlobalDictionary/ApplicationDataTypes/s32OrderValueType_Appl</TYPE-TREF>
+                          <INIT-VALUE>
+                            <CONSTANT-REFERENCE T="2015-10-07T08:45:25+02:00">
+                              <CONSTANT-REF DEST="CONSTANT-SPECIFICATION">/AUTOLIV/GlobalDictionary/Constants/APPLINIT_KS32_ORDER_VALUE_ZERO</CONSTANT-REF>
+                            </CONSTANT-REFERENCE>
+                          </INIT-VALUE>
+                        </VARIABLE-DATA-PROTOTYPE>
+                        <VARIABLE-DATA-PROTOTYPE T="2017-01-04T08:25:38+01:00" UUID="153f7a6c-3927-47f2-b23f-6a36ed56c48f">
+                          <SHORT-NAME>s32OrderIncrementValue</SHORT-NAME>
+                          <SW-DATA-DEF-PROPS T="2015-10-20T08:05:17+02:00">
+                            <SW-DATA-DEF-PROPS-VARIANTS>
+                              <SW-DATA-DEF-PROPS-CONDITIONAL T="2015-10-20T08:05:17+02:00">
+                                <STEP-SIZE>0.0</STEP-SIZE>
+                                <SW-CALIBRATION-ACCESS>READ-ONLY</SW-CALIBRATION-ACCESS>
+                                <SW-IMPL-POLICY>STANDARD</SW-IMPL-POLICY>
+                              </SW-DATA-DEF-PROPS-CONDITIONAL>
+                            </SW-DATA-DEF-PROPS-VARIANTS>
+                          </SW-DATA-DEF-PROPS>
+                          <TYPE-TREF DEST="APPLICATION-PRIMITIVE-DATA-TYPE">/AUTOLIV/GlobalDictionary/ApplicationDataTypes/s32OrderValueType_Appl</TYPE-TREF>
+                          <INIT-VALUE>
+                            <CONSTANT-REFERENCE T="2015-10-07T08:45:53+02:00">
+                              <CONSTANT-REF DEST="CONSTANT-SPECIFICATION">/AUTOLIV/GlobalDictionary/Constants/APPLINIT_KS32_ORDER_VALUE_ZERO</CONSTANT-REF>
+                            </CONSTANT-REFERENCE>
+                          </INIT-VALUE>
+                        </VARIABLE-DATA-PROTOTYPE>
+                        <VARIABLE-DATA-PROTOTYPE T="2017-01-04T08:25:38+01:00" UUID="7c0e6cd3-ac3c-43a7-b3bb-0a0b7f404282">
+                          <SHORT-NAME>u16StepDuration</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">HP step need to know how long does the hp step  last.</L-2>
+                          </DESC>
+                          <SW-DATA-DEF-PROPS T="2015-10-20T08:05:56+02:00">
+                            <SW-DATA-DEF-PROPS-VARIANTS>
+                              <SW-DATA-DEF-PROPS-CONDITIONAL T="2015-10-20T08:05:56+02:00">
+                                <STEP-SIZE>0.0</STEP-SIZE>
+                                <SW-CALIBRATION-ACCESS>READ-ONLY</SW-CALIBRATION-ACCESS>
+                                <SW-IMPL-POLICY>STANDARD</SW-IMPL-POLICY>
+                              </SW-DATA-DEF-PROPS-CONDITIONAL>
+                            </SW-DATA-DEF-PROPS-VARIANTS>
+                          </SW-DATA-DEF-PROPS>
+                          <TYPE-TREF DEST="APPLICATION-PRIMITIVE-DATA-TYPE">/AUTOLIV/GlobalDictionary/ApplicationDataTypes/u16StepDurationType_Appl</TYPE-TREF>
+                          <INIT-VALUE>
+                            <CONSTANT-REFERENCE T="2015-10-07T08:47:50+02:00">
+                              <CONSTANT-REF DEST="CONSTANT-SPECIFICATION">/AUTOLIV/GlobalDictionary/Constants/APPLINIT_KU16_STEP_DURATION_ZERO</CONSTANT-REF>
+                            </CONSTANT-REFERENCE>
+                          </INIT-VALUE>
+                        </VARIABLE-DATA-PROTOTYPE>
+                        <VARIABLE-DATA-PROTOTYPE T="2017-01-04T08:25:38+01:00" UUID="35b303d3-5d60-433b-904a-166b0a052248">
+                          <SHORT-NAME>u8MotorStageStatus</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">To know if the motor stage is activated or not</L-2>
+                          </DESC>
+                          <SW-DATA-DEF-PROPS T="2015-10-20T08:05:42+02:00">
+                            <SW-DATA-DEF-PROPS-VARIANTS>
+                              <SW-DATA-DEF-PROPS-CONDITIONAL T="2015-10-20T08:05:42+02:00">
+                                <STEP-SIZE>0.0</STEP-SIZE>
+                                <SW-CALIBRATION-ACCESS>READ-ONLY</SW-CALIBRATION-ACCESS>
+                                <SW-IMPL-POLICY>STANDARD</SW-IMPL-POLICY>
+                              </SW-DATA-DEF-PROPS-CONDITIONAL>
+                            </SW-DATA-DEF-PROPS-VARIANTS>
+                          </SW-DATA-DEF-PROPS>
+                          <TYPE-TREF DEST="APPLICATION-PRIMITIVE-DATA-TYPE">/AUTOLIV/GlobalDictionary/ApplicationDataTypes/u8MotorStageStatusType_Appl</TYPE-TREF>
+                          <INIT-VALUE>
+                            <CONSTANT-REFERENCE>
+                              <SHORT-LABEL>ConstantValue4</SHORT-LABEL>
+                              <CONSTANT-REF DEST="CONSTANT-SPECIFICATION">/AUTOLIV/GlobalDictionary/Constants/APPLINIT_KU8_MOTOR_STAGE_STATUS_ACTIVATION</CONSTANT-REF>
+                            </CONSTANT-REFERENCE>
+                          </INIT-VALUE>
+                        </VARIABLE-DATA-PROTOTYPE>
+                        <VARIABLE-DATA-PROTOTYPE T="2017-01-04T08:25:38+01:00" UUID="15ff6081-e384-4b63-8d11-1928f5240c74">
+                          <SHORT-NAME>u8OrderType</SHORT-NAME>
+                          <SW-DATA-DEF-PROPS T="2015-10-20T08:05:30+02:00">
+                            <SW-DATA-DEF-PROPS-VARIANTS>
+                              <SW-DATA-DEF-PROPS-CONDITIONAL T="2015-10-20T08:05:30+02:00">
+                                <STEP-SIZE>0.0</STEP-SIZE>
+                                <SW-CALIBRATION-ACCESS>READ-ONLY</SW-CALIBRATION-ACCESS>
+                                <SW-IMPL-POLICY>STANDARD</SW-IMPL-POLICY>
+                              </SW-DATA-DEF-PROPS-CONDITIONAL>
+                            </SW-DATA-DEF-PROPS-VARIANTS>
+                          </SW-DATA-DEF-PROPS>
+                          <TYPE-TREF DEST="APPLICATION-PRIMITIVE-DATA-TYPE">/AUTOLIV/GlobalDictionary/ApplicationDataTypes/u8OrdersListType_Appl</TYPE-TREF>
+                          <INIT-VALUE>
+                            <CONSTANT-REFERENCE T="2015-10-07T08:46:28+02:00">
+                              <CONSTANT-REF DEST="CONSTANT-SPECIFICATION">/AUTOLIV/GlobalDictionary/Constants/APPLINIT_KU8_ORDERS_LIST_ZERO</CONSTANT-REF>
+                            </CONSTANT-REFERENCE>
+                          </INIT-VALUE>
+                        </VARIABLE-DATA-PROTOTYPE>
+                      </EXPLICIT-INTER-RUNNABLE-VARIABLES>
+                      <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+                      <PORT-API-OPTIONS>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pseSynchronousMotorControl</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/psrExecutedCycle</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/psrExecutedStep</PORT-REF>
+                        </PORT-API-OPTION>
+                        <PORT-API-OPTION>
+                          <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                          <INDIRECT-API>false</INDIRECT-API>
+                          <PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/prrSelectedCycle</PORT-REF>
+                        </PORT-API-OPTION>
+                      </PORT-API-OPTIONS>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="abb54ebd-09b4-4722-a8db-ed68ee5419ff">
+                          <SHORT-NAME>BFE_runExecuteEmergencyBrakingSequence</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <READ-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="c3f38bd8-44ad-427f-9ad7-53fc7779b4ec">
+                              <SHORT-NAME>rd_s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="7b879ff0-2b5b-4cc0-a7d4-17fd49dab3f6">
+                              <SHORT-NAME>rd_u8MotorStageStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8MotorStageStatus</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </READ-LOCAL-VARIABLES>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="2f0dbbf6-b708-4cf6-9a7d-db9f2188913e">
+                              <SHORT-NAME>SSCP_pclMotor_I_Get_mA</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_I</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsCurrent/Get_mA</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="5d5c9ad6-224b-40e2-8bea-dca2056ed8c1">
+                              <SHORT-NAME>SSCP_pclMotor_P_SetPowerOrder</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_P</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsMoto_P/SetPowerOrder</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>BFE_runExecuteEmergencyBrakingSequence</SYMBOL>
+                          <WRITTEN-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="9d18f40e-f297-4ac1-b4fe-62509e7e8996">
+                              <SHORT-NAME>wr_s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="248c09c6-db09-4804-bca6-88f04d8ca267">
+                              <SHORT-NAME>wr_u8MotorStageStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8MotorStageStatus</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </WRITTEN-LOCAL-VARIABLES>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-04-11T14:38:32+03:00" UUID="2dfd23b4-7639-4be1-874d-9f7cee4a1474">
+                          <SHORT-NAME>BFE_runExecuteHighPowerStep</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <READ-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="b09da959-08bb-4d15-b65d-31a9549b6894">
+                              <SHORT-NAME>s32FirstOrderValue</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s32FirstOrderValue</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="76bed43d-098b-4332-83ba-756e149afdd2">
+                              <SHORT-NAME>u16StepDuration</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u16StepDuration</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="95f7d889-1f74-4d98-9cf7-e7b48c15f868">
+                              <SHORT-NAME>u8MotorStageStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8MotorStageStatus</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="1c07f8a1-c22b-40b9-ad88-8086f3ffa1c9">
+                              <SHORT-NAME>u8OrderType</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8OrderType</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="e8b58b5b-c6b2-4df7-9e9a-030d6527df79">
+                              <SHORT-NAME>rd_s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </READ-LOCAL-VARIABLES>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="5b226f1b-6994-4bec-907a-eada5fb0f4ae">
+                              <SHORT-NAME>SSCP_pclKL30_V_Get</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclKL30_V</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsVoltage/Get</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="04076443-4431-4b20-a042-a5a7a222872d">
+                              <SHORT-NAME>SSCP_pclMotor_I_Get_mA</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_I</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsCurrent/Get_mA</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="80c240df-3164-4ce2-93a7-6456e8822484">
+                              <SHORT-NAME>SSCP_pclMotor_P_SetPowerOrder</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_P</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsMoto_P/SetPowerOrder</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>BFE_runExecuteHighPowerStep</SYMBOL>
+                          <WRITTEN-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="fd428622-5b46-4ee5-8948-787728409364">
+                              <SHORT-NAME>wr_s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </WRITTEN-LOCAL-VARIABLES>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-03-30T16:36:56+02:00" UUID="d955a74c-080b-4e33-9fe2-b167af3b13c7">
+                          <SHORT-NAME>BFE_runExecuteStandardSteps</SHORT-NAME>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_EXCLUSIVE_AREA</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                          <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="28a3bc06-857e-4499-9035-e284869e259c">
+                              <SHORT-NAME>DRP_prrCarAcceleration_b8IsCarAccelerationLow</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/prrCarAcceleration</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCarAcceleration/b8IsCarAccelerationLow</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                          <READ-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="51a824af-367d-4997-addd-af8069f71928">
+                              <SHORT-NAME>s32FirstOrderValue</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s32FirstOrderValue</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="7770ecbb-1c76-4106-bc39-7d13d8a22632">
+                              <SHORT-NAME>u8OrderType</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8OrderType</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="2bc2e68c-7a13-4959-8661-8ba67a7acd7b">
+                              <SHORT-NAME>rd_s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="4ba540cd-0fb7-4ed1-b535-745c14cfac4d">
+                              <SHORT-NAME>u8MotorStageStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8MotorStageStatus</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="1754a216-e073-4c05-90f0-7eb91f07b48b">
+                              <SHORT-NAME>s32OrderIncrementValue</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s32OrderIncrementValue</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </READ-LOCAL-VARIABLES>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="c65276f5-fcb8-4d29-9453-e70b7a7fa699">
+                              <SHORT-NAME>SSCP_pclMotor_I_Get_A</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_I</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsCurrent/Get_A</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="ef702b28-bc34-4d0b-b722-64b59e82af8f">
+                              <SHORT-NAME>SSCP_pclMotor_I_Get_mA</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_I</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsCurrent/Get_mA</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="09215f34-8340-4e95-80cc-a7f6ccfe649f">
+                              <SHORT-NAME>SSCP_pclKL30_V_Get_2ms</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclKL30_V</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsVoltage/Get_2ms</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="cd10fc23-2697-4a2b-ae13-37c01b12b5d2">
+                              <SHORT-NAME>SSCP_pclMotor_P_SetPowerOrder</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_P</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsMoto_P/SetPowerOrder</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="b76028c7-0a10-4848-b41e-9450a365fac1">
+                              <SHORT-NAME>SSCP_pclKL30_V_Get</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclKL30_V</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsVoltage/Get</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>BFE_runExecuteStandardSteps</SYMBOL>
+                          <WRITTEN-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="e9decb09-0ac0-407d-bf23-b9fc8e44d7bd">
+                              <SHORT-NAME>wr_s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </WRITTEN-LOCAL-VARIABLES>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-03-30T16:37:07+02:00" UUID="eda48311-9fd6-4433-9a2f-b94fdc709595">
+                          <SHORT-NAME>BFE_runResetMotorStageStatus</SHORT-NAME>
+                          <CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                            <CAN-ENTER-EXCLUSIVE-AREA-REF DEST="EXCLUSIVE-AREA">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/BFE_EXCLUSIVE_AREA</CAN-ENTER-EXCLUSIVE-AREA-REF>
+                          </CAN-ENTER-EXCLUSIVE-AREA-REFS>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                          <SYMBOL>BFE_runResetMotorStageStatus</SYMBOL>
+                          <WRITTEN-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="605ec135-3b52-439b-8f87-ae05fc3edd51">
+                              <SHORT-NAME>u8MotorStageStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8MotorStageStatus</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </WRITTEN-LOCAL-VARIABLES>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY T="2017-01-04T08:25:38+01:00" UUID="39ab3123-5a1f-4ed2-b677-ea96534b791d">
+                          <SHORT-NAME>BFE_runScheduleStep</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                          <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="9fb639fc-e703-4708-92b1-97aae667c7c3">
+                              <SHORT-NAME>DRP_prrCarAcceleration_b8IsCarAccelerationLow</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/prrCarAcceleration</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCarAcceleration/b8IsCarAccelerationLow</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="1fa35e2d-7237-4a62-a3d4-6d2684c10913">
+                              <SHORT-NAME>DRP_prrSelect_u8CycleNumber</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/prrSelectedCycle</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCycleNumber/u8CycleNumber</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                          <DATA-SEND-POINTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="3952f0fb-a330-42d6-b5b0-f2f10c4709c4">
+                              <SHORT-NAME>DSP_psrExecut_u8StepNumber</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/psrExecutedStep</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrStepNumber/u8StepNumber</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="634cbd36-83c9-40af-ad8d-a0c060077880">
+                              <SHORT-NAME>DSP_psrExecut_u8CycleNumber</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/psrExecutedCycle</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCycleNumber/u8CycleNumber</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-SEND-POINTS>
+                          <READ-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="898c707d-8824-4a25-a753-cc04e90046e1">
+                              <SHORT-NAME>u8MotorStageStatus</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8MotorStageStatus</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="902513a0-322c-4c7e-8bfe-d2a90b2d0209">
+                              <SHORT-NAME>s16MotorPowerOrder</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s16MotorPowerOrder</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="a8113dd0-4495-422a-b3c5-ce2cf8e13fd1">
+                              <SHORT-NAME>rd_u8OrderType</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8OrderType</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </READ-LOCAL-VARIABLES>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="9c1ad513-cf7a-423f-8024-ea85cc0a85a3">
+                              <SHORT-NAME>SSCP_pclECU_T_GetFiltered</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclECU_T</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsTemperature/GetFiltered</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="4ff96662-829c-4ed1-8986-e73d18ea5195">
+                              <SHORT-NAME>SSCP_pclKL30_V_Get</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclKL30_V</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsVoltage/Get</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="dbae9311-70b5-4021-879b-0bb400621e17">
+                              <SHORT-NAME>SSCP_pclECU_R_Get</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclECU_R</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsResistance/Get</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="ab8bbcfe-060e-4430-a9ed-b1e4a8d8ada7">
+                              <SHORT-NAME>SSCP_pclMotor_R_Get</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_R</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsResistance/Get</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="b43e1c5e-4bb9-4c9a-93c4-6e3e06e218bd">
+                              <SHORT-NAME>SSCP_pclKL30_V_Get_10ms</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclKL30_V</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsVoltage/Get_10ms</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="574bf15c-7365-4fad-9216-a9a2b0bfbf68">
+                              <SHORT-NAME>SSCP_pclMotor_I_Get_mA</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclMotor_I</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsCurrent/Get_mA</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="96d96878-74f1-46a4-b58c-0030469a092b">
+                              <SHORT-NAME>SSCP_pclBelt_D_GetFromMinPos_mm</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclBelt_D</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromMinPos_mm</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="722826d2-6c88-4b2c-b159-f70de9f85af9">
+                              <SHORT-NAME>SSCP_pseBelt_S_GetSpeed_mm_s</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pseBelt_S</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltSpeed/GetSpeed_mm_s</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="ab2588d8-9ab7-420c-9bce-50cc434fe558">
+                              <SHORT-NAME>SSCP_pclBelt_D_GetFromT0_mm</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/pclBelt_D</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsBeltPosition/GetFromT0_mm</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>BFE_runScheduleStep</SYMBOL>
+                          <WRITTEN-LOCAL-VARIABLES>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="c553b12b-d025-432a-9467-06ea0aa1bb59">
+                              <SHORT-NAME>s32FirstOrderValue</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s32FirstOrderValue</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="193b635f-7250-479f-bd62-f3c239d5132c">
+                              <SHORT-NAME>u16StepDuration</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u16StepDuration</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="f259161c-f589-4038-acdd-188ad5897a46">
+                              <SHORT-NAME>s32OrderIncrementValue</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/s32OrderIncrementValue</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="595e5cb1-f360-4187-9523-e9b350e61bc3">
+                              <SHORT-NAME>wr_u8OrderType</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <LOCAL-VARIABLE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution/u8OrderType</LOCAL-VARIABLE-REF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </WRITTEN-LOCAL-VARIABLES>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </APPLICATION-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION T="2017-01-04T08:25:38+01:00" UUID="b14df346-7871-4029-8990-4138bfba43c5">
+                  <SHORT-NAME>BFE_impBeltFunctionExecution</SHORT-NAME>
+                  <CODE-DESCRIPTORS>
+                    <CODE T="2017-01-04T08:25:38+01:00" UUID="8d91ee0f-10c7-48c8-abe3-6b21d17f6b5d">
+                      <SHORT-NAME>BFE_Impl_Code</SHORT-NAME>
+                      <ARTIFACT-DESCRIPTORS>
+                        <AUTOSAR-ENGINEERING-OBJECT>
+                          <SHORT-LABEL>BFE_Impl_Code_CodeDesc</SHORT-LABEL>
+                          <CATEGORY>SWSRC</CATEGORY>
+                        </AUTOSAR-ENGINEERING-OBJECT>
+                      </ARTIFACT-DESCRIPTORS>
+                    </CODE>
+                  </CODE-DESCRIPTORS>
+                  <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+                  <RESOURCE-CONSUMPTION T="2016-06-01T08:22:42+02:00" UUID="DCE:e7ed9196-2fda-4b8d-bf83-ba0a08b41948">
+                    <SHORT-NAME>BFE_Impl_ResCons</SHORT-NAME>
+                    <MEMORY-SECTIONS>
+                      <MEMORY-SECTION T="2017-02-07T16:22:01+01:00" UUID="DCE:4df6abf9-9d1a-4938-8167-3f8422fc39aa">
+                        <SHORT-NAME>CODE</SHORT-NAME>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:22:04+01:00" UUID="DCE:35a576f0-9459-4721-93cf-57cff56b8222">
+                        <SHORT-NAME>VAR_INIT_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:22:09+01:00" UUID="DCE:d54bf2c3-482f-4db9-af06-9de97e2960c8">
+                        <SHORT-NAME>VAR_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                    </MEMORY-SECTIONS>
+                  </RESOURCE-CONSUMPTION>
+                  <SW-VERSION>1.0.0</SW-VERSION>
+                  <VENDOR-ID>0</VENDOR-ID>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/AUTOLIV/SoftwareComponents/BFE/BFE_AC_BeltFunctionExecution/BFE_IB_BeltFunctionExecution</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0408
+ARCH_SW_CIL_0408: This function shall be called by Com when the signal for Belt Handover Stat Front Left is received on Can.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BeltHdOvr_FL_Stat_ST3 to I_C02_BELTHDOVR_STAT_OUT_OF_END (0x1).
+
+	Step 3: Set a breakpoint in function CIL_ComNotification_BeltHdOvr_FL_Stat_ST3_3489841d_Rx ().
+
+	Step 4: Check if CPU stopped in function CIL_ComNotification_BeltHdOvr_FL_Stat_ST3_3489841d_Rx(). 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0408
+
+	Step 5: Evaluate if variable cil_u8BeltHandover is equal to I_C02_BELTHDOVR_STAT_OUT_OF_END 
+		Expected result:  I_C02_BELTHDOVR_STAT_OUT_OF_END.
+
+Postcondition
+
+	Step 6: Return ECU to default values

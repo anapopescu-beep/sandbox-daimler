@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>2658</w>
+      <h>468</h>
+    </coordinates>
+    <panel_attributes>title:DiagCommonDataEcuHardwarePartNumber
+Start
+[Fill structure DiagCommonData.EcuHardwarePartNumber]
+[Hardware part number (ASCII encoded)]
+Init the NvM Block with Default Value '0x30 0x30 0x30 0x30 0x30 0x30 0x30 0x30 0x30 0x30'
+If
+	[ECU_SIDE_RBTM_FR]
+	VStdMemCpy(DiagCommonData.EcuHardwarePartNumber, NVP_BLOCK_ID_HW_PARTNUMBER_RamBlockData.NVP_au8FRHardwarePartnumber, sizeof(DiagCommonData.EcuHardwarePartNumber))
+
+	[ECU_SIDE_RBTM_FL]
+	VStdMemCpy(DiagCommonData.EcuHardwarePartNumber, NVP_BLOCK_ID_HW_PARTNUMBER_RamBlockData.NVP_au8FLHardwarePartnumber, sizeof(DiagCommonData.EcuHardwarePartNumber))
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

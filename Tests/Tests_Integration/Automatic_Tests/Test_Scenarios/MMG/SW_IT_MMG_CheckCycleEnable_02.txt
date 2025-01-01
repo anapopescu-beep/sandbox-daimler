@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0310, ARCH_SW_MMG_0311, ARCH_SW_MMG_0313, ARCH_SW_MMG_0314
+ARCH_SW_MMG_0310: If the first step from a cycle is 0xFF then cycle is invalid.
+ARCH_SW_MMG_0311: If Cycle number to execute is not in the permitted range (35 cycles) then cycle is invalid.
+ARCH_SW_MMG_0313: If step number is not in the permitted range (145 steps) then step is invalid.
+ARCH_SW_MMG_0314: If step duration is over 655350 ms then step is invalid.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init() at line 'mmg_CheckCycleEnable();'.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line 'mmg_CheckCycleEnable();'.
+
+	Step 4: Step in function mmg_CheckCycleEnable().
+
+	Step 5: Set a breakpoint in function mmg_CheckIfCycleStepIsvalid() at line 'if ( KU8_MAX == NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[u16Step0])'.
+
+Action: ARCH_SW_MMG_0310, ARCH_SW_MMG_0311, ARCH_SW_MMG_0313
+
+	Step 6: Check if CPU stopped in function mmg_CheckIfCycleStepIsvalid() at line 'if ( KU8_MAX == NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[u16Step0])'.
+
+	Step 7: Set variable NVP_BLOCK_ID_CYCLE_0_RamBlockData.NVP_au8BeltProfilesDefinitions[u16Step0] to KU8_MAX.
+
+	Step 8: Set a breakpoint in function mmg_CheckCycleEnable() at line 'if ( ( B_TRUE == mmg_CheckIfCycleStepIsvalid((uint16)((KU8_BELT_FUNCTION_00 * KU8_NVP_CYCLE_SIZE)'.
+
+	Step 9: Check if CPU stopped in function mmg_CheckCycleEnable() at line 'if ( ( B_TRUE == mmg_CheckIfCycleStepIsvalid((uint16)((KU8_BELT_FUNCTION_00 * KU8_NVP_CYCLE_SIZE)'.
+
+Action: ARCH_SW_MMG_0310, ARCH_SW_MMG_0311, ARCH_SW_MMG_0313, ARCH_SW_MMG_0314
+
+	Step 10: Check if function mmg_CheckIfCycleStepIsvalid() returns B_FALSE. 
+		Expected result:  B_FALSE
+
+Postcondition
+
+	Step 11: Return ECU to default values

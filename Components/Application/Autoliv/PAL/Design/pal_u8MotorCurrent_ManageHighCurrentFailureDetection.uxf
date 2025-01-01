@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1228</w>
+      <h>753</h>
+    </coordinates>
+    <panel_attributes>title:pal_u8MotorCurrent_ManageHighCurrentFailureDetection
+Start
+Check if the motor current is over high threshold
+If
+	[TRUE]
+	Reset the high reset counter
+	Check if the time threshold for high motor current is reached
+	If
+		[TRUE]
+		Set result as KU8_ATM_TEST_NOK
+
+		[FALSE]
+		Increment the high time counter
+		Set result as KU8_ATM_TEST_NOT_DECIDED
+	EndIf
+
+	[FALSE]
+	Check if the high current reset time is reached
+	If
+		[TRUE]
+		reset qualification counter only
+		Set result as KU8_ATM_TEST_OK
+
+		[FALSE]
+		Increment the high reset counter
+		Set result as KU8_ATM_TEST_NOT_DECIDED
+	EndIf
+EndIf
+Return the computed result
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0561
+ARCH_SW_CIL_0561: Read Rte_DIA_psePresafeDisplay_b8TriggerPreSafeRequestStatus shall be read to get if Presafe display 0302 is requested and 3s have passed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).
+
+	Step 3: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 4: Check if CPU stopped in function CIL_runAppliToCAN().
+
+	Step 5: Set a breakpoint in function cil_ManagePresfDisplay() at line '(void)Rte_Read_prrPresafeDisplay_b8TriggerPreSafeRequestStatus(&u8PresafeDisplay);'.
+
+Action: ARCH_SW_CIL_0561
+
+	Step 6: Check if CPU stopped at line '(void)Rte_Read_prrPresafeDisplay_b8TriggerPreSafeRequestStatus(&u8PresafeDisplay);'.
+
+Action: ARCH_SW_CIL_0561
+
+	Step 7: Evaluate if signal RBTM_FL_Disp_Rq_ST3 is equal to variable Rte_DIA_psePresafeDisplay_b8TriggerPreSafeRequestStatus. 
+		Expected result:  0x55
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,51 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0157, ARCH_SW_CIL_0158, ARCH_SW_CIL_0159, ARCH_SW_CIL_0156
+ARCH_SW_CIL_0157: Frame BeltHdOvr_FL_State_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0159: Frame BeltHdOvr_FR_State_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0158: Signal BeltHdOvr_FL_Stat_ST3 shall be send though application when it�s needed (0,1,2,3).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal BeltHdOvr_FL_Stat_ST3 from frame BeltHdOvr_FL_State_ST3 to I_C02_BELTHDOVR_STAT_OUT_OF_END.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInputSignals at line 'cil_stInputSignalsPresfRec.u8BeltHdOvStat = cil_u8BeltHandover;'.
+
+	Step 6: Check if CPU stopped  in function cil_ManageInputSignals at line 'cil_stInputSignalsPresfRec.u8BeltHdOvStat = cil_u8BeltHandover;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0157, ARCH_SW_CIL_0158
+
+	Step 7: Evaluate if variable cil_u8BeltHandover is equal to I_C02_BELTHDOVR_STAT_OUT_OF_END. 
+		Expected result:  I_C02_BELTHDOVR_STAT_OUT_OF_END (0x1)
+
+	Step 8: Set signal BeltHdOvr_FR_Stat_ST3 from frame BeltHdOvr_FR_State_ST3 to I_C02_BELTHDOVR_STAT_EXTEND.
+
+	Step 9: Set a breakpoint in function cil_ManageInputSignals at line 'cil_stInputSignalsPresfRec.u8BeltHdOvStat = cil_u8BeltHandover;'.
+
+	Step 10: Check if CPU stopped  at line 'cil_stInputSignalsPresfRec.u8BeltHdOvStat = cil_u8BeltHandover;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0159, ARCH_SW_CIL_0156
+
+	Step 11: Evaluate if variable cil_u8BeltHandover is equal to I_C02_BELTHDOVR_STAT_SNA. 
+		Expected result:  I_C02_BELTHDOVR_STAT_SNA
+
+Postcondition
+
+	Step 12: Return ECU to default values

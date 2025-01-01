@@ -1,0 +1,78 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0019, ARCH_SW_MMG_0020, ARCH_SW_MMG_0023, ARCH_SW_MMG_0024, ARCH_SW_MMG_0025
+ARCH_SW_MMG_0019: Impact X shall represent the 4 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Impact X Crash conditions detected; Yes = 1 if Impact X Crash conditions detected
+ARCH_SW_MMG_0020: Impact X shall represent the 4 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Impact X Crash conditions detected; Yes = 1 if Impact X Crash conditions detected
+ARCH_SW_MMG_0023: ECU Temperature shall represent the Bytes 3-4 from Start and Stop Blocks and shall be saved with the following values: Byte 3: Low-temperature � 0x00 if deficiency level &lt; 1200; Middle-temperature � 0x01 if deficiency level &gt;= 1200 and deficiency level &lt; 32000; High-temperature � 0x02 if deficiency level &gt;= 32000 and deficiency level &lt;150000; Hot-temperature � 0x03 if deficiency level &gt;= 150000 and deficiency level &lt;160000; Over-temperature � 0x04 if deficiency level &gt;= 160000; Invalid � 0xFF Value not available; Byte 4: will always be 0.
+ARCH_SW_MMG_0024: System Timpe shall represent the Bytes 5-9 from Start and Stop Blocks and shall be saved with the following values: Byte 5-8: will represent the current operating time represented in seconds; Byte 9: will always be 0.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder().
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 4: Check if CPU stopped in function MMG_runPreSafeRecorder(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start2ImpactX = KB_ZERO;'.
+
+Action: ARCH_SW_MMG_0019, ARCH_SW_MMG_0020, ARCH_SW_MMG_0025
+
+	Step 6: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.Start2ImpactX = KB_ZERO;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0019, ARCH_SW_MMG_0020
+
+	Step 7: Evaluate if variable mmg_stPreSafeStartData.Start2ImpactX is equal to KB_ZERO. 
+		Expected result:  Variable mmg_stPreSafeStartData.Start1BuckleSwitch is equal to KB_ZERO
+
+	Step 8: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.StartTemperature1 = u8StartTemperature;'.
+
+Action: ARCH_SW_MMG_0023
+
+	Step 9: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.StartTemperature1 = u8StartTemperature;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0023
+
+	Step 10: Evaluate if variable mmg_stPreSafeStartData.StartTemperature1 is equal to KB_ZERO. 
+		Expected result:  Variable mmg_stPreSafeStartData.StartTemperature1 is equal to KB_ZERO
+
+	Step 11: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.StartTemperature2 = KU8_ZERO;'.
+
+Action: ARCH_SW_MMG_0023
+
+	Step 12: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.StartTemperature2 = KU8_ZERO;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0023
+
+	Step 13: Evaluate if variable mmg_stPreSafeStartData.StartTemperature2 is equal to KB_ZERO. 
+		Expected result:  Variable mmg_stPreSafeStartData.StartTemperature2 is equal to KB_ZERO
+
+	Step 14: Set a breakpoint in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.StartSystemTime5 = KU8_ZERO;'.
+
+Action: ARCH_SW_MMG_0024
+
+	Step 15: Check if CPU stopped in mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStartData.StartSystemTime5 = KU8_ZERO;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0024
+
+	Step 16: Evaluate if variable mmg_stPreSafeStartData.StartSystemTime5 is equal to KB_ZERO. 
+		Expected result:  Variable mmg_stPreSafeStartData.StartSystemTime5 is equal to KB_ZERO
+
+Postcondition
+
+	Step 17: Return ECU to default values

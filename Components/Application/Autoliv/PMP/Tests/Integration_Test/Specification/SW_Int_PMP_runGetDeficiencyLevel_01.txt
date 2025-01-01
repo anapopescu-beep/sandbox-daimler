@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0320
+ARCH_SW_PMP_0320: PMP shall provide the estimation of the energy stored in the motor.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+Action: ARCH_SW_PMP_0320
+
+	Step 4: Set a breakpoint in function MMG_runPreSafeRecorder at the RTE Call for PMP_runGetDeficiencyLevel function 
+		Expected result:  BP reached.
+
+	Step 5: Read local variable pu32DeficiencyLevel 
+		Expected result:  Variable read from ADC channel.
+
+	Step 6: Set a breakpoint in function MMG_runPreSafeRecorder at the end of function 
+		Expected result:  BP reached.
+
+	Step 7: Evaluate local variable mmg_u32DeficiencyLevel 
+		Expected result:  Variable read is the same from *pu32DeficiencyLevel data pointer.
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,2324 @@
+/**********************************************************************************************************************
+ *  COPYRIGHT
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  \verbatim
+ *
+ *                This software is copyright protected and proprietary to Vector Informatik GmbH.
+ *                Vector Informatik GmbH grants to you only those rights as set out in the license conditions.
+ *                All other rights remain with Vector Informatik GmbH.
+ *  \endverbatim
+ *  -------------------------------------------------------------------------------------------------------------------
+ *  FILE DESCRIPTION
+ *  -------------------------------------------------------------------------------------------------------------------
+ *             File:  Rte_KeyM.h
+ *           Config:  StartApplication.dpa
+ *      ECU-Project:  StartApplication
+ *
+ *        Generator:  MICROSAR RTE Generator Version 4.32.0
+ *                    RTE Core Version 4.32.0
+ *          License:  CBD2200333
+ *
+ *      Description:  Application header file for SW-C <KeyM>
+ *********************************************************************************************************************/
+
+/* double include prevention */
+#ifndef RTE_KEYM_H
+# define RTE_KEYM_H
+
+# ifndef RTE_CORE
+#  ifdef RTE_APPLICATION_HEADER_FILE
+#   error Multiple application header files included.
+#  endif
+#  define RTE_APPLICATION_HEADER_FILE
+#  ifndef RTE_PTR2ARRAYBASETYPE_PASSING
+#   define RTE_PTR2ARRAYBASETYPE_PASSING
+#  endif
+# endif
+
+# ifdef __cplusplus
+extern "C"
+{
+# endif /* __cplusplus */
+
+/* include files */
+
+# include "Rte_KeyM_Type.h"
+# include "Rte_DataHandleType.h"
+
+
+# define RTE_START_SEC_CODE
+# include "Rte_MemMap.h" /* PRQA S 5087 */ /* MD_MSR_MemMap */
+
+/**********************************************************************************************************************
+ * API prototypes
+ *********************************************************************************************************************/
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendPeerCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendPeerCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCsr_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCsr_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuPeerCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuPeerCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediateCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediateCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediatePeerCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediatePeerCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelRootCert_CertificateVerifyCallbackNotification(KeyM_CertificateStatusType Result); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, RTE_CODE) Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelRootCert_ServiceCertificateCallbackNotification(KeyM_ResultType Result, uint16 ResponseDataLength, KeyM_const_CryptoKeyDataType ResponseData); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+
+# define RTE_STOP_SEC_CODE
+# include "Rte_MemMap.h" /* PRQA S 5087 */ /* MD_MSR_MemMap */
+
+
+# ifndef RTE_CORE
+
+/**********************************************************************************************************************
+ * Rte_Call_<p>_<o> (unmapped) for synchronous C/S communication
+ *********************************************************************************************************************/
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelBackendCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelBackendCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendCert_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelBackendPeerCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendPeerCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelBackendPeerCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelBackendPeerCert_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelEcuCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelEcuCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCert_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelEcuCsr_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCsr_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelEcuCsr_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuCsr_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelEcuPeerCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuPeerCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelEcuPeerCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelEcuPeerCert_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelIntermediateCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediateCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelIntermediateCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediateCert_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelIntermediatePeerCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediatePeerCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelIntermediatePeerCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelIntermediatePeerCert_ServiceCertificateCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelRootCert_CertificateVerifyCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelRootCert_CertificateVerifyCallbackNotification
+#  define Rte_Call_KeyMCertificateNotification_Ssa_TrustModelRootCert_ServiceCertificateCallbackNotification Rte_Call_KeyM_KeyMCertificateNotification_Ssa_TrustModelRootCert_ServiceCertificateCallbackNotification
+
+# endif /* !defined(RTE_CORE) */
+
+
+# define KeyM_START_SEC_CODE
+# include "KeyM_MemMap.h" /* PRQA S 5087 */ /* MD_MSR_MemMap */
+
+/**********************************************************************************************************************
+ * Runnable entities
+ *********************************************************************************************************************/
+
+# ifndef RTE_CORE
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_Issuer_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_Issuer_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_SerialNo_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_SerialNo_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_SigAlgoId_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_SigAlgoId_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_Version_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_Version_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_ext_authKeyId_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_authKeyId_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_ext_basicConstraints_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_basicConstraints_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_ext_keyUsage_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_keyUsage_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_ext_pkiRole_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_pkiRole_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_ext_subKeyId_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_subKeyId_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_signatureAlgorithm_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_signatureAlgorithm_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_signatureValue_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_signatureValue_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_subject_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_subject_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_validityNotAfter_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_validityNotAfter_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendCert_validityNotBefore_002 KeyM_CertElementGet_Ssa_TrustModelBackendCert_validityNotBefore_002
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_Issuer_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_Issuer_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_SerialNo_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SerialNo_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_SigAlgoId_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SigAlgoId_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_Version_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_Version_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_signatureValue_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_signatureValue_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_subject_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_subject_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_validityNotAfter_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_validityNotAfter_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelBackendPeerCert_validityNotBefore_004 KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_validityNotBefore_004
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_Issuer_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_Issuer_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_SerialNo_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_SerialNo_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_SigAlgoId_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_SigAlgoId_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_Version_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_Version_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_ext_authKeyId_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_authKeyId_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_ext_keyUsage_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_keyUsage_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_ext_pkiRole_006 KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_pkiRole_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_ext_specialEcu_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_specialEcu_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_ext_subKeyId_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_subKeyId_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_ext_uniqueECUID_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_uniqueECUID_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_signatureAlgorithm_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_signatureAlgorithm_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_signatureValue_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_signatureValue_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_subject_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_subject_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_validityNotAfter_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_validityNotAfter_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCert_validityNotBefore_005 KeyM_CertElementGet_Ssa_TrustModelEcuCert_validityNotBefore_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_Issuer_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_Issuer_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_SerialNo_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SerialNo_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_SigAlgoId_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SigAlgoId_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_Version_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_Version_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_authKeyId_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_authKeyId_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_keyUsage_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_keyUsage_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_pkiRole_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_pkiRole_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_specialEcu_007 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_specialEcu_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_subKeyId_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_subKeyId_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_signatureAlgorithm_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_signatureAlgorithm_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_signatureValue_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_signatureValue_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_subject_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_subject_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_validityNotAfter_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_validityNotAfter_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuCsr_validityNotBefore_008 KeyM_CertElementGet_Ssa_TrustModelEcuCsr_validityNotBefore_008
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_Issuer_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_Issuer_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_SerialNo_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SerialNo_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_SigAlgoId_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SigAlgoId_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_Version_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_Version_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_signatureValue_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_signatureValue_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_subject_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_subject_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_validityNotAfter_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_validityNotAfter_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelEcuPeerCert_validityNotBefore_006 KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_validityNotBefore_006
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_Issuer_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_Issuer_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_SerialNo_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SerialNo_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_SigAlgoId_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SigAlgoId_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_Version_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_Version_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_ext_authKeyId_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_authKeyId_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_ext_keyUsage_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_keyUsage_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_ext_pkiRole_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_pkiRole_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_ext_subKeyId_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_subKeyId_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_signatureValue_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_signatureValue_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_subject_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_subject_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_validityNotAfter_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_validityNotAfter_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediateCert_validityNotBefore_003 KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_validityNotBefore_003
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_Issuer_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_Issuer_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SerialNo_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SerialNo_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_Version_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_Version_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_signatureValue_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_signatureValue_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_subject_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_subject_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007 KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_Issuer KeyM_CertElementGet_Ssa_TrustModelRootCert_Issuer
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_SerialNo KeyM_CertElementGet_Ssa_TrustModelRootCert_SerialNo
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_SigAlgoId KeyM_CertElementGet_Ssa_TrustModelRootCert_SigAlgoId
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo KeyM_CertElementGet_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey KeyM_CertElementGet_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_Version KeyM_CertElementGet_Ssa_TrustModelRootCert_Version
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_ext_authKeyId_009 KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_authKeyId_009
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_ext_basicConstraints KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_basicConstraints
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_ext_keyUsage KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_keyUsage
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_ext_pkiRole KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_pkiRole
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_ext_subKeyId KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_subKeyId
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_signatureAlgorithm KeyM_CertElementGet_Ssa_TrustModelRootCert_signatureAlgorithm
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_signatureValue KeyM_CertElementGet_Ssa_TrustModelRootCert_signatureValue
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_subject KeyM_CertElementGet_Ssa_TrustModelRootCert_subject
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_validityNotAfter KeyM_CertElementGet_Ssa_TrustModelRootCert_validityNotAfter
+#  define RTE_RUNNABLE_CertElementGet_Ssa_TrustModelRootCert_validityNotBefore KeyM_CertElementGet_Ssa_TrustModelRootCert_validityNotBefore
+#  define RTE_RUNNABLE_CertGetStatus KeyM_CertGetStatus
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_Issuer_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_Issuer_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SerialNo_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SerialNo_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SigAlgoId_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SigAlgoId_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_Version_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_Version_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_authKeyId_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_authKeyId_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_basicConstraints_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_basicConstraints_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_keyUsage_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_keyUsage_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_pkiRole_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_pkiRole_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_subKeyId_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_subKeyId_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_signatureAlgorithm_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_signatureAlgorithm_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_signatureValue_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_signatureValue_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_subject_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_subject_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_validityNotAfter_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_validityNotAfter_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_validityNotBefore_002 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_validityNotBefore_002
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_Issuer_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_Issuer_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SerialNo_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SerialNo_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SigAlgoId_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SigAlgoId_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_Version_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_Version_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_signatureValue_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_signatureValue_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_subject_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_subject_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_validityNotAfter_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_validityNotAfter_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_validityNotBefore_004 KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_validityNotBefore_004
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_Issuer_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_Issuer_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SerialNo_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SerialNo_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SigAlgoId_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SigAlgoId_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_Version_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_Version_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_authKeyId_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_authKeyId_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_keyUsage_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_keyUsage_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_pkiRole_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_pkiRole_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_specialEcu_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_specialEcu_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_subKeyId_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_subKeyId_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_uniqueECUID_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_uniqueECUID_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_signatureAlgorithm_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_signatureAlgorithm_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_signatureValue_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_signatureValue_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_subject_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_subject_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_validityNotAfter_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_validityNotAfter_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_validityNotBefore_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_validityNotBefore_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_Issuer_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_Issuer_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SerialNo_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SerialNo_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SigAlgoId_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SigAlgoId_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_Version_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_Version_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_authKeyId_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_authKeyId_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_keyUsage_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_keyUsage_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_pkiRole_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_pkiRole_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_specialEcu_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_specialEcu_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_subKeyId_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_subKeyId_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_signatureAlgorithm_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_signatureAlgorithm_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_signatureValue_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_signatureValue_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_subject_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_subject_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_validityNotAfter_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_validityNotAfter_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_validityNotBefore_008 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_validityNotBefore_008
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_Issuer_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_Issuer_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SerialNo_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SerialNo_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SigAlgoId_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SigAlgoId_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_Version_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_Version_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_signatureValue_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_signatureValue_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_subject_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_subject_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_validityNotAfter_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_validityNotAfter_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_validityNotBefore_006 KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_validityNotBefore_006
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_Issuer_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_Issuer_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SerialNo_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SerialNo_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SigAlgoId_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SigAlgoId_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_Version_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_Version_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_authKeyId_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_authKeyId_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_keyUsage_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_keyUsage_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_pkiRole_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_pkiRole_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_subKeyId_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_subKeyId_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_signatureValue_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_signatureValue_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_subject_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_subject_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_validityNotAfter_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_validityNotAfter_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_validityNotBefore_003 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_validityNotBefore_003
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_Issuer_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_Issuer_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SerialNo_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SerialNo_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_Version_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_Version_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_signatureValue_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_signatureValue_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_subject_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_subject_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007 KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_Issuer KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_Issuer
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SerialNo KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SerialNo
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SigAlgoId KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SigAlgoId
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_Version KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_Version
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_authKeyId_009 KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_authKeyId_009
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_basicConstraints KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_basicConstraints
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_keyUsage KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_keyUsage
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_pkiRole KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_pkiRole
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_subKeyId KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_subKeyId
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_signatureAlgorithm KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_signatureAlgorithm
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_signatureValue KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_signatureValue
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_subject KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_subject
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_validityNotAfter KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_validityNotAfter
+#  define RTE_RUNNABLE_CertificateElementGetByIndex_Ssa_TrustModelRootCert_validityNotBefore KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_validityNotBefore
+#  define RTE_RUNNABLE_CertificateElementGetCount KeyM_CertificateElementGetCount
+#  define RTE_RUNNABLE_CsrElementSet KeyM_CsrElementSet
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelBackendCert KeyM_GetCertificate_Ssa_TrustModelBackendCert
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelBackendPeerCert KeyM_GetCertificate_Ssa_TrustModelBackendPeerCert
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelEcuCert KeyM_GetCertificate_Ssa_TrustModelEcuCert
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelEcuCsr KeyM_GetCertificate_Ssa_TrustModelEcuCsr
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelEcuPeerCert KeyM_GetCertificate_Ssa_TrustModelEcuPeerCert
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelIntermediateCert KeyM_GetCertificate_Ssa_TrustModelIntermediateCert
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelIntermediatePeerCert KeyM_GetCertificate_Ssa_TrustModelIntermediatePeerCert
+#  define RTE_RUNNABLE_GetCertificate_Ssa_TrustModelRootCert KeyM_GetCertificate_Ssa_TrustModelRootCert
+#  define RTE_RUNNABLE_KeyM_MainFunction KeyM_MainFunction
+#  define RTE_RUNNABLE_ServiceCertificateByCertIdRteWrapper KeyM_ServiceCertificateByCertIdRteWrapper
+#  define RTE_RUNNABLE_ServiceCertificateByIdRteAdpt KeyM_ServiceCertificateByIdRteAdpt
+#  define RTE_RUNNABLE_ServiceCertificateRteWrapper KeyM_ServiceCertificateRteWrapper
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelBackendCert KeyM_SetCertificate_Ssa_TrustModelBackendCert
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelBackendPeerCert KeyM_SetCertificate_Ssa_TrustModelBackendPeerCert
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelEcuCert KeyM_SetCertificate_Ssa_TrustModelEcuCert
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelEcuCsr KeyM_SetCertificate_Ssa_TrustModelEcuCsr
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelEcuPeerCert KeyM_SetCertificate_Ssa_TrustModelEcuPeerCert
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelIntermediateCert KeyM_SetCertificate_Ssa_TrustModelIntermediateCert
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelIntermediatePeerCert KeyM_SetCertificate_Ssa_TrustModelIntermediatePeerCert
+#  define RTE_RUNNABLE_SetCertificate_Ssa_TrustModelRootCert KeyM_SetCertificate_Ssa_TrustModelRootCert
+#  define RTE_RUNNABLE_VerifyCertificate KeyM_VerifyCertificate
+# endif
+
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_Issuer_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_SerialNo_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_SigAlgoId_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_Version_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_authKeyId_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_basicConstraints_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_keyUsage_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_pkiRole_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_ext_subKeyId_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_signatureAlgorithm_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_signatureValue_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_subject_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_validityNotAfter_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendCert_validityNotBefore_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_Issuer_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SerialNo_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SigAlgoId_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_Version_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_signatureValue_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_subject_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_validityNotAfter_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelBackendPeerCert_validityNotBefore_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_Issuer_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_SerialNo_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_SigAlgoId_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_Version_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_authKeyId_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_keyUsage_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_pkiRole_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_specialEcu_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_subKeyId_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_ext_uniqueECUID_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_signatureAlgorithm_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_signatureValue_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_subject_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_validityNotAfter_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCert_validityNotBefore_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_Issuer_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SerialNo_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SigAlgoId_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_Version_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_authKeyId_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_keyUsage_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_pkiRole_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_specialEcu_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_subKeyId_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_signatureAlgorithm_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_signatureValue_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_subject_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_validityNotAfter_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuCsr_validityNotBefore_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_Issuer_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SerialNo_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SigAlgoId_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_Version_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_signatureValue_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_subject_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_validityNotAfter_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelEcuPeerCert_validityNotBefore_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_Issuer_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SerialNo_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SigAlgoId_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_Version_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_authKeyId_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_keyUsage_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_pkiRole_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_ext_subKeyId_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_signatureValue_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_subject_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_validityNotAfter_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediateCert_validityNotBefore_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_Issuer_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SerialNo_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_Version_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_signatureValue_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_subject_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_Issuer(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_SerialNo(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_SigAlgoId(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_Version(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_authKeyId_009(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_basicConstraints(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_keyUsage(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_pkiRole(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_ext_subKeyId(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_signatureAlgorithm(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_signatureValue(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_subject(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_validityNotAfter(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertElementGet_Ssa_TrustModelRootCert_validityNotBefore(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertGetStatus(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateStatusType, AUTOMATIC, RTE_KEYM_APPL_VAR) Status); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_Issuer_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SerialNo_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SigAlgoId_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_Version_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_authKeyId_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_basicConstraints_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_keyUsage_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_pkiRole_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_ext_subKeyId_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_signatureAlgorithm_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_signatureValue_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_subject_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_validityNotAfter_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendCert_validityNotBefore_002(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_Issuer_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SerialNo_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SigAlgoId_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_Version_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_signatureValue_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_subject_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_validityNotAfter_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelBackendPeerCert_validityNotBefore_004(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_Issuer_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SerialNo_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SigAlgoId_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_Version_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_authKeyId_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_keyUsage_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_pkiRole_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_specialEcu_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_subKeyId_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_ext_uniqueECUID_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_signatureAlgorithm_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_signatureValue_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_subject_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_validityNotAfter_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCert_validityNotBefore_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_Issuer_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SerialNo_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SigAlgoId_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_Version_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_authKeyId_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_keyUsage_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_pkiRole_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_specialEcu_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_subKeyId_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_signatureAlgorithm_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_signatureValue_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_subject_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_validityNotAfter_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuCsr_validityNotBefore_008(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_Issuer_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SerialNo_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SigAlgoId_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_Version_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_signatureValue_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_subject_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_validityNotAfter_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelEcuPeerCert_validityNotBefore_006(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_Issuer_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SerialNo_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SigAlgoId_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_Version_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_authKeyId_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_keyUsage_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_pkiRole_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_ext_subKeyId_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_signatureValue_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_subject_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_validityNotAfter_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediateCert_validityNotBefore_003(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_Issuer_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SerialNo_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_Version_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_signatureValue_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_subject_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_Issuer(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SerialNo(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SigAlgoId(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_Version(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_authKeyId_009(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_basicConstraints(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_keyUsage(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_pkiRole(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_ext_subKeyId(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_signatureAlgorithm(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_signatureValue(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_subject(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_validityNotAfter(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetByIndex_Ssa_TrustModelRootCert_validityNotBefore(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, uint16 Index, P2VAR(uint8, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateElementData, P2VAR(uint32, AUTOMATIC, RTE_KEYM_APPL_VAR) CertificateDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CertificateElementGetCount(KeyM_CertificateIdType parg0, KeyM_CertElementIdType parg1, P2VAR(uint16, AUTOMATIC, RTE_KEYM_APPL_VAR) count); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_CsrElementSet(KeyM_CertificateIdType parg0, KeyM_CertElementIdType CertElementId, KeyM_CsrEncodingType EncodingType, KeyM_ConstDataPtrType ElementData, uint32 ElementDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelBackendCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelBackendCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelBackendPeerCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelBackendPeerCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelEcuCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelEcuCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelEcuCsr(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelEcuCsr, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelEcuPeerCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelEcuPeerCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelIntermediateCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelIntermediateCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelIntermediatePeerCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelIntermediatePeerCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_GetCertificate_Ssa_TrustModelRootCert(KeyM_CertificateIdType parg0, P2VAR(KeyM_CertificateType_Ssa_TrustModelRootCert, AUTOMATIC, RTE_KEYM_APPL_VAR) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(void, KeyM_CODE) KeyM_MainFunction(void); /* PRQA S 3451, 0786, 3449 */ /* MD_Rte_3451, MD_Rte_0786, MD_Rte_3449 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_ServiceCertificateByCertIdRteWrapper(KeyM_CertificateIdType parg0, KeyM_ServiceCertificateType Service, dtRef_const_VOID RequestData, uint32 RequestDataLength, dtRef_VOID ResponseData, uint32 ResponseDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_ServiceCertificateByIdRteAdpt(KeyM_CertificateIdType parg0, KeyM_ServiceCertificateType Service, KeyM_ConstDataPtrType RequestData, uint32 RequestDataLength, KeyM_DataPtrType ResponseData, uint32 ResponseDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_ServiceCertificateRteWrapper(KeyM_ServiceCertificateType Service, dtRef_const_VOID CertNamePtr, uint32 CertNameLength, dtRef_const_VOID RequestData, uint32 RequestDataLength, dtRef_VOID ResponseData, uint32 ResponseDataLength); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelBackendCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelBackendCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelBackendPeerCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelBackendPeerCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelEcuCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelEcuCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelEcuCsr(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelEcuCsr, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelEcuPeerCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelEcuPeerCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelIntermediateCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelIntermediateCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelIntermediatePeerCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelIntermediatePeerCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_SetCertificate_Ssa_TrustModelRootCert(KeyM_CertificateIdType parg0, P2CONST(KeyM_CertificateType_Ssa_TrustModelRootCert, AUTOMATIC, RTE_KEYM_APPL_DATA) Certificate); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+FUNC(Std_ReturnType, KeyM_CODE) KeyM_VerifyCertificate(KeyM_CertificateIdType parg0); /* PRQA S 1330, 3451, 0786, 3449, 0624 */ /* MD_Rte_1330, MD_Rte_3451, MD_Rte_0786, MD_Rte_3449, MD_Rte_0624 */
+
+# define KeyM_STOP_SEC_CODE
+# include "KeyM_MemMap.h" /* PRQA S 5087 */ /* MD_MSR_MemMap */
+
+
+# ifndef RTE_CORE
+/**********************************************************************************************************************
+ * Application errors
+ *********************************************************************************************************************/
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Issuer_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Issuer_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Issuer_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Issuer_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Issuer_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SerialNo_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SerialNo_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SerialNo_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SerialNo_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SerialNo_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SigAlgoId_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SigAlgoId_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SigAlgoId_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SigAlgoId_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SigAlgoId_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoAlgo_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_SubjectPublicKeyInfoKey_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Version_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Version_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Version_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Version_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_Version_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_authKeyId_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_authKeyId_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_authKeyId_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_authKeyId_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_authKeyId_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_basicConstraints_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_basicConstraints_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_basicConstraints_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_basicConstraints_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_basicConstraints_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_keyUsage_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_keyUsage_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_keyUsage_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_keyUsage_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_keyUsage_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_pkiRole_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_pkiRole_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_pkiRole_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_pkiRole_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_pkiRole_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_subKeyId_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_subKeyId_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_subKeyId_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_subKeyId_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_ext_subKeyId_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureAlgorithm_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureAlgorithm_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureAlgorithm_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureAlgorithm_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureAlgorithm_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureValue_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureValue_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureValue_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureValue_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_signatureValue_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_subject_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_subject_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_subject_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_subject_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_subject_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotAfter_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotAfter_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotAfter_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotAfter_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotAfter_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotBefore_002_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotBefore_002_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotBefore_002_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotBefore_002_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendCert_validityNotBefore_002_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Issuer_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Issuer_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Issuer_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Issuer_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Issuer_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SerialNo_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SerialNo_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SerialNo_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SerialNo_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SerialNo_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SigAlgoId_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SigAlgoId_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SigAlgoId_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SigAlgoId_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SigAlgoId_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoAlgo_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_SubjectPublicKeyInfoKey_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Version_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Version_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Version_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Version_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_Version_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_authKeyId_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_basicConstraints_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_keyUsage_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_pkiRole_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_ext_subKeyId_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureAlgorithm_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureValue_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureValue_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureValue_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureValue_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_signatureValue_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_subject_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_subject_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_subject_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_subject_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_subject_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotAfter_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotAfter_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotAfter_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotAfter_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotAfter_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotBefore_004_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotBefore_004_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotBefore_004_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotBefore_004_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelBackendPeerCert_validityNotBefore_004_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Issuer_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Issuer_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Issuer_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Issuer_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Issuer_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SerialNo_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SerialNo_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SerialNo_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SerialNo_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SerialNo_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SigAlgoId_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SigAlgoId_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SigAlgoId_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SigAlgoId_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SigAlgoId_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoAlgo_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_SubjectPublicKeyInfoKey_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Version_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Version_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Version_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Version_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_Version_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_authKeyId_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_authKeyId_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_authKeyId_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_authKeyId_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_authKeyId_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_keyUsage_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_keyUsage_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_keyUsage_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_keyUsage_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_keyUsage_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_pkiRole_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_pkiRole_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_pkiRole_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_pkiRole_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_pkiRole_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_specialEcu_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_specialEcu_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_specialEcu_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_specialEcu_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_specialEcu_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_subKeyId_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_subKeyId_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_subKeyId_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_subKeyId_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_subKeyId_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_uniqueECUID_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_uniqueECUID_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_uniqueECUID_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_uniqueECUID_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_ext_uniqueECUID_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureAlgorithm_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureAlgorithm_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureAlgorithm_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureAlgorithm_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureAlgorithm_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureValue_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureValue_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureValue_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureValue_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_signatureValue_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_subject_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_subject_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_subject_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_subject_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_subject_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotAfter_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotAfter_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotAfter_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotAfter_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotAfter_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotBefore_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotBefore_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotBefore_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotBefore_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCert_validityNotBefore_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Issuer_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Issuer_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Issuer_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Issuer_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Issuer_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SerialNo_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SerialNo_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SerialNo_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SerialNo_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SerialNo_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SigAlgoId_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SigAlgoId_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SigAlgoId_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SigAlgoId_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SigAlgoId_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoAlgo_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_SubjectPublicKeyInfoKey_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Version_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Version_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Version_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Version_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_Version_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_authKeyId_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_authKeyId_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_authKeyId_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_authKeyId_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_authKeyId_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid1_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid2_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_extKeyUsage_oid3_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_keyUsage_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_keyUsage_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_keyUsage_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_keyUsage_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_keyUsage_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_pkiRole_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_pkiRole_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_pkiRole_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_pkiRole_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_pkiRole_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_specialEcu_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_specialEcu_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_specialEcu_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_specialEcu_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_specialEcu_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_subKeyId_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_subKeyId_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_subKeyId_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_subKeyId_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_subKeyId_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_ext_uniqueECUID_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureAlgorithm_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureAlgorithm_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureAlgorithm_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureAlgorithm_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureAlgorithm_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureValue_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureValue_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureValue_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureValue_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_signatureValue_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_subject_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_subject_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_subject_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_subject_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_subject_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotAfter_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotAfter_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotAfter_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotAfter_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotAfter_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotBefore_008_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotBefore_008_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotBefore_008_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotBefore_008_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuCsr_validityNotBefore_008_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Issuer_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Issuer_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Issuer_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Issuer_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Issuer_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SerialNo_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SerialNo_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SerialNo_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SerialNo_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SerialNo_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SigAlgoId_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SigAlgoId_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SigAlgoId_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SigAlgoId_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SigAlgoId_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoAlgo_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_SubjectPublicKeyInfoKey_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Version_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Version_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Version_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Version_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_Version_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_authKeyId_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_keyUsage_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_specialEcu_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_subKeyId_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_ext_uniqueECUID_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureAlgorithm_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureValue_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureValue_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureValue_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureValue_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_signatureValue_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_subject_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_subject_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_subject_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_subject_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_subject_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotAfter_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotAfter_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotAfter_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotAfter_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotAfter_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotBefore_006_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotBefore_006_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotBefore_006_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotBefore_006_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelEcuPeerCert_validityNotBefore_006_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Issuer_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Issuer_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Issuer_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Issuer_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Issuer_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SerialNo_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SerialNo_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SerialNo_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SerialNo_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SerialNo_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SigAlgoId_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SigAlgoId_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SigAlgoId_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SigAlgoId_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SigAlgoId_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoAlgo_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_SubjectPublicKeyInfoKey_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Version_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Version_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Version_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Version_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_Version_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_authKeyId_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_authKeyId_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_authKeyId_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_authKeyId_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_authKeyId_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_basicConstraints_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_keyUsage_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_keyUsage_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_keyUsage_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_keyUsage_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_keyUsage_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_pkiRole_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_pkiRole_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_pkiRole_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_pkiRole_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_pkiRole_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_subKeyId_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_subKeyId_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_subKeyId_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_subKeyId_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_ext_subKeyId_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureAlgorithm_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureValue_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureValue_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureValue_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureValue_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_signatureValue_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_subject_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_subject_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_subject_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_subject_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_subject_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotAfter_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotAfter_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotAfter_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotAfter_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotAfter_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotBefore_003_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotBefore_003_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotBefore_003_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotBefore_003_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediateCert_validityNotBefore_003_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Issuer_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Issuer_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Issuer_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Issuer_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Issuer_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SerialNo_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SerialNo_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SerialNo_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SerialNo_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SerialNo_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SigAlgoId_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoAlgo_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_SubjectPublicKeyInfoKey_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Version_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Version_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Version_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Version_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_Version_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_authKeyId_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_basicConstraints_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_keyUsage_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_pkiRole_005_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_ext_subKeyId_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureAlgorithm_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureValue_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureValue_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureValue_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureValue_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_signatureValue_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_subject_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_subject_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_subject_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_subject_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_subject_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotAfter_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelIntermediatePeerCert_validityNotBefore_007_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Issuer_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Issuer_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Issuer_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Issuer_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Issuer_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SerialNo_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SerialNo_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SerialNo_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SerialNo_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SerialNo_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SigAlgoId_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SigAlgoId_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SigAlgoId_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SigAlgoId_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SigAlgoId_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoAlgo_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_SubjectPublicKeyInfoKey_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Version_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Version_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Version_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Version_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_Version_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_authKeyId_009_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_authKeyId_009_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_authKeyId_009_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_authKeyId_009_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_authKeyId_009_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_basicConstraints_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_basicConstraints_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_basicConstraints_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_basicConstraints_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_basicConstraints_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_keyUsage_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_keyUsage_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_keyUsage_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_keyUsage_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_keyUsage_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_pkiRole_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_pkiRole_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_pkiRole_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_pkiRole_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_pkiRole_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_subKeyId_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_subKeyId_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_subKeyId_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_subKeyId_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_ext_subKeyId_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureAlgorithm_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureAlgorithm_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureAlgorithm_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureAlgorithm_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureAlgorithm_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureValue_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureValue_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureValue_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureValue_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_signatureValue_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_subject_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_subject_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_subject_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_subject_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_subject_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotAfter_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotAfter_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotAfter_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotAfter_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotAfter_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotBefore_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotBefore_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotBefore_KEYM_E_KEY_CERT_INVALID (6U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotBefore_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateElement_Ssa_TrustModelRootCert_validityNotBefore_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendPeerCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendPeerCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendPeerCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendPeerCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendPeerCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelBackendPeerCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCsr_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCsr_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCsr_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCsr_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCsr_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuCsr_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuPeerCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuPeerCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuPeerCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuPeerCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuPeerCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelEcuPeerCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediateCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediateCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediateCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediateCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediateCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediateCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediatePeerCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediatePeerCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediatePeerCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediatePeerCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediatePeerCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelIntermediatePeerCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelRootCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelRootCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelRootCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelRootCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelRootCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificateExtended_Ssa_TrustModelRootCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelBackendPeerCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuCsr_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelEcuPeerCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediateCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelIntermediatePeerCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_CERT_INVALID_CHAIN_OF_TRUST (11U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_KEY_CERT_EMPTY (10U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_KEY_CERT_READ_FAIL (9U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_KEY_CERT_WRITE_FAIL (7U)
+
+#  define RTE_E_KeyMCertificate_Ssa_TrustModelRootCert_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMServiceCertificate_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMServiceCertificate_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMServiceCertificate_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMServiceCertificate_KEYM_E_PARAMETER_MISMATCH (5U)
+
+#  define RTE_E_KeyMServiceCertificateByCertId_E_NOT_OK (1U)
+
+#  define RTE_E_KeyMServiceCertificateByCertId_KEYM_E_BUSY (2U)
+
+#  define RTE_E_KeyMServiceCertificateByCertId_KEYM_E_KEY_CERT_SIZE_MISMATCH (4U)
+
+#  define RTE_E_KeyMServiceCertificateByCertId_KEYM_E_PARAMETER_MISMATCH (5U)
+# endif /* !defined(RTE_CORE) */
+
+# ifdef __cplusplus
+} /* extern "C" */
+# endif /* __cplusplus */
+
+#endif /* RTE_KEYM_H */
+
+/**********************************************************************************************************************
+ MISRA 2012 violations and justifications
+ *********************************************************************************************************************/
+
+/* module specific MISRA deviations:
+   MD_Rte_0624:  MISRA rule: Rule8.3
+     Reason:     This MISRA violation is a consequence from the RTE requirements [SWS_Rte_01007] [SWS_Rte_01150].
+                 The typedefs are never used in the same context.
+     Risk:       No functional risk. Only a cast to uint8* is performed.
+     Prevention: Not required.
+
+   MD_Rte_0786:  MISRA rule: Rule5.5
+     Reason:     Same macro and idintifier names in first 63 characters are required to meet AUTOSAR spec.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+   MD_Rte_1330:  MISRA rule: Rule8.3
+     Reason:     The RTE Generator uses default names for parameter identifiers of port defined arguments of service modules.
+                 Therefore the parameter identifiers in the function declaration differs from those of the implementation of the BSW module.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+   MD_Rte_3449:  MISRA rule: Rule8.5
+     Reason:     Schedulable entities are declared by the RTE and also by the BSW modules.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+   MD_Rte_3451:  MISRA rule: Rule8.5
+     Reason:     Schedulable entities are declared by the RTE and also by the BSW modules.
+     Risk:       No functional risk.
+     Prevention: Not required.
+
+*/

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>203</x>
+      <y>147</y>
+      <w>1376</w>
+      <h>464</h>
+    </coordinates>
+    <panel_attributes>title: cil_CheckHapticPreconditions
+Start
+If
+	[cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 == 0] AND
+	[cil_BcklSwStatSignal == 0]  AND
+	[cil_IgnStatFrame.ISw_Stat_ST3 == 4] 
+	forward call\cil_TriggerHWAProfile();
+
+	[cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  1) || (cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  2) || (cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  3) || (cil_PresfActAdjFrame.PresfAct_TensSupp_Rq_ST3 ==  7) ] OR
+	[(cil_BcklSwStatSignal = 1] OR
+	[(cil_PresfActAdjFrame.Presf_Enbl_ST3 == 0] OR
+	[(cil_IgnStatFrame.ISw_Stat_ST3 == 0) || (cil_IgnStatFrame.ISw_Stat_ST3 == 1) || (cil_IgnStatFrame.ISw_Stat_ST3 == 2) || (cil_IgnStatFrame.ISw_Stat_ST3 == 5) || (cil_IgnStatFrame.ISw_Stat_ST3 == 7)] ]
+	forward call \cil_AbortHWAProfile();
+EndIf
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

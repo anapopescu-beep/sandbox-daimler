@@ -1,0 +1,48 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0090, ARCH_SW_PAL_0095, ARCH_SW_PAL_0110
+ARCH_SW_PAL_0090: The component shall be able to init the hardware.
+ARCH_SW_PAL_0095: The component shall be able to disable the H-bridge at startup.
+ARCH_SW_PAL_0110: The component shall initialize the auto tests data.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+	Step 4: Set a breakpoint in function PAL_Init at line pal_Cfg_Init (); .
+
+Action: ARCH_SW_PAL_0090
+
+	Step 5: Check if CPU stopped in function PAL_Init at line pal_Cfg_Init ();. 
+		Expected result:  BP reached.
+
+	Step 6: Set a breakpoint in function pal_Cfg_Init at line PAL_Cfg_InternalData.s16AdaptedDutyCycleCommand = KS16_ZERO.
+
+	Step 7: Reset the debugger.
+
+Action: ARCH_SW_PAL_0095
+
+	Step 8: Check if CPU stopped in function pal_Cfg_Init at line PAL_Cfg_InternalData.s16AdaptedDutyCycleCommand = KS16_ZERO.
+
+	Step 9: Set a breakpoint in function pal_Cfg_Init at line pal_AT_Init().
+
+Action: ARCH_SW_PAL_0110
+
+	Step 10: Check if CPU stopped in function pal_Cfg_Init at line pal_AT_Init ()  
+		Expected result:  BP reached.
+
+Postcondition
+
+	Step 11: Return ECU to default values

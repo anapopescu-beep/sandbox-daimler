@@ -1,0 +1,55 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_1200
+ARCH_SW_BMM_1200: This function shall compute the timer overflow in order to detect a no movement state of the belt.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_A])'.
+
+Action: ARCH_SW_BMM_1200
+
+	Step 3: Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_A])''. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_A])'.
+
+Action: ARCH_SW_BMM_1200
+
+	Step 5: Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_A]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_A])''. 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_RISING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_B])'.
+
+Action: ARCH_SW_BMM_1200
+
+	Step 7: Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_RISING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_RISING_B])''. 
+		Expected result:  CPU stopped at BP
+
+	Step 8: Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_B])'.
+
+Action: ARCH_SW_BMM_1200
+
+	Step 9: Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'au8Overflows[KU8_FALLING_B]++;' under 'if (KU8_MAX > au8Overflows[KU8_FALLING_B])'. 
+		Expected result:  CPU stopped at BP
+
+	Step 10: Set a breakpoint in function OS_ISR_BMM_HES_TOUT at line 'stSingleEdgeData.u8TmrOvfl++;' under 'if (KU8_MAX > stSingleEdgeData.u8TmrOvfl)'.
+
+Action: ARCH_SW_BMM_1200
+
+	Step 11: Check if CPU stopped in function OS_ISR_BMM_HES_TOUT at line 'stSingleEdgeData.u8TmrOvfl++;' under 'if (KU8_MAX > stSingleEdgeData.u8TmrOvfl)'. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 12: Return ECU to default values

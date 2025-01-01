@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>70</x>
+      <y>0</y>
+      <w>2293</w>
+      <h>1550</h>
+    </coordinates>
+    <panel_attributes>title:mmg_PreSafe_HandleStartData
+Start
+
+Start1BuckleSwitch = u8BuckleStateType
+Start1BeltHandOver = u8BeltHdOvStat
+Start2PreSafeLvl = u8PresafeLevelType
+
+Check Impact X is Set
+If
+	[Impact X is 1]
+	Start2ImpactX = 0x01
+
+	[Impact X is 0]
+	Start2ImpactX = 0x00
+
+EndIf
+
+Check RollOverType1 is Set
+If
+	[RollOverType1 is 1]
+	Start2RollOverType1 = 0x01
+
+	[RollOverType1 is 0]
+	Start2RollOverType1 = 0x00
+
+EndIf
+Check RollOverType2 is Set
+If
+	[RollOverType2 is 1]
+	Start2RollOverType2 = 0x01
+
+	[RollOverType2 is 0]
+	Start2RollOverType2 = 0x00
+
+EndIf
+
+Compute local voltage
+
+Check local voltage
+If
+	[Local voltage &gt; Voltage Max]
+	Local voltage = voltage max
+
+	[Local voltage &lt; voltage max]
+EndIf
+
+StartVoltage = Local voltage
+
+Check deficiency value
+If
+	[Deficiency value &lt; MMG_KU32_DEF_LVL_LOW_THRS]
+	Deficiency level = 0x00
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_LOW_THRS AND Deficiency value &lt; MMG_KU32_DEF_LVL_MID_THR]
+	Deficiency level = 0x01
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_MID_THRS AND Deficiency value &lt; MMG_KU32_DEF_LVL_HIGH_THRS]
+	Deficiency level = 0x02
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_HIGH_THRS AND Deficiency value &lt; MMG_KU32_DEF_LVL_HOT_THRS]
+	Deficiency level = 0x03
+
+	[Deficiency value &gt;=  MMG_KU32_DEF_LVL_HOT_THRS]
+	Deficiency level = 0x04
+EndIf
+
+StartTemperature1 = Deficiency level
+StartTemperature2 = 0x00
+
+Check if System time return is E_OK
+
+If
+	[E_OK]
+	StartSystemTime5 = 0x00
+	StartSystemTime4 = mmg_TimeStamp.seconds
+	StartSystemTime3 = mmg_TimeStamp.seconds right sift 4
+	StartSystemTime2 = mmg_TimeStamp.seconds right sift 16
+	StartSystemTime1 = mmg_TimeStamp.seconds right sift 24
+	
+	[E_NOT_OK]
+
+EndIf
+
+Call mmg_PreSafe_CopyStartData function
+
+Call mmg_PreSafe_HandleStateData function
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

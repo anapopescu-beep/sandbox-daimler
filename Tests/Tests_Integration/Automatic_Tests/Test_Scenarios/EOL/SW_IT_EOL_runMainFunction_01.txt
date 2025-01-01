@@ -1,0 +1,45 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0001, ARCH_SW_EOL_0008, ARCH_SW_EOL_0015, ARCH_SW_EOL_0020
+ARCH_SW_EOL_0001: The EOL_runMainFunction function shall update the high force cycle counter when tensioning cycles 2 and 3 are executed.
+ARCH_SW_EOL_0008: The Low Force Counter shall be incremented if High Force Counter is incremented. NVP_au32ExecutedCycleCounters NVM parameter shall be used.
+ARCH_SW_EOL_0015: Rte_Call_pclNvmServicesExecutionCounters_SetRamBlockStatus shall be called in order to set the RAM block status.
+ARCH_SW_EOL_0020: If the associated cycle counter configuration value is 4 then the max force counter will be incremented.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL4 (0x4).
+
+	Step 3: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle2_b8CycleValidity(&u8CycleValidityStatus);.
+
+Action: ARCH_SW_EOL_0001
+
+	Step 4: Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters()
+
+	Step 5: Step in eol_ManageCycleCounters function.
+
+Action: ARCH_SW_EOL_0001, ARCH_SW_EOL_0020
+
+	Step 6: Set a breakpoint in function eol_ManageCycleCounters at line 'if (KU8_NB_MONITORED_CYCLES > u8ExecutedCycleNumber)'.
+
+Action: ARCH_SW_EOL_0001, ARCH_SW_EOL_0020
+
+	Step 7: Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_HIGH_FORCE_LEVEL:'.
+
+Action: ARCH_SW_EOL_0008
+
+	Step 8: Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_LOW_FORCE_LEVEL:'.
+
+Postcondition
+
+	Step 9: Return ECU to default values

@@ -1,0 +1,49 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "..\..\Includes\Project_configuration.cin"
+}
+
+variables
+{
+  
+}
+
+void MainTest()
+{
+  if (@sysvar::DigitalMultimeter::sysGetDCVButton==1)
+  {
+    ReadVoltageDC();
+  }
+  
+  else if (@sysvar::DigitalMultimeter::sysGetDCIButton==1)
+  {
+    ReadCurrentDC();
+  }
+  
+  else if (@sysvar::DigitalMultimeter::sysGetACVButton==1)
+  {
+    ReadVoltageAC();
+  }
+  
+  else if (@sysvar::DigitalMultimeter::sysGetACIButton==1)
+  {
+    ReadCurrentAC();
+  }
+  
+  else if (@sysvar::DigitalMultimeter::sysGetTempButton==1)
+  {
+    ReadTemp();
+  }
+  
+  else if (@sysvar::DigitalMultimeter::sysGet10TempButton==1)
+  {
+    ReadTempTC();
+  }
+  
+  else 
+  {
+    ReadTerminalPos();
+  }
+
+}

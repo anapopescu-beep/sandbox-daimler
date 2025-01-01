@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0021
+ARCH_SW_EOL_0021: If the associated cycle counter configuration value is 8 then the comfort force counter will be incremented.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to 0x8.
+
+	Step 3: Set a breakpoint in function cil_TriggerProfiles under case I_C04_PRESF_LVL_V2_LVL8:.
+
+Action: ARCH_SW_EOL_0021
+
+	Step 4: Set a breakpoint in function EOL_runMainFunction.
+
+	Step 5: Step in eol_ManageCycleCounters function.
+
+Action: ARCH_SW_EOL_0021
+
+	Step 6: Set a breakpoint in function eol_ManageCycleCounters at line 'case KU8_EOL_COMFORT_LEVEL:'.
+
+Postcondition
+
+	Step 7: Return ECU to default values

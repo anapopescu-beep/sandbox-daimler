@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0010, ARCH_SW_EOL_0011, ARCH_SW_EOL_0022
+ARCH_SW_EOL_0010: The EOL_runMainFunction function shall update the max force cycle counter when tensioning cycles 4 5 and 6 are executed.
+ARCH_SW_EOL_0011: The EOL_runMainFunction function shall update the request counter when HWA profile or tensioning cycles 0-6 are executed.
+ARCH_SW_EOL_0022: If the associated cycle counter configuration value is different than 1,2,4,8 the low force counter will be incremented.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_TriggerProfiles.
+
+	Step 3: Set variable u8CycleRequest to 0x6.
+
+Action: ARCH_SW_EOL_0022
+
+	Step 4: Set a breakpoint in function cil_TriggerProfiles at line (void)Rte_Read_prrEnableCycle4_b8CycleValidity(&u8CycleValidityStatus);.
+
+	Step 5: Set a breakpoint in function EOL_runMainFunction at line eol_ManageCycleCounters();
+
+	Step 6: Step in eol_ManageCycleCounters function.
+
+Action: ARCH_SW_EOL_0010, ARCH_SW_EOL_0011
+
+	Step 7: Set a breakpoint in eol_ManageCycleCounters at the end of the function.
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0002; ARCH_SW_DIA_0062; ARCH_SW_DIA_0063; ARCH_SW_NVP_0000
+ARCH_SW_DIA_0002: Service 0x22 will be implemented for DID FD2F.
+ARCH_SW_DIA_0062: Service should be available in Default and extended session
+ARCH_SW_DIA_0063: NVP_BLOCK_ID_ECU_LOCATION_RamBlockData will be read.
+ARCH_SW_NVP_0000: NVP_BLOCK_ID_ECU_LOCATION block shall be configured
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0002; ARCH_SW_DIA_0062; ARCH_SW_DIA_0063; ARCH_SW_NVP_0000
+
+	Step 2: Enter default or extended session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD2F_EcuLocationRead*.
+
+	Step 4: Send diag request for 22 FD2F and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD2F_EcuLocationRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Read first byte of NVP_BLOCK_ID_ECU_LOCATION_RamBlockData 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 7: Return ECU to default values

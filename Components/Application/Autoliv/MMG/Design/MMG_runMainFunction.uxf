@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1662</w>
+      <h>943</h>
+    </coordinates>
+    <panel_attributes>title:MMG_runMainFunction
+Start
+Read debounced status for every autotest check
+Check overvoltage and undervoltage tests results
+If
+	[Overvoltage or undervoltage was detected]
+	 Set voltage status as FALSE and report power supply DTC as FAILED
+
+	[No overvoltage or undervoltage detected]
+	 Set voltage status as TRUE and report power supply DTC as PASSED
+EndIf
+Check overvoltage and undervoltage during activation tests results
+If
+	[Overvoltage or undervoltage during activation was detected]
+	 Set voltage status as FALSE and report power supply DTC as FAILED
+
+	[No overvoltage or undervoltage during activation detected]
+	 Set voltage status as TRUE and report power supply DTC as PASSED
+EndIf
+Check internal error tests results
+If
+	[One of the Motor Current, Motor Thermal Protection and HW Selfprotection check is FAILED]
+	 Set internal status as FALSE and report internal error DTC as FAILED
+
+	[Motor Current, Motor Thermal Protection and HW Selfprotection checks are PASSED]
+	 Set internal status as TRUE and report internal error DTC as PASSED
+EndIf
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

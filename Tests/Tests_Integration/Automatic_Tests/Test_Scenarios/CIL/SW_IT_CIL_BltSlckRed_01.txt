@@ -1,0 +1,43 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0259
+ARCH_SW_CIL_0259: If BSR 1 ALGO is executed and PresfAccelReset_NotExcd_ST3 is not '2' for NVP_u8BSR1AccelerationTimeout * 10 ms than smooth release shall be executed after 60S as an EMERGENCY RELEASE.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PT4_PTCoor_PT_Rdy_ST3 to RDY.
+
+	Step 3: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 4: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 5: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 6: Step in function cil_ManageInputSignals(). 
+		Expected result:  Stepped in function cil_ManageInputSignals
+
+	Step 7: Set a breakpoint at line 'cil_u8BSRBeltSlackStarted = KU8_TRUE;'.
+
+	Step 8: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_u8BSRBeltSlackStarted = KU8_TRUE;'. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set signal PresfAccelReset_NotExcd_ST3 to I_C02_NDEF_FALSE_TRUE_ST3_FALSE.
+
+Action: ARCH_SW_CIL_0259
+
+	Step 10: Evaluate if variable cil_u16EmergencyReleaseCounter is equal to 6001. 
+		Expected result:  6001
+
+Postcondition
+
+	Step 11: Return ECU to default values

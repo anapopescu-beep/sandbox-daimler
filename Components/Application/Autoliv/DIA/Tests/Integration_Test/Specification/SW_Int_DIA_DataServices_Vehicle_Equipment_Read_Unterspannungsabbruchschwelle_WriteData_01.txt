@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0028; ARCH_SW_DIA_0138; ARCH_SW_DIA_0139;
+ARCH_SW_DIA_0028: Service 0x2E will be implemented for DID 0310.
+ARCH_SW_DIA_0138: Request data shall be 2 bytes long.
+ARCH_SW_DIA_0139: Runanble shall write Unterspannungsabbruchschwelle stored in Rte_Ct_MBBL_SsaAppl_Coding_VehicleEquipment. Unterspannungsabbruchschwelle.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Vehicle_Equipment_Read_Unterspannungsabbruchschwelle_WriteData*.
+
+Action: ARCH_SW_DIA_0028; ARCH_SW_DIA_0138; ARCH_SW_DIA_0139;
+
+	Step 4: Send diag request for 2E 0310 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_Vehicle_Equipment_Read_Unterspannungsabbruchschwelle_WriteData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,45 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0311, ARCH_SW_MMG_0312, ARCH_SW_MMG_0313, ARCH_SW_MMG_0314, ARCH_SW_MMG_0315
+ARCH_SW_MMG_0311: If Cycle number to execute is not in the permitted range (35 cycles) then cycle is invalid.
+ARCH_SW_MMG_0312: If a cycle has Week or YEAR equal to 0xFF then cycle is invalid.
+ARCH_SW_MMG_0313: If step number is not in the permitted range (145 steps) then step is invalid.
+ARCH_SW_MMG_0314: If step duration is over 655350 ms then step is invalid.
+ARCH_SW_MMG_0315: If Step order is not a valid one (not 0x00: PWM order ; 0x01: Current order ; 0x02: Velocity Control order type; 0x03: Velocity Control + backup PWM order type; 0x04: Voltage order type; 0x05: Velocity Control + backup Current order type; 0x06: Velocity Control + backup Voltage order type ) then step is invalid.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_Init() at line 'for(mmg_u8Index = KU8_ZERO; mmg_u8Index < MMG_KU8_NUMBER_OF_CYCLES_MODES_DELAYS; mmg_u8Index++)'.
+
+	Step 3: Check if CPU stopped in function MMG_Init() at line 'for(mmg_u8Index = KU8_ZERO; mmg_u8Index < MMG_KU8_NUMBER_OF_CYCLES_MODES_DELAYS; mmg_u8Index++)'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function MMG_Init() at line 'mmg_CheckCycleEnable();' and press run.
+
+	Step 5: Check if CPU stopped in function MMG_Init() at line 'mmg_CheckCycleEnable();'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Step in function mmg_CheckIfCycleStepIsvalid.
+
+	Step 7: Set variable u16Step0Index0 to 0x07 (Invalid order type).
+
+	Step 8: Set a breakpoint in function mmg_CheckIfCycleStepIsvalid() at line 'else if ( KU8_SEVEN == (NVP_BLOCK_ID_STEP_0_RamBlockData.NVP_au8StepsDefinitions[u16Step0Index0 + KU8_THREE] & MMG_STEPS_ORDER_TYPE_MASK ))'.
+
+Action: ARCH_SW_MMG_0311, ARCH_SW_MMG_0312, ARCH_SW_MMG_0313, ARCH_SW_MMG_0314, ARCH_SW_MMG_0315
+
+	Step 9: Check if CPU stopped in function mmg_CheckIfCycleStepIsvalid() at line 'else if ( KU8_SEVEN == (NVP_BLOCK_ID_STEP_0_RamBlockData.NVP_au8StepsDefinitions[u16Step0Index0 + KU8_THREE] & MMG_STEPS_ORDER_TYPE_MASK ))'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 10: Return ECU to default values

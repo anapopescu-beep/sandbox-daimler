@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0870; ARCH_SW_DIA_0871; ARCH_SW_DIA_0872; ARCH_SW_DIA_0873; ARCH_SW_DIA_0874; ARCH_SW_DIA_0875
+ARCH_SW_DIA_0870: Service 0x31 (Routine Control) 0x31 01 Start for RID 0xF791 (External Watchdog Test) will be implemented 
+ARCH_SW_DIA_0871: RoutineIdentifier shall be 0xF782.
+ARCH_SW_DIA_0872: The folowing request shall be available for this RID: - Start Routine 
+ARCH_SW_DIA_0873: Routine Start shall be available in the following diagnostic sessions: ?Supplier Session/Development Session (0x7E) Routine Start requires the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales STANDARD 
+ARCH_SW_DIA_0874: Routine Start shall be used to test the external watchdog by stopping its refresh and causing a reset.
+ARCH_SW_DIA_0875: RID specific Routine Status Record Start shall be represented by the following: ?Byte 6: Watchdog Status ?WDG_RESET_NOT_EXECUTED = 0x00 ?WDG_RESET_BY_DIAG = 0xAA ?WDG_NOT_RESET_BY_DIAG = 0x55 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+Action: ARCH_SW_DIA_0870; ARCH_SW_DIA_0871; ARCH_SW_DIA_0872; ARCH_SW_DIA_0873; ARCH_SW_DIA_0874; ARCH_SW_DIA_0875
+
+	Step 3: Send diag request for Routine Start for RID F791 and check response 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 4: Return ECU to default values

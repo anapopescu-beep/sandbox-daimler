@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0340, ARCH_SW_PAL_0341, ARCH_SW_PAL_0343
+ARCH_SW_PAL_0340: The component shall check the current used by the motor.
+ARCH_SW_PAL_0341: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be called  to get the current executed cycle number.
+ARCH_SW_PAL_0343: The current executed cycle shall be read from BFE.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMotorCurrent at line 'Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult);'.
+
+	Step 3: Check if CPU stopped in function PAL_cbk_CheckMotorCurrent at line 'Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult);'. 
+		Expected result:  CPU is stopped at BP
+
+Action: ARCH_SW_PAL_0340, ARCH_SW_PAL_0343
+
+	Step 4: Step in function Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult). 
+		Expected result:  Stepped in function PAL_Autotest_CheckMotorCurrent
+
+	Step 5: Check if CPU stopped in function PAL_Autotest_CheckMotorCurrent(). 
+		Expected result:  CPU is stopped at BP
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMotorCurrent at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&pal_u8ExecutedCycleNumber);'.
+
+	Step 7: Check if CPU stopped at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&pal_u8ExecutedCycleNumber);'
+
+Action: ARCH_SW_PAL_0341
+
+	Step 8: Evaluate Rte_BFE_psrExecutedCycle_u8CycleNumber 
+		Expected result:  Variable is equal to 0x20.
+
+Postcondition
+
+	Step 9: Return ECU to default values

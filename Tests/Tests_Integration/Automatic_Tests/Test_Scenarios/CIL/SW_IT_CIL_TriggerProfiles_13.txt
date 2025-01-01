@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0130, ARCH_SW_CIL_0143
+ARCH_SW_CIL_0130: If signal is received with value 12, then tensioning cycle 10 shall be requested.
+ARCH_SW_CIL_0143: If signal is received with value 12, then tensioning cycle 10 shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runCANToAppli at line cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);.
+
+	Step 3: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE12.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE12 at line '(void)Rte_Read_prrEnableCycle10_b8CycleValidity(&u8CycleValidityStatus);'.
+
+Action: ARCH_SW_CIL_0130, ARCH_SW_CIL_0143
+
+	Step 6: Check if CPU stopped in function cil_TriggerProfiles under case I_C06_RBTM_LVL_RQ_PROFILE12 at line '(void)Rte_Read_prrEnableCycle10_b8CycleValidity(&u8CycleValidityStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint at the end of the function cil_RequestTensioning.
+
+Action: ARCH_SW_CIL_0130
+
+	Step 8: Check if CPU stopped at the end of the function cil_RequestTensioning. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0130, ARCH_SW_CIL_0143
+
+	Step 9: Check if variable Rte_CIL_prrCrashSeverityLevel_u8PreCrashSeverityLevel is KU8_PRECRASH_SEVERITY_LEVEL_11. 
+		Expected result:  KU8_PRECRASH_SEVERITY_LEVEL_11 (0xA)
+
+Postcondition
+
+	Step 10: Return ECU to default values

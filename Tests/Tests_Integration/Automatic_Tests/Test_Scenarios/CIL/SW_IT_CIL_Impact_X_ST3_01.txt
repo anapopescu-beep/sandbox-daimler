@@ -1,0 +1,56 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0036, ARCH_SW_CIL_0183, ARCH_SW_CIL_2941
+ARCH_SW_CIL_0036: If Impact_X_ST3 is 1 then CRASH occurs and all profiles(including release) are aborted/inhibited until a new ignition cycle.
+ARCH_SW_CIL_2941: If release profile is aborted then it will be restarted when abortion conditions disappear.
+ARCH_SW_CIL_0183: After ORC Request no profile will be executed until a new ignition cycle happens.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_stInputSignalsPresfRec.bImpactXType= cil_stImpactSignalsStatus3.Impact_X_ST3;'.
+
+	Step 3: Set signal Impact_X_ST3 from frame Impact3_ST3 to KU8_ONE.
+
+	Step 4: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_stInputSignalsPresfRec.bImpactXType= cil_stImpactSignalsStatus3.Impact_X_ST3;'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageAbortingConditions at line 'CIL_SET_ABORT_MASK_ON (KU8_CIL_AbortingOfImpactX);'.
+
+Action: ARCH_SW_CIL_0036, ARCH_SW_CIL_2941
+
+	Step 6: Check if CPU stopped in function cil_ManageAbortingConditions at line 'CIL_SET_ABORT_MASK_ON (KU8_CIL_AbortingOfImpactX);'. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL3.
+
+	Step 8: Set a breakpoint in function cil_TriggerProfiles() at line '(void)Rte_Read_prrEnableCycle1_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL3.
+
+Action: ARCH_SW_CIL_0183
+
+	Step 9: Check if CPU stopped at line '(void)Rte_Read_prrEnableCycle1_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL3. 
+		Expected result:  CPU is Running
+
+	Step 10: Set a breakpoint in function cil_TriggerProfiles() at line '(void)Rte_Read_prrEnableCycle1_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL3.
+
+	Step 11: Set signal ISw_Stat_ST3 to I_C03_ISW_STAT_IGN_OFF and afterwards to I_C03_ISW_STAT_IGN_ON.
+
+	Step 12: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL3.
+
+Action:ARCH_SW_CIL_0183
+
+	Step 13: Check if CPU stopped at line '(void)Rte_Read_prrEnableCycle1_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL3. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 14: Return ECU to default values

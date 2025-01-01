@@ -1,0 +1,327 @@
+/*@!Encoding:1252*/
+includes
+{
+}
+
+variables
+{
+  char  cTCPanelName[20] = "ThermalChamberPanel";
+  char  cOutputView[500];
+}
+
+/// <ThermalChamber Implementation>
+void ChamberSetSetpoint(float fIntSetpoint)
+{
+  stack char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\sTCMeasureFile.txt";
+  stack char buffer[400]; 
+  stack char cTemp[10];
+  stack char cCommand[200] = "pyw C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\TCargs.pyw sSetSetpoint ";
+  stack long modeType = 0;
+  stack int  iPos = 0;
+
+  if(@sysvar::ThermalChamber::sysSetTCSetpointButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+
+  _gcvt(fIntSetpoint, 9,cTemp);
+  strncat(cCommand, cTemp, elcount(cCommand));
+  
+  testwaitforsyscall(cCommand, 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if(iFlag==1)
+  {
+    if((fIntSetpoint<-40) || (fIntSetpoint>180))
+    {
+      strncpy(cOutputView, "[SETPOINT] INPUT: ", 50);
+      strncat(cOutputView, "Selected setpoint is out of range!", elcount(cOutputView));
+      putValueToControl(cTCPanelName, "OutputView", 1, 1);
+      putValueToControl(cTCPanelName, "OutputView", cOutputView);
+    }
+    else
+    {
+      strncpy(cOutputView, "[SETPOINT] INPUT: ", 50);
+      strncat(cOutputView, buffer, elcount(cOutputView));
+      putValueToControl(cTCPanelName, "OutputView", 1, 1);
+      putValueToControl(cTCPanelName, "OutputView", cOutputView);
+    }
+  }
+  
+  else{}
+  
+  iPos = strstr(buffer, "Setpoint");
+  
+  if (iPos==0)
+  {
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "SET", buffer);
+  }
+  else if(iPos==-1)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "NOT SET", "Selected setpoint is out of range!");
+  }
+  
+}
+
+/// <ThermalChamber Implementation>
+double ChamberReadSetpoint()
+{
+  stack char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\sTCMeasureFile.txt";
+  stack char buffer[400];
+  stack long modeType = 0;
+
+  if(@sysvar::ThermalChamber::sysGetTCSetpointButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\TCargs.pyw sReadSetpoint", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if(iFlag==1)
+  {
+    @sysvar::ThermalChamber::sysReadTCSetpoint = glbValue;
+    strncpy(cOutputView, "[SETPOINT] OUTPUT: ", 50);
+    strncat(cOutputView, buffer, elcount(cOutputView));
+    putValueToControl(cTCPanelName, "OutputView", 1, 1);
+    putValueToControl(cTCPanelName, "OutputView", cOutputView);
+  }
+  
+  else{}
+  
+  return glbValue;  
+}
+
+/// <ThermalChamber Implementation>
+double ChamberReadTemperature()
+{
+  stack char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\sTCMeasureFile.txt";
+  stack char buffer[400];
+  stack long modeType = 0;
+
+  if((@sysvar::ThermalChamber::sysGetTCTempButton==1) || (@sysvar::ThermalChamber::sysTempLiveUpdate==1))
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\TCargs.pyw sReadTemperature", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if(iFlag==1)
+  {
+    @sysvar::ThermalChamber::sysReadTCTemperature = glbValue;
+    strncpy(cOutputView, "[TEMPERATURE] OUTPUT: ", 50);
+    strncat(cOutputView, buffer, elcount(cOutputView));
+    putValueToControl(cTCPanelName, "OutputView", 1, 1);
+    putValueToControl(cTCPanelName, "OutputView", cOutputView);
+  }
+  
+  else{}
+  
+  return glbValue;  
+}
+
+/// <ThermalChamber Implementation>
+void ChamberReadData()
+{
+  stack char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\sTCMeasureFile.txt";
+  stack char buffer[400];
+  stack long modeType = 0;
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\TCargs.pyw sReadData", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    if (strncmp(buffer,"Connection error: [WinError 10060] A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond", elCount(buffer))==0)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "ERROR", buffer);
+    }
+    else if (strncmp(buffer,"Error occurred!", elCount(buffer))==0)
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "ERROR", buffer);
+    }
+    else
+    {
+      testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "Thermal Chamber Data", buffer);
+    } 
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+}
+
+/// <ThermalChamber Implementation>
+void ChamberTurnOn()
+{
+  stack char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\sTCMeasureFile.txt";
+  stack char buffer[400];
+  stack long modeType = 0;
+  
+  if(@sysvar::ThermalChamber::sysTCOnButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\TCargs.pyw sChamberTurnOn", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if(iFlag==1)
+  {
+    if (strncmp(buffer,"Thermal chamber is turned ON!", elCount(buffer))==0)
+    {
+      @sysvar::ThermalChamber::sysTCOnOffIndicator=1;
+    }
+    else
+    {
+      @sysvar::ThermalChamber::sysTCOnOffIndicator=2;
+    }
+    strncpy(cOutputView, "[ON] OUTPUT: ", 50);
+    strncat(cOutputView, buffer, elcount(cOutputView));
+    putValueToControl(cTCPanelName, "OutputView", 1, 1);
+    putValueToControl(cTCPanelName, "OutputView", cOutputView);
+  }
+  
+  else{}
+  
+  if (strncmp(buffer,"Thermal chamber is turned ON!", elCount(buffer))==0)
+  {
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "ON", buffer);
+  }
+  else if(strncmp(buffer,"Thermal chamber is still OFF!", elCount(buffer))==0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "OFF/ERROR", buffer);
+  }
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "ERROR", "Error occurred!");
+  }
+}
+
+/// <ThermalChamber Implementation>
+void ChamberTurnOff()
+{
+  stack char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\sTCMeasureFile.txt";
+  stack char buffer[400];
+  stack long modeType = 0;
+
+  if(@sysvar::ThermalChamber::sysTCOffButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Phase_02\\View_Test\\Tools\\CANoe\\Config\\DAIMLER_MMA_VERIF\\Includes\\HW_Modules\\TMP\\TCargs.pyw sChamberTurnOff", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if(iFlag==1)
+  {
+    if (strncmp(buffer,"Thermal chamber is turned OFF!", elCount(buffer))==0)
+    {
+      @sysvar::ThermalChamber::sysTCOnOffIndicator=0;
+    }
+    else
+    {
+      @sysvar::ThermalChamber::sysTCOnOffIndicator=2;
+    }
+    strncpy(cOutputView, "[OFF] OUTPUT: ", 50);
+    strncat(cOutputView, buffer, elcount(cOutputView));
+    putValueToControl(cTCPanelName, "OutputView", 1, 1);
+    putValueToControl(cTCPanelName, "OutputView", cOutputView);
+  }
+  
+  else{}
+  
+  if (strncmp(buffer,"Thermal chamber is turned OFF!", elCount(buffer))==0)
+  {
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "OFF", buffer);
+  }
+  else if(strncmp(buffer,"Thermal chamber is still ON [OR] other ERROR is reported!", elCount(buffer))==0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "ON/ERROR", buffer);
+  }
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "ERROR", "Error occurred!");
+  }
+}

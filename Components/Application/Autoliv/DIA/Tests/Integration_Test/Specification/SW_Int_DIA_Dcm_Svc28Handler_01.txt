@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0400; ARCH_SW_DIA_0401; ARCH_SW_DIA_0402; ARCH_SW_DIA_0403; ARCH_SW_DIA_0404; ARCH_SW_DIA_0405; ARCH_SW_DIA_0406; ARCH_SW_DIA_0407
+ARCH_SW_DIA_0401: The Communication control service shall be available in the following sessions:Extended Session (0x03)Supplier Session/Development Session (0x7E)
+ARCH_SW_DIA_0402: Communication control service shall be available under the following forms of Authentication:SupplierDevelopment ENHANCEDProductionAfter-Sales ENHANCED
+ARCH_SW_DIA_0403: Control Type = 0x00 correspond to the Enable Rx and Tx Note: This value indicates that the reception and transmission of messages shall be enabled for the specified communicationType. 
+ARCH_SW_DIA_0404: Control Type = 0x01 correspond to the Enable Rx and Disable Tx Note: This value indicates that the reception of messages shall be enabled and the transmission shall be disabled for the specified communicationType 
+ARCH_SW_DIA_0405: Communication Type = 0x01 correspond to Normal Communication type. Note: Normal Communication is referring to all application-related communication signals 
+ARCH_SW_DIA_0406: Byte #2:  Control Type of the Communication control shall be an echo of Control Type parameter from the request message.
+ARCH_SW_DIA_0407: If positive response of the Communication Control service has been received, then the transmission / reception of messages shall be done according the Control Type and Communication Type requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *Dcm_Svc28Handler*.
+
+Action: ARCH_SW_DIA_0400; ARCH_SW_DIA_0401; ARCH_SW_DIA_0402; ARCH_SW_DIA_0403; ARCH_SW_DIA_0404; ARCH_SW_DIA_0405; ARCH_SW_DIA_0406; ARCH_SW_DIA_0407;
+
+	Step 3: Send request.
+
+	Step 4: Check if  was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

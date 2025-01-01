@@ -1,0 +1,88 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0721, ARCH_SW_CIL_0750, ARCH_SW_CIL_0751, ARCH_SW_CIL_0762
+ARCH_SW_CIL_0721: If selected, the content of the measurement frame - block #11 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0750: AdcIf_runGetMotor_Ip_(Ext)* shall be called to get the sampled value of the current provided by the �P� half bridge.
+ARCH_SW_CIL_0751: AdcIf_runGetMotor_In_(Ext)* shall be called to get the sampled value of the current provided by the �N� half bridge.
+ARCH_SW_CIL_0762: PAL_runReadMotorCurrentInmA shall be called to get the motor current in mAmps.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 11.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block11_InfosToSend at line Rte_Call_pclMotor_In_raw_raw_Get(&u16MotorCurrentRelRaw);.
+
+	Step 4: Set a breakpoint in function cil_Update_07Cx_Block11_InfosToSend at line Rte_Call_pclMotor_Ip_raw_raw_Get(&u16MotorCurrentTensRaw);.
+
+	Step 5: Set a breakpoint in function cil_Update_07Cx_Block11_InfosToSend at line Rte_Call_pclMotor_I_Get_mA(&s32ScaledMotorCurrent);.
+
+Action: ARCH_SW_CIL_0751
+
+	Step 6: Check if CPU stopped at line Rte_Call_pclMotor_In_raw_raw_Get(&u16MotorCurrentRelRaw);. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0750
+
+	Step 7: Check if CPU stopped at line Rte_Call_pclMotor_Ip_raw_raw_Get(&u16MotorCurrentTensRaw);. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0762
+
+	Step 8: Check if CPU stopped at line Rte_Call_pclMotor_I_Get_mA(&s32ScaledMotorCurrent);. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint at the last line of function cil_Update_07Cx_Block11_InfosToSend.
+
+Action: ARCH_SW_CIL_0721
+
+	Step 10: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 and signal Meas_RBTM_FL_01_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 is equal to signal Meas_RBTM_FL_01_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 11: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 is equal to signal Meas_RBTM_FL_02_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 12: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 is equal to signal Meas_RBTM_FL_03_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 13: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 and signal Meas_RBTM_FL_04_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 is equal to signal Meas_RBTM_FL_04_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 14: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 and signal Meas_RBTM_FL_05_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 is equal to signal Meas_RBTM_FL_05_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 15: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 is equal to signal Meas_RBTM_FL_06_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 16: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 is equal to signal Meas_RBTM_FL_07_ST3
+
+Action: ARCH_SW_CIL_0721
+
+	Step 17: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 and signal Meas_RBTM_FL_08_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 is equal to signal Meas_RBTM_FL_08_ST3
+
+Postcondition
+
+	Step 18: Return ECU to default values

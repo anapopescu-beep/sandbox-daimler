@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00046.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="7661CC50-8657-4892-B834-2807157801F9">
+      <SHORT-NAME>ComponentTypes</SHORT-NAME>
+      <ELEMENTS>
+        <SWC-IMPLEMENTATION UUID="8675AD04-5396-4CE1-BCAD-F2E2975D0AD9">
+          <SHORT-NAME>Ct_MBBL_SsaAppl_ProjectSpecific_Implementation</SHORT-NAME>
+          <CODE-DESCRIPTORS>
+            <CODE UUID="EBA8361A-52A5-43C6-A6A5-D618A44C1E2B">
+              <SHORT-NAME>Default</SHORT-NAME>
+              <ARTIFACT-DESCRIPTORS>
+                <AUTOSAR-ENGINEERING-OBJECT>
+                  <CATEGORY>SWSRC</CATEGORY>
+                </AUTOSAR-ENGINEERING-OBJECT>
+              </ARTIFACT-DESCRIPTORS>
+            </CODE>
+          </CODE-DESCRIPTORS>
+          <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/Ct_MBBL_SsaAppl_ProjectSpecific_InternalBehavior</BEHAVIOR-REF>
+        </SWC-IMPLEMENTATION>
+        <APPLICATION-SW-COMPONENT-TYPE UUID="698D23E0-3603-49B3-AB43-E9FEB8B3F025">
+          <SHORT-NAME>Ct_MBBL_SsaAppl_ProjectSpecific</SHORT-NAME>
+          <PORTS>
+            <R-PORT-PROTOTYPE UUID="80516FEA-820C-4C74-A006-0766CB93B19B">
+              <SHORT-NAME>P_ICS_SecAccess_ST3</SHORT-NAME>
+              <ADMIN-DATA>
+                <SDGS>
+                  <SDG GID="DV:DEV">
+                    <SD GID="DV:ImportModePreset">Keep</SD>
+                  </SDG>
+                </SDGS>
+              </ADMIN-DATA>
+              <REQUIRED-COM-SPECS>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/CompareKey</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+                <CLIENT-COM-SPEC>
+                  <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/GetSeed</OPERATION-REF>
+                </CLIENT-COM-SPEC>
+              </REQUIRED-COM-SPECS>
+              <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess</REQUIRED-INTERFACE-TREF>
+            </R-PORT-PROTOTYPE>
+          </PORTS>
+          <INTERNAL-BEHAVIORS>
+            <SWC-INTERNAL-BEHAVIOR UUID="63A7B82F-3109-4FF1-81BB-D1B8658032EF">
+              <SHORT-NAME>Ct_MBBL_SsaAppl_ProjectSpecific_InternalBehavior</SHORT-NAME>
+              <EVENTS>
+                <INIT-EVENT UUID="3059D209-3931-4EB8-80F8-A61A0EA0E933">
+                  <SHORT-NAME>Ct_MBBL_SsaAppl_ProjectSpecific_InitEvent</SHORT-NAME>
+                  <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/Ct_MBBL_SsaAppl_ProjectSpecific_InternalBehavior/Ct_MBBL_SsaAppl_ProjectSpecific_Init</START-ON-EVENT-REF>
+                </INIT-EVENT>
+              </EVENTS>
+              <RUNNABLES>
+                <RUNNABLE-ENTITY UUID="54F8B2DC-F844-46D9-B1FC-71B6CA004E4F">
+                  <SHORT-NAME>SecurityAccess_SAR_Remove_CompareKey</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="0E12872D-E2C8-4575-A375-F81DB867EB37">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_CompareKey</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/CompareKey</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_SAR_Remove_CompareKey</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="67A3F2D9-D326-4502-A62E-CFEE3442A871">
+                  <SHORT-NAME>SecurityAccess_SAR_Remove_GetSeed</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="63DA6EEB-CCD9-40AB-94E5-6C2237982F20">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_GetSeed</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/GetSeed</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_SAR_Remove_GetSeed</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="5CE6FDF8-D272-41A1-9389-51C52BED76FB">
+                  <SHORT-NAME>SecurityAccess_SAR_Read_CompareKey</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="7B732169-042B-4DE7-BC25-51CE819896D5">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_CompareKey</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/CompareKey</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_SAR_Read_CompareKey</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="FDE3F27A-E126-4561-9470-2D7762B3DA1B">
+                  <SHORT-NAME>SecurityAccess_SAR_Read_GetSeed</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="B30546E9-748A-4AC0-986B-5EA9AAE9023B">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_GetSeed</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/GetSeed</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_SAR_Read_GetSeed</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="15C46992-C7CE-412E-AC15-20D21073FDA5">
+                  <SHORT-NAME>SecurityAccess_Level_11_CompareKey</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="38AB1D50-DCD5-4403-A452-7638B7F3AC05">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_CompareKey</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/CompareKey</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_Level_11_CompareKey</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="D41865B3-CE5A-4812-9093-27A852030352">
+                  <SHORT-NAME>SecurityAccess_Level_11_GetSeed</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="7FB2B2F5-F722-4713-B5A1-D8E89A210362">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_GetSeed</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/GetSeed</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_Level_11_GetSeed</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="4BAC18C4-7DD3-4265-9AA2-E02C765EF083">
+                  <SHORT-NAME>SecurityAccess_Level_5F_CompareKey</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="FE1A122A-E2F5-4D92-BB72-E863C137C750">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_CompareKey</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/CompareKey</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_Level_5F_CompareKey</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="B2121528-1B4F-42A0-B7FC-A78996B4FE90">
+                  <SHORT-NAME>SecurityAccess_Level_5F_GetSeed</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="7655E1FF-65DC-4D4B-B1FD-EDE6AB61F2B5">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_GetSeed</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/GetSeed</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_Level_5F_GetSeed</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="110CB224-43F3-4599-AD3B-E306BE4172A3">
+                  <SHORT-NAME>SecurityAccess_Level_3_CompareKey</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="690D5490-7BD9-40FB-9141-FE323CD3F115">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_CompareKey</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/CompareKey</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_Level_3_CompareKey</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="9186F352-6416-4243-A8F3-FC97CF8C5E39">
+                  <SHORT-NAME>SecurityAccess_Level_3_GetSeed</SHORT-NAME>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SERVER-CALL-POINTS>
+                    <SYNCHRONOUS-SERVER-CALL-POINT UUID="6EE92CB8-1F3C-42DF-AB83-48C10DECC21D">
+                      <SHORT-NAME>SC_P_ICS_SecAccess_ST3_GetSeed</SHORT-NAME>
+                      <OPERATION-IREF>
+                        <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/ComponentTypes/Ct_MBBL_SsaAppl_ProjectSpecific/P_ICS_SecAccess_ST3</CONTEXT-R-PORT-REF>
+                        <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecurityAccessServices_GenericSecurityAccess/GetSeed</TARGET-REQUIRED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </SYNCHRONOUS-SERVER-CALL-POINT>
+                  </SERVER-CALL-POINTS>
+                  <SYMBOL>SecurityAccess_Level_3_GetSeed</SYMBOL>
+                </RUNNABLE-ENTITY>
+                <RUNNABLE-ENTITY UUID="DE209C0C-42F9-4474-A892-6A6BF26B5C58">
+                  <SHORT-NAME>Ct_MBBL_SsaAppl_ProjectSpecific_Init</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="edve:RunnableKind">
+                        <SD>InitRunnable</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                  <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                  <SYMBOL>Ct_MBBL_SsaAppl_ProjectSpecific_Init</SYMBOL>
+                </RUNNABLE-ENTITY>
+              </RUNNABLES>
+              <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+            </SWC-INTERNAL-BEHAVIOR>
+          </INTERNAL-BEHAVIORS>
+        </APPLICATION-SW-COMPONENT-TYPE>
+      </ELEMENTS>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

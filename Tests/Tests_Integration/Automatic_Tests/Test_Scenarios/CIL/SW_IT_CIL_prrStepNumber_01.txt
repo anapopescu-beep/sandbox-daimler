@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0304
+ARCH_SW_CIL_0304: Read Rte_Read_prrStepNumber_u8StepNumber shall be read to get executed cycle number.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE25.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli() at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles at line 'case I_C06_RBTM_LVL_RQ_PROFILE25:'.
+
+	Step 6: Check if CPU stopped at line 'case I_C06_RBTM_LVL_RQ_PROFILE25:'.
+
+	Step 7: Set a breakpoint in function cil_RequestTensioning() at line '(void)Rte_Read_prrStepNumber_u8StepNumber(&u8ExecutedStep);'.
+
+Action: ARCH_SW_CIL_0304
+
+	Step 8: Check if CPU stopped in function cil_RequestTensioning() at line '(void)Rte_Read_prrStepNumber_u8StepNumber(&u8ExecutedStep);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0304
+
+	Step 9: Evaluate if variable Rte_BFE_psrExecutedStep_u8StepNumber is equal to KU8_TWO. 
+		Expected result:  KU8_TWO
+
+Postcondition
+
+	Step 10: Return ECU to default values

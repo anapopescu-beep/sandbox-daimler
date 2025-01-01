@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BSW_0004, ARCH_SW_BSW_0005, ARCH_SW_BSW_0006, ARCH_SW_BSW_0007
+ARCH_SW_BSW_0004: All DTCs shall be reported from Diagnostic Chrono Stack, from the most recent to oldest.
+ARCH_SW_BSW_0005: In Diagnostic Chrono Stack if a DTC has priority 1, shall not be overwriten by other fault.
+ARCH_SW_BSW_0006: All DTCs shall be stored to NVM on every shutdown.
+ARCH_SW_BSW_0007: System shall handle qualification of CAN bus error.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in Dem_Client_FilterData_FilterMemoryByEvent.
+
+Action: ARCH_SW_BSW_0004, ARCH_SW_BSW_0007
+
+	Step 3: Check if CPU is stopped in Dem_Client_FilterData_FilterMemoryByEvent. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set breakpoint in Dem_Client_FilterData_FilterMemoryChrono.
+
+Action: ARCH_SW_BSW_0005
+
+	Step 5: Check if CPU is stopped in Dem_Client_FilterData_FilterMemoryChrono. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set breakpoint in Dem_Shutdown.
+
+Action: ARCH_SW_BSW_0006
+
+	Step 7: Check if CPU is stopped in Dem_Shutdown. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,2211 @@
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "..\Includes\SW_Modules\SW_Modules_Project\Project_Includes_Configuration.cin"
+}
+
+variables
+{
+  char signal_value[24];
+  char buffer[24];
+  int64 debuggerResultVariable;
+  int64 debuggerResultVariableToCompare;
+  int64 debuggerResultVariableToCompare1;
+  int64 debuggerResultVariableToCompare2;
+
+  diagRequest RBTMFL174.Tensioning_Cycle_BSR_Read req_Tensioning_Cycle_BSR_Read;
+  diagRequest RBTMFL174.Tensioning_Cycle_BSR_Write req_Tensioning_Cycle_BSR_Write;
+  
+  diagRequest RBTMFL174.Measurement_Frames_Configuration_Read req_Measurement_Frames_Configuration_Read;
+  diagRequest RBTMFL174.Measurement_Frames_Configuration_Write req_Measurement_Frames_Configuration_Write;
+  
+  diagRequest RBTMFL174.PRE_SAFE_Counter_read_Read req_PRE_SAFE_Counter_read_Read;
+  diagRequest RBTMFL174.PreSafe_Cycles_Level_1_8_Read req_PreSafe_Cycles_Level_1_8_Read;
+}
+
+
+
+testcase InitTestModule()
+{
+  ConfigureTestModuleInformation(CGA);
+  
+  strncpy(cLogPath, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",  elcount(cLogPath));
+}
+
+
+
+testcase SW_IT_PAL_ComponentInit_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0010, ARCH_SW_PAL_0110");
+  AddRequirementInfo("ARCH_SW_PAL_0010", "Check if the component is initialized.");
+  AddRequirementInfo("ARCH_SW_PAL_0110", "The component shall initialize the auto tests data.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Init() at line 'pal_Cfg_Init ();'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Init", 8);
+  
+    debugger_reset();
+    debugger_run();
+
+    testStep("STEP", "Check if CPU has stopped in function PAL_Init() at line 'pal_Cfg_Init ();'.");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0010");
+    testStep("STEP", "Step in function pal_Cfg_Init(). --> Stepped in pal_Cfg_Init()");
+    
+  	debugger_stepIn();
+  	
+  	testStep("STEP", "Check if CPU stopped in function pal_Cfg_Init().");
+  	debugger_waitUntilBPisReached(1000);
+      
+	  
+    testStep("STEP", "Set a breakpoint in function pal_Cfg_Init() at line 'pal_AT_Init ();' and press run.");
+    debugger_setRelativeFunctionBpAtLine("pal_Cfg_Init", 36);
+  
+    debugger_run();
+	
+  	testStep("STEP", "Check if CPU stopped in function pal_Cfg_Init() at line 'pal_AT_Init ();'.");
+  	debugger_waitUntilBPisReached(1000);
+	
+  
+    testCaseComment("Action: ARCH_SW_PAL_0110");
+    testStep("STEP", "Step in function pal_AT_Init(). --> Stepped in function pal_AT_Init()");
+    
+  	debugger_stepIn();
+  	
+  	testStep("STEP", "Check if CPU stopped in function pal_AT_Init().");
+  	debugger_waitUntilBPisReached(1000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_runMainFunction_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0450, ARCH_SW_PAL_0457");
+  AddRequirementInfo("ARCH_SW_PAL_0450", "The component shall have a main function.");
+  AddRequirementInfo("ARCH_SW_PAL_0457", "The PAL_runMainFunction function shall allow the application to enable control for autotest for motor command.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  
+    testStep("STEP", "Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).");
+    setSignal(BODY3::Presf_Lvl_ST3, I_C04_PRESF_LVL_V2_LVL1);
+    testWaitForTimeout(500);
+  
+    testStep("STEP", "Set a breakpoint in function PAL_runMainFunction() at line 'switch (PAL_u8ModeState)'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runMainFunction", 24);
+ 
+    testCaseComment("Action: ARCH_SW_PAL_0450");
+    testStep("STEP", "Check if CPU has stopped at line 'switch (PAL_u8ModeState)'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    debugger_writeGlobalVariable("uint8", "PAL_u8ModeState,,app.elf", 0, 0x02);
+  
+  
+    testStep("STEP", "Set a breakpoint at line 'PAL_u8ModeState = PAL_KU8_ACTIVATION_MODE_STATE;'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runMainFunction", 55);
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0457");
+    testStep("STEP", "Check if CPU has stopped at line 'PAL_u8ModeState = PAL_KU8_ACTIVATION_MODE_STATE;:'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  setSignal(BODY3::Presf_Lvl_ST3, 0);
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_runMainFunction_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0456");
+  AddRequirementInfo("ARCH_SW_PAL_0456", "The PAL_runMainFunction function shall allow the application to switch to the OFF_MODE if a Shut Down is requested or if a critical autotest has failed during startup.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+    
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetHighSC() in order to call Mosfet High SC autotest.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetHighSC", 4);
+    
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckMosfetHighSC().");
+    debugger_waitUntilBPisReached(1000);
+  
+
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC() in order to create fault.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", 101);
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckMosfetHighSC().");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Write variable pu8TestResult with KU8_ATM_TEST_NOK (0x2).");
+    debugger_writeLocalVariable("*pu8TestResult", 2);
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_runMainFunction() at line 'switch (PAL_u8ModeState)'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runMainFunction", 24);
+    
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_PAL_0456");
+    testStep("STEP", "Check if CPU has stopped at line 'switch (PAL_u8ModeState)'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+
+    testStep("STEP", "Check if variable PAL_u8ModeState is equal to PAL_KU8_OFF_MODE_STATE'. --> PAL_KU8_OFF_MODE_STATE");
+    debuggerResultVariable = debugger_readGlobalVariable("uint8", "PAL_u8ModeState,,app.elf", 0);
+    EvalManStepEqual("Variable is equal to PAL_KU8_OFF_MODE_STATE", debuggerResultVariable, 0x08);
+   
+   
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_checkPowerSupply_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0070, ARCH_SW_PAL_0075, ARCH_SW_PAL_0076");
+  AddRequirementInfo("ARCH_SW_PAL_0070", "The component shall be able to set the power state to IDLE.");
+  AddRequirementInfo("ARCH_SW_PAL_0075", "The component shall be able to deactivate the half bridge connected to the Vp pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0076", "The component shall be able to deactivate the half bridge connected to the Vn pin of the motor.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+ 
+    testStep("STEP", "Set a breakpoint in function PAL_runMainFunction() at line 'case PAL_KU8_IDLE_MODE_STATE:'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runMainFunction", 45);
+ 
+    testCaseComment("Action: ARCH_SW_PAL_0070");
+    testStep("STEP", "Check if CPU has stopped at line 'case PAL_KU8_IDLE_MODE_STATE:'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_DisablePowerStage() at line 'Dio_WriteChannel (PAL_kstHardWareTopology.astHBridgeDef[PAL_CFG_KU8_HB_P_ID].u16DriveEnableDioId,(uint8)STD_LOW);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_DisablePowerStage", 0);
+    
+    debugger_run();
+  
+    testCaseComment("Action: , ARCH_SW_PAL_0070, ARCH_SW_PAL_0075");
+    testStep("STEP", "Check if CPU has stopped at line 'Dio_WriteChannel (PAL_kstHardWareTopology.astHBridgeDef[PAL_CFG_KU8_HB_P_ID].u16DriveEnableDioId,(uint8)STD_LOW);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Set a breakpoint in function at line 'Dio_WriteChannel (PAL_kstHardWareTopology.astHBridgeDef[PAL_CFG_KU8_HB_N_ID].u16DriveEnableDioId,(uint8)STD_LOW);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_DisablePowerStage", 1);
+    
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0076");
+    testStep("STEP", "Check if CPU has stopped at line 'Dio_WriteChannel (PAL_kstHardWareTopology.astHBridgeDef[PAL_CFG_KU8_HB_N_ID].u16DriveEnableDioId,(uint8)STD_LOW);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_HardwareInit_02()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0090, ARCH_SW_PAL_0095");
+  AddRequirementInfo("ARCH_SW_PAL_0090", "The component shall be able to init the hardware.");
+  AddRequirementInfo("ARCH_SW_PAL_0095", "The component shall be able to disable the H-bridge at startup.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+
+    testStep("STEP", "Set a breakpoint in function PAL_Init() at line 'pal_Cfg_Init ();' .");
+    debugger_setRelativeFunctionBpAtLine("PAL_Init", 8);
+
+    debugger_reset();
+    debugger_run();
+
+    testCaseComment("Action: ARCH_SW_PAL_0090");
+    testStep("STEP", "Step in function pal_Cfg_Init(). --> pal_Cfg_Init,,app.elf");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if CPU has stopped in function pal_Cfg_Init('. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    debugger_reset();
+  
+  
+    testStep("STEP", "Set a breakpoint at line 'PAL_Cfg_InternalData.s16AdaptedDutyCycleCommand = KS16_ZERO'.");
+    debugger_setRelativeFunctionBpAtLine("pal_Cfg_Init", 0);
+    
+    debugger_run();
+
+    testCaseComment("Action: ARCH_SW_PAL_0095");
+    testStep("STEP", "Check if CPU stopped at line 'PAL_Cfg_InternalData.s16AdaptedDutyCycleCommand = KS16_ZERO;'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+    
+    testStep("STEP", "Set a breakpoint at line 'PAL_Cfg_InternalData.s16RawDutyCycleCommand     = KS16_ZERO;'.");
+    debugger_setRelativeFunctionBpAtLine("pal_Cfg_Init", 1);
+    
+    debugger_run();
+
+    testStep("STEP", "Check if CPU stopped at line 'PAL_Cfg_InternalData.s16RawDutyCycleCommand     = KS16_ZERO;'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Set a breakpoint at line 'PAL_Cfg_InternalData.u8EnableCommand            = KU8_ZERO;'.");
+    debugger_setRelativeFunctionBpAtLine("pal_Cfg_Init", 2);
+    
+    debugger_run();
+
+    testStep("STEP", "Check if CPU stopped at line 'PAL_Cfg_InternalData.u8EnableCommand            = KU8_ZERO;'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Set a breakpoint at line 'PAL_Cfg_InternalData.bIsPwrStgInSelfProtection  = B_FALSE;'.");
+    debugger_setRelativeFunctionBpAtLine("pal_Cfg_Init", 3);
+    
+    debugger_run();
+
+    testStep("STEP", "Check if CPU stopped at line 'PAL_Cfg_InternalData.bIsPwrStgInSelfProtection  = B_FALSE;'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckHWSelfProtection_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0140, ARCH_SW_PAL_0147, ARCH_SW_PAL_0342");
+  AddRequirementInfo("ARCH_SW_PAL_0140", "The component shall check for HW thermanl protection.");
+  AddRequirementInfo("ARCH_SW_PAL_0147", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PAL_0342", "ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed)."); 
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckHWSelfProtection at line 'Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckHWSelfProtection", 4);
+    
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckHWSelfProtection at line 'Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0140");
+    testStep("STEP", "Step in function 'Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);'. --> PAL_Autotest_CheckHWSelfProtection,,app.elf");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckHWSelfProtection(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection() at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_DRIVER_COMMAND, &pal_u8PreviousDriverCommandTestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckHWSelfProtection", 11);
+  
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckHWSelfProtection() at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_DRIVER_COMMAND, &pal_u8PreviousDriverCommandTestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0147, ARCH_SW_PAL_0342");
+    testStep("STEP", "Step in function Rte_Call_pclAutotestServices_GetTestResult(). --> ATM_runGetTestResult,,app.elf");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if CPU stopped in function ATM_runGetTestResult(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Write variable u8TestResult with KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection at line '*pu8TestResult = pal_u8ResultOfAutoTest;'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckHWSelfProtection", 36);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped at line *pu8TestResult = pal_u8ResultOfAutoTest;");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Overwrite variable pu8TestResult with KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckHWSelfProtection after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckHWSelfProtection", 7);
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0147, ARCH_SW_PAL_0342");
+    testStep("STEP", "Check if CPU stopped after the return of the autotest result'. --> CPU is stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Read autotest result transmited from ATM. --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x01", debuggerResultVariable, 0x01);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMotorCurrent_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0340, ARCH_SW_PAL_0341, ARCH_SW_PAL_0343");
+  AddRequirementInfo("ARCH_SW_PAL_0340", "The component shall check the current used by the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0341", "Rte_BFE_psrExecutedCycle_u8CycleNumber shall be called  to get the current executed cycle number.");
+  AddRequirementInfo("ARCH_SW_PAL_0343", "The current executed cycle shall be read from BFE.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+    
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorCurrent at line 'Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorCurrent", 4);
+
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckMotorCurrent at line 'Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult);'. --> CPU is stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0340, ARCH_SW_PAL_0343");
+    testStep("STEP", "Step in function Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult). --> Stepped in function PAL_Autotest_CheckMotorCurrent");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorCurrent(). --> CPU is stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorCurrent at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&pal_u8ExecutedCycleNumber);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorCurrent", 22);
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&pal_u8ExecutedCycleNumber);'");
+    debugger_waitUntilBPisReached(2000);
+  
+  
+    debugger_run();  
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0341");
+    testStep("STEP", "Evaluate Rte_BFE_psrExecutedCycle_u8CycleNumber --> Variable is equal to 0x20.");
+    debuggerResultVariable = debugger_readGlobalVariable("uint8", "Rte_BFE_psrExecutedCycle_u8CycleNumber,,app.elf", 0);
+    EvalManStepEqual("Variable is equal to 0x20", debuggerResultVariable, 0x20);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckCommandConsistency_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0369");
+  AddRequirementInfo("ARCH_SW_PAL_0369", "The component shall check if the power stage activation state is consistent with the order.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckCommandConsistency at line 'Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckCommandConsistency", 4);
+  
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);'.");
+    debugger_waitUntilBPisReached(1000);
+  
+    
+    testStep("STEP", "Step in function Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult). --> Stepped in PAL_Autotest_CheckCommandConsistency function");
+    debugger_stepIn();
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint at line '*pu8TestResult = u8ResultOfAutoTest;'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckCommandConsistency", 26);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'.");
+    debugger_waitUntilBPisReached(1000);
+    
+
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+
+
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckCommandConsistency after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckCommandConsistency", 7);
+  
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0369");
+    testStep("STEP", "Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'.  --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1 .");
+    debuggerResultVariable = debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to KU8_ONE", debuggerResultVariable, 0x1);
+   
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMosfetLowSC_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0370, ARCH_SW_PAL_0390, ARCH_SW_PAL_0391");
+  AddRequirementInfo("ARCH_SW_PAL_0370", "The component shall check the Short Circuit failure for Low Mosfets and set the result of autotest.");
+  AddRequirementInfo("ARCH_SW_PAL_0390", "ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PAL_0391", "PMP_runGetMotorVp_100ms and PMP_runGetMotorVn_100ms shall be called to check battery voltage.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetLowSC at line 'Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetLowSC", 4);
+  
+    debugger_reset();
+    debugger_run();
+    
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0370");
+    testStep("STEP", "Step in function Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult). --> Stepped in PAL_Autotest_CheckMosfetLowSC function");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMosfetLowSC(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    debugger_deleteAllBP();
+  
+   
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetLowSC at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetLowSC", 32);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+    
+  
+    testCaseComment("Action: ARCH_SW_PAL_0390");
+    testStep("STEP", "Step in function Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult). --> Stepped in ATM_runGetTestResult function");
+  
+    debugger_stepIn();
+    
+    testStep("STEP", "Check if the CPU stopped in function ATM_runGetTestResult(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Set a breakpoint at the last line of function ATM_runGetTestResult().");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_run();  
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Write autotest result with KU8_ONE.");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+     
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetLowSC at line 'Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage );'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetLowSC", 48);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage );'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0391");
+    testStep("STEP", "Step in function Rte_Call_pclMotor_Vp_Get_100ms($u16FilteredMotorPlusVoltage). --> Stepped in PMP_runGetMotorVp_100ms function");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if the CPU stopped in function PMP_runGetMotorVp_100ms(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Run until return PMP_runGetMotorVp_100ms and evaluate *pu16Voltage data pointer. --> Variable read");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorVp_100ms", 18);
+    debugger_waitUntilBPisReached(2000);
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*pu16Voltage");
+    
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetLowSC at line '*pu8TestResult = u8ResultOfAutoTest;'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetLowSC", 96);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK (0x1).");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+  
+    testCaseComment("Action: ARCH_SW_PAL_0390");
+    testStep("STEP", "Evaluate PreviousHighSideSWTestResult. --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8PreviousHighSideSWTestResult");
+    EvalManStepEqual("Variable is equal to 1 ", debuggerResultVariable, 1);  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0391");
+    testStep("STEP", "Evaluate FilteredMotorPlusVoltage --> Variable is equal to *pu16Voltage data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u16FilteredMotorPlusVoltage");
+    EvalManStepEqual("Variable is equal to *pu16Voltage data pointer", debuggerResultVariable, debuggerResultVariableToCompare);
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetLowSC after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetLowSC", 7);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped after the return of the autotest result. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+    
+    testStep("STEP", "Read autotest result transmited from ATM.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+  
+ 
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMosfetHighSC_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0372, ARCH_SW_PAL_0395, ARCH_SW_PAL_0396");
+  AddRequirementInfo("ARCH_SW_PAL_0372", "The component shall check the Short Circuit failure for High Mosfets and set the result of autotest..");
+  AddRequirementInfo("ARCH_SW_PAL_0395", "ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PAL_0396", "PMP_runGetBatteryVoltage_100ms , PMP_runGetMotorVp_100ms and PMP_runGetMotorVn_100ms shall be called to check battery voltage.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetHighSC at line 'Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetHighSC", 4);
+  
+    debugger_reset();
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+    
+    testCaseComment("Action: ARCH_SW_PAL_0372");
+    testStep("STEP", "Step in function 'Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);'. --> Stepped in PAL_Autotest_CheckMosfetHighSC function");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMosfetHighSC(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", 32);
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0395");
+    testStep("", "Step in function Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousAdcTestResult). --> Stepped in ATM_runGetTestResult");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if the CPU stopped in function ATM_runGetTestResult(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_waitUntilBPisReached(1000);
+
+   
+    testStep("STEP", "Write autotest result with KU8_ONE.");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+      
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at line 'Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage );'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", 47);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line 'Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage );'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0396");
+    testStep("STEP", "Step in function Rte_Call_pclMotor_Vp_Get_100ms( &u16FilteredMotorPlusVoltage ). --> Stepped in PMP_runGetBatteryVoltage_100ms function");
+    
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if the CPU stopped in function PMP_runGetBatteryVoltage_100ms(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_100ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_100ms", 18);
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*pu16Voltage");
+   
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at line '*pu8TestResult = u8ResultOfAutoTest;'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetHighSC", 101);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at line '*pu8TestResult = u8ResultOfAutoTest;'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+      
+  
+    testCaseComment("Action: ARCH_SW_PAL_0395");
+    testStep("STEP", "Evaluate PreviousHighSideSWTestResult. --> Variable is equal to 0x1");
+    debuggerResultVariable = debugger_readLocalVariable("u8PreviousHighSideSWTestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0396");
+    testStep("STEP", "Evaluate FilteredMotorPlusVoltage. --> Variable is read");
+    debuggerResultVariable = debugger_readLocalVariable("u16FilteredMotorPlusVoltage");
+    EvalManStepEqual("Variable is read", debuggerResultVariable, debuggerResultVariable);
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetHighSC after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetHighSC", 7);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped after the return of the autotest result. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("STEP", "Read autotest result transmited from ATM.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMosfetOCAT_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0373, ARCH_SW_PAL_0374, ARCH_SW_PAL_0375");
+  AddRequirementInfo("ARCH_SW_PAL_0373", "The component shall check is the power bridge is open circuit.");
+  AddRequirementInfo("ARCH_SW_PAL_0374", "The Autotest shall be performed in 4 steps in order to set the result.");
+  AddRequirementInfo("ARCH_SW_PAL_0375", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+    
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetOCAT at the RTE Call for CheckMosfetOCAT autotest.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetOCAT", 4);
+  
+    debugger_reset();
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0373, ARCH_SW_PAL_0374");
+    testStep("STEP", "Check if the CPU stopped at the RTE Call for CheckMosfetOCAT autotest. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+    
+  
+    testStep("STEP", "Step in function Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);. --> Stepped in PAL_Autotest_CheckMosfetOCAT function");
+    debugger_stepIn();
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMosfetOCAT(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    debugger_deleteAllBP();
+    
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetOCAT at the RTE call for GetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetOCAT", 44);
+
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at the RTE call for GetTestResult. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+    debugger_run();
+  
+    testStep("", "Step in function Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousADCTestresult). --> Stepped in ATM_runGetTestResult function");
+    debugger_stepIn();
+    testStep("STEP", "Check if the CPU stopped in function ATM_runGetTestResult(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable overwritten with 0x1");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+     
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMosfetHighSC at the return of autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMosfetOCAT", 288);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if the CPU stopped at the return of autotest result. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+      
+    testCaseComment("Action: ARCH_SW_PAL_0375");
+    testStep("STEP", "Evaluate PreviousADCTestresult --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8PreviousADCTestresult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMosfetOCAT after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMosfetOCAT", 7);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if the CPU stopped after the return of the autotest result. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMotorConnection_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0376, ARCH_SW_PAL_0377, ARCH_SW_PAL_0410");
+  AddRequirementInfo("ARCH_SW_PAL_0376", "The component shall check if the motor is present and connected.");
+  AddRequirementInfo("ARCH_SW_PAL_0377", "ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PAL_0410", "PMP_runGetBatteryVoltage_100ms , PMP_runGetMotorVp_100ms and PMP_runGetMotorVn_100ms shall be called to check battery voltage.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorConnection at the RTE Call for CheckMotorConnection autotest.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorConnection", 4);
+  
+    debugger_reset();
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0376");
+    testStep("STEP", "Check if the CPU stopped at the RTE Call for CheckMotorConnection autotest. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+    
+    
+    testStep("STEP", "Step in function Rte_Call_pclCheckMotorConnection_AutotestCallback(&u8TestResult). --> Stepped in PAL_Autotest_CheckMotorConnection function");
+    debugger_stepIn();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorConnection(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    debugger_deleteAllBP();
+
+    
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorConnection at the RTE call for GetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorConnection", 30);
+  
+    debugger_run();
+
+    testStep("STEP", "Check if the CPU stopped at the RTE call for GetTestResult. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+    
+
+    testStep("STEP", "Step in function Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult). --> Stepped in ATM_runGetTestResult function");
+    debugger_stepIn();
+
+  
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("STEP", "Write autotest result with KU8_ONE");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorConnection at the RTE Call for PMP_runGetMotorVp_100ms.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorConnection", 47);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped at the RTE Call for PMP_runGetMotorVp_100ms. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("STEP", "Step in function Rte_Call_pclMotor_Vp_Get_100ms(&u16FilteredMotorPlusVoltage). --> Stepped in PMP_runGetMotorVp_100ms function");
+    debugger_stepIn();
+  
+    testStep("STEP", "Run until return PMP_runGetMotorVp_100ms and evaluate *pu16Voltage data pointer --> Variable read from adc.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorVp_100ms", 18);
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*pu16Voltage");
+  
+      
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorConnection at the return of autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorConnection", 98);
+  
+    debugger_run();
+
+    testStep("STEP", "Check if the CPU stopped at the return of autotest result. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*pu8TestResult", 0x01);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0377");
+    testStep("STEP", "Evaluate PreviousMosfetHighSCTestResult --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8PreviousMosfetHighSCTestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x01);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0410");
+    testStep("STEP", "Evaluate FilteredMotorPlusVoltage --> Variable is equal to *pu16Voltage data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u16FilteredMotorPlusVoltage");
+    EvalManStepEqual("Variable is equal to *pu16Voltage data pointer", debuggerResultVariable, debuggerResultVariableToCompare);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorConnection after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorConnection", 7);
+  
+    debugger_run();
+
+    testStep("STEP", "Check if the CPU stopped after the return of the autotest result. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+
+  
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x01.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x01", debuggerResultVariable, 0x01);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMotorDisengagement_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0380, ARCH_SW_PAL_0378, ARCH_SW_PAL_0379, ARCH_SW_PAL_0400, ARCH_SW_PAL_0401, ARCH_SW_PAL_0402, ARCH_SW_PAL_0403, ARCH_SW_PAL_0080, ARCH_SW_PAL_0085, ARCH_SW_PAL_0086");
+  AddRequirementInfo("ARCH_SW_PAL_0380", "The component shall check if the motor is coupled with the mechanic.");
+  AddRequirementInfo("ARCH_SW_PAL_0378", "The current executed cycle shall be read from BFE.");
+  AddRequirementInfo("ARCH_SW_PAL_0379", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PAL_0400", "PMP_runGetFilteredTemperature_deg shall be called to get the ECU temperature");
+  AddRequirementInfo("ARCH_SW_PAL_0401", "PMP_runGetBatteryVoltage_10ms shall be called to get the battery voltage");
+  AddRequirementInfo("ARCH_SW_PAL_0402", "PMP_runGetMotorResistance shall be called to get motor resistance");
+  AddRequirementInfo("ARCH_SW_PAL_0403", "PAL_runReadMotorCurrentInmA shall be called to get motor current.");
+  AddRequirementInfo("ARCH_SW_PAL_0080", "The component shall provide the current in miliamps");
+  AddRequirementInfo("ARCH_SW_PAL_0085", "The component shall be able to read the current measured at the Vp motor pin");
+  AddRequirementInfo("ARCH_SW_PAL_0086", "The component shall be able to read the current measured at the Vn motor pin");
+  ///***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorDisengagement at line 'Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&u8TestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorDisengagement", 4);
+  
+    debugger_reset();
+    debugger_run();
+  
+    testCaseComment("Action: ARCH_SW_PAL_0380, ARCH_SW_PAL_0378");
+    testStep("STEP", "Check if the CPU stopped in function PAL_cbk_CheckMotorDisengagement() at line 'Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&u8TestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(5000);
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    debugger_deleteAllBP();
+  
+    
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousADCTestResult);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 38);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousADCTestResult);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Write autotest result with KU8_ONE --> Variable written with KU8_ONE");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+  
+  
+    debugger_deleteAllBP();
+  
+    
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 45);
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+    
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    testStep("STEP", "Write Executed Cycle Number  with 0x1D --> Variable written with 0x1D");
+    debugger_writeLocalVariable("u8ExecutedCycleNumber", 0x1D);
+  
+  
+    debugger_deleteAllBP();
+    
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclECU_T_GetFiltered_deg ( &s16ECUInternalTemperature);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 56);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement() at line 'Rte_Call_pclECU_T_GetFiltered_deg ( &s16ECUInternalTemperature);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("STEP", "Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature_deg", 12);
+    
+    debugger_run();
+
+    testStep("STEP", "Check if the CPU stopped in function PMP_runGetFilteredTemperature_deg(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*ps16InternalTemperature_deg"); // 0x0014
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'if((s16MotorPWMOrder < NVP_BLOCK_ID_TESTS_PARAM_RamBlockData.NVP_s16MotorDisengagementMinPowerOrder)'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 65);
+  
+    debugger_run();
+  
+    testStep("STEP", "Write vaiable s16MotorPWMOrder with value -770 --> Variable written with -770");
+    debugger_writeLocalVariable("s16MotorPWMOrder", -770);
+    
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclKL30_V_Get_10ms ( &u16KL30Voltage_mV);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 71);
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclKL30_V_Get_10ms ( &u16KL30Voltage_mV);'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+
+  
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_10ms", 18);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare1 = debugger_readLocalVariable("*pu16Voltage"); // 0x3199
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetMotorResistance --> CPU is stopped at BP.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 85);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("STEP", "Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer --> Variable read from ADC.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorResistance", 17);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare2 = debugger_readLocalVariable("*pu16Resistance_mOhm"); // 0x008E
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'if(s32SignedPhysicalMotorCurrent_mA < KS32_ZERO)' after 'PAL_runReadMotorCurrentInmA(&s32SignedPhysicalMotorCurrent_mA);'.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 107);
+    
+    debugger_run();
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0085");
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement() at line 'if(s32SignedPhysicalMotorCurrent_mA < KS32_ZERO)'. --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    debuggerResultVariable = debugger_readLocalVariable("s32SignedPhysicalMotorCurrent_mA"); // 0x00000000
+  
+  
+    debugger_deleteRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 99);
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the autotest result --> CPU is stopped at BP.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorDisengagement", 169);
+    
+    debugger_run();
+  
+    testStep("STEP", "Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement(). --> CPU stopped at BP");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0379");
+    testStep("STEP", "Evaluate PreviousADCTestResult --> Variable is equal to 0x01.");
+    debuggerResultVariable = debugger_readLocalVariable("u8PreviousADCTestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x01);
+  
+  
+    testStep("STEP", "Evaluate ExecutedCycleNumber --> Variable read.");
+    debuggerResultVariable = debugger_readLocalVariable("u8ExecutedCycleNumber");
+    EvalManStepEqual("Variable read.", debuggerResultVariable, 0x1); 
+ 
+  
+    testCaseComment("Action: ARCH_SW_PAL_0400");
+    testStep("STEP", "Evaluate ECUInternalTemperature --> Variable is equal to *ps16InternalTemperature_deg data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("s16ECUInternalTemperature");
+    EvalManStepEqual("Variable is equal to *ps16InternalTemperature_deg data pointer", debuggerResultVariable, debuggerResultVariableToCompare);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0401");
+    testStep("STEP", "Evaluate KL30Voltage_mV --> Variable is equal to *pu16Voltage data pointer data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u16KL30Voltage_mV");
+    EvalManStepEqual("Variable is equal to *pu16Voltage data pointer data pointer.", debuggerResultVariable, debuggerResultVariableToCompare1);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0402");
+    testStep("STEP", "Evaluate MotorResistance_mOhm --> Variable is equal to *pu16Resistance_mOhm data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u16MotorResistance_mOhm");
+    EvalManStepEqual("Variable is equal to *pu16Resistance_mOhm data pointer.", debuggerResultVariable, debuggerResultVariableToCompare2);
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorDisengagement after the return of the autotest result --> CPU is stopped at BP.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorDisengagement", 7);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to KU8_ONE.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x01);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+testcase SW_IT_PAL_Autotest_CheckMotorPowerOrder_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0382, ARCH_SW_PAL_0381, ARCH_SW_PAL_0390, ARCH_SW_PAL_0391, ARCH_SW_PAL_0392");
+  AddRequirementInfo("ARCH_SW_PAL_0382", "The component shall check if a high PWM duty cycle will not be applied for a too long time.");
+  AddRequirementInfo("ARCH_SW_PAL_0381", "The current executed data from BFE shall be an input.");
+  AddRequirementInfo("ARCH_SW_PAL_0390", "The ERH_runGetAecStatus function shall be called to get the motor Order AEC status.");
+  AddRequirementInfo("ARCH_SW_PAL_0391", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).S");
+  AddRequirementInfo("ARCH_SW_PAL_0392", "MMG_runCheckModeStatus shall be called to get the context status.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorPowerOrder at the RTE Call for CheckMotorPowerOrder autotest.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorPowerOrder", 4);
+  
+    debugger_reset();
+    debugger_run();
+    
+    testCaseComment("Action: ARCH_SW_PAL_0382, ARCH_SW_PAL_0381, ARCH_SW_PAL_0393");
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckMotorPowerOrder at the RTE Call for CheckMotorPowerOrder autotest --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+    
+  
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the RTE call for ERH_runGetAecStatus.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorPowerOrder", 34);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorPowerOrder at the RTE Call for ERH_runGetAecStatus autotest --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+
+    testStep("", "Run until return in function ERH_runGetAecStatus.");
+    debugger_setRelativeFunctionBpAtLine("ERH_runGetAecStatus", 32);
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Read *AecStatus --> Local variable read.");
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*pu8AecStatus");
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the RTE call for GetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorPowerOrder", 37);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorPowerOrder at the RTE Call for GetTestResult. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+    
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+    
+    testStep("", "Write autotest result with 0x01 --> Variable overwritten with 0x01");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the RTE call for MMG_runCheckModeStatus.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorPowerOrder", 45);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorPowerOrder at the RTE Call for MMG_runCheckModeStatus. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+
+    testStep("", "Run until return in function MMG_runCheckModeStatus.");
+    debugger_setRelativeFunctionBpAtLine("MMG_runCheckModeStatus", 37);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Read *ModeStatus --> Local variable read.");
+    debuggerResultVariableToCompare1 = debugger_readLocalVariable("*bModeStatus");
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorPowerOrder at the return of autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorPowerOrder", 141);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorPowerOrder(). --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0391");
+    testStep("STEP", "Evaluate MotorOrderEventStatus --> Variable equal to *pu8AecStatus data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("tMotorOrderEventStatus");
+    EvalManStepEqual("Variable equal to *pu8AecStatus data pointer.", debuggerResultVariable, debuggerResultVariableToCompare);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0390");
+    testStep("STEP", "Evaluate PreviousADCTestResult --> Variable equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8PreviousADCTestResult");
+    EvalManStepEqual("Variable equal to 0x1.", debuggerResultVariable, 0x1);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0392");
+    testStep("STEP", "Evaluate TensioningModeStatus --> Variable equal to *ModeStatus data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TensioningModeStatus");
+    EvalManStepEqual("Variable equal to *ModeStatus data pointer.", debuggerResultVariable, debuggerResultVariableToCompare1);
+   
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorPowerOrder after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorPowerOrder", 7);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckMotorPowerOrder() after the return of the autotest result. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+
+testcase SW_IT_PAL_Autotest_CheckMotorSC_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0383, ARCH_SW_PAL_0384, ARCH_SW_PAL_0385, ARCH_SW_PAL_0386, ARCH_SW_PAL_0387, ARCH_SW_PAL_0388, ARCH_SW_PAL_0389");
+  AddRequirementInfo("ARCH_SW_PAL_0383", "The current executed cycle data from BFE shall be an input.");
+  AddRequirementInfo("ARCH_SW_PAL_0384", "The PMP_runGetBatteryVoltage_10ms function shall be called to get the battery voltage.");
+  AddRequirementInfo("ARCH_SW_PAL_0385", "ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).");
+  AddRequirementInfo("ARCH_SW_PAL_0386", "PAL_runReadMotorCurrentInmA shall be called to get the Motor current.");
+  AddRequirementInfo("ARCH_SW_PAL_0387", "PMP_runGetBatteryVoltage_10ms shall be called to mesure motor SC current.");
+  AddRequirementInfo("ARCH_SW_PAL_0388", "PMP_runGetFilteredTemperature_deg shall be called to get the filtred value of the ECU temperature.");
+  AddRequirementInfo("ARCH_SW_PAL_0389", "PMP_runGetMotorResistance shall be called to get the value for motor resitance.");
+ //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testCaseComment("Action: ARCH_SW_PAL_0386, ARCH_SW_PAL_0383");
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorSC at the RTE Call for CheckMotorSC autotest.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorSC", 4);
+  
+    debugger_reset();
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_cbk_CheckMotorSC() at the RTE Call for CheckMotorSC autotest. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+    
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE call for GetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorSC", 43);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorSC() at the RTE call for GetTestResult. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("STEP", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Write autotest result with 0x01");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorSC at the PAL_runReadMotorCurrentInmA function call.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorSC", 140);
+  
+    debugger_run();
+  
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the PAL_runReadMotorCurrentInmA function call. --> BP reached.");
+    debugger_waitUntilBPisReached(1000);
+  
+
+    debuggerResultVariable = debugger_readLocalVariable("s32SignedPhysicalMotorCurrent_mA");
+    EvalManStepEqual("Variable read.", debuggerResultVariable);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetBatteryVoltage_10ms.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorSC", 154);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetBatteryVoltage_10ms. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0086");
+    testStep("STEP", "Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer --> Variable read from ADC.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetBatteryVoltage_10ms", 18);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare1 = debugger_readLocalVariable("*pu16Voltage");
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetFilteredTemperature_deg.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorSC", 163);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetFilteredTemperature_deg. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("STEP", "Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer --> Variable read from ADC.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetFilteredTemperature_deg", 12);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*ps16InternalTemperature_deg");
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetMotorResistance.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorSC", 167);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetMotorResistance. --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("STEP", "Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer --> Variable read from ADC.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetMotorResistance", 17);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PMP_runGetMotorResistance(). --> BP reached.");
+    debugger_waitUntilBPisReached(1000);
+    debuggerResultVariableToCompare2 = debugger_readLocalVariable("*pu16Resistance_mOhm");
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorSC() at the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorSC", 246);
+  
+    debugger_run();
+    
+    testStep("STEP", "Check if CPU stopped in function PAL_Autotest_CheckMotorSC(). --> BP reached.");
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0385");
+    testStep("STEP", "Evaluate u8ADCTestResult --> Variable is equal to 0x01.");
+    debuggerResultVariable = debugger_readLocalVariable("u8ADCTestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x01);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0389");
+    testStep("STEP", "Evaluate ECUInternalTemperature --> Variable is equal to *ps16InternalTemperature_deg data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("s16ECUInternalTemperature");
+    EvalManStepEqual("Variable is equal to *ps16InternalTemperature_deg data pointer", debuggerResultVariable, debuggerResultVariableToCompare);
+
+  
+    testCaseComment("Action: ARCH_SW_PAL_0384, ARCH_SW_PAL_0387");
+    testStep("STEP", "Evaluate KL30Voltage_mV --> Variable is equal to *pu16Voltage data pointer data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u16FilteredVbatPowerVoltage_mV");
+    EvalManStepEqual("Variable is equal to *pu16Voltage data pointer", debuggerResultVariable, debuggerResultVariableToCompare1);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0388");
+    testStep("STEP", "Evaluate MotorResistance_mOhm --> Variable is equal to *pu16Resistance_mOhm data pointer.");
+    debuggerResultVariable = debugger_readLocalVariable("u16MotorResistance_mOhm");
+    EvalManStepEqual("Variable is equal to *pu16Resistance_mOhm data pointer.", debuggerResultVariable, debuggerResultVariableToCompare2);
+
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorSC after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorSC", 7);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x01.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x01", debuggerResultVariable, 0x01);
+
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs(); 
+}
+
+
+testcase SW_IT_PAL_Autotest_CheckHighSideSwRegulation_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0368");
+  AddRequirementInfo("ARCH_SW_PAL_0368", "The component shall check if high switch regulation works well.");
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckHighSideSwRegulation at the RTE Call for CheckHighSideSwRegulation autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckHighSideSwRegulation", 4);
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step In");
+    debugger_stepIn();
+  
+  
+    debugger_deleteRelativeFunctionBpAtLine("PAL_cbk_CheckHighSideSwRegulation", 4);
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckHighSideSwRegulation at the return of autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckHighSideSwRegulation", 105);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*(pu8TestResult)", 1);
+  
+  
+    debugger_deleteAllBP();
+  
+
+    testCaseComment("Action: ARCH_SW_PAL_0368");
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckHighSideSwRegulation after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckHighSideSwRegulation", 7);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_IT_PAL_Autotest_CheckMotorThermalProctection_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0361");
+  AddRequirementInfo("ARCH_SW_PAL_0361", "PMP_runGetDeficiencyLevel function shall be called to get the estimation of the energy stored in the motor.");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorThermalProctection at the RTE Call for CheckMotorThermalProctection autotest.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorThermalProctection", 4);
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+    
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorThermalProctection at the RTE call for PMP_runGetDeficiencyLevel.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorThermalProctection", 14);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("STEP", "Run until return in function PMP_runGetDeficiencyLevel.");
+    debugger_setRelativeFunctionBpAtLine("PMP_runGetDeficiencyLevel", 1);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Read DeficiencyLevel.");
+    debuggerResultVariableToCompare = debugger_readLocalVariable("*pu32DeficiencyLevel");
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorThermalProctection at the return of autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorThermalProctection", 56);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0361");
+    testStep("STEP", "Evaluate pal_u32DeficiencyLevel.");
+    debuggerResultVariable = debugger_readLocalVariable("pal_u32DeficiencyLevel");
+    EvalManStepEqual("Variable equal to *pu32DeficiencyLevel data pointer.", debuggerResultVariable, debuggerResultVariableToCompare);
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorThermalProctection after the return of the autotest result.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorThermalProctection", 7);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Read autotest result transmited from ATM.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_IT_PAL_Autotest_CHeckMotorThermalProtection_02()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0360, ARCH_SW_PAL_0366");
+  AddRequirementInfo("ARCH_SW_PAL_0360", "The component shall check if an over temperature of the power stage is reached by returning a SW self-protection status.");
+  AddRequirementInfo("ARCH_SW_PAL_0366", "The component shall check the state of specific autotests.");
+  
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testCaseComment("Action: ARCH_SW_PAL_0360");
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorThermalProctection at the RTE Call for CheckMotorThermalProctection autotest --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorThermalProctection", 4);
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+    
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+    
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorThermalProctection at the RTE call for GetTestResult --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorThermalProctection", 18);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    testStep("", "Run until return in function ATM_runGetTestResult.");
+    debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", 13);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testStep("STEP", "Write autotest result with KU8_ATM_TEST_OK --> Variable set to KU8_ATM_TEST_OK");
+    debugger_writeLocalVariable("*u8TestResult", 1);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckMotorCurrent at the return of autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckMotorThermalProctection", 56);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Overwrite autotest result with KU8_ATM_TEST_OK --> Variable is set to 0x1.");
+    debugger_writeLocalVariable("*pu8TestResult", 1);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0366");
+    testStep("STEP", "Evaluate pal_tSwThermalProtectionEventStatus --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("pal_tSwThermalProtectionEventStatus");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_cbk_CheckMotorThermalProctection after the return of the autotest result --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_cbk_CheckMotorThermalProctection", 7);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("STEP", "Read autotest result transmited from ATM --> Variable is equal to 0x1.");
+    debuggerResultVariable = debugger_readLocalVariable("u8TestResult");
+    EvalManStepEqual("Variable is equal to 0x1", debuggerResultVariable, 0x1);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_IT_PAL_runSetPowerOrder_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0020, ARCH_SW_PAL_0025, ARCH_SW_PAL_0026, ARCH_SW_PAL_0027, ARCH_SW_PAL_0028, ARCH_SW_PAL_0029");
+  AddRequirementInfo("ARCH_SW_PAL_0020", "The component shall control the power bridge based on the requested power order.");
+  AddRequirementInfo("ARCH_SW_PAL_0025", "The component shall be able to activate/deactivate the half bridge connected to the Vp pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0026", "The component shall be able to activate/deactivate the half bridge connected to the Vn pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0027", "The component shall be able to control the MOSFETs of the half bridge connected to the Vp pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0028", "The component shall be able to control the MOSFETs of the half bridge connected to the Vp pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0029", "The component shall be able to control MOSFET of the high power.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testCaseComment("Action: ARCH_SW_PAL_0020");
+    testStep("STEP", "Set a breakpoint in function PAL_runSetPowerOrder at the pal_DriveMotorInReleasing function call --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runSetPowerOrder", 20);
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0025, ARCH_SW_PAL_0026, ARCH_SW_PAL_0029");
+    testStep("STEP", "Set a breakpoint in function pal_DriveMotorInReleasing at the RTE Call of PwmIf_SetDutyCycle --> BP reached.");
+    debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\PAL\\Implementation\\src\\PAL_PowerLayerDriving.c", 253);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0027, ARCH_SW_PAL_0028");
+    testStep("STEP", "Set a breakpoint in function pal_DriveMotorInReleasing at Dio_WriteChannel for Vp and Vn function call --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("Dio_WriteChannel", 0);
+    debugger_run();
+    debugger_waitUntilBPisReached(1000);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_IT_PAL_StartFreeWheelingState_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0077, ARCH_SW_PAL_0078, ARCH_SW_PAL_0079.");
+  AddRequirementInfo("ARCH_SW_PAL_0077", "This function shall set the power stage in IDLE state .");
+  AddRequirementInfo("ARCH_SW_PAL_0078", "The Dio_WriteChannel function shall be called to activate the half bridge connected to the VP pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0079", "The Dio_WriteChannel function shall be called to activate the half bridge connected to the VN pin of the motor.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testCaseComment("Action: ARCH_SW_PAL_0077");
+    testStep("STEP", "Set a breakpoint in function PAL_Autotest_CheckHighSideSwRegulation at the PAL_KU8_HIGH_SIDE_SW_REG_INIT state to add a free wheeling phase --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_Autotest_CheckHighSideSwRegulation", 23);
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function pal_HighSideSWRegFreeWheelingPhase at the PAL_StartFreeWheelingState call to set both half bridge in free wheeling state --> BP reached."); 
+    debugger_setBPatLine("s:\\Components\\Application\\Autoliv\\PAL\\Implementation\\src\\PAL_Autotests.c", 549);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0078");
+    testStep("STEP", "Set a breakpoint in function PAL_StartFreeWheelingState at the Dio_WriteChannel call to to activate the half bridge connected to the Vn pin of the motor --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_StartFreeWheelingState", 6);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testCaseComment("Action: ARCH_SW_PAL_0079");
+    testStep("STEP", "Set a breakpoint in function PAL_StartFreeWheelingState at the Dio_WriteChannel call to to activate the half bridge connected to the Vn pin of the motor --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_StartFreeWheelingState", 7);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_IT_PAL_runReadMotorCurrentInA_01()
+{ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+
+  AddRequirementInfo("Requirement under test", "ARCH_SW_PAL_0105, ARCH_SW_PAL_0106, ARCH_SW_PAL_0100");
+  AddRequirementInfo("ARCH_SW_PAL_0105", "If the motor rotation direction is “tensioning”, the AdcIf_runGetMotor_Ip function shall be called to read the motor current measured by the half bridge connected to the VP pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0106", "If the motor rotation direction is “releasing”, the AdcIf_runGetMotor_In function shall be called to read the motor current measured by the half bridge connected to the VN pin of the motor.");
+  AddRequirementInfo("ARCH_SW_PAL_0100", "The component shall provide the current in amps.");
+
+  //***************************************************************************************
+
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+
+    testCaseComment("Action: ARCH_SW_PAL_0105, ARCH_SW_PAL_0106, ARCH_SW_PAL_0100");
+    testStep("STEP", "Set a breakpoint in function PAL_runReadMotorCurrentInA at PAL_runReadMotorCurrentInmA function call --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runReadMotorCurrentInA", 5);
+    debugger_reset();
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+  
+    testStep("", "Step in.");
+    debugger_stepIn();
+  
+  
+    debugger_deleteAllBP();
+  
+  
+    testStep("STEP", "Set a breakpoint in function PAL_runReadMotorCurrentInmA after the pal_ComputeCurrentHalfBridgeP and pal_ComputeCurrentHalfBridgeN functions call --> BP reached.");
+    debugger_setRelativeFunctionBpAtLine("PAL_runReadMotorCurrentInmA", 32);
+    debugger_run();
+    debugger_waitUntilBPisReached(5000);
+  
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+

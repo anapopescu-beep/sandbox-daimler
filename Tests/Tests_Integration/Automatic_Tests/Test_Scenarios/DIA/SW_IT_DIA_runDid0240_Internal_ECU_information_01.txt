@@ -1,0 +1,65 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0565, ARCH_SW_DIA_0566, ARCH_SW_DIA_0567, ARCH_SW_DIA_0568, ARCH_SW_DIA_0569, ARCH_SW_DIA_0570, ARCH_SW_DIA_0571, ARCH_SW_DIA_0572, ARCH_SW_DIA_0573, ARCH_SW_DIA_0574
+ARCH_SW_DIA_0565: Service 0x22 (Read Data By Identifier) will be implemented for DID 0240 (Internal ECU Information).
+ARCH_SW_DIA_0566: The Read Internal ECU Information service shall be available in the following sessions: ?Default Session (0x01); ?Extended Session (0x03); ?Supplier Session/Development Session (0x7E); ?Update Session (0x42).
+ARCH_SW_DIA_0567: The Read Internal ECU Information service shall be available under the following forms of Authentication: ?Supplier; ?Development ENHANCED; ?Production; ?After-Sales ENHANCED; ?After-Sales; ?After-Sales BASIC; ?Internal Diagnostic Test Tool; ?ePTI Test Tool
+ARCH_SW_DIA_0568: DataIdentifier of the Read Internal ECU Information shall be: 0x0240.
+ARCH_SW_DIA_0569: Response data length shall be 6 bytes long.
+ARCH_SW_DIA_0570: Bytes #2-#3:  DataIdentifier of the Read Internal ECU Information shall be: 0x0240.
+ARCH_SW_DIA_0571: Byte #4: ?bits 0-7: Autosar System State (EcuM_State); 0x10 - Startup; 0x20 - Wakeup; 0x30 - Run; 0x40 - Shutdown; 0x50 - Sleep;
+ARCH_SW_DIA_0572: Read Internal ECU Information service shall return the values measured.
+ARCH_SW_DIA_0573: Bytes #5-#6: ?bits 0-7: ECU Temperature; Any value from 0x0A -> 0x043F; Offset is -52.7875 (i.e. 0x0A = -50 V); Resolution is 0.2325 (e.g. 0x10 = -49.0675 V); Range is -50 deg C -> 200 deg C; Range 0x00 -> 0x09 is Undefined; Range 0x0440 -> 0xFFFF is Undefined.
+ARCH_SW_DIA_0574: Bytes #7-#8: ?bits 0-7: Motor Current; Any value from 0x00 -> 0xFF; Offset is 0 (i.e. 0x00 = 0A); Resolution is 0.01 (e.g. 0x100 = 16 A); Range is 0A -> 163.83A
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function DIA_runDid0240_Internal_ECU_information_Read_Autosar_System_State_EcuM_State_ReadData at line 'Data[0] = ecuM_Mode;'.
+
+	Step 3: Enter development session.
+
+Action: ARCH_SW_DIA_0572, ARCH_SW_DIA_0565, ARCH_SW_DIA_0566, ARCH_SW_DIA_0567, ARCH_SW_DIA_0568, ARCH_SW_DIA_0570
+
+	Step 4: Send diag request for 22 0240 and wait for timeout error 
+		Expected result:  Request sent and timeout received.
+
+	Step 5: Check if CPU stopped in function DIA_runDid0240_Internal_ECU_information_Read_Autosar_System_State_EcuM_State_ReadData at line 'Data[0] = ecuM_Mode;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_DIA_0572
+
+	Step 6: Read variable Data[0].
+
+	Step 7: Set a breakpoint in function DIA_runDid0240_Internal_ECU_information_Read_ECU_Temperature_ReadData() at line 'Data[1] = (uint8)convertedTemperature_deg;'.
+
+Action: ARCH_SW_DIA_0573, ARCH_SW_DIA_0569
+
+	Step 8: Read variable Data[0].
+
+Action: ARCH_SW_DIA_0573, ARCH_SW_DIA_0569
+
+	Step 9: Read variable Data[1].
+
+	Step 10: Set a breakpoint in function DIA_runDid0240_Internal_ECU_information_Read_MOTOR_Current_ReadData() at line 'Data[1] = motorCurrentInA >> 8;'.
+
+Action: ARCH_SW_DIA_0574, ARCH_SW_DIA_0571
+
+	Step 11: Read variable Data[0].
+
+Action: ARCH_SW_DIA_0574, ARCH_SW_DIA_0571
+
+	Step 12: Read variable Data[1].
+
+Postcondition
+
+	Step 13: Return ECU to default values

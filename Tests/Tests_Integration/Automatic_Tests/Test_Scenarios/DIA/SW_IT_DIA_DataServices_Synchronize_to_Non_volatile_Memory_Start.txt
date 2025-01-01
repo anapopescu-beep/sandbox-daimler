@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0755; ARCH_SW_DIA_0756; ARCH_SW_DIA_0757; ARCH_SW_DIA_0758
+ARCH_SW_DIA_0755: Service 0x31 (Routine Control) 0x31 01 Start 0x31 02 Stop 0x31 03 Request Results for RID 0x0245 (Synchronize to Non-volatile Memory) will be implemented 
+ARCH_SW_DIA_0756: RoutineIdentifier shall be 0x0245.
+ARCH_SW_DIA_0757: Routine Start 0x01 shall be available in the following diagnostic sessions: ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) Routine Start requires the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales STANDARD 
+ARCH_SW_DIA_0758: Routine Start 0x01 shall synchronize all data currently not synchronized from volatile memory to non-volatile memory.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Synchronize_to_Non_volatile_Memory_Start*.
+
+Action: ARCH_SW_DIA_0755; ARCH_SW_DIA_0756; ARCH_SW_DIA_0757; ARCH_SW_DIA_0758
+
+	Step 4: Send diag request for RID 02 45 Start 
+		Expected result:  Request Sent.
+
+	Step 5: Check if breakpoint from function DataServices_Synchronize_to_Non_volatile_Memory_Start was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

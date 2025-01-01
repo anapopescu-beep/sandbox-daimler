@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: : ARCH_SW_DIA_0520; ARCH_SW_DIA_0522
+ARCH_SW_DIA_0520: Service 0x31 (Routine Control)0x31 01 Start 0x31 02 Stop 0x31 03 Request Results for RID 0x0265 (Activate Debugging Interfaces) will be implemented
+ARCH_SW_DIA_0522: RID specific Routine Start Result shall be represented by the following:?Byte 0: Debugging Interfaces Status
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *RoutineServices_Routine_Activate_Debugging_Interfaces_Start_Start*.
+
+	Step 3: Enter development session.
+
+Action: ARCH_SW_DIA_0520; ARCH_SW_DIA_0522;
+
+	Step 4: Send diag request for RID 03 01 for RID 0245 
+		Expected result:  Request Sent.
+
+	Step 5: Check if breakpoint from function RoutineServices_Routine_Activate_Debugging_Interfaces_Start_Start was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

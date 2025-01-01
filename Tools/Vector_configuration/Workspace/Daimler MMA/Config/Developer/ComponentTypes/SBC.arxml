@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00048.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="2CB43E06-4F17-41A0-94F5-544DCD58FE6F">
+          <SHORT-NAME>SBC</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="6D24E192-A4F2-49CF-B5D2-7EF62EF33E88">
+              <SHORT-NAME>ComponentTypes</SHORT-NAME>
+              <ELEMENTS>
+                <SERVICE-SW-COMPONENT-TYPE UUID="8C82604E-43FD-424B-AEB0-E27C61E37C03">
+                  <SHORT-NAME>SBC</SHORT-NAME>
+                  <PORTS>
+                    <P-PORT-PROTOTYPE UUID="8F71EB3D-5DB8-4A8F-8AE3-C6E80F27328A">
+                      <SHORT-NAME>pcs_ServiceAutotest</SHORT-NAME>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="DV:DEV">
+                            <SD GID="DV:ImportModePreset">Keep</SD>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <PROVIDED-COM-SPECS>
+                        <SERVER-COM-SPEC>
+                          <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/ics_ServiceAutotest/GetTestResult</OPERATION-REF>
+                          <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                        </SERVER-COM-SPEC>
+                      </PROVIDED-COM-SPECS>
+                      <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/ics_ServiceAutotest</PROVIDED-INTERFACE-TREF>
+                    </P-PORT-PROTOTYPE>
+                  </PORTS>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR UUID="FB8FC8A7-752E-4293-AEF3-F6F2F91D54D6">
+                      <SHORT-NAME>SBC_InternalBehavior</SHORT-NAME>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/AUTOLIV/GlobalDictionary/DataTypeMappingSet/DataTypeMappingSet_PP4G</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EVENTS>
+                        <TIMING-EVENT UUID="2C014AA1-5471-42CC-AE51-1129948E086B">
+                          <SHORT-NAME>TMT_SBC_MainFunction</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/SBC/ComponentTypes/SBC/SBC_InternalBehavior/SBC_MainFunction</START-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </TIMING-EVENT>
+                        <OPERATION-INVOKED-EVENT UUID="11070864-A264-47BC-8751-C02FDDA64194">
+                          <SHORT-NAME>OIT_ics_ServiceAutotest_GetTestResult_ics_ServiceAutotest_GetTestResult</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/MICROSAR/SBC/ComponentTypes/SBC/SBC_InternalBehavior/SBC_ServiceAutotest_GetTestResult</START-ON-EVENT-REF>
+                          <OPERATION-IREF>
+                            <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/MICROSAR/SBC/ComponentTypes/SBC/pcs_ServiceAutotest</CONTEXT-P-PORT-REF>
+                            <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/ics_ServiceAutotest/GetTestResult</TARGET-PROVIDED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </OPERATION-INVOKED-EVENT>
+                      </EVENTS>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY UUID="4AD9A1EA-E1D8-423C-8E64-69D2636F6205">
+                          <SHORT-NAME>SBC_MainFunction</SHORT-NAME>
+                        </RUNNABLE-ENTITY>
+                        <RUNNABLE-ENTITY UUID="197F79CD-53C2-4684-B67C-8088BC1ABD1C">
+                          <SHORT-NAME>SBC_ServiceAutotest_GetTestResult</SHORT-NAME>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </SERVICE-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION UUID="FD798E85-2618-4A12-A9A4-C7D3613DC5F1">
+                  <SHORT-NAME>SBC_Implementation</SHORT-NAME>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/MICROSAR/SBC/ComponentTypes/SBC/SBC_InternalBehavior</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+    <AR-PACKAGE UUID="4FB0CE39E42636E1B118FA293B4A2045">
+      <SHORT-NAME>SwComponentTypes</SHORT-NAME>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

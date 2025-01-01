@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>12</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>4104</w>
+      <h>2382</h>
+    </coordinates>
+    <panel_attributes>title:eol_ManageCycleCounters
+Start
+Call Rte_Read_prrExecutedCycle_u8CycleNumber function
+Call Rte_Read_prrCustomerSpecific_u8TriggerRequest function
+Call Rte_Read_prrPreSafeLvl_u8PreSafeLvl function
+
+Check if a request on PRE-SAFE is active
+If
+	[PRE-SAFE is active]
+	Check if request is different than NO_LVL
+	If
+		[Request is different than NO_LVL]
+		Check data overflow
+		If
+			[No overflow]
+			Increase Request counter value
+			Call Rte_Write_pseExecutionCounterBlockStatus_b8NVMBlockStatus
+
+
+			[else]
+			Do nothing due to data overflow 
+		EndIf
+
+
+		[else]
+		Nothing to do 
+	EndIf
+
+
+	[else]
+	Nothing to do 
+EndIf
+
+
+If
+	[KU8_NB_MONITORED_CYCLES &gt; u8ExecutedCycleNumber]
+	call eol_GetCounterIndex function
+	If
+		[u8ExecutedCycleNumber  != EOL_u8OldExecutedCycleNumber]
+		switch(u8Index)
+		If
+			[KU8_EOL_COMFORT_LEVEL]
+			If
+				[Check data overflow]
+				Increase Comfort counter value
+				Call Rte_Write_pseExecutionCounterBlockStatus_b8NVMBlockStatus
+
+
+				[else]
+				Do nothing due to data overflow 
+			EndIf
+			break;
+
+			[KU8_EOL_MAX_FORCE_LEVEL]
+			If
+				[Check data overflow]
+				Increase Max counter value
+				Call Rte_Write_pseExecutionCounterBlockStatus_b8NVMBlockStatus
+
+
+				[else]
+				Do nothing due to data overflow 
+			EndIf
+			break;
+
+			[KU8_EOL_HIGH_FORCE_LEVEL]
+			If
+				[Check data overflow]
+				Increase Max counter value
+				Call Rte_Write_pseExecutionCounterBlockStatus_b8NVMBlockStatus
+
+
+				[else]
+				Do nothing due to data overflow 
+			EndIf
+
+			[KU8_EOL_LOW_FORCE_LEVEL]
+			If
+				[Check data overflow]
+				Increase Max counter value
+				Call Rte_Write_pseExecutionCounterBlockStatus_b8NVMBlockStatus
+
+
+				[else]
+				Do nothing due to data overflow 
+			EndIf
+			break;
+		EndIf
+
+
+		[else]
+		Do nothing due to same cycle
+	EndIf
+
+	[else]
+	Do nothing due to cycle index invalid
+EndIf
+
+Update Old executed cycle number
+Update Old PreSafe lvl
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

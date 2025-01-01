@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>45</x>
+      <y>27</y>
+      <w>1399</w>
+      <h>560</h>
+    </coordinates>
+    <panel_attributes>title:mmg_AvailabilityDataStatus
+Start
+Rte_Call_pclAecStatus_GetAecGroupsStatus(&amp;u32AECGroupStatus)
+If
+	[KU32_ZERO != u32AECGroup_RedStatus]
+	 u8newAvailabilityDataCategory = MMG_STATUS_IS_RED
+	 
+	[KU32_ZERO != u32AECGroup_GreenStatus]
+	 u8newAvailabilityDataCategory = MMG_STATUS_IS_GREEN
+
+	[KU32_ZERO == u32AECGroupStatus]
+	u8newAvailabilityDataCategory = MMG_STATUS_IS_GREEN
+	
+	Do nothing
+EndIf
+If
+	[u8oldAvailabilityDataCategory != u8newAvailabilityDataCategory]
+	 u8oldAvailabilityDataCategory = u8newAvailabilityDataCategory
+	 Rte_Write_AvailabilityDataHandler_AvailabilityDataCategory(u8newAvailabilityDataCategory)
+		
+	 Do nothing
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

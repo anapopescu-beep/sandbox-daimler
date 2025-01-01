@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0305; ARCH_SW_DIA_0306; ARCH_SW_DIA_0307; ARCH_SW_DIA_0308; ARCH_SW_DIA_0309; ARCH_SW_DIA_0310; ARCH_SW_DIA_0311
+ARCH_SW_DIA_0305: Service 0x2E (Write Data By Identifier) will be implemented for DID FD2F (ECU Location)
+ARCH_SW_DIA_0306: The Write ECU Location service shall be available in the following sessions: Supplier Session/Development Session (0x7E)
+ARCH_SW_DIA_0307: Service Write ECU Location shall be available under the following forms of Authentication: Supplier Development ENHANCED Production
+ARCH_SW_DIA_0308: Data Identifier of Write ECU Location shall be: 0xFD2F
+ARCH_SW_DIA_0309: The SIDE parameter shall be 1 byte and shall correspond to the side the ECU shall be configured to: 0x99 RIGHT SIDE 0x9C LEFT SIDE
+ARCH_SW_DIA_0310: Bytes #2-#3:  DataIdentifier of the Write ECU location service shall be: 0xFD2F
+ARCH_SW_DIA_0311: If positive answer is sent, then value of SIDE shall be taken into account after reset.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD2F_EcuLocationWrite*.
+
+Action: ARCH_SW_DIA_0305; ARCH_SW_DIA_0306; ARCH_SW_DIA_0307; ARCH_SW_DIA_0308; ARCH_SW_DIA_0309; ARCH_SW_DIA_0310; ARCH_SW_DIA_0311
+
+	Step 4: Send diag request for 2E FD2F and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD2F_EcuLocationWrite was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1195</w>
+      <h>701</h>
+    </coordinates>
+    <panel_attributes>title:Dcm_Svc85Handler
+Start
+lStdResult = Dcm_DiagVerifyServiceWithSubFunction()
+
+[lStdResult == DCM_E_OK]
+SubSvcRef = (Dcm_DiagSubServiceRefMemType)lSubSvcRef
+ReqMode = Dcm_CfgWrapSvc85SubFuncInfo()
+DemClientId = Dcm_DiagGetDemClientId()
+Dcm_UtiConsumeReqDataAsU24()
+	[DTCGroup != DEM_DTC_GROUP_ALL_DTCS]
+	lStdResult = E_NOT_OK
+	ErrorCode = DCM_E_REQUESTOUTOFRANGE
+
+	[DTCGroup == DEM_DTC_GROUP_ALL_DTCS]
+	Do nothing
+	
+	[lStdResult == DCM_E_OK]
+	Dcm_RepeaterNextStep()
+	lStdResult = DCM_E_LOOP
+	
+return lStdResult
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

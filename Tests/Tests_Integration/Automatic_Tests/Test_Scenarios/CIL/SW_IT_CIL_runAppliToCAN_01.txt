@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0011, ARCH_SW_CIL_0016
+ARCH_SW_CIL_0011: Signal PS_Curve_FL/FR_Stat_ST3 shall be written and send to CAN.
+ARCH_SW_CIL_0016: Signal shall be send with the exact same value read as Input for Curve Signal.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PS_Curve_FL_Rq_HU_ST3 to KU8_TWO.
+
+	Step 3: Set a breakpoint in function cil_ManageOutputSignals() at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_PS_Curve_FL_Stat_ST3_PS_Curve_FL_Stat_ST3(CIL_u8PSCurve);'.
+
+	Step 4: Check if CPU stopped at line '(void)Rte_Write_CIL_AC_CommunicationInteractionLayer_IF_PS_Curve_FL_Stat_ST3_PS_Curve_FL_Stat_ST3(CIL_u8PSCurve);'.
+
+Action: ARCH_SW_CIL_0011
+
+	Step 5: Check if variable CIL_u8PSCurve is I_CO2_OFF_STAGE1_STAGE2_STAGE2. 
+		Expected result:  2
+
+Action: ARCH_SW_CIL_0011, ARCH_SW_CIL_0016
+
+	Step 6: Check if signal PS_Curve_FL_Stat_ST3 value is I_CO2_OFF_STAGE1_STAGE2_STAGE2. 
+		Expected result:  2
+
+Postcondition
+
+	Step 7: Return ECU to default values

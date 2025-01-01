@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0585; ARCH_SW_DIA_0589; ARCH_SW_DIA_0590; ARCH_SW_DIA_0591; ARCH_SW_DIA_0592; ARCH_SW_DIA_0593
+ARCH_SW_DIA_0585: Service 0x2E (Write Data By Identifier) will be implemented for DID FD03 (AEE Traceability Number And PCBA Programmed PN)
+ARCH_SW_DIA_0589: Bytes #2-#3: DataIdentifier of the Write AEE Traceability Number And PCBA programmed PN shall be: 0xFD03
+ARCH_SW_DIA_0590: Bytes #4-#15: ?AEE Traceability Number [ASCII Coded]
+ARCH_SW_DIA_0591: Bytes #16-#25: ?PCBA programmed Part Number [ASCII Coded] 
+ARCH_SW_DIA_0592: Byte #1: SID-PR of the WriteDataByIdentifier service shall be 0x6E.
+ARCH_SW_DIA_0593: Bytes #2-#3: Data Identifier of the Write AEE Traceability Number And PCBA programmed PN Service shall be: 0xFD03.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD03_PCBAProgrammedPartNumberWrite*.
+
+ARCH_SW_DIA_0585; ARCH_SW_DIA_0589; ARCH_SW_DIA_0590; ARCH_SW_DIA_0591; ARCH_SW_DIA_0592; ARCH_SW_DIA_0593
+
+	Step 4: Send diag request for 2E FD03 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD03_PCBAProgrammedPartNumberWrite was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

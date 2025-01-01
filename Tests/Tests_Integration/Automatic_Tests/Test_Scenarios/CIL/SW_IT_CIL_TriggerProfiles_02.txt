@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0023, ARCH_SW_CIL_0060, ARCH_SW_CIL_0053, ARCH_SW_CIL_0113
+ARCH_SW_CIL_0023: If signal is received with value 2, then cycle 18,19(HWA) shall be requested.
+ARCH_SW_CIL_0060: If signal is received with value 2, then cycle 18(HWA) shall be requested.
+ARCH_SW_CIL_0053: If signal is received with value 2, then cycle 18,19(HWA) shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL2 (0x2).
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in the function cil_TriggerProfiles() after line '(void)Rte_Read_prrEnableCycle18_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL2.
+
+Action: ARCH_SW_CIL_0023, ARCH_SW_CIL_0060, ARCH_SW_CIL_0053, ARCH_SW_CIL_0113
+
+	Step 6: Check if CPU stopped after line '(void)Rte_Read_prrEnableCycle18_b8CycleValidity(&u8CycleValidityStatus);' under case I_C04_PRESF_LVL_V2_LVL2. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 7: Return ECU to default values

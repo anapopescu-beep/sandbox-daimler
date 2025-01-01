@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0366, ARCH_SW_CIL_0367, ARCH_SW_CIL_0368, ARCH_SW_CIL_0369
+ARCH_SW_CIL_0366: ERH_runGetAecGroupsStatus shall be called to get the inhibition and abortion conditions for PRE_SAFE and request tensioning cycles.
+ARCH_SW_CIL_0367: ERH_runGetAecGroupsStatus shall be called to get the inhibition conditions for PRE-SAFE6/7/8 request cycles.
+ARCH_SW_CIL_0368: ERH_runGetAecGroupsStatus shall be called to get the abortion conditions for PRE_SAFE request tensioning cycles.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C04_PRESF_LVL_V2_NOLVL.
+
+	Step 3: Set a breakpoint in the function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 5: Set a breakpoint in the function cil_ManageInputSignals at line 'cil_ManageInhibitConditions();'.
+
+	Step 6: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 7: Set a breakpoint in the function cil_ManageInhibitConditions at line 'Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);'.
+
+Action: ARCH_SW_CIL_0366, ARCH_SW_CIL_0367, ARCH_SW_CIL_0368, ARCH_SW_CIL_0369
+
+	Step 8: Check if CPU stopped at line Rte_Call_pclAecStatus_GetAecGroupsStatus(&u32AECGroupStatus);.
+
+Postcondition
+
+	Step 9: Return ECU to default values

@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+  <!-- Attribute types-->
+  <xs:simpleType name="t_time">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]"/>
+      <!-- "YYYY-MM-DD hh:mm.ss" -->
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_timestamp">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[ 0-9]*[0-9]\.[0-9][0-9][0-9][0-9][0-9][0-9]"/>
+      <!-- "X.XXXXXX" -->
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_timestamp_normalized">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]*[0-9]\.[0-9]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_hex_value">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="0x[0-9A-Fa-f]*"/>
+      <!-- "0xABCDEF" -->
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_hex_value_noprefix">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9A-Fa-f]*"/>
+      <!-- "ABCDEF" -->
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_numeric_value">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-9]*[0-9]\.?[0-9]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_bool_enum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="true"/>
+      <xs:enumeration value="false"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_result_enum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value=""/>
+      <xs:enumeration value="na"/>
+      <xs:enumeration value="skip"/>
+      <xs:enumeration value="pass"/>
+      <xs:enumeration value="fail"/>
+      <xs:enumeration value="warn"/>
+      <xs:enumeration value="none"/>
+      <xs:enumeration value="error"/>
+      <xs:enumeration value="inconclusive"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_checkresult_enum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Unknown"/>
+      <xs:enumeration value="none"/>
+      <xs:enumeration value="pass"/>
+      <xs:enumeration value="inconclusive"/>
+      <xs:enumeration value="fail"/>
+      <xs:enumeration value="error"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_measurementresulttype_enum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="int"/>
+      <xs:enumeration value="float"/>
+      <xs:enumeration value="string"/>
+      <xs:enumeration value="signed"/>
+      <xs:enumeration value="unsigned"/>
+      <xs:enumeration value="double"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_rtr">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="rtr"/>
+      <xs:enumeration value="nortr"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_ams">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ctrl"/>
+      <xs:enumeration value="ams"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_dir">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="tx"/>
+      <xs:enumeration value="rx"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_vartype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="int"/>
+      <xs:enumeration value="integer"/>
+      <xs:enumeration value="float"/>
+      <xs:enumeration value="string"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_violationtype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="constraint"/>
+      <xs:enumeration value="condition"/>
+      <xs:enumeration value="conditionwarning"/>
+      <xs:enumeration value="constraintwarning"/>
+      <xs:enumeration value="observation"/>
+      <xs:enumeration value="program"/>
+      <xs:enumeration value="warning"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_verdicttype">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="2_basic"/>
+      <xs:enumeration value="5_extended"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="t_reportfeatures">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  <xs:attributeGroup name="a_time">
+    <xs:attribute name="time" type="t_time" use="required"/>
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="a_starttime">
+    <xs:attribute name="starttime" type="t_time" use="required"/>
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+  </xs:attributeGroup>
+  <xs:attributeGroup name="a_endtime">
+    <xs:attribute name="endtime" type="t_time" use="required"/>
+    <xs:attribute name="endtimestamp" type="t_timestamp" use="required"/>
+  </xs:attributeGroup>
+  <!--Types for element-->
+  <xs:complexType name="t_cell">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="colspan" type="xs:integer"/>
+        <xs:attribute name="rowspan" type="xs:integer"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="t_info">
+    <xs:sequence>
+      <xs:element name="name"/>
+      <xs:element name="description"/>
+    </xs:sequence>
+    <xs:attribute name="key" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_infos">
+    <xs:sequence>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="xinfo" type="t_info" maxOccurs="unbounded"/>
+        <xs:element name="info" type="t_info" maxOccurs="unbounded"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_canmsg">
+    <xs:sequence minOccurs="0">
+      <xs:element name="byte" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="pos" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="t_hex_value" use="required"/>
+    <xs:attribute name="dlc" type="xs:integer" use="required"/>
+    <xs:attribute name="rtr" type="t_rtr" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_mostmsg">
+    <xs:sequence minOccurs="0">
+      <xs:element name="byte" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="pos" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="fblock" type="t_hex_value" use="required"/>
+    <xs:attribute name="instance" type="t_hex_value" use="required"/>
+    <xs:attribute name="function" type="t_hex_value" use="required"/>
+    <xs:attribute name="optype" type="t_hex_value" use="required"/>
+    <xs:attribute name="da" type="t_hex_value" use="required"/>
+    <xs:attribute name="sa" type="t_hex_value" use="required"/>
+    <xs:attribute name="tellen" type="t_hex_value" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="telid" type="t_hex_value"/>
+    <xs:attribute name="ams" type="t_ams" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_mostsysmsg">
+    <xs:sequence minOccurs="0">
+      <xs:element name="byte" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="pos" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="rtype" type="t_hex_value" use="required"/>
+    <xs:attribute name="da" type="t_hex_value" use="required"/>
+    <xs:attribute name="sa" type="t_hex_value" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_linframe">
+    <xs:sequence minOccurs="0">
+      <xs:element name="byte" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="pos" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="t_hex_value" use="required"/>
+    <xs:attribute name="channel" type="t_hex_value_noprefix" use="required"/>
+    <xs:attribute name="dir" type="t_dir"/>
+  </xs:complexType>
+  <xs:complexType name="t_gmlanmsg">
+    <xs:sequence minOccurs="0">
+      <xs:element name="byte" maxOccurs="unbounded">
+        <xs:complexType mixed="true">
+          <xs:attribute name="pos" type="xs:integer" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="id" type="t_hex_value" use="required"/>
+    <xs:attribute name="sourceId" type="t_hex_value"/>
+    <xs:attribute name="prio" type="t_hex_value"/>
+    <xs:attribute name="dlc" type="xs:integer" use="required"/>
+    <xs:attribute name="rtr" type="t_rtr" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_image">
+    <xs:attribute name="file" type="xs:string" use="required"/>
+    <xs:attribute name="width" type="xs:string"/>
+    <xs:attribute name="height" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_details">
+    <xs:sequence>
+      <xs:element name="title" minOccurs="0"/>
+      <xs:choice>
+        <xs:element name="image" type="t_image"/>
+        <xs:element name="canmsg" type="t_canmsg"/>
+        <xs:element name="mostmsg" type="t_mostmsg"/>
+        <xs:element name="linframe" type="t_linframe"/>
+        <xs:element name="gmlanmsg" type="t_gmlanmsg"/>
+        <xs:element name="mostsysmsg" type="t_mostsysmsg"/>
+        <xs:element name="info" type="t_info"/>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_measuredresults">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="measuredresult">
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:string" use="required"/>
+          <xs:attribute name="value" type="xs:string" use="required"/>
+          <xs:attribute name="type" type="t_measurementresulttype_enum" use="required"/>
+          <xs:attribute name="unit" type="xs:string" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_verdict">
+    <xs:attributeGroup ref="a_time"/>
+    <xs:attributeGroup ref="a_endtime"/>
+    <xs:attribute name="result" type="t_result_enum" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_sysvardef">
+    <xs:sequence>
+      <xs:element name="valuetable" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="enumerationvalue" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:attribute name="value" use="required"/>
+                <xs:attribute name="description" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sysvarvalue"/>
+    </xs:sequence>
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="t_vartype" use="required"/>
+    <xs:attribute name="min" type="xs:string"/>
+    <xs:attribute name="max" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_vardef">
+    <xs:sequence>
+      <xs:element name="testerquestion" minOccurs="0"/>
+      <xs:element name="testerinput">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="inputvalue"/>
+            <xs:element name="description" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="t_vartype" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_result">
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="result" type="t_result_enum" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_precondition">
+    <xs:sequence>
+      <xs:element name="teststep" type="t_teststep" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="precondend" type="t_precondend"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="a_starttime"/>
+  </xs:complexType>
+  <xs:complexType name="t_precondend">
+    <xs:attributeGroup ref="a_endtime"/>
+    <xs:attribute name="fulfilled" type="t_bool_enum"/>
+  </xs:complexType>
+  <xs:complexType name="t_teststep" mixed="true">
+    <xs:sequence minOccurs="0">
+      <xs:element name="tabularinfo" type="t_tabularinfo"/>
+    </xs:sequence>
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="level" type="xs:integer"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="auto"/>
+          <xs:enumeration value="user"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="ident" type="xs:string" use="required"/>
+    <xs:attribute name="result" type="t_result_enum" use="required"/>
+    <xs:attribute name="detectedAt" type="t_timestamp"/>
+    <xs:attribute name="detectedText" type="xs:string"/>
+    <xs:attribute name="indent" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_comment" mixed="true">
+    <xs:sequence minOccurs="0">
+      <xs:element name="text"/>
+    </xs:sequence>
+    <xs:attribute name="timestamp" type="t_timestamp"/>
+  </xs:complexType>
+  <xs:complexType name="t_prepend">
+    <xs:attributeGroup ref="a_endtime"/>
+  </xs:complexType>
+  <xs:complexType name="t_xinfoobject">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="xinfo" type="t_info"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_xinfoset">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="xinfoobject" type="t_xinfoobject"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_miscinfo">
+    <xs:sequence>
+      <xs:element name="title"/>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="info" type="t_info"/>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_externalref" mixed="true">
+    <xs:attribute name="type" type="xs:string" use="required"/>
+    <xs:attribute name="title" type="xs:string" use="required"/>
+    <xs:attribute name="owner" type="xs:string"/>
+    <xs:attribute name="uniqueid" type="xs:string"/>
+    <xs:attribute name="readableid" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="t_extendedinfo" mixed="true">
+    <xs:sequence>
+      <xs:any processContents="skip" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="type" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_tabularinfo">
+    <xs:sequence>
+      <xs:element name="description"/>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element name="heading">
+          <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+              <xs:element name="cell" type="t_cell"/>
+            </xs:sequence>
+            <xs:attribute name="level" type="xs:integer"/>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="row">
+          <xs:complexType>
+            <xs:sequence maxOccurs="unbounded">
+              <xs:element name="cell" type="t_cell"/>
+            </xs:sequence>
+            <xs:attribute name="level" type="xs:integer" use="required"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="expand" type="xs:string" fixed="true"/>
+  </xs:complexType>
+  <xs:complexType name="t_testlogfiles">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="testlogfile">
+        <xs:complexType>
+          <xs:attribute name="logbegin"/>
+          <xs:attribute name="logend"/>
+          <xs:attribute name="file" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="t_engineer">
+    <xs:complexContent>
+      <xs:extension base="t_infos"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="t_testsetup">
+    <xs:complexContent>
+      <xs:extension base="t_infos"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="t_sut">
+    <xs:complexContent>
+      <xs:extension base="t_infos"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="t_hardware">
+    <xs:sequence>
+      <xs:element name="sectioncomment" minOccurs="0"/>
+      <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="xinfoset" type="t_xinfoset"/>
+      </xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="category" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_checkbegin">
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="checkname" type="xs:string" use="required"/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_checkend">
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="checkname" type="xs:string" use="required"/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_checkstartupinfo" mixed="true">
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="checkname" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="xs:string" use="required"/>
+    <xs:attribute name="result" type="t_result_enum" use="required"/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_checkterminationinfo" mixed="true">
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="checkname" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="xs:string" use="required"/>
+    <xs:attribute name="result" type="t_result_enum" use="required"/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_checkstatistic">
+    <xs:sequence>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="spec" type="t_infos"/>
+      </xs:sequence>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="statistic">
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="t_infos">
+                <xs:attribute name="title"/>
+                <xs:attribute name="type" fixed="distribution">
+                  <xs:annotation>
+                    <xs:documentation>Only for distribution type</xs:documentation>
+                  </xs:annotation>
+                </xs:attribute>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="checkname" type="xs:string" use="required"/>
+    <xs:attribute name="id" type="xs:string" use="required"/>
+    <xs:attribute name="seq" type="xs:string"/>
+    <xs:attribute name="result" type="t_checkresult_enum" use="required"/>
+  </xs:complexType>
+  <xs:complexType name="t_violation" mixed="true">
+    <xs:attribute name="timestamp" type="t_timestamp" use="required"/>
+    <xs:attribute name="type" type="t_violationtype" use="required"/>
+    <xs:attribute name="result" type="t_result_enum"/>
+    <xs:attribute name="checkId" type="xs:string"/>
+    <xs:attribute name="checkTitle" type="xs:string"/>
+    <xs:attribute name="detectedAt" type="t_timestamp_normalized"/>
+  </xs:complexType>
+  <xs:complexType name="t_skipped">
+    <xs:sequence>
+      <xs:element name="title"/>
+      <xs:choice minOccurs="0">
+        <xs:element name="ident"/>
+        <xs:element name="skippedcount"/>
+      </xs:choice>
+      <xs:element name="description" minOccurs="0"/>
+      <xs:element name="externalref" type="t_externalref" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="a_starttime"/>
+  </xs:complexType>
+  <!--Elements-->
+  <xs:element name="showtestcase">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="none" type="t_bool_enum"/>
+        <xs:element name="pass" type="t_bool_enum"/>
+        <xs:element name="inconclusive"/>
+        <xs:element name="fail"/>
+        <xs:element name="error" type="t_bool_enum"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

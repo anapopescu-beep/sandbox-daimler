@@ -1,0 +1,66 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0021, ARCH_SW_MMG_0022, ARCH_SW_MMG_0404, ARCH_SW_MMG_0405
+ARCH_SW_MMG_0021: Type 2 Roll Over Event shall represent the 7 Bit of Byte 1 from Start and Stop Blocks and shall be saved with the following values: No = 0 if no Type 2 Roll Over Crash conditions detected; Yes = 1 if Type 2 Roll Over Crash conditions detected
+ARCH_SW_MMG_0022: KL30 Voltage shall represent the Byte 2 from Start and Stop Blocks and shall be saved with values between 0x00 and 0xFF.
+ARCH_SW_MMG_0404: CIL_runGetInputSignalPresafeRecorderInfo shall be called in order to get PreSafe Recorder Info data from CIL module.
+ARCH_SW_MMG_0405: PMP_runGetDeficiencyLevel shall be called in order to get the Deficiency level input.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in MMG_runPreSafeRecorder().
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 4: Check if CPU stopped in function MMG_runPreSafeRecorder(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in mmg_PreSafe_HandleStopData() at line 'mmg_stPreSafeStopData.Stop2RollOverType2 = KB_ZERO;'.
+
+Action: ARCH_SW_MMG_0021
+
+	Step 6: Check if CPU stopped in function mmg_PreSafe_HandleStartData() at line 'mmg_stPreSafeStopData.Stop2RollOverType2 = KB_ZERO;'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0021
+
+	Step 7: Evaluate if variable mmg_stPreSafeStopData.Stop2RollOverType2 is equal to KB_ZERO. 
+		Expected result:  Variable mmg_stPreSafeStopData.Stop2RollOverType2  is equal to KB_ZERO
+
+	Step 8: Set a breakpoint in MMG_runPreSafeRecorder() at line 'Rte_Call_pclMotor_T_GetDeficiencyLevel(&mmg_u32DeficiencyLevel);'.
+
+Action: ARCH_SW_MMG_0405
+
+	Step 9: Check if CPU stopped at line 'Rte_Call_pclMotor_T_GetDeficiencyLevel(&mmg_u32DeficiencyLevel);'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in MMG_runPreSafeRecorder() at line 'Rte_Call_pclPreSafeRecInput_GetInputSignals(&mmm_stPreSafeInputData);'.
+
+Action: ARCH_SW_MMG_0404
+
+	Step 11: Check if CPU stopped at line 'Rte_Call_pclPreSafeRecInput_GetInputSignals(&mmm_stPreSafeInputData);'. 
+		Expected result:  CPU is Stopped
+
+	Step 12: Set a breakpoint in MMG_runPreSafeRecorder() at line 'Rte_Call_pclKL30_Get(&mmg_u16LocalVoltage);'.
+
+	Step 13: Check if CPU stopped 'Rte_Call_pclKL30_Get(&mmg_u16LocalVoltage);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_MMG_0022
+
+	Step 14: Check if variable mmg_u16LocalVoltage values are between 0x00 and 0xFF. 
+		Expected result:  values are between 0x00 and 0xFF
+
+Postcondition
+
+	Step 15: Return ECU to default values

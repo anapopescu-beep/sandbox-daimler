@@ -1,0 +1,88 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0720, ARCH_SW_CIL_0753, ARCH_SW_CIL_0754, ARCH_SW_CIL_0755
+ARCH_SW_CIL_0720: If selected, the content of the measurement frame - block #10 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0753: AdcIf_runGetHBS_A_V_(Ext)* shall be called to get the voltage of the HBS �A� monitoring signal.
+ARCH_SW_CIL_0754: AdcIf_runGetHBS_B_V_(Ext)* shall be called to get the voltage of the HBS �B� monitoring signal.
+ARCH_SW_CIL_0755: AdcIf_runGetHS1_V_(Ext)* shall be called to get the sampled value of the HS_SW signal.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 10.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block10_InfosToSend at line Rte_Call_pclHBS_A_V_raw_Get(&u16HBSAVoltageRaw);.
+
+	Step 4: Set a breakpoint in function cil_Update_07Cx_Block10_InfosToSend at line Rte_Call_pclHBS_B_V_raw_Get(&u16HBSBVoltageRaw);.
+
+	Step 5: Set a breakpoint in function cil_Update_07Cx_Block10_InfosToSend at line Rte_Call_pclHS1_V_raw_Get(&u16HS1_V_raw);.
+
+Action: ARCH_SW_CIL_0753
+
+	Step 6: Check if CPU stopped at line Rte_Call_pclHBS_A_V_raw_Get(&u16HBSAVoltageRaw);. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0754
+
+	Step 7: Check if CPU stopped at line Rte_Call_pclHBS_B_V_raw_Get(&u16HBSBVoltageRaw);. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0755
+
+	Step 8: Check if CPU stopped at line Rte_Call_pclHS1_V_raw_Get(&u16HS1_V_raw);. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint at the last line of function cil_Update_07Cx_Block10_InfosToSend.
+
+Action: ARCH_SW_CIL_0720
+
+	Step 10: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 and signal Meas_RBTM_FL_01_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_01 is equal to signal Meas_RBTM_FL_01_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 11: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 is equal to signal Meas_RBTM_FL_02_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 12: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 is equal to signal Meas_RBTM_FL_03_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 13: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 and signal Meas_RBTM_FL_04_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_04 is equal to signal Meas_RBTM_FL_04_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 14: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 and signal Meas_RBTM_FL_05_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_05 is equal to signal Meas_RBTM_FL_05_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 15: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 is equal to signal Meas_RBTM_FL_06_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 16: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 is equal to signal Meas_RBTM_FL_07_ST3
+
+Action: ARCH_SW_CIL_0720
+
+	Step 17: Evaluate if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 and signal Meas_RBTM_FL_08_ST3 are equal. 
+		Expected result:  Variable cil_stMeasurementFrameContent.Meas_RBTM_FL_08 is equal to signal Meas_RBTM_FL_08_ST3
+
+Postcondition
+
+	Step 18: Return ECU to default values

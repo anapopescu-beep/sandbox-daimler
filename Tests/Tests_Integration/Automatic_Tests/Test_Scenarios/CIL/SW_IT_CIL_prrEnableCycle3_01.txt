@@ -1,0 +1,51 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0241
+ARCH_SW_CIL_0241: If signal is received with value 6 and group KU32_AEC_GROUP_MASK_EOL_MAX is set then tensioning cycle 3 shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeMaxForce().
+
+	Step 3: Check if CPU stopped in function EOL_Autotest_CheckProductEndOfLifeMaxForce(). 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set variable NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData.NVP_au32ExecutedCycleCounters[KU8_EOL_MAX_FORCE_LEVEL] to NVP_u32MaxForceEOLThrs.
+
+	Step 5: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL6.
+
+	Step 6: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 7: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function cil_TriggerProfile at line 'if( (KU8_TRUE == u8CycleValidityStatus) &&' under case I_C04_PRESF_LVL_V2_LVL6 and press run.
+
+Action: ARCH_SW_CIL_0247, ARCH_SW_CIL_0249
+
+	Step 9: Check if CPU stopped at line 'if( (KU8_TRUE == u8CycleValidityStatus) &&' under case I_C04_PRESF_LVL_V2_LVL6. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in function cil_RequestTensioning.
+
+	Step 11: Check if CPU stopped in function cil_RequestTensioning. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0241
+
+	Step 12: Evaluate if variable u8Level is KU8_THREE. 
+		Expected result:  KU8_THREE
+
+Postcondition
+
+	Step 13: Return ECU to default values

@@ -1,0 +1,48 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0258
+ARCH_SW_CIL_0258: CIL component should ensure that if a profile is requested on PRE_SAFE or API and it is executed completely (maximum duration REACHED) and the request is still active on signal the profile will be RESTARTED until signal change to NO action or another profile.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 4: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfile at line 'case I_C04_PRESF_LVL_V2_LVL1:' and press run.
+
+Action: ARCH_SW_CIL_0258
+
+	Step 6: Check if CPU stopped at line 'case I_C04_PRESF_LVL_V2_LVL1:' and delete breakpoint. 
+		Expected result:  CPU is Stopped
+
+	Step 7: Set a breakpoint at line 'cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_1);' and press run.
+
+Action: ARCH_SW_CIL_0258
+
+	Step 8: Check if CPU stopped at line 'cil_RequestTensioning(KU8_PRECRASH_SEVERITY_LEVEL_1);' and press run. 
+		Expected result:  CPU is Stopped
+
+	Step 9: Set a breakpoint at line 'case I_C04_PRESF_LVL_V2_LVL1:'.
+
+Action: ARCH_SW_CIL_0258
+
+	Step 10: Check if CPU stopped at line 'case I_C04_PRESF_LVL_V2_LVL1:'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 11: Return ECU to default values

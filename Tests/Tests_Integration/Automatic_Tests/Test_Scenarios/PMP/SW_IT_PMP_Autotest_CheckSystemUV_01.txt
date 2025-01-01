@@ -1,0 +1,50 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_1100, ARCH_SW_PMP_1111, ARCH_SW_PMP_1112
+ARCH_SW_PMP_1100: PMP shall check if an undervoltage is detected in the system, signal PN14_SupBat_Volt_ST3.
+ARCH_SW_PMP_1111: Value of signal PN14_SupBat_Volt_ST3 shall be an input.
+ARCH_SW_PMP_1112: ERH_runGetAecStatus shall be called to get the qualification status of a specific AEC.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_1100, ARCH_SW_PMP_1102
+
+	Step 2: Set a breakpoint in function PMP_cbk_CheckSystemUV at the RTE Call for CheckSystemUV autotest 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PMP_Autotest_CheckSystemUV at the RTE Call for ERH_runGetAecStatus 
+		Expected result:  BP reached.
+
+	Step 4: Step in.
+
+	Step 5: Run until return ERH_runGetAecStatus
+
+Action: ARCH_SW_PMP_1101
+
+	Step 6: Write a value less than 16V on signal PN14_SupBat_Volt_ST3 
+		Expected result:  Signal value set to 15.0.
+
+	Step 7: Set a breakpoint in function PMP_Autotest_CheckSystemUV after the return of the autotest result 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_1112
+
+	Step 8: Evaluate pmp_u8AECStatus 
+		Expected result:  Variable is read
+
+	Step 9: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 10: Return ECU to default values

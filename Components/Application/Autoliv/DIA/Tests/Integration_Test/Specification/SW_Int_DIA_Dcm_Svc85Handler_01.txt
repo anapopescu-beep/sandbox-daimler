@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0410; ARCH_SW_DIA_0411; ARCH_SW_DIA_0412; ARCH_SW_DIA_0413; ARCH_SW_DIA_0414; ARCH_SW_DIA_0415; ARCH_SW_DIA_0416; ARCH_SW_DIA_0417; ARCH_SW_DIA_0418; ARCH_SW_DIA_0492; ARCH_SW_DIA_0493; ARCH_SW_DIA_0494; ARCH_SW_DIA_0495; ARCH_SW_DIA_0496
+ARCH_SW_DIA_0492: The DID shall be available in the following sessions: ?Extended session ?Development Session 
+ARCH_SW_DIA_0493: This service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED
+ARCH_SW_DIA_0494: The value 0x85 shall correspond to the SID-RQ of the ControlDTCSetings Service
+ARCH_SW_DIA_0495: The value 0x01 shall correspond to the DTCSettingType: DTC Setting Enabled 
+ARCH_SW_DIA_0496: The value 0x02 shall correspond to the DTCSettingType: DTC Setting Disabled
+ARCH_SW_DIA_0411: The byte 1 shall be reserved for the SID-PR of the ControlDTCSetting service:The value 0xC5 shall correspond to the SID-PR of the ControlDTCSetting service
+ARCH_SW_DIA_0412: The byte 2 shall be reserved for the DTCSettingType of the ControlDTCSetting service: The value 0x01 shall correspond to the DTCSettingType: DTC Setting Enabled. The value 0x02 shall correspond to the DTCSettingType: DTC Setting Disabled. 
+ARCH_SW_DIA_0413: If positive response has been received for DTC Setting Disabled then the status of the DTCs shall be frozen. Note: ControlDTCSetting deactivates only the updating of the StatusOfDTC bits. The service is not used to deactivate substitute functions.
+ARCH_SW_DIA_0414: If positive response has been received for DTC Setting Enabled then the status of the DTCs shall be resumed.
+ARCH_SW_DIA_0415: If a clearDiagnosticInformation (14 hex) service is sent by the client, the ControlDTCSetting shall not prohibit resetting the server's DTC memory. If a successful ECUReset is performed, then this re-enables the setting of DTCs. 
+ARCH_SW_DIA_0416: The byte 1 shall be reserved for the SID-NR of the ControlDTCSetting service:?	The value 0x7F shall correspond to the SID-NR of the ControlDTcSetting service.
+ARCH_SW_DIA_0417: The byte 2 shall be reserved for the SID-RQ-NR of the ControlDTCSetting service: The value 0x85 shall correspond to the SID-RQ-NR of the ControlDTCSetting service. 
+ARCH_SW_DIA_0418: The byte 3 shall be reserved for the NRC-CDTCS of the ControlDTCSetting service: The value 0x12 shall correspond to the NRC-CDTCS: SubFunctionNotSupported The value 0x13 shall correspond to the NRC-CDTCS: IncorrectMessageLengthOrInvalidFormat The value 0x22 shall correspond to the NRC-CDTCS: ConditionsNotCorrect The value 0x7E shall correspond to the NRC-CDTCS: SubfunctionNotSupportedInActiveSession The value 0x7F shall correspond to the NRC-CDTCS: ServiceNotSupportedInActiveSession 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *Dcm_Svc85Handler*.
+
+Action: ARCH_SW_DIA_0410; ARCH_SW_DIA_0411; ARCH_SW_DIA_0412; ARCH_SW_DIA_0413; ARCH_SW_DIA_0414; ARCH_SW_DIA_0415; ARCH_SW_DIA_0416; ARCH_SW_DIA_0417; ARCH_SW_DIA_0418; ARCH_SW_DIA_0492; ARCH_SW_DIA_0493; ARCH_SW_DIA_0494; ARCH_SW_DIA_0495; ARCH_SW_DIA_0496;
+
+	Step 3: Send request.
+
+	Step 4: Check if  was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

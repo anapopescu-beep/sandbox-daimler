@@ -1,0 +1,556 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>SW_IT_MMG_TensioningCycles_01_Wed_Mar_08_13_35_47_2023</title>
+    <script type="text/javascript">
+      function showTimestamp(timestamp){top.LogFile.showTimestamp(timestamp);}
+    </script>
+    <script type="text/javascript">
+      var EXPANDED = '[−]';
+      var COLLAPSED = '[+]';
+      var VISIBLE = 'Visible';
+      var HIDDEN = 'Hidden';
+      var NONE = 'none';
+      var BLOCK = '';
+      function getDivId(id) { return 'div_' + id; }
+      function getLinkId(id) { return 'lnk_' + id; }
+      function getTableId(id) { return 'tbl_' + id; }
+      function getTbl2Id(id) { return 'tbl_t' + id; }
+      
+      
+      function switchText(oldText) { return oldText == COLLAPSED ? EXPANDED : COLLAPSED ; }
+      function getStyleFromText(linkText) { return linkText == COLLAPSED ? HIDDEN : VISIBLE; }
+      
+      function getElements(tagName, elementId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        var len = elm.length;
+        for (var i = 0; i < len; i++) 
+        {
+          var id = elm[i].id;
+          if (id && id.indexOf(elementId) == 0)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;
+      }
+      function matchElements(tagName, matchId)
+      {
+        this.elements = [];
+        var index = 0;
+        var elm = document.getElementsByTagName(tagName);
+        for (var i = 0; i < elm.length; i++) 
+        {
+          var id = elm[i].id;
+          var tc = id.replace(/s[0-9]+\./, "");
+          if (tc && tc == matchId)
+          {
+            this.elements[index] = elm[i];
+            index++;
+          }
+        }
+        return this.elements;  
+      }
+      function onoff(elm, style)
+      {
+        if(elm.style.display == NONE)
+        {
+          if(style == null || style == VISIBLE)
+            elm.style.display = BLOCK;
+        }
+        else
+        {
+          if(style == null || style == HIDDEN)
+            elm.style.display = NONE;
+        }
+      }
+      function switchTagStyle(tag, id, style)
+      {
+        var divs = getElements(tag, id);
+        for(var i = 0; i < divs.length; i++)
+          onoff(divs[i], style);
+      }
+      function switchRowStyle(tbl, style)
+      {
+        var rows = tbl.rows.length;
+        for(var rowIndex=0; rowIndex < rows; rowIndex++)
+        {
+          var row = tbl.rows[rowIndex];
+          if (row.id != "on")
+            onoff(row, style);
+        }
+      }
+      function switchTableRowStyle(tableId, style)
+      {
+        var tables = getElements('table', tableId);
+        for(var i = 0; i < tables.length; i++)
+          switchRowStyle(tables[i], style);
+      }
+      function switchLinkText(linkId, newText)
+      {
+        var link = getElements('a', linkId);
+        var len = link.length;
+        for(var i = 0; i < len; i++)
+        {
+          var lnk = link[i];
+          if(newText == null)
+          {
+            var oldText = lnk.text;
+            newText = switchText(oldText)
+          }
+          lnk.text = newText;
+        }
+      }
+      function switchTag(tag, id, text)
+      {
+        var style = getStyleFromText(text);
+        switchTagStyle(tag, id, style);
+      }
+      function switchTable(id)
+      {
+        switchLinkText(getTableId(id));
+        switchTableRowStyle(getTableId(id));
+      }
+      function switchDiv(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+      }      
+      function switchAll(id, linkText)
+      {
+        var text = switchText(linkText);
+        switchLinkText(getLinkId(id), text);
+        switchTag('div', getDivId(id), text);
+        var style = getStyleFromText(text);
+        switchTableRowStyle(getTbl2Id(id), style);
+      }
+      function showTable(id)
+      {
+        var tableId = getTableId(id);
+        switchLinkText(tableId, EXPANDED);
+        switchTableRowStyle(tableId, VISIBLE);
+      }
+      function hideTable(id)
+      {
+        var tableId = getTableId(id);
+        switchTableRowStyle(tableId, HIDDEN);
+        switchLinkText(tableId, COLLAPSED);
+      }
+      function showDiv(id)
+      {
+        switchLinkText(getLinkId(id), EXPANDED);
+        switchTag('div', getDivId(id), EXPANDED);
+      }
+      function showTC(id)
+      {
+        var divId = getDivId(id);
+        var elms = matchElements('div', divId); 
+        if(elms != null && elms.length > 0)
+        {
+          id = elms[0].id.replace(getDivId(''), '');
+          showDiv(id);
+        }
+      }
+      
+    </script>
+    <link rel="stylesheet" type="text/css" href="extendedNavigation.css">
+  </head>
+  <body>
+    <table>
+      <tbody>
+        <tr>
+          <td class="UpCell">
+            <a href="Frame_Report.html">Go up</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table>
+      <tr>
+        <td class="TestcaseHeadingPositiveResult">
+          <big class="Heading3">9 <a name="i__-1085787072_4656">SW_IT_MMG_TensioningCycles_01_Wed_Mar_08_13_35_47_2023</a>: Passed</big>
+        </td>
+      </tr>
+    </table>
+    <div class="Indentation" id="div_9">
+      <div class="Indentation">
+        <table class="DefaultTable">
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case begin: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2023-03-08 13:35:43</td>
+            <td class="CellNoColor">(logging timestamp  238.429226)</td>
+          </tr>
+          <tr>
+            <td style="padding-right: 0.5em;" class="CellNoColor">Test case end: </td>
+            <td style="padding-right: 0.5em;" class="CellNoColor">2023-03-08 13:36:16</td>
+            <td class="CellNoColor" nowrap>(logging timestamp  271.241816)</td>
+          </tr>
+        </table>
+        <div class="Heading4">AUTOLIV ELECTRONICS document</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="CellNoColor">Nightly test: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Test type: </td>
+              <td class="CellNoColor">Requirement-Based test</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Regression Test: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Fault injection method used: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Resource usage evaluation: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Priority: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Safety relevant: </td>
+              <td class="CellNoColor">No</td>
+            </tr>
+          </table>
+        </div>
+        <div class="Heading4">Test equipment</div>
+        <div class="Indentation">
+          <table>
+            <tr>
+              <td class="CellNoColor">Tester Name: </td>
+              <td class="CellNoColor">CGA</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">CAN case ID: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">SBC Board: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Power supply ID: </td>
+              <td class="CellNoColor">AER-PWR-005</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">Motherboard: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">MCU: </td>
+              <td class="CellNoColor">-</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">DUT: </td>
+              <td class="CellNoColor">Sample_1</td>
+            </tr>
+            <tr>
+              <td class="CellNoColor">HW Info: </td>
+              <td class="CellNoColor">22/04.00</td>
+            </tr>
+          </table>
+        </div>
+        <p><table><tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement under test</th><th style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0133, ARCH_SW_MMG_0135, ARCH_SW_MMG_0138, ARCH_SW_MMG_0157, ARCH_SW_MMG_0159, ARCH_SW_MMG_0160, ARCH_SW_MMG_0162</th></tr></table></p>
+        <p><table> <tr><th style='color:rgb(255, 255, 255);font-style:italic;font-weight:bold;text-transform:uppercase;' bgcolor='#2e90e5'>Requirement</th><th style='text-transform:uppercase;color:rgb(255, 255, 255);' bgcolor='2e90e5'>Description of the requirement</th></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0133</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_SELF_PROTECTION – SW/HW Self protection status AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0135</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_UNDER_VO_TENS – to check undervoltage AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0138</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_EOL_LOW_HIGH – to check counters AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0157</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_OVER_VO_TENS – to check overvoltage during tensioning AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0159</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE – to check timout for buckle signal AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0160</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_STEERING_CONFIGURATION – to check control unit configuration AEC group status from ERH shall be an input for MMG_KU32_MASK_AEC_INHIB_TENSIONING_CYCLES context qualification.</td></tr></p>
+        <p><tr><td style='color:rgb(4, 45, 229);font-style:italic;font-weight:bold' bgcolor='#d3e9f6'>ARCH_SW_MMG_0162</td><td style='color:rgb(4, 45, 229);font-style:italic;' bgcolor='#d3e9f6'>The “KU32_AEC_GROUP_MASK_EOL_COMFORT – To check EOL comfort counter AEC group status from ERH shall be an input for MMG_KU32_MASK_EOL_COUNTER_INHIBITION context qualification.</td></tr></p>
+        <p></table></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_IT_MMG_TensioningCycles_01_Wed_Mar_8_13_35_47_2023.asc'>Log file: SW_IT_MMG_TensioningCycles_01_Wed_Mar_8_13_35_47_2023.asc </A></p>
+        <p><A HREF='S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Logs\SW_IT_MMG_TensioningCycles_01_Wed_Mar_8_13_35_47_2023.blf'>Log file: SW_IT_MMG_TensioningCycles_01_Wed_Mar_8_13_35_47_2023.blf </A></p>
+      </div>
+      <div class="Indentation">
+        <table class="ScreenOnly">
+          <tbody>
+            <tr>
+              <td>
+                <a class="Undecorated" href="javascript:showTable('9_')">[expand test steps]</a>
+              </td>
+              <td width="2px"></td>
+              <td>
+                <a class="Undecorated" href="javascript:hideTable('9_')">[collapse test steps]</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <table class="TestGroupHeadingBackground">
+        <tr>
+          <td>
+            <big class="Heading3">Main Part of Test Case</big>
+          </td>
+        </tr>
+      </table>
+      <div class="Indentation">
+        <table class="ResultTable">
+          <tr>
+            <th class="TableHeadingCell" width="1px">Timestamp</th>
+            <th class="TableHeadingCell" width="1px">Test Step</th>
+            <th class="TableHeadingCell" width="auto">Description</th>
+            <th class="TableHeadingCell" width="1px">Result</th>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 238.429226</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Preconditions</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 238.429226</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Bench Initialization</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">1. RunPreTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 254.149816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 256.065816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles at the first line.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 256.965816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Step in mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 258.165816</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_9_i__-1085787072_4741" href="javascript:switchTable('9_i__-1085787072_4741')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_9_i__-1085787072_4741">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles,,app.elf</td>
+                  <td class="DefaultCell">Stepped in function mmg_UpdateModeStatus_Temperature_EOL_KL30_TensioningCycles,,app.elf</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 258.165816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_MMG_0133</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 258.165816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TEMPERATURE_HIGH] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_SELF_PROTECTION);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 260.265816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_IMPL_BUCKLE_TENS] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 262.365816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 262.365816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_IMPL_BUCKLE_TENS] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_IMPLAUSIBLE_DATA_BUCKLE_ORC);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 263.217816</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_9_i__-1085787072_4844" href="javascript:switchTable('9_i__-1085787072_4844')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_9_i__-1085787072_4844">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 263.217816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 265.417816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_MMG_0135, ARCH_SW_MMG_0159</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 265.417816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_TIMOEUT_BUCKLEK_TENS] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_TIMEOUT_BUCKLE);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 266.225816</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_9_i__-1085787072_4926" href="javascript:switchTable('9_i__-1085787072_4926')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_9_i__-1085787072_4926">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 266.225816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 266.225816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Set a breakpoint at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_EOL_LOW_AND_HIGH] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_LOW_HIGH);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 268.425816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Action: ARCH_SW_MMG_0138, ARCH_SW_MMG_0162</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 268.425816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Check if CPU stopped at line u32AecStatus_TensioningCycles[MMG_KU8_IDX_EOL_LOW_AND_HIGH] = (u32AECGroupStatus &amp; KU32_AEC_GROUP_MASK_EOL_LOW_HIGH);.</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 269.241816</td>
+            <td class="NumberCell"></td>
+            <td class="DefaultCell">
+              <table class="NoMarginBottom">
+                <tbody>
+                  <tr>
+                    <td>
+                      <a class="Undecorated" id="tbl_9_i__-1085787072_5019" href="javascript:switchTable('9_i__-1085787072_5019')">[−]</a>
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="InfoTableExpand" id="tbl_9_i__-1085787072_5019">
+                <tr>
+                  <td class="DefineCell" style="text-indent: 0px;">Expected Result</td>
+                  <td class="DefineCell">Actual Result</td>
+                </tr>
+                <tr>
+                  <td class="DefaultCell" style="text-indent: 0px;">CPU stopped at BP</td>
+                  <td class="DefaultCell">CPU stopped at BP</td>
+                </tr>
+              </table>
+            </td>
+            <td class="PositiveResultCell">pass</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 269.241816</td>
+            <td class="DefaultCell"></td>
+            <td class="DefaultCell">Postcondition</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="DefineCell"> 269.241816</td>
+            <td class="NumberCell">STEP</td>
+            <td class="DefaultCell">Return ECU to default values</td>
+            <td class="DefaultCell">-</td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+          <tr class="PositiveResultBackground">
+            <td style="text-indent: 20px;" class="ResultBlockHeading" colspan="4">
+              <big class="Heading4">2. RunPostTs: Passed</big>
+            </td>
+          </tr>
+          <tr>
+            <td class="PatternSeparator" colspan="4"></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>

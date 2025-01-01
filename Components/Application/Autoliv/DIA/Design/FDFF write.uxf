@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>112</y>
+      <w>935</w>
+      <h>588</h>
+    </coordinates>
+    <panel_attributes>title:Diagnostic Write
+Start
+If
+	[Data != NULL_PTR]
+	Calculate \ address
+	If
+		[(DIA_RAM_ADDRESS_START &lt;= Address) &amp;&amp; \(DIA_RAM_ADDRESS_END &gt;= Address + sizeToWrite)]
+		If
+			[DIA_WRITEBYMEM_LENGTH_MAX &gt;= sizeToWrite]
+			Update NV RAM Mirror
+			NVM_WriteBlock()
+			*ErrorCode = DCM_E_POSITIVERESPONSE
+
+			
+			*ErrorCode = \DCM_E_REQUESTOUTOFRANGE
+		EndIf
+		
+		[Out of range]
+		*ErrorCode = \DCM_E_REQUESTOUTOFRANGE
+	EndIf
+	
+	*ErrorCode = \DCM_E_REQUESTOUTOFRANGE
+EndIf
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

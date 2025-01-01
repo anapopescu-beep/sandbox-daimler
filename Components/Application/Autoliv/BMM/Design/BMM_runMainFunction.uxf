@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>5</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>420</x>
+      <y>10</y>
+      <w>597</w>
+      <h>926</h>
+    </coordinates>
+    <panel_attributes>title:BMM_runMainFunction
+Start
+Set error flags to FALSE.
+Get measured voltages for both sensors.
+Check if voltage from sensor A is in range
+If
+	[TRUE]
+
+	[FALSE]
+	Set sensor A error flag to TRUE
+
+EndIf
+Check if voltage from sensor B is in range
+If
+	[TRUE]
+
+	[FALSE]
+	Set sensor B error flag to TRUE
+
+EndIf
+Check if both sensor flags are set to TRUE
+If
+	[TRUE]
+	Set state to BMM_BOTH_SENSORS_ERROR
+
+	[FALSE]
+	Check if sensor A error flag is set to TRUE
+	If
+		[TRUE]
+		Set state to BMM_HALL_A_ERROR
+
+		[FALSE]
+		Check if sensor B error flag is set to TRUE
+		If
+			[TRUE]
+			Set state to BMM_HALL_B_ERROR
+
+			[FALSE]
+			Set state to BMM_SENSORS_OK.
+		EndIf
+	EndIf
+EndIf
+
+Check if pyro status is activated
+If
+	[Active]
+	Check if 2s delay passed
+	If
+		[Delay passed]
+		Set pyro status as not active
+	
+		[Delay active]
+		Decrement counter
+	
+	EndIf
+
+	[Not active]
+	Set sensor B error flag to TRUE
+
+EndIf
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

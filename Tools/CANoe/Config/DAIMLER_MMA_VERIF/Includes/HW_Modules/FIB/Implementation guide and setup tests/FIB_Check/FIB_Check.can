@@ -1,0 +1,156 @@
+/*@!Encoding:1252*/
+/***********************************AUTOLIV ELECTRONICS document********************************
+Module Notes: 
+************************************************************************************************
+Mks Information:
+$Author: Agapi Grigore (agapi.grigore) $ 
+$Date: 2022/02/23 14:11:51CET $
+$ProjectName: e:/MKSProjects/SBE/PP/DAIMLER_MMA/Phase_02/View_Development/Tools/CANoe/Config/DAIMLER_MMA_VERIF/Includes/HW_Modules/FIB/Implementation guide and setup tests/FIB_Check/project.pj $
+***********************************************************************************************/
+
+includes
+{
+  #include "Includes\Project_configuration.cin"
+}
+
+variables
+{  
+  
+}
+
+testcase FIB_Check_Of_All_Channels()
+{
+  char cFIBResponse[300];
+  char cExpectedFIBResponse[300];
+  int i;
+  int iBoardNumber;
+  //***************************************************************************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Test notes", "Test of FIB functionality.");
+  
+  AddRequirementInfo("Requirement under test", "FIB");
+  AddRequirementInfo("FIB", "FIB commands function properly for all channels: Open Circuit, Short to VCC, Short to GND, Set DAC Voltage, Restart_Board, Reset_Channel");
+ //***************************************************************************************
+
+  
+  DisplayRequirementsInfo();
+  AddTestSetupInformation();
+  
+  
+  TestWaitForMessageBox("Please Turn off your power supply and disconnect the FIB output from the power board.",600000000);
+  testStep("STEP", "Set Power supply off and disconnect FIB from power board.");
+  
+
+  testCaseComment("Set Open circuit on all channels");
+  for(i = 1; i<= @sysvar::FIB::sysFIBChannelCount; i++)
+  {
+    testStep("STEP", "Set Open circuit on channel %i", i);
+    testWaitForTimeout(100);
+    strncpy(cExpectedFIBResponse, "", 1);
+    
+    Open_Circuit(i, cFIBResponse);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Open Circuit performed OK on channel %i", i);
+    EvalManStepEqual("Perform open circuit", cFIBResponse, cExpectedFIBResponse);
+    
+    testWaitForTimeout(500);
+    Remove_Fault(i, cFIBResponse);
+    strncpy(cExpectedFIBResponse, "", 1);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Remove fault performed OK on channel %i", i);
+    EvalManStepEqual("Remove fault", cFIBResponse, cExpectedFIBResponse);
+  }
+  
+  testWaitForTimeout(1000);
+  
+  testCaseComment("Perform Short to VCC on all channels");
+  for(i = 1; i<= @sysvar::FIB::sysFIBChannelCount; i++)
+  {
+    testStep("STEP", "Set short to VCC on channel %i", i);
+    testWaitForTimeout(100);
+    strncpy(cExpectedFIBResponse, "", 1);
+    
+    Perform_Leakage(i, "false", "VCC", cFIBResponse);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Short to VCC performed OK on channel %i", i);
+    EvalManStepEqual("Perform short to VCC", cFIBResponse, cExpectedFIBResponse);
+    
+    testWaitForTimeout(500);
+    Remove_Fault(i, cFIBResponse);
+    strncpy(cExpectedFIBResponse, "", 1);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Remove fault performed OK on channel %i", i);
+    EvalManStepEqual("Remove fault", cFIBResponse, cExpectedFIBResponse); 
+  }
+  
+  testWaitForTimeout(1000);
+  
+  testCaseComment("Perform Short to GND on all channels");
+  for(i = 1; i<= @sysvar::FIB::sysFIBChannelCount; i++)
+  {
+    testStep("STEP", "Set short to GND on channel %i", i);
+    testWaitForTimeout(100);
+    strncpy(cExpectedFIBResponse, "", 1);
+    
+    Perform_Leakage(i, "false", "GND", cFIBResponse);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Short to GND performed OK on channel %i", i);
+    EvalManStepEqual("Perform short to GND", cFIBResponse, cExpectedFIBResponse);
+    
+    testWaitForTimeout(500);
+    Remove_Fault(i, cFIBResponse);
+    strncpy(cExpectedFIBResponse, "", 1);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Remove fault performed OK on channel %i", i);
+    EvalManStepEqual("Remove fault", cFIBResponse, cExpectedFIBResponse); 
+  }
+  
+  testWaitForTimeout(1000);
+  
+  testCaseComment("Set DAC voltage on all channels");
+  for(i = 1; i<= @sysvar::FIB::sysFIBChannelCount; i++)
+  {
+    testStep("STEP", "Set DAC voltage on channel %i", i);
+    
+    testWaitForTimeout(100);
+    strncpy(cExpectedFIBResponse, "", 1);
+    
+    Set_DAC_Voltage(i, 1000, cFIBResponse);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Set DAC voltage to 1000 mV performed OK on channel %i", i);
+    EvalManStepEqual("Set DAC voltage", cFIBResponse, cExpectedFIBResponse);
+    
+    testWaitForTimeout(500);
+    Remove_Fault(i, cFIBResponse);
+    strncpy(cExpectedFIBResponse, "", 1);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Remove fault performed OK on channel %i", i);
+    EvalManStepEqual("Remove fault", cFIBResponse, cExpectedFIBResponse); 
+  }
+  
+  testWaitForTimeout(1000);
+  
+  testCaseComment("Restart all boards");
+  for(iBoardNumber = 1; iBoardNumber <= (@sysvar::FIB::sysFIBChannelCount / 10); iBoardNumber++)
+  {
+    testStep("STEP", "Restart board %i", iBoardNumber);
+    
+    Restart_Board(iBoardNumber, cFIBResponse);
+    strncpy(cExpectedFIBResponse, "", 1);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Restart board %i performed OK", iBoardNumber);
+    EvalManStepEqual("Restart board", cFIBResponse, cExpectedFIBResponse);
+    testWaitForTimeout(300);
+  }
+    
+  testWaitForTimeout(1000);
+  testCaseComment("Reset all channels"); 
+  for(i = 1; i <= @sysvar::FIB::sysFIBChannelCount; i++)
+  {
+    testStep("STEP", "Reset channel %i", i);
+    
+    Reset_Channel(i, cFIBResponse);
+    strncpy(cExpectedFIBResponse, "", 1);
+    snprintf(cExpectedFIBResponse, elcount(cExpectedFIBResponse), "Reset performed OK on channel %i", i);
+    EvalManStepEqual("Reset channel", cFIBResponse, cExpectedFIBResponse);
+    testWaitForTimeout(300);
+  } 
+}
+
+void MainTest()
+{
+  FIB_Check_Of_All_Channels();
+}

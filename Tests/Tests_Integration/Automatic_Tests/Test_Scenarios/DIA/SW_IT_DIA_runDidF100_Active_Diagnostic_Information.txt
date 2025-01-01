@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0655, ARCH_SW_DIA_0676; ARCH_SW_DIA_0677; ARCH_SW_DIA_0678; ARCH_SW_DIA_0679; ARCH_SW_DIA_0680; ARCH_SW_DIA_0681
+ARCH_SW_DIA_0655: Service 0x22 (Read Data By Identifier) will be implemented for DiagCommonData Structure which is composed by the following DIDs: EF00 (ECU Extract Version) EF01 (Diagnostic Extract Version) EF03 (Standard Application SW Package Information) EF05 (Minimum SW Version) F100 (Active Diagnostic Information) F104 (ECU Name) F10D (DDS Package Release) F111 (MBC ECU Identification - Hardware Part Number) F121 (MBC ECU Identification - Software Logical Block Part Number(s)) F154 (Hardware Supplier Identification) F155 (Software Supplier Identification)
+ARCH_SW_DIA_0676: The Read Standard Application SW Package Information service shall be available in the following sessions: ⦁Default Session (0x01) ⦁Extended Session (0x03) ⦁Supplier Session/Development Session (0x7E)
+ARCH_SW_DIA_0677: The Read Active Diagnostic Information service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0678: DataIdentifier of the Read Active Diagnostic Information shall be: 0xF100
+ARCH_SW_DIA_0679: Response data length shall be 4 bytes long Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0680: Bytes #2-#3: DataIdentifier of the Read Active Diagnostic Information shall be: 0xF100
+ARCH_SW_DIA_0681: Byte #4: ⦁bits 0-7: Active Diagnostic Status 0 = Application / 1 = Bootloader Byte #5: ⦁bits 0-7: Active Diagnostic Variant Byte #6: ⦁bits 0-7: Active Diagnostic Version Byte #7: ⦁bits 0-7: Active Diagnostic Sesion -- 0x01: Default -- 0x02: Programming -- 0x04: Extended
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0655, ARCH_SW_DIA_0676; ARCH_SW_DIA_0677; ARCH_SW_DIA_0678; ARCH_SW_DIA_0679; ARCH_SW_DIA_0680; ARCH_SW_DIA_0681
+
+	Step 2: Send diag request for 22 F100 and check response 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 3: Return ECU to default values

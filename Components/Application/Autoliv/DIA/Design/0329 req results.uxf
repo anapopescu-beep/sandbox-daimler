@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>12</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>24</x>
+      <y>228</y>
+      <w>2535</w>
+      <h>1124</h>
+    </coordinates>
+    <panel_attributes>title:0329 Request Results
+Start
+ret = OK
+Read currently executed Cycle
+Read currently requested Cycle
+Check the requested cycle on diag is currently running
+If
+	[TRUE]
+	*routineInfo = KU8_ROUTINE_IN_PROGRESS
+	ret = OK
+	*Result = ROUTINE_STILL_RUNNING
+	
+	[FALSE]
+	Check If no cycle is executed
+	If
+		[TRUE]
+		*routineInfo = KU8_ROUTINE_SUCCESFULLY_COMPPLETED;
+		ret = RTE_E_OK;
+		*Result = KU8_ROUTINE_SUCCESFULLY_COMPPLETED;
+		dia_u8RequestResult0330 = KU8_ROUTINE_SUCCESFULLY_COMPPLETED;
+	EndIf
+	
+	Check if routine is stopped without results
+	If
+		[TRUE]
+		*routineInfo = KU8_ROUTINE_STOPPED_WITHOUT_RESULTS;
+		ret = RTE_E_OK;
+		*Result = KU8_ROUTINE_STOPPED_WITHOUT_RESULTS;
+	EndIf
+	
+	Check if routine is in progress
+	If
+		[TRUE]
+		*routineInfo = KU8_ROUTINE_IN_PROGRESS;
+		ret = RTE_E_OK;
+		*Result = ROUTINE_STILL_RUNNING;
+	EndIf
+	
+	Check if Request Results is requested before start
+	If
+		[TRUE]
+		ret = RTE_E_RoutineServices_Routine_Cycle_Execution_Start_E_NOT_OK;
+		*ErrorCode = DCM_E_REQUESTSEQUENCEERROR;
+		*Result = ROUTINE_STOPPED_WITHOUT_RESULT;		
+
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

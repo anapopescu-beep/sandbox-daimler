@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>733</w>
+      <h>936</h>
+    </coordinates>
+    <panel_attributes>title:0265_ActivateDebuggingInterface_Start
+Start
+Clear 512 byte buffer
+SuspendAllInterrupts()
+If
+	[SERIES SOFTWARE]
+	Unlock OCDS interface
+	Clear OSTATE.IF_LCK with write access enabled
+	Wait until debug interface is unlocked
+	Unlock UCB_DBG
+	Reset to read
+	Disable protection
+	Wait Flash is not busy
+
+	[DEVELOPMENT SOFTWARE]
+	Erase DF0_UCB
+	Wait Flash is not busy
+	Set Confirmation code to 'UNLOCKED
+	program DF0_UCB
+	Wait Flash is not busy
+
+ResumeAllInterrupts()
+[Prepare Diagnostic Response]
+Debugging_Interfaces_Status = 0x01u 'debugging interface activated'
+routineInfo = 0x00u 'routine completed successfully'
+
+Return RTE_E_OK
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

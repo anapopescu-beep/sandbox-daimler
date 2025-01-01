@@ -1,0 +1,48 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0001, ARCH_SW_ERH_0006, ARCH_SW_ERH_0018
+ARCH_SW_ERH_0001: The AEC ERH_KU8_HW_SELF_PROTECTION_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification time: 1200ms; deskill time: 60000ms; associated group: KU32_AEC_GROUP_MASK_SELF_PROTECTION;
+ARCH_SW_ERH_0006: The AEC ERH_KU8_HW_SELF_PROTECTION_AEC_CFG shall be defined as a Counter based AEC, with the following parameters: qualification count: 1; deskill count: 1; associated group: KU32_AEC_GROUP_MASK_SELF_PROTECTION;
+ARCH_SW_ERH_0018: The AEC ERH_KU8_HIGH_SIDE_SWITCH_AEC_CFG shall be defined as a Counter based AEC, with the following parameters:- qualification time: instantaneously;- deskill time: 1 (shall be deskilled even after reset to recheck the fault situation);- associated group: KU32_AEC_GROUP_MASK_HARDWARE
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_Init() at line 'erh_au16AecCounter[u8Index] = KU16_ZERO;'.
+
+	Step 3: Check if CPU stopped in function ERH_Init() at line 'erh_au16AecCounter[u8Index] = KU16_ZERO;'.
+
+	Step 4: Set a breakpoint in ERH_Init() at the end of the function.
+
+Action: ARCH_SW_ERH_0001, ARCH_SW_ERH_0006, ARCH_SW_ERH_0018
+
+	Step 5: Evaluate if erh_au16AecCounter[u8Index], where u8Index is ATM_KU8_ID_TEST_DRIVER_SELF_PROTECTION, is equal to KU16_ZERO. 
+		Expected result:  erh_au16AecCounter[u8Index] == KU16_ZERO
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection() at line '*pu8TestResult = pal_u8ResultOfAutoTest;'.
+
+	Step 7: Check if CPU stopped in function PAL_Autotest_CheckHWSelfProtection() at line '*pu8TestResult = pal_u8ResultOfAutoTest;'.
+
+	Step 8: Set variable *pu8TestResult to KU8_ATM_TEST_NOK.
+
+	Step 9: Set a breakpoint in function erh_ManageFailedCounterEvent() at line 'erh_au16AecCounter[cu8Index] += KU16_ONE;'.
+
+	Step 10: Check if CPU stopped in function erh_ManageFailedCounterEvent() at line 'erh_au16AecCounter[cu8Index] += KU16_ONE;'.
+
+Action: ARCH_SW_ERH_0001, ARCH_SW_ERH_0006, ARCH_SW_ERH_0018
+
+	Step 11: Evaluate if erh_au16AecCounter[u8Index], where u8Index is ATM_KU8_ID_TEST_DRIVER_SELF_PROTECTION, is equal to KU16_ONE. 
+		Expected result:  erh_au16AecCounter[u8Index] == KU16_ONE
+
+Postcondition
+
+	Step 12: Return ECU to default values

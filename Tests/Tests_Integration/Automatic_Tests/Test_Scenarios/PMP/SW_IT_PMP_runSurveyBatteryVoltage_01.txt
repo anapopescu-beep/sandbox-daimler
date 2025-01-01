@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0200, ARCH_SW_PMP_0201, ARCH_SW_PMP_0202, ARCH_SW_PMP_0210
+ARCH_SW_PMP_0200: PMP shall monitor the stability of the battery voltage and update a battery status variable for the rest of application.
+ARCH_SW_PMP_0201: The NVP_u16KL30MinimumThr parameter  shall be read to detect unstable battery voltage situation.
+ARCH_SW_PMP_0202: The NVP_u16KL30MaximumThr parameter  shall be read to detect unstable battery voltage situation
+ARCH_SW_PMP_0210: The AdcIf_runGetKL30_V function shall be called to get the sampled value of the KL30 signal as a raw value function shall be called to get the sampled value of the Cpu regulator signal
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PMP_0200, ARCH_SW_PMP_0201, ARCH_SW_PMP_0202
+
+	Step 2: Set a breakpoint in function PMP_runSurveyBatteryVoltage at the RTE Call for AdcIf_runGetKL30_V function 
+		Expected result:  BP reached.
+
+	Step 3: Read local variable pu16SampledSignal 
+		Expected result:  Variable read from ADC channel
+
+	Step 4: Set a breakpoint in function PMP_runGetFilteredTemperature at the end of function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0210
+
+	Step 5: Evaluate local variable pmp_u16InternalAnalogSignal 
+		Expected result:  Variable read is the same from *pu16SampledSignal data pointer
+
+Postcondition
+
+	Step 6: Return ECU to default values

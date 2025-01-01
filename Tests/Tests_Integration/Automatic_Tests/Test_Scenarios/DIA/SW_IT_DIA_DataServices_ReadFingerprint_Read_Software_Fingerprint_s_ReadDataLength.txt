@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0735; ARCH_SW_DIA_0739; ARCH_SW_DIA_0740
+ARCH_SW_DIA_0735: Service 0x22 (Read Data By Identifier) will be implemented for DID F15B (Software Fingerprint)
+ARCH_SW_DIA_0739: Response data length shall be 20 bytes* nb of logical blocks Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0740: Byte #4: ?Status Information - Logical Block #0 Bytes #5 -#20: ?Diagnostic Authentication Certificate ID Byte #21: ?Programming Date Year Byte #22: ?Programming Date Month Byte #23: ?Programming Date Day 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_ReadFingerprint_Read_Software_Fingerprint_s_ReadDataLength*.
+
+Action: ARCH_SW_DIA_0735; ARCH_SW_DIA_0739; ARCH_SW_DIA_0740
+
+	Step 3: Send diag request for 22 F15B and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_ReadFingerprint_Read_Software_Fingerprint_s_ReadDataLength was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *DataLength pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

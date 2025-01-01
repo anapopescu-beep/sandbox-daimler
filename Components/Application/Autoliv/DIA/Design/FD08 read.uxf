@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>10</y>
+      <w>9421</w>
+      <h>975</h>
+    </coordinates>
+    <panel_attributes>title:FD08 read
+Start
+Check Data for Null pointer
+If
+	[Data == nullPointer]
+	ret = NOT_OK
+	
+	[Data pointer valid]
+	If
+		[KU32_ZERO != (KU32_POWER_ON_RESET_MASK &amp; \u32WarmResetCause)]
+		*Data = KU8_RESET_CAUSE_POR
+
+		[else]
+		If
+			[KU32_ZERO != (KU32_BATTERY_LOSS_MASK &amp; u32WarmResetCause)
+			*Data = KU8_RESET_CAUSE_LOW_VOLTAGE
+
+			[else]
+			Fork
+				[Cause = KU32_CRYSTAL_FAILURE_MASK]
+				*Data = KU8_WARM_RESET_CAUSE_CRYSTAL
+
+				[Cause = KU32_PLL_FAILURE_MASK]
+				*Data = KU8_WARM_RESET_CAUSE_PLL
+				
+				[Cause = KU32_INTERNAL_WDG_MASK]
+				*Data = KU8_WARM_RESET_CAUSE_WD
+
+				[Cause = KU32_SW_INTERNAL_WDG_MASK]
+				*Data = KU8_RESET_CAUSE_INTERNAL_WATCHDOG
+
+				[Cause = KU32_SW_RESET_MASK]
+				*Data = KU8_RESET_CAUSE_RESET_BY_DIAG
+
+				[Cause = KU32_BTLD_RESET_MASK]
+				*Data = KU8_RESET_CAUSE_BTLD
+
+				[Cause = KU32_ECC_RAM_MASK]
+				*Data = KU8_RESET_CAUSE_RAM_ECC
+
+				[Cause = KU32_ECC_PFLASH_MASK]
+				*Data = KU8_RESET_CAUSE_PFLASH_ECC
+
+				[Cause = KU32_OS_EXCEPTION_MASK]
+				*Data = KU8_RESET_CAUSE_OS_EXCEPTION
+
+				[Cause = KU32_INVALID_INTERRUPT_MASK]
+				*Data = KU8_RESET_CAUSE_INVALID_INT
+
+				[Cause = KU32_WAKE_UP_EVENT_MASK]
+				*Data = KU8_RESET_CAUSE_WAKEUP
+
+				[Cause = KU32_SW_WDG_TEST_MASK]
+				*Data = KU8_RESET_CAUSE_WD_TEST
+			
+				[Cause = KU32_ECC_UNIDENTIFIED_MASK]
+				*Data = KU8_RESET_CAUSE_UNIDENTIFIED_ECC
+
+				[Cause = KU32_STACK_OVERFLOW_MASK]
+				*Data = KU8_RESET_CAUSE_STACK_OVERFLOW
+
+				[Cause = KU32_RAM_DATA_CORRUPTED]
+				*Data = KU8_RESET_CAUSE_RAM_DATA_CORRUPTED
+
+				[Cause = KU32_ECC_E2P_MASK]
+				*Data = KU8_RESET_CAUSE_E2P_ECC
+
+				[Cause = KU32_EXTERNAL_WDG_MASK]
+				*Data = KU8_RESET_CAUSE_EXTERNAL_WATCHDOG
+
+				[Cause = KU32_RESET_CAUSE_UNKNOWN]
+				*Data = KU8_WARM_RESET_CAUSE_UNKNOWN
+	ret = OK
+	
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0028; ARCH_SW_DIA_0105; ARCH_SW_DIA_0106; ARCH_SW_DIA_0107;
+ARCH_SW_DIA_0028: Service 0x2E will be implemented for DID 0310.
+ARCH_SW_DIA_0105: Service shall be available in Default, Extended and Development session.
+ARCH_SW_DIA_0106: Request data shall be 1 byte long.
+ARCH_SW_DIA_0107: Blocks NVP_BLOCK_ID_CYCLE_26 to NVP_BLOCK_ID_CYCLE_28 and NVP_BLOCK_ID_STEP_116 to NVP_BLOCK_ID_STEP_144 shall be written
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Tensioning_Cycle_BSR_CombinedSignal_WriteData*.
+
+Action: ARCH_SW_DIA_0026; ARCH_SW_DIA_0099; ARCH_SW_DIA_0100; ARCH_SW_DIA_0101
+
+	Step 4: Send diag request for 2E 0302 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_Tensioning_Cycle_BSR_CombinedSignal_WriteData was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Write 26th byte of NVP_BLOCK_ID_CYCLE_0_RamBlockData 
+		Expected result:  Variable overwritten with 0x1.
+
+Postcondition
+
+	Step 7: Return ECU to default values

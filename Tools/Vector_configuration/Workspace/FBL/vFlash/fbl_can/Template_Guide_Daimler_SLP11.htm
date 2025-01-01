@@ -1,0 +1,451 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <style type="text/css">
+        body
+        {
+            margin: 20px;
+            font-size: 8pt;
+            font-family: Verdana, arial, sans-serif;
+            color: #000000;
+            background-color: #FFFFFF;
+            text-align: left;
+        }
+        
+        table
+        {
+            border-collapse: collapse;
+        }
+        
+        table, th, td
+        {
+            border: 1px solid black;
+            font-size: 8pt;
+            font-family: Verdana, arial, sans-serif;
+        }
+        
+        h1
+        {
+            font-size: 12pt;
+            font-weight: normal;
+        }
+        
+        h1 img
+        {
+            vertical-align: bottom;
+            padding-bottom: 2px;
+        }
+        
+        h2
+        {
+            height: 30px;
+            line-height: 30px;
+            text-align: left;
+            background-color: #E5E5E5;
+            font-size: 8pt;
+            font-weight: bold;
+            padding-left: 10px;
+        }
+        
+        h3
+        {
+            font-size: 8pt;
+            padding-top: 5pt;
+            padding-left: 10px;
+        }
+        
+        p
+        {
+            padding-left: 10px;
+        }
+        
+        ul
+        {
+            padding-top: 0pt;
+            margin-top: 0px;
+        }
+        
+        .where:before
+        {
+            content: "Context: ";
+        }
+        
+        .where
+        {
+            font-size: 6pt;
+            font-style: normal;
+            display: block;
+            width: 65em;
+            padding-bottom: 5pt;
+        }
+        .style1
+        {
+            height: 26px;
+        }
+    </style>
+    <meta http-equiv="content-type" content="text/html; charset=windows-1250">
+    <meta name="description" content="Template Guide <TEMPLATE NAME>">
+    <title>Template Guide - Daimler SLP11</title>
+</head>
+<body>
+    <h1>
+        <span>Daimler SLP11</span>
+    </h1>
+    <br />
+    <h2>
+        <a name="AvailableDatablockTypes">Available DatablockTypes</a>
+    </h2>
+    <p>
+        The different DatablockTypes optionally control special handlings for the respective
+        datablocks.<br/><br/>
+        <table border="1" cellpadding="5">
+            <tr>
+                <th>
+                    Type
+                </th>
+                <th>
+                    Description
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    BOOT
+                </td>
+                <td>
+                    Blocks which update the Bootloader. Flashed before downloading DATA blocks.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    DATA
+                </td>
+                <td>
+                    All data files which shall be flashed.
+                </td>
+            </tr>
+        </table>
+    </p>
+    
+    <h3>Datablock Attributes</h3>
+      
+      <p>Datablock Attributes can be used to trigger special processing of one or several datablocks.</p>
+      
+      <p>
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Requirement/Restriction</th>
+          </tr>
+          <tr>
+            <td>Logical Block Index (Erase)</td>
+            <td>Logical Block Index used in the Erase Routine</td>
+            <td>Restricted to max. hex:0x7F</td>
+          </tr>
+          <tr>
+            <td>With Delta Programming</td>
+            <td>Indicates whether to use Delta Programming or not</td>
+            <td></td>
+          </tr>
+        </table>
+      </p>
+    
+    <h2>
+        <a name="Tester Serial Number">Tester Serial Number</a>
+    </h2>
+    <p>
+        The Tester Serial Number is not used. Values entered in vFlash are ignored in the
+        flash sequence.</p>
+    <h2>
+        <a name="Download">Download</a>
+    </h2>
+    <h3>
+        Logical Blocks</h3>
+    <p>
+        Logical blocks are erased by logical block indexes and are programmed by using addresses.
+    </p>
+    <p>
+        For each logical block a signature file is required. The signature has to have a length of 64 bytes (entered in format 0x90, 0x54, ...).
+    </p>   
+	<h3>
+        Encryption/Compression
+    </h3>
+    <p>
+        PreCompression: Optionally the template can download already compressed flashware.
+        The download of the datablock has to be marked as a compressed download (adapt data
+        format identifier - DFI).
+    </p>
+    <h3>
+        Checksum</h3>
+    <p>
+        LiveChecksumCalculation: Optionally the template offers the possibility to calculate
+        the checksum of the loaded flashware just before flashing. The available algorithm
+        is the CRC32 algorithm.</p>
+    <h2>
+        <a name="SecurityHandling">Security Handling</a>
+    </h2>
+    <p>
+        To generate a Key based on the ECU's offered Seed, two types of SeedKey dlls are
+        supported - SeedKey dlls that are configured for exactly one ECU and SeedKey dlls
+        configured for several ECUs. SeedKey DLLs configured for several ECUs require entering
+        a SeedExtension to additionally parametrize the calculation of the Key. According to the specification the SeedExtension needs to be 32 byte long.
+        </p>
+        <p>For the
+        SeedKey.dll the following APIs are supported:</p>
+        <p>
+            Generating the Key without SeedExtension (configured for one single ECU)
+            <ul>
+                <li>GenerateKeyEx</li>
+                <li>GenerateKey</li>
+                <li>KWP2000_ComputeKeyFromSeed</li>
+                <li>ASAP1A_CCP_ComputeKeyFromSeed</li>
+            </ul>
+        </p>
+        <p>
+            Generating the Key without SeedExtension (configured for one single ECU) and with SeedExtension (configured for several ECUs)
+            <ul>
+                <li>GenerateKeyExOpt</li>
+            </ul>
+        </p>
+        <p>
+            Note: For function details see vFlash's SeedKey example.
+        </p>
+        <h2>
+            <a name="Communication">Communication</a>
+        </h2>
+        <h3>
+            CAN/CAN FD/LIN</h3>
+        <ul>
+            <li> For flashing LIN nodes behind a CAN-LIN gateway Mixed Addressing with 29 bit CAN
+            IDs is defined. The Address Extension is used to specify the LIN NAD. However, due
+            to a Daimler internal restriction sometimes the ECUs' diagnostic addresses do not
+            follow the Mixed Addressing CAN ID scheme. As workaround the Extended Addressing
+            scheme with identical target addresses for request and response (= Tester Address
+            and ECU Address) may be used.<br />
+            Hint: For functional communication still Normal Addressing (29-bit) is used.</li>
+			<li>The communication interface <em>"CAN FD Requests, CAN 2.0 Responses"</em> makes vFlash send requests as CAN FD frames,
+			accepting classic CAN 2.0 frames from the ECU too.
+        </ul>
+		<h3>Gateway</h3>
+        <ul>
+            With Logical Link "CAN Extended (Gateway)" 11 bit or 29 bit request and response CAN IDs can be defined for a gateway. If authentication is activated, the authentication will be executed on the gateway. Also the Wakeup mechanism in the beginning will be executed on the gateway. 
+        </ul>
+        <h2>
+            <a name="FlashAttributes">FlashAttributes</a>
+        </h2>
+        <p>
+            FlashAttributes can be used to control the overall flash procedure or to provide
+            special parameters e.g. values to be written to the ECU.
+        </p>
+        <p>
+        <table border="1" cellpadding="5">
+            <tbody>
+                <tr>
+                    <th class="style1">
+                        Name
+                    </th>
+                    <th class="style1">
+                        Description
+                    </th>
+                    <th class="style1">
+                        Requirement/Restriction
+                    </th>
+                </tr>
+                <tr>
+                    <td>
+                        TesterHardwareMACAddress
+                    </td>
+                    <td>
+                        Enter a 6 byte value used as TesterHardwareMACAddress in WriteFingerprint. If the
+                        attribute is empty, a MAC address will be calculated automatically.
+                    </td>
+                    <td>
+                        Length must be 6 bytes or value must be empty.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        ProgrammingDate
+                    </td>
+                    <td>
+                        Select between UseCurrentdate and 0x00 00 00.
+                    </td>
+                    <td>
+                        -
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        WithResume
+                    </td>
+                    <td>
+                        Select whether ECU supports resume functionality to resume an interrupted download.
+                    </td>
+                    <td>
+                        -
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        WaitTimeAfterHardResetAndSessionChange (ms)
+                    </td>
+                    <td>
+                        Time to wait after Hard Reset and Session Change to/from Bootloader in milliseconds.
+                    </td>
+                    <td>
+                        Valid range: 0ms - 65536ms
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        EnableEcuWakeup
+                    </td>
+                    <td>
+                        Whether to wakeup the ECU before reprogramming sequence is executed.
+                    </td>
+                    <td>
+                        -
+                    </td>
+                </tr>
+            </tbody>
+            </p>
+        </table>
+        <h2><a name="Speecial Features">Special Features</a></h2>
+        <h3>Authentication</h3>
+        <p>This template supports the PKI based authentication to ECUs based on a locally running ZenZefi server instance. This implementation is based on specification "MSS-10796 Standard Security Specification" version 1.2</p>
+      <p>To use this feature the user must enable authentication in the vFlash frontend and select the appropriate role of itself. A corresponding certificate for the user role needs to be present in the ZenZefi server which can be queried and used by vFlash. It has to be imported to ZenZefi beforehand by the user.</p>
+      <p>The following roles are available and need to be specified by their identifying numbers in the vFlash tab 'Miscellaneous' -&gt; 'Authentication':</p>
+      <p>
+      <table border="1" cellpadding="5">
+            <tbody>
+              <tr>
+                <th class="style1">Identifier</th>
+                <th class="style1">Role</th>
+              </tr>
+              <tr>
+                <td>0</td>
+                <td>None</td>
+              </tr>
+              <tr>
+                <td>1</td>
+                <td>Supplier</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Development Enhanced</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Production</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>AS Enhanced</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>AS Standard</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>AS Basic</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Internal Diagnostic Test Tool</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>ePTI Test Tool</td>
+              </tr>
+            </tbody>
+          </table>
+          </p>
+          <p>ECU Name: ECU Qualifier as available in the ECU specific CDD. If no ECU Name is entered, an ECU independent security certificate is requested (starting with STAR3 R6 suppliers usually get a ECU specific serial).</p>
+          <p>The VIN is required to get the serial certificate for executing ECU Authentication. If the VIN cannot be read from the ECU, the development VIN ('?????????????????') is used.</p>
+		  <p>
+		  Before starting authentication it is checked whether the ECU is in Bootloader (by sending 0x22 F100). Authentication is only possible and only executed when the ECU is in Application!<br>
+		  The authentication begins by sending 0x22 0184 ("Diagnostic Authentication Certificate Identification"). If the response is positive and the returned Diagnostic Authentication Certificate Serial Number parameter is different than 0xFF, then the authentication is skipped. A serial number different than 0xFF means that authentication was already done.
+		  </p>
+        <h2>
+            <a name="Restrictions">Restrictions</a>
+        </h2>
+        <ul>
+            <li>Resuming an Interrupted Reprogramming Sequence is currently only partially supported:
+                <br>
+                - Resuming a download with unencrypted and uncompressed data is supported
+                <br>
+                - Resuming a download with encrypted data, compressed data or data that is both
+                encrypted and compressed is currently not supported<br><br></li>
+            <li>Filebased download is currently not supported<br><br></li>
+            <li>Only unidirectional authentication is supported</li>
+        </ul>
+        <h2>
+            <a name="Third Party Software">Third Party Software</a>
+        </h2>
+        <p>
+          This vFlash template uses third party software for the communication to the ZenZefi server which allows PKI based authentication to the ECU.
+        </p>
+        <p>
+          <table border="1" cellpadding="5">
+              <tr>
+                  <th>
+                      Component
+                  </th>
+                  <th>
+                      License
+                  </th>
+                  <th>
+                      License File
+                  </th>
+              </tr>
+              <tr>
+                  <td>
+                      cpprest (C++ REST SDK)
+                  </td>
+                  <td>
+                      The MIT License (MIT)
+                  </td>
+                  <td>
+                      <a href="./cpprestsdk_license.txt at v2.9.1 - Microsoft_cpprestsdk - GitHub.txt" target="_blank">cpprestsdk_license.txt at v2.9.1 - Microsoft_cpprestsdk - GitHub.txt</a>
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      cpprest (Third Party Components)
+                  </td>
+                  <td>
+                      Different licenses
+                  </td>
+                  <td>
+                      <a href="./cpprestsdk_ThirdPartyNotices.txt at v2.9.1 - Microsoft_cpprestsdk - GitHub.txt" target="_blank">cpprestsdk_ThirdPartyNotices.txt at v2.9.1 - Microsoft_cpprestsdk - GitHub.txt</a> 
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      Boost Library
+                  </td>
+                  <td>
+                      Boost License
+                  </td>
+                  <td>
+                      <a href="./Boost_LICENSE_1_0.txt" target="_blank">Boost_LICENSE_1_0.txt</a> 
+                  </td>
+              </tr>
+              <tr>
+                  <td>
+                      Websocketcpp
+                  </td>
+                  <td>
+                      Websocketcpp License
+                  </td>
+                  <td>
+                      <a href="./Websocketpp-0.5.1.COPYING" target="_blank">Websocketpp-0.5.1.COPYING</a> 
+                  </td>
+              </tr>
+          </table>
+        </p>
+        <p>The specified license files can be found in the directory of every vFlash project that is derived from this template.</p>
+        <br />
+</body>
+</html>

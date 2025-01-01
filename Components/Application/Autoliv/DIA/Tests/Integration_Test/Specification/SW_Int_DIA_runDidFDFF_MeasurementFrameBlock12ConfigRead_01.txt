@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0037; ARCH_SW_DIA_0171; ARCH_SW_DIA_0172; ARCH_SW_DIA_0173
+ARCH_SW_DIA_0037: Service 0x22 will be implemented for DID FEFF.
+ARCH_SW_DIA_0171: Service shall be available in Development session.
+ARCH_SW_DIA_0172: Response data shall be 4 bytes long.
+ARCH_SW_DIA_0173: Response shall return Ram Address and Size stored in NVP_BLOCK_ID_MEASUREMENT_FRAME_12_CONFIG.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFDFF_MeasurementFrameBlock12ConfigRead*.
+
+Action: ARCH_SW_DIA_0037; ARCH_SW_DIA_0171; ARCH_SW_DIA_0172; ARCH_SW_DIA_0173
+
+	Step 3: Send diag request for 22 FDFF and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFDFF_MeasurementFrameBlock12ConfigRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read first byte of NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

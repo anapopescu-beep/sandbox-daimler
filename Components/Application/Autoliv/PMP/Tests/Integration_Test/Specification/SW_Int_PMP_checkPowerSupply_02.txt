@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_1050, ARCH_SW_PMP_1051, ARCH_SW_PMP_1055, ARCH_SW_PMP_1057, ARCH_SW_PMP_1058
+ARCH_SW_PMP_1050: PMP shall check if an undervoltage is detected on the power stage of the battery voltage.
+ARCH_SW_PMP_1051: NVP parameters shall be used by this auto-tests.
+ARCH_SW_PMP_1055: PMP_runGetBatteryVoltage_100ms shall be called to get the measured value on the power supply.
+ARCH_SW_PMP_1057: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PMP_1058: MMG_runCheckModeStatus shall be called to get the tensioning state.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+Action: ARCH_SW_PMP_1050
+
+	Step 4: Check if CPU stopped in function PMP_Autotest_CheckPowerSupplyUV() at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_OVO_POWER_AEC_CFG, &pmp_u8AECBatteryOVStatus);. -- > True
+
+	Step 5: Check if CPU stopped in function PMP_Autotest_CheckPowerSupplyOV at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &pmp_u8AECStatus);.
+
+Action: ARCH_SW_PMP_1057, ARCH_SW_PMP_1058
+
+	Step 6: Check if CPU stopped in function PMP_Autotest_CheckPowerSupplyOVDuringActivation.
+		Expected result:  True
+
+Action: ARCH_SW_PMP_1051
+
+	Step 7: Check if CPU stopped at line u8AecStatusType pmp_u8AECBatteryOVStatus = ERH_KU8_AEC_QUALIFIED_STATUS_MASK;.
+
+Action: ARCH_SW_PMP_1055
+
+	Step 8: Check if CPU stopped at line PMP_runGetBatteryVoltage_100ms(&pmp_u16FilteredVbatPowerVoltage);.
+
+Postcondition
+
+	Step 9: Return ECU to default values

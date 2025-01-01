@@ -1,0 +1,62 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0376, ARCH_SW_PAL_0377, ARCH_SW_PAL_0410
+ARCH_SW_PAL_0376: The component shall check if the motor is present and connected.
+ARCH_SW_PAL_0377: ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0410: PMP_runGetBatteryVoltage_100ms , PMP_runGetMotorVp_100ms and PMP_runGetMotorVn_100ms shall be called to check battery voltage.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0376
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckMotorConnection at the RTE Call for CheckMotorConnection autotest 
+		Expected result:  BP reached.
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMotorConnection at the RTE call for GetTestResult 
+		Expected result:  BP reached.
+
+	Step 5: Write autotest result with 0x1
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMotorConnection at the RTE Call for PMP_runGetMotorVp_100ms 
+		Expected result:  BP reached.
+
+	Step 7: Run until return PMP_runGetMotorVp_100ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from adc.
+
+	Step 8: Set a breakpoint in function PAL_Autotest_CheckMotorConnection at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 9: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0377
+
+	Step 10: Evaluate PreviousMosfetHighSCTestResult 
+		Expected result:  Variable is equal to 0x1.
+
+Action: ARCH_SW_PAL_0410
+
+	Step 11: Evaluate FilteredMotorPlusVoltage 
+		Expected result:  Variable is equal to *pu16Voltage data pointer 
+
+	Step 12: Set a breakpoint in function PAL_cbk_CheckMotorConnection after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 13: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 14: Return ECU to default values

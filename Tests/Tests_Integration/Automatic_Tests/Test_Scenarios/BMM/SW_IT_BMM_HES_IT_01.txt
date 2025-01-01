@@ -1,0 +1,64 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0053, ARCH_SW_BMM_0054, ARCH_SW_BMM_0055, ARCH_SW_BMM_0349, ARCH_SW_BMM_1100
+ARCH_SW_BMM_0053: The module shall read the period of the HES A signal measured by the eTimer unit.
+ARCH_SW_BMM_0054: The module shall read the period of the HES B signal measured by the eTimer unit.
+ARCH_SW_BMM_0055: The module shall validate the �pyro firing� if 2 consecutive measured HES signal periods are below the period corresponding to the �low pyro firing� event.
+ARCH_SW_BMM_0349: Dio_ReadChannel shall be called to read the level of HES A and HES B pins.
+ARCH_SW_BMM_1100: This function shall manage the sensor A and B signals.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function OS_ISR_BMM_HES_IT at line 'u8StateA = DIO_HALL_A;'.
+
+Action: ARCH_SW_BMM_0349, ARCH_SW_BMM_1100
+
+	Step 3: Check if CPU stopped in function OS_ISR_BMM_HES_IT at line 'u8StateA = DIO_HALL_A;'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function OS_ISR_BMM_HES_IT at line 'u8StateB = DIO_HALL_B;' and run the debugger.
+
+Action: ARCH_SW_BMM_0349, ARCH_SW_BMM_1100
+
+	Step 5: Check if CPU stopped in function OS_ISR_BMM_HES_IT at line 'u8StateB = DIO_HALL_B;'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in OS_ISR_BMM_HES_IT at the last line of the function.
+
+	Step 7: Check if CPU stopped at the last line of the function OS_ISR_BMM_HES_IT. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_A] * HARD_TIMER_RANGE) + u16Capture)'.
+
+Action: ARCH_SW_BMM_0053
+
+	Step 9: Check if CPU stopped in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_A] * HARD_TIMER_RANGE) + u16Capture)'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_A] * HARD_TIMER_RANGE) + u16Capture)'.
+
+Action: ARCH_SW_BMM_0054
+
+	Step 11: Check if CPU stopped in OS_ISR_BMM_HES_IT at line 'u32LastPeriodLength = (((au8Overflows[KU8_RISING_B] * HARD_TIMER_RANGE) + u16Capture) '. 
+		Expected result:  CPU is Stopped
+
+	Step 12: Set a breakpoint in OS_ISR_BMM_HES_IT at line '#if (BMM_ENABLE_PYRO_DETECTION == 1)'.
+
+Action: ARCH_SW_BMM_0055
+
+	Step 13: Check if CPU stopped in OS_ISR_BMM_HES_IT at line '#if (BMM_ENABLE_PYRO_DETECTION == 1)'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 14: Return ECU to default values

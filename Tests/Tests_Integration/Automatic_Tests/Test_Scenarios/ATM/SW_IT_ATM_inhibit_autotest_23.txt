@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0052
+ARCH_SW_ATM_0052: ATM_KU8_ID_END_OF_LIFE_COMFORT autotest is inhibited by KU8_MODES______________________INHIB.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ATM_runMainFunction() at line 'atm_PlayCyclicTests(castStartupCyclicList);'.
+
+	Step 3: Check if CPU is stopped in function ATM_runMainFunction() at line 'atm_PlayCyclicTests(castStartupCyclicList);'.
+
+	Step 4: Set a breakpoint in function atm_PlayCyclicTests() at line 'atm_executeAutoTest(u8AutotestID);' under 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))'.
+
+	Step 5: Check if CPU is stopped in function atm_PlayCyclicTests() at line 'atm_executeAutoTest(u8AutotestID);' under 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))'.
+
+	Step 6: Set a breakpoint in function atm_executeAutoTest() at line 'u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;'.
+
+	Step 7: Check if CPU is stopped in function atm_executeAutoTest() at line 'u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;'.
+
+Action: ARCH_SW_ATM_0052
+
+	Step 8: Evaluate if castATMConfig[cu8AutotestID].u8InhibIndex, with cu8AutotestID == ATM_KU8_ID_END_OF_LIFE_COMFORT, is equal to KU8_MODES________________INHIB. 
+		Expected result:  u8InhibIndex == KU8_MODES________________INHIB
+
+Postcondition
+
+	Step 9: Return ECU to default values

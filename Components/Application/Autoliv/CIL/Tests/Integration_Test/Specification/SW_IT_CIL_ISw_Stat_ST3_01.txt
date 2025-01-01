@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0027, ARCH_SW_CIL_0123
+ARCH_SW_CIL_0027: If value for ISw_Stat_ST3 is not 4 (is  0,1,2,5 or 7 ) then cycle request should be inhibitted/aborted.
+ARCH_SW_CIL_0123: A NEW IGNITION RUN CYCLE happens when trasiition from any value to 0 � IGN_LOCK;
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal ISw_Stat_ST3 from frame Ign_Stat_ST3 to 0x0.
+
+	Step 4: Set a breakpoint in function cil_ManageAbortingConditions.
+
+Action: ARCH_SW_CIL_0123
+
+	Step 5: Read variable cil_u8IgnitionSignal 
+		Expected result:  0x0.
+
+Action: ARCH_SW_CIL_0027
+
+	Step 6: Check if CPU stopped in function cil_ManageAbortingConditions. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

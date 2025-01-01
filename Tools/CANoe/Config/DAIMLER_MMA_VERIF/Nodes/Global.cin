@@ -1,0 +1,87 @@
+/*@!Encoding:1252*/
+variables
+{
+  //Do not edit the following enumerations
+  enum bus {CAL_COC = 1, CAL_DL = 2, CAL_DR = 3, BODY3 = 4, BODY2 = 5, BODY1 = 6, RADAR_F = 7,
+  RADAR_R = 8, PERIPHERY = 9, LSM_F = 10, EIS_BASE_GW = 11, EIS_GW_BASE = 12, MAIN = 13, HAD_BACKUP = 14, CHASSIS = 15, 
+  STEERING_WHEEL = 16, SUSPENSION_F = 17, SUSPENSION_R = 18, CPC = 19, ECM_PERIPHERY2 = 20, 
+	ECM_PERIPHERY1 = 21, ECM = 22, ENERGY = 23, INV = 24, TCM = 25, HEADUNIT1 = 26, HEADUNIT2 = 27, 
+	RVC_HSVL = 28, AEPU = 29
+  };
+  enum ecuType {STANDARD = 0, GATEWAY = 1, VSM = 2};
+  enum certType {DEVELOPMENT = 0, SERIES = 1};
+  
+  //Enter diagnostic ECU qualifier
+  //Diagnostic ECU qualifier could be found in "Diagnostics/ISO-TP"
+  //Diagnostic ECU qualifier has to match an unique ECU Id of the corresponding ECU certificate in ZenZefi
+  char diagTarget[30] = "BC_R223";
+  
+  //Absolute path (incl. file name) to ECU Extract
+  char ecuExtractPath[500] = "C:\\Databases\\BC_R_STAR_3_2020_Ecu_Extract_2018_29a0_AR43.arxml";
+  
+  //Absolute path (incl. file name) to Tester.can
+  char testerPath[500] = "C:\\Tester\\Tester.can";
+  
+  //Enter Ecu Type of device under test
+  enum ecuType EcuType = STANDARD;
+  
+  //Enter type of certificates intergrated in device unter test
+  enum certType CertType = SERIES;
+  
+  //Enter database name of the bus which is tested
+  enum bus Bus = BODY1;
+  
+  //Set 1 to automate import of certificates (\certs) into ZenZefi within testcase Preparation
+  byte autoZenZefiCertImport = 0;
+  
+  //Set 1 if diagnostic firewall is active (SSA v1.3.6, CPC only)
+  byte diagFirewall = 0;
+  
+  //Enter SSA version integrated in device under test
+  byte ssaVersion[3] = {0x01, 0x03, 0x06};
+  
+  //Max. waiting time for diagnostic response 
+  //Time in milliseconds
+  dword diagTimeout = 60000;
+  
+  //Max. waiting time for shutdown (bus off) of device under test
+  //Time in milliseconds
+  dword shutdownTimeout = 60000;
+  
+  //Waiting time for full functionality of device under test afer wakeup (bus on)
+  //Time in milliseconds
+  dword afterWakeupTimeout = 10000;
+      
+  /**
+  *DO NOT EDIT THE FOLLOWING PARAMETERS
+  */
+
+  byte TickCountInitVal[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  byte RealTimeOffsetInitVal[12] = {7, 224, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0};
+  char VINInitVal[18] = "?????????????????";
+  byte DiagnosticSerialNumberInitVal[20] = {0x09, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x00, 0x04};
+  byte CarSpecificSecretInitVal[32] = {0x55, 0x77, 0x65, 0x4d, 0x61, 0x72, 0x74, 0x69, 0x6e, 0x4a, 0x75, 0x6c, 0x69, 0x61, 0x6e, 0x41, 0x6e, 0x64, 0x72, 0x65, 0x61, 0x73, 0x4d, 0x61, 0x72, 0x6b, 0x75, 0x73, 0x32, 0x30, 0x31, 0x36};
+  
+  //1 = active; 0 = inactive
+  long AuthTimerInitVal = 0;
+  //2 = active (without tickcount req & sync); 1 = only active after successful tickcount req & sync; 0 = inactive
+  long TickcountTimerInitVal = 1;
+  //1 = active; 0 = inactive
+  long RTOTimerInitVal = 0;
+  //1 = active; 0 = inactive
+  long VINTimerInitVal = 0;
+  //1 = active; 0 = inactive
+  long CarSpecSecTimerInitVal = 0;
+  
+  //Waiting time between switching off and on logical ignition status
+  //Time in milliseconds
+  dword iswStatChangeTimeout = 2500;
+  
+  //Waiting time for SecOC key derivation & storage after shared secret broadcast
+  //Time in milliseconds
+  dword storageTimeout = 20000;
+  
+  //Time for which user is logged in ZenZefi before logging off automatically (default 5 min)
+  //Time in milliseconds
+  dword zenzefiTimeout = 300000;
+}

@@ -1,0 +1,29 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0205
+ARCH_SW_CIL_0205: CIL shall check if timeout is present for API frame.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_SNA (26).
+
+	Step 3: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_API at line *pu8TestResult = cil_u8ResultOfAutoTest;.
+
+Action: ARCH_SW_CIL_0205
+
+	Step 4: Check if CPU stopped at line *pu8TestResult = cil_u8ResultOfAutoTest;. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 5: Return ECU to default values

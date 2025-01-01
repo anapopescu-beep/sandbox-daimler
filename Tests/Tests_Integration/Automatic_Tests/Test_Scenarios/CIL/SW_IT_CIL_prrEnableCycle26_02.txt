@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0045
+ARCH_SW_CIL_0045: If value for Bckl_Sw_D_Stat_ST3 is trasitioning from 1 to 0 then cycle 26 (BSR1) shall be executed after NVP_u8AfterBuckle* 5 time.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_ManageInputSignals() at line 'if (KU8_ONE == NVP_stVehicleEquipmentData.VehicleSteeringConfig)'.
+
+	Step 3: Set variable NVP_stVehicleEquipmentData.VehicleSteeringConfig to KU8_ZERO.
+
+	Step 4: Set signal EVC_List03_StStyle_ST3 to LHD (0x1).
+
+	Step 5: Set signal PT4_PTCoor_PT_Rdy_ST3 to RDY (0x1).
+
+	Step 6: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 7: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_DelayBuckleSwitch);'.
+
+	Step 8: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 9: Check if CPU stopped in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_DelayBuckleSwitch);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0045
+
+	Step 10: Evaluate if variable cil_u16BuckleSwitchDelayCounter is equal to (NVP_u8AfterBuckle * 5). 
+		Expected result:  cil_u16BuckleSwitchDelayCounter is equal to (NVP_u8AfterBuckle * 5)
+
+Postcondition
+
+	Step 11: Return ECU to default values

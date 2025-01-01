@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>308</y>
+      <w>2209</w>
+      <h>431</h>
+    </coordinates>
+    <panel_attributes>title:eol_GetCounterIndex
+Start
+
+Get Variable Counter Status
+
+Check the executed cycle value
+If
+	[executed cycle is a comfort cycle]
+	u8CounterIndex = KU8_EOL_COMFORT_LEVEL
+	
+	[executed cycle is a max cycle]
+	u8CounterIndex = KU8_EOL_MAX_FORCE_LEVEL
+
+	[executed cycle is a high cycle]
+	u8CounterIndex = KU8_EOL_HIGH_FORCE_LEVEL
+
+	[executed cycle is a low cycle]
+	u8CounterIndex = KU8_EOL_LOW_FORCE_LEVEL
+
+	[PRECRASH_LVL8 &lt;= executed cycle &lt;= PRECRASH_LVL14 ]
+	Check the variable counter status
+	If
+		[KU8_VARIABLE_COUNTER_LOW]
+		u8CounterIndex = Low
+
+		[KU8_VARIABLE_COUNTER_HIGH]
+		u8CounterIndex = High
+		
+		[KU8_VARIABLE_COUNTER_MAX]
+		u8CounterIndex = Max
+
+		[KU8_VARIABLE_COUNTER_COMFORT]
+		u8CounterIndex = Comfort
+
+		[default]
+		u8CounterIndex = Low
+	EndIf
+
+	[else]
+	u8CounterIndex = KU8_MAX
+EndIf
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

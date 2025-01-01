@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0347
+ARCH_SW_BMM_0347: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_cbk_CheckHallEffectSensor  at line 'Rte_Call_pclCheckHallEffectSensor_AutotestCallback(&u8TestResult);'.
+
+	Step 3: Check if CPU stopped at line 'Rte_Call_pclCheckHallEffectSensor_AutotestCallback(&u8TestResult);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Step in function Rte_Call_pclCheckHallEffectSensor_AutotestCallback. 
+		Expected result:  BMM_Autotest_CheckHallEffectSensor,,app.elf
+
+	Step 5: Set a breakpoint in function BMM_Autotest_CheckHallEffectSensor at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'.
+
+	Step 6: Check if CPU stopped at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_0347
+
+	Step 7: Step in function Rte_Call_pclCheckHallEffectSensor_AutotestCallback.
+
+	Step 8: Check if CPU stopped in function ERH_runGetAecStatus(). 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 9: Return ECU to default values

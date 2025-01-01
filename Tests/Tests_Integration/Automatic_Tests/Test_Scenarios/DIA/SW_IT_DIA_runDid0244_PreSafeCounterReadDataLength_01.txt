@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0011; ARCH_SW_DIA_0078
+ARCH_SW_DIA_0011: Service 0x22 will be implemented for DID 0244
+ARCH_SW_DIA_0078: Response data length shall be 8 bytes long
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0011; ARCH_SW_DIA_0078
+
+	Step 2: Set BP in function *DIA_runDid0244_PreSafeCounterReadDataLenght* 
+		Expected result:  BP was reached.
+
+	Step 3: Send diag request for 22 0244, and wait for timeout error 
+		Expected result:  Timeout received
+
+	Step 4: Evaluate response data lenght. 
+		Expected result:  Response data size is 8 bytes.
+
+Postcondition
+
+	Step 5: Return ECU to default values

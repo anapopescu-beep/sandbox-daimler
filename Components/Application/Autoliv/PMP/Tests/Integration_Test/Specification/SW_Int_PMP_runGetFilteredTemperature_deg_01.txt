@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0280, ARCH_SW_PMP_0285
+ARCH_SW_PMP_0280: PMP shall provide the temperature in Celsius degrees.
+ARCH_SW_PMP_0285: The PMP_runGetFilteredTemperature function shall be called to get the sampled value of the temperature (measured at MCU level).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+Action: ARCH_SW_PMP_0280
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetFilteredTemperature_deg function 
+		Expected result:  BP reached.
+
+	Step 5: Set a breakpoint in function PMP_runGetFilteredTemperature_deg at the PMP_runGetFilteredTemperature function call
+		Expected result:  BP reached.
+
+	Step 6: Read local variable ps16InternalTemperature_deg 
+		Expected result:  Variable read from ADC channel.
+
+	Step 7: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the end of function 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0210
+
+	Step 8: Evaluate local variable s16ECUInternalTemperature 
+		Expected result:  Variable read is the same from *ps16InternalTemperature_deg data pointer.
+
+Postcondition
+
+	Step 9: Return ECU to default values

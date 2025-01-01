@@ -1,0 +1,126 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0380, ARCH_SW_PAL_0378, ARCH_SW_PAL_0379, ARCH_SW_PAL_0400, ARCH_SW_PAL_0401, ARCH_SW_PAL_0402, ARCH_SW_PAL_0403, ARCH_SW_PAL_0080, ARCH_SW_PAL_0085, ARCH_SW_PAL_0086
+ARCH_SW_PAL_0380: The component shall check if the motor is coupled with the mechanic.
+ARCH_SW_PAL_0378: The current executed cycle shall be read from BFE.
+ARCH_SW_PAL_0379: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0400: PMP_runGetFilteredTemperature_deg shall be called to get the ECU temperature
+ARCH_SW_PAL_0401: PMP_runGetBatteryVoltage_10ms shall be called to get the battery voltage
+ARCH_SW_PAL_0402: PMP_runGetMotorResistance shall be called to get motor resistance
+ARCH_SW_PAL_0403: PAL_runReadMotorCurrentInmA shall be called to get motor current.
+ARCH_SW_PAL_0080: The component shall provide the current in miliamps
+ARCH_SW_PAL_0085: The component shall be able to read the current measured at the Vp motor pin
+ARCH_SW_PAL_0086: The component shall be able to read the current measured at the Vn motor pin
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMotorDisengagement at line 'Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&u8TestResult);'.
+
+Action: ARCH_SW_PAL_0380, ARCH_SW_PAL_0378
+
+	Step 3: Check if the CPU stopped in function PAL_cbk_CheckMotorDisengagement() at line 'Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&u8TestResult);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousADCTestResult);'.
+
+	Step 5: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_ADC, &u8PreviousADCTestResult);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Write autotest result with KU8_ONE 
+		Expected result:  Variable written with KU8_ONE
+
+	Step 7: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber);'.
+
+	Step 8: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Read_prrExecutedCycle_u8CycleNumber(&u8ExecutedCycleNumber);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 9: Write Executed Cycle Number  with 0x1D 
+		Expected result:  Variable written with 0x1D
+
+	Step 10: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclECU_T_GetFiltered_deg ( &s16ECUInternalTemperature);'.
+
+	Step 11: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement() at line 'Rte_Call_pclECU_T_GetFiltered_deg ( &s16ECUInternalTemperature);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 12: Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer.
+
+	Step 13: Check if the CPU stopped in function PMP_runGetFilteredTemperature_deg(). 
+		Expected result:  CPU stopped at BP
+
+	Step 14: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'if((s16MotorPWMOrder < NVP_BLOCK_ID_TESTS_PARAM_RamBlockData.NVP_s16MotorDisengagementMinPowerOrder)'.
+
+	Step 15: Write vaiable s16MotorPWMOrder with value -770 
+		Expected result:  Variable written with -770
+
+	Step 16: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclKL30_V_Get_10ms ( &u16KL30Voltage_mV);'.
+
+	Step 17: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement at line 'Rte_Call_pclKL30_V_Get_10ms ( &u16KL30Voltage_mV);'. 
+		Expected result:  CPU stopped at BP
+
+	Step 18: Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 19: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the RTE Call for PMP_runGetMotorResistance 
+		Expected result:  CPU is stopped at BP.
+
+	Step 20: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement(). 
+		Expected result:  CPU stopped at BP
+
+	Step 21: Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 22: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at line 'if(s32SignedPhysicalMotorCurrent_mA < KS32_ZERO)' after 'PAL_runReadMotorCurrentInmA(&s32SignedPhysicalMotorCurrent_mA);'.
+
+Action: ARCH_SW_PAL_0085
+
+	Step 23: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement() at line 'if(s32SignedPhysicalMotorCurrent_mA < KS32_ZERO)'. 
+		Expected result:  CPU stopped at BP
+
+	Step 24: Set a breakpoint in function PAL_Autotest_CheckMotorDisengagement at the autotest result 
+		Expected result:  CPU is stopped at BP.
+
+	Step 25: Check if the CPU stopped in function PAL_Autotest_CheckMotorDisengagement(). 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_PAL_0379
+
+	Step 26: Evaluate PreviousADCTestResult 
+		Expected result:  Variable is equal to 0x01.
+
+	Step 27: Evaluate ExecutedCycleNumber 
+		Expected result:  Variable read.
+
+Action: ARCH_SW_PAL_0400
+
+	Step 28: Evaluate ECUInternalTemperature 
+		Expected result:  Variable is equal to *ps16InternalTemperature_deg data pointer.
+
+Action: ARCH_SW_PAL_0401
+
+	Step 29: Evaluate KL30Voltage_mV 
+		Expected result:  Variable is equal to *pu16Voltage data pointer data pointer.
+
+Action: ARCH_SW_PAL_0402
+
+	Step 30: Evaluate MotorResistance_mOhm 
+		Expected result:  Variable is equal to *pu16Resistance_mOhm data pointer.
+
+	Step 31: Set a breakpoint in function PAL_cbk_CheckMotorDisengagement after the return of the autotest result 
+		Expected result:  CPU is stopped at BP.
+
+	Step 32: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to KU8_ONE.
+
+Postcondition
+
+	Step 33: Return ECU to default values

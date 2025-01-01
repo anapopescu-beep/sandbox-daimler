@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0006, ARCH_SW_BMM_0345
+ARCH_SW_BMM_0006: The AdcIf_runGetHBS_A_V_100ms function shall be called to get the value measured of Hall Effect Sensor A
+ARCH_SW_BMM_0345: AdcIf_runGetHBS_A_V_100ms be called to get the measured value on the power supply
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_runMainFunction at line 'Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);'.
+
+	Step 3: Check if CPU stopped at line 'Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_0006, ARCH_SW_BMM_0345
+
+	Step 4: Step in function 'Rte_Call_pclHBS_A_V_raw_Get_100ms(&bmm_u16FilteredHESAInputVoltage_lsb);'. 
+		Expected result:  AdcIf_runGetHBS_A_V_100ms,,app.elf
+
+Postcondition
+
+	Step 5: Return ECU to default values

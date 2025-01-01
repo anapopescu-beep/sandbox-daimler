@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1186</w>
+      <h>727</h>
+    </coordinates>
+    <panel_attributes>title:PAL_Autotest_CheckMotorThermalProctection
+Start
+Get the deficiency level from TSA
+Get previous SW thermal protection autotest status
+Check SW thermal protection autotest status is KU8_ATM_TEST_NOK
+If
+	[TRUE]
+	Check if Deficiency level is over the deskill threshold
+	If
+		[TRUE]
+		Set test result as KU8_ATM_TEST_NOK
+
+		[FALSE]
+		Set test result as KU8_ATM_TEST_OK
+	EndIf
+	
+	[FALSE]
+	Check if Deficiency level is over the qualification threshold
+	If
+		[TRUE]
+		Set test result as KU8_ATM_TEST_NOK
+
+		[FALSE]
+		Set test result as KU8_ATM_TEST_OK
+	EndIf
+EndIf
+
+Return the computed test result
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

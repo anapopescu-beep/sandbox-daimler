@@ -1,0 +1,33 @@
+/*@!Encoding:1252*/
+
+variables
+{
+  long DiagTargetCount = 0; // number of available diag targets
+  char DiagTargetList[200]; // available targets, one per cdd
+}
+
+
+// utility function to collect all available diag targets
+void ReadDiagQualifier()
+{
+  int i;
+  char ecuQual[100];
+
+  DiagTargetCount = diagGetTargetCount();
+  
+  //write("DiagTargetCount = %i",DiagTargetCount);
+  
+  i = DiagTargetCount;
+  while( i-- > 0)
+  {
+    diagGetTargetQualifier( i, ecuQual, elcount(ecuQual));
+    //write( "Target %d: %s", i, ecuQual);
+    strncat(DiagTargetList,ecuQual,elcount(DiagTargetList));
+    if(i!=0)
+    {
+      strncat(DiagTargetList,",",elcount(DiagTargetList));  
+    }
+  }
+  sysSetVariableString("LocalAuthentication","DiagTargetList",DiagTargetList);
+  //write("List: %s",DiagTargetList);
+}

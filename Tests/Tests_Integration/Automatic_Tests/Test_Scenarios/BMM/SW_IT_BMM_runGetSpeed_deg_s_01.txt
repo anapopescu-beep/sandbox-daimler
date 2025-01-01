@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0045, ARCH_SW_BMM_0347
+ARCH_SW_BMM_0045: This module shall provide to the rest of the application the belt speed in degrees per seconds.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 6.
+
+	Step 3: Set a breakpoint in function BMM_runGetSpeed_deg_s at line '*ps32BeltSpeed_deg_s = 0;'.
+
+Action: ARCH_SW_BMM_0045
+
+	Step 4: Check if CPU stopped at line '*ps32BeltSpeed_deg_s'. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Evaluate variable ps32BeltSpeed_deg_s. 
+		Expected result:  ps32BeltSpeed_deg_s == KS32_ZERO
+
+Postcondition
+
+	Step 6: Return ECU to default values

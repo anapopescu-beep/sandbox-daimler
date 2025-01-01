@@ -1,0 +1,50 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0070, ARCH_SW_PAL_0075, ARCH_SW_PAL_0076
+ARCH_SW_PAL_0070: The component shall be able to set the power state to IDLE.
+ARCH_SW_PAL_0075: The component shall be able to deactivate the half bridge connected to the Vp pin of the motor.
+ARCH_SW_PAL_0076: The component shall be able to deactivate the half bridge connected to the Vn pin of the motor.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+	Step 3: Set a breakpoint in function ATM_runMainFunction() at line atm_PlayCyclicTests(castStartupCyclicList);.
+
+	Step 4: Step in atm_PlayCyclicTests().
+
+	Step 5: Set a breakpoint in function atm_PlayCyclicTests() at line if (B_TRUE == isAutoTestEnabled(u8AutotestID)).
+
+	Step 6: Set u8AutotestID variable to 1.
+
+	Step 7: Set a breakpoint in function executeAutoTest() at line u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;.
+
+	Step 8: Set a breakpoint in function PAL_cbk_CheckHighSideSwRegulation().
+
+	Step 9: Set a breakpoint in function PAL_Autotest_CheckHighSideSwRegulation().
+
+Action: ARCH_SW_PAL_0070
+
+	Step 10: Check if CPU stopped in function PAL_Autotest_CheckHighSideSwRegulation() at line case PAL_KU8_HIGH_SIDE_SW_REG_INIT:. 
+		Expected result:  True
+
+	Step 11: Set a breakpoint in function PAL_DisablePowerStage().
+
+Action: ARCH_SW_PAL_0075, ARCH_SW_PAL_0076
+
+	Step 12: Check if CPU stopped in function PAL_DisablePowerStage at line Dio_WriteChannel (PAL_kstHardWareTopology.astHBridgeDef[PAL_CFG_KU8_HB_P_ID].u16DriveEnableDioId,(uint8)STD_LOW).  
+		Expected result:  True
+
+Postcondition
+
+	Step 13: Return ECU to default values

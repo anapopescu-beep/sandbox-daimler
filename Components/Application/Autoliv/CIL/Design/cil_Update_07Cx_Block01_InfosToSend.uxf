@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>8</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>552</x>
+      <y>144</y>
+      <w>495</w>
+      <h>676</h>
+    </coordinates>
+    <panel_attributes>title:cil_Update_07Cx_Block01_InfosToSend
+Start
+
+Call Rte_Read_prrCycleNumber_u8CycleNumber function
+Call Rte_Read_prrStepNumber_u8StepNumber function
+Call Rte_Call_pclMotor_Ip_raw_raw_Get function
+
+Set u8MotorCurrentTensRawMSB as high byte
+Set u8MotorCurrentTensRawLSB as low byte
+
+Call Rte_Call_pclMotor_In_raw_raw_Get function
+
+Set u8MotorCurrentRelRawMSB as high byte
+Set u8MotorCurrentRelRawLSB as low byte
+
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_01 = CU8_BLOCK_ID_01;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_02 = u8CurrentCycle;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_03 = u8CurrentStep;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_04 = KU8_MAX;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_05 = u8MotorCurrentTensRawMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_06 = u8MotorCurrentTensRawLSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_07 = u8MotorCurrentRelRawMSB;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_08 = u8MotorCurrentRelRaw
+
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

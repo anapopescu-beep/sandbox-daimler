@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0510; ARCH_SW_DIA_0511; ARCH_SW_DIA_0543; ARCH_SW_DIA_0544; ARCH_SW_DIA_0545; ARCH_SW_DIA_0546; ARCH_SW_DIA_0547; ARCH_SW_DIA_0548; ARCH_SW_DIA_0549; ARCH_SW_DIA_0550; ARCH_SW_DIA_0551; ARCH_SW_DIA_0512; ARCH_SW_DIA_0513; ARCH_SW_DIA_0514
+ARCH_SW_DIA_0510: Service 0x22 (Read Data By Identifier) will be implemented for DID 0210 (CAN Output)
+ARCH_SW_DIA_0511: Response data shall contain Presafe Display Request, Belt Slack Decreasing Mode.
+ARCH_SW_DIA_0543: The last value of BSR Function Mode  BltSlckDec_Md_FR_Stat_ST3) shall keep over a next power cycle ( any type of reset )
+ARCH_SW_DIA_0544: If a diagnostic service request is received via CAN Frame DIAG_RBTM_FL_03_ExtCAN_RQ_ST3 then RGS shall respond via DIAG_RBTM_FL_03_ExtCAN_RS_ST3 (Id: 0x18E1A481) frame
+ARCH_SW_DIA_0545: DIAG_RBTM_FL_03_ExtCAN_RS_ST3 Frame size: variable max 8 bytes
+ARCH_SW_DIA_0546: If a diagnostic service request is received via CAN Frame DIAG_RBTM_FR_03_ExtCAN_RQ_ST3 then RGS shall respond via DIAG_RBTM_FR_03_ExtCAN_RS_ST3 (Id: 0x18E1A581) frame
+ARCH_SW_DIA_0547: DIAG_RBTM_FR_03_ExtCAN_RS_ST3 Frame size: variable max 8 bytes
+ARCH_SW_DIA_0548: If a diagnostic service request is received via CAN Frame DIAG_RBTM_FL_03_IntEth_RS_ST3 then RGS shall respond via DIAG_RBTM_FL_03_IntEth_RS_ST3 (Id: 0x18E1A485) frame
+ARCH_SW_DIA_0549: DIAG_RBTM_FL_03_IntEth_RS_ST3 Frame size: variable max 8 bytes
+ARCH_SW_DIA_0550: If a diagnostic service request is received via CAN Frame DIAG_RBTM_FR_03_IntEth_RS_ST3 then RGS shall respond via DIAG_RBTM_FR_03_IntEth_RS_ST3 (Id: 0x18E1A585) frame
+ARCH_SW_DIA_0551: DIAG_RBTM_FR_03_IntEth_RS_ST3 Frame size: variable max 8 bytes
+ARCH_SW_DIA_0512: Response data shall contain PS_Curve_xy_Stat_ST3
+ARCH_SW_DIA_0512: Response data shall contain RBTMxy_ACTV_LVL_ST35
+ARCH_SW_DIA_0513: Response data shall contain RBTMxy_SP_ActvClient_ST35
+ARCH_SW_DIA_0514: Response data shall contain RBTMxy_SP_FCTPrecond_Stat_ST35
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set BP in function *DIA_runDid0210_CAN_output_Read_CANoutput1_ReadData* 
+		Expected result:  BP was reached.
+
+Action: ARCH_SW_DIA_0510; ARCH_SW_DIA_0511; ARCH_SW_DIA_0543; ARCH_SW_DIA_0544; ARCH_SW_DIA_0545; ARCH_SW_DIA_0546; ARCH_SW_DIA_0547; ARCH_SW_DIA_0548; ARCH_SW_DIA_0549; ARCH_SW_DIA_0550; ARCH_SW_DIA_0551; ARCH_SW_DIA_0512; ARCH_SW_DIA_0513; ARCH_SW_DIA_0514
+
+	Step 4: Send diag request for 22 0210 and wait for timeout error 
+		Expected result:  Request sent and timeout received.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

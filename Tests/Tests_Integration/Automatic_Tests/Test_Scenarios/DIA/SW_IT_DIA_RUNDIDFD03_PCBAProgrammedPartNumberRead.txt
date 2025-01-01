@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0575; ARCH_SW_DIA_0578; ARCH_SW_DIA_0579; ARCH_SW_DIA_0580; ARCH_SW_DIA_0581; ARCH_SW_DIA_0582
+ARCH_SW_DIA_0575: Service 0x22 (Read Data By Identifier) will be implemented for DID FD03 (AEE Traceability Number And PCBA Programmed PN)
+ARCH_SW_DIA_0578: Data Identifier of the Read AEE Traceability Number And PCBA programmed PN Service shall be: 0xFD03
+ARCH_SW_DIA_0579: Response data length shall be 22 bytes longNote: Full Response length = 3 bytes + Response data length
+ARCH_SW_DIA_0580: Response data length shall be 22 bytes long Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0581: Bytes #4-#15: ?AEE Traceability Number [ASCII Coded 
+ARCH_SW_DIA_0582: Bytes #16-#25: ?PCBA programmed Part Number [ASCII Coded] 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD03_PCBAProgrammedPartNumberRead*.
+
+Action:ARCH_SW_DIA_0575; ARCH_SW_DIA_0578; ARCH_SW_DIA_0579; ARCH_SW_DIA_0580; ARCH_SW_DIA_0581; ARCH_SW_DIA_0582
+
+	Step 3: Send diag request for 22 0220 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFD03_PCBAProgrammedPartNumberRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

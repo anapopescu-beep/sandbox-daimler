@@ -1,0 +1,1015 @@
+/*@!Encoding:1252*/
+
+variables
+{
+  //EIB 
+  int iBaudrateEIB = 9600;
+  int iParityEIB = 0;	
+  int iStopbitEIB = 1;
+	int iByteSizeEIB = 8;
+
+  const int _iEID_EN_HB_N     = 1;
+  const int _iEID_EN_HB_P     = 2;
+  const int _iEID_PWM_H_Boost = 3;
+  const int _iEID_PWM_L_Boost = 4;
+  const int _iEID_EN_HS_SW    = 5;
+  
+  const int EIB_0_5_V_Output  = 1;
+  const int EIB_0_13_V_Output = 2;
+  
+  const int EIB_Falling_Edge = 0;
+  const int EIB_Rising_Edge  = 1;
+}
+
+// EIB function
+void GenerateTestConditions(int input, int output, int edge, int edgeNo, int voltageStart, int time1, int voltage1)
+{
+  int   amplification = 0;
+  int64 temp = 0;
+  int64 temp1 = 0;
+  char  buffer[5000];
+  byte  number1 = 0x00;
+  byte  number2 = 0x00;
+  byte  inputArray[45] = {0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00};
+  
+  if (1==rs232Open(@sysvar::EIB::sysCOMPort_EIB))
+  {
+    rs232Configure(@sysvar::EIB::sysCOMPort_EIB, iBaudrateEIB, iByteSizeEIB, iStopbitEIB, iParityEIB);
+    
+    if((input > 6) || (input < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect input value", "Input value should be in interval (1,6). Selected value: %d", input);
+    }
+    else
+    {
+      inputArray[0] = (int)input & 0xFF;
+    }
+    
+    if((output > 2) || (output < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect output value", "Output value should be in interval (1,2). Selected value: %d", output);
+    }
+    else
+    {
+      inputArray[1] = (int)output & 0xFF;
+    }
+    
+    if((edge > 1) || (edge < 0))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "Edge value can have only 0 - falling [OR] 1 - rising. Selected value: %d", edge);
+    }
+    else
+    {
+      if(edgeNo < 1)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "EdgeNo value should be bigger than 1. Selected value: %d", edgeNo);
+      }
+      number1 = ((int)edge << 7) & 0xFF;
+      number2 = (int)edgeNo & 0xFF;
+      inputArray[2] = number1 + number2;
+    }
+    
+    if((voltageStart < 0) || (voltageStart > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltageStart);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltageStart/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[3] = (int64)temp1 & 0xFF;
+      inputArray[4] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((time1 < 0) || (time1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect time1 value", "Time1 value should be in interval (0,65534). Selected value: %d", time1);
+    }
+    
+    else
+    {
+      temp = (int64)(time1/256);
+      inputArray[5] = temp & 0xFF;
+      inputArray[6] = time1 & 0xFF;
+    }
+    
+    if((voltage1 < 0) || (voltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[7] = (int64)temp1 & 0xFF;
+      inputArray[8] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    rs232Send(@sysvar::EIB::sysCOMPort_EIB,inputArray,elcount(inputArray));
+    ConvertByteArrInCharArr(inputArray, buffer, 0, 44,"true");
+    testStep("", "Simulated data: %s", buffer);
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "EIB request","EIB simulation DONE!");
+    
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",@sysvar::EIB::sysCOMPort_EIB);
+  }
+  TestWaitForTimeout(200);
+  rs232Close(@sysvar::EIB::sysCOMPort_EIB);
+}
+
+// EIB function
+void GenerateTestConditions(int input, int output, int edge, int edgeNo, int voltageStart, int time1, int voltage1, int optionalTime, int optionalVoltage)
+{
+  int   amplification = 0;
+  int64 temp = 0;
+  int64 temp1 = 0;
+  char  buffer[5000];
+  byte  number1 = 0x00;
+  byte  number2 = 0x00;
+  byte  inputArray[45] = {0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00};
+  
+  if (1==rs232Open(@sysvar::EIB::sysCOMPort_EIB))
+  {
+    rs232Configure(@sysvar::EIB::sysCOMPort_EIB, iBaudrateEIB, iByteSizeEIB, iStopbitEIB, iParityEIB);
+    
+    if((input > 6) || (input < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect input value", "Input value should be in interval (1,6). Selected value: %d", input);
+    }
+    else
+    {
+      inputArray[0] = (int)input & 0xFF;
+    }
+    
+    if((output > 2) || (output < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect output value", "Output value should be in interval (1,2). Selected value: %d", output);
+    }
+    else
+    {
+      inputArray[1] = (int)output & 0xFF;
+    }
+    
+    if((edge > 1) || (edge < 0))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "Edge value can have only 0 - falling [OR] 1 - rising. Selected value: %d", edge);
+    }
+    else
+    {
+      if(edgeNo < 1)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "EdgeNo value should be bigger than 1. Selected value: %d", edgeNo);
+      }
+      number1 = ((int)edge << 7) & 0xFF;
+      number2 = (int)edgeNo & 0xFF;
+      inputArray[2] = number1 + number2;
+    }
+    
+    if((voltageStart < 0) || (voltageStart > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltageStart);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltageStart/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[3] = (int64)temp1 & 0xFF;
+      inputArray[4] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((time1 < 0) || (time1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect time1 value", "Time1 value should be in interval (0,65534). Selected value: %d", time1);
+    }
+    
+    else
+    {
+      temp = (int64)(time1/256);
+      inputArray[5] = temp & 0xFF;
+      inputArray[6] = time1 & 0xFF;
+    }
+    
+    if((voltage1 < 0) || (voltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[7] = (int64)temp1 & 0xFF;
+      inputArray[8] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime < 0) || (optionalTime > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime value", "optionalTime value should be in interval (0,65534). Selected value: %d", optionalTime);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime/256);
+      inputArray[9] = temp & 0xFF;
+      inputArray[10] = optionalTime & 0xFF;
+    }
+    
+    if((optionalVoltage < 0) || (optionalVoltage > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[11] = (int64)temp1 & 0xFF;
+      inputArray[12] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    rs232Send(@sysvar::EIB::sysCOMPort_EIB,inputArray,elcount(inputArray));
+    ConvertByteArrInCharArr(inputArray, buffer, 0, 44,"true");
+    testStep("", "Simulated data: %s", buffer);
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "EIB request","EIB simulation DONE!");
+    
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",@sysvar::EIB::sysCOMPort_EIB);
+  }
+  TestWaitForTimeout(200);
+  rs232Close(@sysvar::EIB::sysCOMPort_EIB);
+}
+
+// EIB function
+void GenerateTestConditions(int input, int output, int edge, int edgeNo, int voltageStart, int time1, int voltage1, int optionalTime, int optionalVoltage, int optionalTime1, int optionalVoltage1)
+{
+  int   amplification = 0;
+  int64 temp = 0;
+  int64 temp1 = 0;
+  char  buffer[5000];
+  byte  number1 = 0x00;
+  byte  number2 = 0x00;
+  byte  inputArray[45] = {0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00};
+  
+  if (1==rs232Open(@sysvar::EIB::sysCOMPort_EIB))
+  {
+    rs232Configure(@sysvar::EIB::sysCOMPort_EIB, iBaudrateEIB, iByteSizeEIB, iStopbitEIB, iParityEIB);
+    
+    if((input > 6) || (input < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect input value", "Input value should be in interval (1,6). Selected value: %d", input);
+    }
+    else
+    {
+      inputArray[0] = (int)input & 0xFF;
+    }
+    
+    if((output > 2) || (output < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect output value", "Output value should be in interval (1,2). Selected value: %d", output);
+    }
+    else
+    {
+      inputArray[1] = (int)output & 0xFF;
+    }
+    
+    if((edge > 1) || (edge < 0))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "Edge value can have only 0 - falling [OR] 1 - rising. Selected value: %d", edge);
+    }
+    else
+    {
+      if(edgeNo < 1)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "EdgeNo value should be bigger than 1. Selected value: %d", edgeNo);
+      }
+      number1 = ((int)edge << 7) & 0xFF;
+      number2 = (int)edgeNo & 0xFF;
+      inputArray[2] = number1 + number2;
+    }
+    
+    if((voltageStart < 0) || (voltageStart > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltageStart);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltageStart/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[3] = (int64)temp1 & 0xFF;
+      inputArray[4] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((time1 < 0) || (time1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect time1 value", "Time1 value should be in interval (0,65534). Selected value: %d", time1);
+    }
+    
+    else
+    {
+      temp = (int64)(time1/256);
+      inputArray[5] = temp & 0xFF;
+      inputArray[6] = time1 & 0xFF;
+    }
+    
+    if((voltage1 < 0) || (voltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[7] = (int64)temp1 & 0xFF;
+      inputArray[8] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime < 0) || (optionalTime > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime value", "optionalTime value should be in interval (0,65534). Selected value: %d", optionalTime);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime/256);
+      inputArray[9] = temp & 0xFF;
+      inputArray[10] = optionalTime & 0xFF;
+    }
+    
+    if((optionalVoltage < 0) || (optionalVoltage > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[11] = (int64)temp1 & 0xFF;
+      inputArray[12] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime1 < 0) || (optionalTime1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime1 value should be in interval (0,65534). Selected value: %d", optionalTime1);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime1/256);
+      inputArray[13] = temp & 0xFF;
+      inputArray[14] = optionalTime1 & 0xFF;
+    }
+    
+    if((optionalVoltage1 < 0) || (optionalVoltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[15] = (int64)temp1 & 0xFF;
+      inputArray[16] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    rs232Send(@sysvar::EIB::sysCOMPort_EIB,inputArray,elcount(inputArray));
+    ConvertByteArrInCharArr(inputArray, buffer, 0, 44,"true");
+    testStep("", "Simulated data: %s", buffer);
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "EIB request","EIB simulation DONE!");
+    
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",@sysvar::EIB::sysCOMPort_EIB);
+  }
+  TestWaitForTimeout(200);
+  rs232Close(@sysvar::EIB::sysCOMPort_EIB);
+}
+
+// EIB function
+void GenerateTestConditions(int input, int output, int edge, int edgeNo,
+  int voltageStart, int time1,
+  int voltage1, int optionalTime,
+  int optionalVoltage, int optionalTime1, 
+  int optionalVoltage1, int optionalTime2, int optionalVoltage2)
+{
+  int   amplification = 0;
+  int64 temp = 0;
+  int64 temp1 = 0;
+  char  buffer[5000];
+  byte  number1 = 0x00;
+  byte  number2 = 0x00;
+  byte  inputArray[45] = {0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00};
+  
+  if (1==rs232Open(@sysvar::EIB::sysCOMPort_EIB))
+  {
+    rs232Configure(@sysvar::EIB::sysCOMPort_EIB, iBaudrateEIB, iByteSizeEIB, iStopbitEIB, iParityEIB);
+    
+    if((input > 6) || (input < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect input value", "Input value should be in interval (1,6). Selected value: %d", input);
+    }
+    else
+    {
+      inputArray[0] = (int)input & 0xFF;
+    }
+    
+    if((output > 2) || (output < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect output value", "Output value should be in interval (1,2). Selected value: %d", output);
+    }
+    else
+    {
+      inputArray[1] = (int)output & 0xFF;
+    }
+    
+    if((edge > 1) || (edge < 0))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "Edge value can have only 0 - falling [OR] 1 - rising. Selected value: %d", edge);
+    }
+    else
+    {
+      if(edgeNo < 1)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "EdgeNo value should be bigger than 1. Selected value: %d", edgeNo);
+      }
+      number1 = ((int)edge << 7) & 0xFF;
+      number2 = (int)edgeNo & 0xFF;
+      inputArray[2] = number1 + number2;
+    }
+    
+    if((voltageStart < 0) || (voltageStart > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltageStart);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltageStart/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[3] = (int64)temp1 & 0xFF;
+      inputArray[4] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((time1 < 0) || (time1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect time1 value", "Time1 value should be in interval (0,65534). Selected value: %d", time1);
+    }
+    
+    else
+    {
+      temp = (int64)(time1/256);
+      inputArray[5] = temp & 0xFF;
+      inputArray[6] = time1 & 0xFF;
+    }
+    
+    if((voltage1 < 0) || (voltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[7] = (int64)temp1 & 0xFF;
+      inputArray[8] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime < 0) || (optionalTime > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime value", "optionalTime value should be in interval (0,65534). Selected value: %d", optionalTime);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime/256);
+      inputArray[9] = temp & 0xFF;
+      inputArray[10] = optionalTime & 0xFF;
+    }
+    
+    if((optionalVoltage < 0) || (optionalVoltage > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[11] = (int64)temp1 & 0xFF;
+      inputArray[12] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime1 < 0) || (optionalTime1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime1 value should be in interval (0,65534). Selected value: %d", optionalTime1);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime1/256);
+      inputArray[13] = temp & 0xFF;
+      inputArray[14] = optionalTime1 & 0xFF;
+    }
+    
+    if((optionalVoltage1 < 0) || (optionalVoltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[15] = (int64)temp1 & 0xFF;
+      inputArray[16] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime2 < 0) || (optionalTime2 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime2 value should be in interval (0,65534). Selected value: %d", optionalTime2);
+    }
+    else
+    {
+      temp = (int64)(optionalTime2/256);
+      inputArray[17] = temp & 0xFF;
+      inputArray[18] = optionalTime2 & 0xFF;
+    }
+    
+    if((optionalVoltage2 < 0) || (optionalVoltage2 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage2);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage2/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[19] = (int64)temp1 & 0xFF;
+      inputArray[20] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    rs232Send(@sysvar::EIB::sysCOMPort_EIB,inputArray,elcount(inputArray));
+    ConvertByteArrInCharArr(inputArray, buffer, 0, 44,"true");
+    testStep("", "Simulated data: %s", buffer);
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "EIB request","EIB simulation DONE!");
+    
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",@sysvar::EIB::sysCOMPort_EIB);
+  }
+  TestWaitForTimeout(200);
+  rs232Close(@sysvar::EIB::sysCOMPort_EIB);
+}
+
+// EIB function
+void GenerateTestConditions(int input, int output, int edge, int edgeNo,
+  int voltageStart, int time1,
+  int voltage1, int optionalTime,
+  int optionalVoltage, int optionalTime1, 
+  int optionalVoltage1, int optionalTime2, int optionalVoltage2,
+  int optionalTime3, int optionalVoltage3
+  )
+{
+  int   amplification = 0;
+  int64 temp = 0;
+  int64 temp1 = 0;
+  char  buffer[5000];
+  byte  number1 = 0x00;
+  byte  number2 = 0x00;
+  byte  inputArray[45] = {0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00};
+  
+  if (1==rs232Open(@sysvar::EIB::sysCOMPort_EIB))
+  {
+    rs232Configure(@sysvar::EIB::sysCOMPort_EIB, iBaudrateEIB, iByteSizeEIB, iStopbitEIB, iParityEIB);
+    
+    if((input > 6) || (input < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect input value", "Input value should be in interval (1,6). Selected value: %d", input);
+    }
+    else
+    {
+      inputArray[0] = (int)input & 0xFF;
+    }
+    
+    if((output > 2) || (output < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect output value", "Output value should be in interval (1,2). Selected value: %d", output);
+    }
+    else
+    {
+      inputArray[1] = (int)output & 0xFF;
+    }
+    
+    if((edge > 1) || (edge < 0))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "Edge value can have only 0 - falling [OR] 1 - rising. Selected value: %d", edge);
+    }
+    else
+    {
+      if(edgeNo < 1)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "EdgeNo value should be bigger than 1. Selected value: %d", edgeNo);
+      }
+      number1 = ((int)edge << 7) & 0xFF;
+      number2 = (int)edgeNo & 0xFF;
+      inputArray[2] = number1 + number2;
+    }
+    
+    if((voltageStart < 0) || (voltageStart > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltageStart);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltageStart/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[3] = (int64)temp1 & 0xFF;
+      inputArray[4] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((time1 < 0) || (time1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect time1 value", "Time1 value should be in interval (0,65534). Selected value: %d", time1);
+    }
+    
+    else
+    {
+      temp = (int64)(time1/256);
+      inputArray[5] = temp & 0xFF;
+      inputArray[6] = time1 & 0xFF;
+    }
+    
+    if((voltage1 < 0) || (voltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[7] = (int64)temp1 & 0xFF;
+      inputArray[8] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime < 0) || (optionalTime > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime value", "optionalTime value should be in interval (0,65534). Selected value: %d", optionalTime);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime/256);
+      inputArray[9] = temp & 0xFF;
+      inputArray[10] = optionalTime & 0xFF;
+    }
+    
+    if((optionalVoltage < 0) || (optionalVoltage > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[11] = (int64)temp1 & 0xFF;
+      inputArray[12] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime1 < 0) || (optionalTime1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime1 value should be in interval (0,65534). Selected value: %d", optionalTime1);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime1/256);
+      inputArray[13] = temp & 0xFF;
+      inputArray[14] = optionalTime1 & 0xFF;
+    }
+    
+    if((optionalVoltage1 < 0) || (optionalVoltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[15] = (int64)temp1 & 0xFF;
+      inputArray[16] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime2 < 0) || (optionalTime2 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime2 value should be in interval (0,65534). Selected value: %d", optionalTime2);
+    }
+    else
+    {
+      temp = (int64)(optionalTime2/256);
+      inputArray[17] = temp & 0xFF;
+      inputArray[18] = optionalTime2 & 0xFF;
+    }
+    
+    if((optionalVoltage2 < 0) || (optionalVoltage2 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage2);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage2/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[19] = (int64)temp1 & 0xFF;
+      inputArray[20] = ((int64)temp << 4) & 0x0F;
+    }
+    
+     if((optionalTime3 < 0) || (optionalTime3 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime3 value should be in interval (0,65534). Selected value: %d", optionalTime3);
+    }
+    else
+    {
+      temp = (int64)(optionalTime3/256);
+      inputArray[19] = temp & 0xFF;
+      inputArray[20] = optionalTime3 & 0xFF;
+    }
+    
+    if((optionalVoltage3 < 0) || (optionalVoltage3 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage3);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage3/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[21] = (int64)temp1 & 0xFF;
+      inputArray[22] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    rs232Send(@sysvar::EIB::sysCOMPort_EIB,inputArray,elcount(inputArray));
+    ConvertByteArrInCharArr(inputArray, buffer, 0, 44,"true");
+    testStep("", "Simulated data: %s", buffer);
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "EIB request","EIB simulation DONE!");
+    
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",@sysvar::EIB::sysCOMPort_EIB);
+  }
+  TestWaitForTimeout(200);
+  rs232Close(@sysvar::EIB::sysCOMPort_EIB);
+}
+
+
+// EIB function
+void GenerateTestConditions(int input, int output, int edge, int edgeNo,
+  int voltageStart, int time1,
+  int voltage1, int optionalTime,
+  int optionalVoltage, int optionalTime1, 
+  int optionalVoltage1, int optionalTime2, int optionalVoltage2,
+  int optionalTime3, int optionalVoltage3,
+  int optionalTime4, int optionalVoltage4
+  )
+{
+  int   amplification = 0;
+  int64 temp = 0;
+  int64 temp1 = 0;
+  char  buffer[5000];
+  byte  number1 = 0x00;
+  byte  number2 = 0x00;
+  byte  inputArray[45] = {0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00,0xFF,0xFF,0x00,0x00};
+  
+  if (1==rs232Open(@sysvar::EIB::sysCOMPort_EIB))
+  {
+    rs232Configure(@sysvar::EIB::sysCOMPort_EIB, iBaudrateEIB, iByteSizeEIB, iStopbitEIB, iParityEIB);
+    
+    if((input > 6) || (input < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect input value", "Input value should be in interval (1,6). Selected value: %d", input);
+    }
+    else
+    {
+      inputArray[0] = (int)input & 0xFF;
+    }
+    
+    if((output > 2) || (output < 1))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect output value", "Output value should be in interval (1,2). Selected value: %d", output);
+    }
+    else
+    {
+      inputArray[1] = (int)output & 0xFF;
+    }
+    
+    if((edge > 1) || (edge < 0))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "Edge value can have only 0 - falling [OR] 1 - rising. Selected value: %d", edge);
+    }
+    else
+    {
+      if(edgeNo < 1)
+      {
+        testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect edge value", "EdgeNo value should be bigger than 1. Selected value: %d", edgeNo);
+      }
+      number1 = ((int)edge << 7) & 0xFF;
+      number2 = (int)edgeNo & 0xFF;
+      inputArray[2] = number1 + number2;
+    }
+    
+    if((voltageStart < 0) || (voltageStart > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltageStart);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltageStart/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[3] = (int64)temp1 & 0xFF;
+      inputArray[4] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((time1 < 0) || (time1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect time1 value", "Time1 value should be in interval (0,65534). Selected value: %d", time1);
+    }
+    
+    else
+    {
+      temp = (int64)(time1/256);
+      inputArray[5] = temp & 0xFF;
+      inputArray[6] = time1 & 0xFF;
+    }
+    
+    if((voltage1 < 0) || (voltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", voltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(voltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[7] = (int64)temp1 & 0xFF;
+      inputArray[8] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime < 0) || (optionalTime > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime value", "optionalTime value should be in interval (0,65534). Selected value: %d", optionalTime);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime/256);
+      inputArray[9] = temp & 0xFF;
+      inputArray[10] = optionalTime & 0xFF;
+    }
+    
+    if((optionalVoltage < 0) || (optionalVoltage > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[11] = (int64)temp1 & 0xFF;
+      inputArray[12] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime1 < 0) || (optionalTime1 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime1 value should be in interval (0,65534). Selected value: %d", optionalTime1);
+    }
+    
+    else
+    {
+      temp = (int64)(optionalTime1/256);
+      inputArray[13] = temp & 0xFF;
+      inputArray[14] = optionalTime1 & 0xFF;
+    }
+    
+    if((optionalVoltage1 < 0) || (optionalVoltage1 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage1);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage1/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[15] = (int64)temp1 & 0xFF;
+      inputArray[16] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    if((optionalTime2 < 0) || (optionalTime2 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime2 value should be in interval (0,65534). Selected value: %d", optionalTime2);
+    }
+    else
+    {
+      temp = (int64)(optionalTime2/256);
+      inputArray[17] = temp & 0xFF;
+      inputArray[18] = optionalTime2 & 0xFF;
+    }
+    
+    if((optionalVoltage2 < 0) || (optionalVoltage2 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage2);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage2/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[19] = (int64)temp1 & 0xFF;
+      inputArray[20] = ((int64)temp << 4) & 0x0F;
+    }
+    
+     if((optionalTime3 < 0) || (optionalTime3 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime3 value should be in interval (0,65534). Selected value: %d", optionalTime3);
+    }
+    else
+    {
+      temp = (int64)(optionalTime3/256);
+      inputArray[19] = temp & 0xFF;
+      inputArray[20] = optionalTime3 & 0xFF;
+    }
+    
+    if((optionalVoltage3 < 0) || (optionalVoltage3 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage3);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage3/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[21] = (int64)temp1 & 0xFF;
+      inputArray[22] = ((int64)temp << 4) & 0x0F;
+    }
+    
+     if((optionalTime4 < 0) || (optionalTime4 > 65534))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect optionalTime1 value", "optionalTime4 value should be in interval (0,65534). Selected value: %d", optionalTime4);
+    }
+    else
+    {
+      temp = (int64)(optionalTime4/256);
+      inputArray[23] = temp & 0xFF;
+      inputArray[24] = optionalTime4 & 0xFF;
+    }
+    
+    if((optionalVoltage4 < 0) || (optionalVoltage4 > 12000))
+    {
+      testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Incorrect voltage value", "Voltage value should be in interval (0,12000). Selected value: %d", optionalVoltage4);
+    }
+    else
+    {
+      amplification = (_pow(2,output+1) - output) - 2;
+      temp  = (int64)(optionalVoltage4/amplification*512/1000);
+      temp1 = (int64)(temp/16);
+      inputArray[25] = (int64)temp1 & 0xFF;
+      inputArray[26] = ((int64)temp << 4) & 0x0F;
+    }
+    
+    rs232Send(@sysvar::EIB::sysCOMPort_EIB,inputArray,elcount(inputArray));
+    ConvertByteArrInCharArr(inputArray, buffer, 0, 44,"true");
+    testStep("", "Simulated data: %s", buffer);
+    testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "EIB request","EIB simulation DONE!");
+    
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "COM Port Failure","Can't open COM port: %d",@sysvar::EIB::sysCOMPort_EIB);
+  }
+  TestWaitForTimeout(200);
+  rs232Close(@sysvar::EIB::sysCOMPort_EIB);
+}

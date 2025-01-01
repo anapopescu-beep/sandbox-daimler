@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0330; ARCH_SW_DIA_0331; ARCH_SW_DIA_0332; ARCH_SW_DIA_0333
+ARCH_SW_DIA_0330: DataIdentifier shall be 0x0133
+ARCH_SW_DIA_0331: The Read Obsolescence Data service shall be available in the following sessions:Default Session (0x01)Programming (0x02)Extended Session (0x03)Supplier Session/Development Session (0x7E)Update Session (0x42)
+ARCH_SW_DIA_0332: This service shall be available under the following forms of Authentication:?Supplier?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?Internal Diagnostic Test Tool
+ARCH_SW_DIA_0333: DataIdentifier of the Read Obsolescence Data shall be: 0x0140.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid00140_Obsolescence_Data_BSR_Current_Value_Read*.
+
+Action: ARCH_SW_DIA_0330; ARCH_SW_DIA_0331; ARCH_SW_DIA_0332; ARCH_SW_DIA_0333
+
+	Step 3: Send diag request for 01 40 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Current_Operating_Time_Read_Current_Operating_Time_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read stObsolescenseData 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

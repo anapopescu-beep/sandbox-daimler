@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MAIN_0000, ARCH_SW_MAIN_0001, ARCH_SW_MAIN_0002, ARCH_SW_MAIN_0003, ARCH_SW_MAIN_0004, ARCH_SW_MAIN_0005, ARCH_SW_MAIN_0006, ARCH_SW_MAIN_0007,ARCH_SW_MAIN_0008, ARCH_SW_MAIN_0009, ARCH_SW_MAIN_0010
+ARCH_SW_MAIN_0000: The ECU_STARTUP state shall be reach if the ECU is supplied, Powered ON.
+ARCH_SW_MAIN_0001: Software initialization is done in ECU_Startup State using AUTOSAR specifications.
+ARCH_SW_MAIN_0002: To Leave ECU_STARTUP state, Wake -up Validation notification is expected to go ECU_RUN State.
+ARCH_SW_MAIN_0003: In this state if POWER OFF occurred the ecu switch to ECU_OFF state.
+ARCH_SW_MAIN_0004: After entering ECU_RUN the following actions shall be considered: - Rx CAN communication frames shall be received; - Tx CAN communication frames shall be transmitted; - ECU shall respond to diagnostic frames request; - all autotests shall be periodically executed and their status shall be reported
+ARCH_SW_MAIN_0005: If: -CanSM notifies that no communication is needed anymore(TTimeout = 4 seconds); -no diagnostics available; -no belt function execution; -no bus communication, and then ECU goes in ECU_SLEEP state. 
+ARCH_SW_MAIN_0006: In this state if POWER OFF occurred the ecu switch to ECU_OFF state.
+ARCH_SW_MAIN_0007: In ECU_SLEPP state the following actions shall be considered:- monitor bus activity but no communication shall be ensured. 
+ARCH_SW_MAIN_0008: In this state if nm frame is detected then ECU shall switch to ECU_RUN state.
+ARCH_SW_MAIN_0009: In this state if bus activity is detected or reset is received then ECU shall switch to ECU_STARTUP state.
+ARCH_SW_MAIN_0010: In this stare if POWER OFF occurred the ecu switch to ECU_OFF state.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_MAIN_0000, ARCH_SW_MAIN_0001, ARCH_SW_MAIN_0009
+
+	Step 2: Set a breakpoint in function EcuM_SetState under case ECUM_STATE_STARTUP.
+
+Action: ARCH_SW_MAIN_0002, ARCH_SW_MAIN_0004, ARCH_SW_MAIN_0008
+
+	Step 3: Set a breakpoint in function EcuM_SetState under case ECUM_STATE_APP_RUN.
+
+Action: ARCH_SW_MAIN_0003, ARCH_SW_MAIN_0005, ARCH_SW_MAIN_0006, ARCH_SW_MAIN_0007, ARCH_SW_MAIN_0010
+
+	Step 4: Set a breakpoint in function EcuM_SetState under case ECUM_STATE_SHUTDOWN.
+
+Postcondition
+
+	Step 5: Return ECU to default values

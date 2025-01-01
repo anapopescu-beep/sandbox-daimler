@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0187, ARCH_SW_CIL_0155
+ARCH_SW_CIL_0155: Reverse Gear Engaged is value 3 for this signal and BSR profiles shall be inhibited / aborted by this.
+ARCH_SW_CIL_0187: Values of 0 and 3 for this signall shall inhibit all BSR profiles.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PT4_PTCoor_PT_Rdy_ST3 to ENGG_ENGG.
+
+	Step 3: Set signal PT4_PTCoor_PT_Rdy_ST3 to RDY (0x1).
+
+	Step 4: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 5: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 6: Set a breakpoint in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 7: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_Bckl_Sw_Inhibition);'.
+
+Action: ARCH_SW_CIL_0155
+
+	Step 9: Check if CPU stopped in function cil_ManageInputSignals() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_Bckl_Sw_Inhibition);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 10: Return ECU to default values

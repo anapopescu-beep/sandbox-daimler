@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>2909</w>
+      <h>1193</h>
+    </coordinates>
+    <panel_attributes>title:PAL_Autotest_CheckMotorCurrent
+Start
+Read the current executed cycle number
+Get Motor Current DTC state
+Check if no PRO cycle is running
+If
+	[TRUE]
+	Check if a new cycle is played or if no cycle is played
+	If
+		[TRUE]
+		Get the Motor current from WRA
+		Get absolute value of motor current
+		Call the local sub-function to manage the medium current detection
+		Call the local sub-function to manage the high current detection
+		Check the detections results
+		If
+			[Both detetions returned KU8_ATM_TEST_OK]
+			Set test result as KU8_ATM_TEST_OK
+
+			[At least one of the detections returned KU8_ATM_TEST_NOK]
+			Set test result as KU8_ATM_TEST_NOK
+
+			[At least one of the detections returned KU8_ATM_TEST_NOT_DECIDED]
+			Set test result as KU8_ATM_TEST_NOT_DECIDED
+		EndIf
+			
+		[FALSE]
+		Check if Motor Current Event Status was KU8_ATM_TEST_NOK and the timer expired
+		If
+			[TRUE]
+			Deskill time spend here
+			Set test result as KU8_ATM_TEST_NOK
+
+			[FALSE]
+			 Deskill time expired OR no error detected during last cycle and reset all counters
+			 Set test result as KU8_ATM_TEST_OK
+		EndIf
+
+	EndIf
+
+	[FALSE]
+	Set test result as KU8_ATM_TEST_NOT_DECIDED
+
+EndIf
+
+Save cycle number
+Return the computed test result
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0321
+ARCH_SW_MMG_0321: The VehicleEquipemnt parameter for API activation be an input for MMG_KU32_MASK_ENABLE_CODING_API context qualification.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus() at line 'mmg_CheckCodingOfAPI();'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus() at line 'mmg_CheckCodingOfAPI();'.
+
+	Step 4: Step in function mmg_CheckCodingOfAPI().
+
+	Step 5: Set a breakpoint in function mmg_CheckCodingOfAPI() at line 'if(NVP_stVehicleEquipmentData.APIActivation != 0x00)'.
+
+Action: ARCH_SW_MMG_0321
+
+	Step 6: Check if CPU stopped in function mmg_CheckCodingOfAPI() at line 'if(NVP_stVehicleEquipmentData.APIActivation != 0x00)'.
+
+	Step 7: Set a breakpoint in function mmg_CheckCodingOfAPI() at line 'M_SET_MODE_MASK_ON(MMG_KU32_MASK_ENABLE_CODING_API);'.
+
+Action: ARCH_SW_MMG_0321
+
+	Step 8: Check if CPU stopped in function mmg_CheckCodingOfAPI() at line 'M_SET_MODE_MASK_ON(MMG_KU32_MASK_ENABLE_CODING_API);'.
+
+Postcondition
+
+	Step 9: Return ECU to default values

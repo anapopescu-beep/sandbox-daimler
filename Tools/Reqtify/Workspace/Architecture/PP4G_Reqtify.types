@@ -1,0 +1,1668 @@
+
+[Types]
+Names=SW Design Document,ACR_Module,All SW Integration Tests Documents,Global Integration Test Result For Word Format,SW Integration Tests Result,DES_Requirements,SW_Verification_EVA_Test_Result,Doxygen Design,SW_Verification_EVA_Test_Plan,SW_Verification_CANOE_Test_Result,SW_Verification_CANOE_Test_Plan,SW_Verification_NeEVA_Test_Plan,SW_Verification_Manual_Test_Result,SW Architecture,SW_Verification_NeEVA_Test_Result,Design Verification Plan And Report For System,SW_Verification_SummaryReport_ForNeEVATests,Implementation Source Code,SubSYS_Requirements,SYS_Requirements,Product Verification Plan And Report,PRO_Requirements,SW_Verification_SummaryReport_ForManualTests,HW Proof Of Design Document (POD),HSIS Document,HW Document (HSIS part),All SW Integration Test Specifications and Results,HW Architecture,ALR_Module,All SW Unit Tests Specifications,All SW Unit Tests Reports,Design Verification Plan And Report For Domain Design (DES),All Automatic SW Integration Tests Specifications,Global Integration Test Result For Automatic Tests,All SW MBD Unit Tests Specifications And Reports,All Automatic SW Integration Tests Results,System Coverage Review,All SW Unit Test Specifications and Results,DES_Requirements For NVP Configuration,DES Integration Tests For NVP Configuration,SW Integration NeEVA Test Plan,SW Integration NeEVA Test Result
+
+[SW Design Document]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+Tool=WordWithStyles
+ToolEdit=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=File
+Section1Print=$l
+Section1Image=word
+Section1IdentifyChildren=1
+Section1=^BEGIN_FILE: (.+):(.+)$
+Section1End=^END_FILE: .+$
+Requirement1Name=SW Design Requirement
+Requirement1Value1Key=taggerRange
+Requirement1Value1Value=3
+Requirement1Value2Key=taggerIdentStyleType
+Requirement1Value2Value=None
+Requirement1Value3Key=taggerNumber
+Requirement1Value3Value=001
+Requirement1Value4Key=taggerTextStyleType
+Requirement1Value4Value=None
+Requirement1Value5Key=taggerPrefix
+Requirement1Value5Value=DSG_
+Requirement1Value6Key=taggerTextStyle
+Requirement1Value6Value=Requirement_Text
+Requirement1Value7Key=taggerIdentStyle
+Requirement1Value7Value=Requirement_ID
+Requirement1Value8Key=taggerStyleType
+Requirement1Value8Value=eNone
+Requirement1=(DSG_\w+_[0-9]+)
+Requirement1Indexes=1,3,5,0
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=\[COVERS|Covers[ \t]*:[ \t]*([^\.\]]*)
+Reference1Sub=[ \t]*(\w+\d[;,\s]*)[ \t]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=^Requirement_Text\s*(.+)
+Picture1Name=Picture
+Picture1RegularExpression=<Picture<([\S\s]+?)>Picture>
+FileExtension=doc,docx,docm
+MatchingFileNames=*Module*Design*.doc*
+IntermediateFileEncoding=UTF8
+
+[ACR_Module]
+;This type captures requirements from DOORS as follows :
+;- An object is a requirement if it has an attribute 'Requirement'=True
+;- The ObjectID is considered as the Requirement ID
+;The intermediate file is in XML format
+Tool=DoorsXML
+ToolEdit=Doors
+Image=doors
+Variable1Name=withDiagrams
+Variable1Label=Capture diagrams
+Variable1Type=boolean
+Variable2Name=purgeAttributes
+Variable2Label=Extract only defined attributes
+Variable2Type=boolean
+Variable3Name=baseline
+Variable3Label=Baseline
+Variable3Type=string
+Variable4Name=server
+Variable4Label=Server
+Variable4Type=string
+Variable5Name=regexpMatch
+Variable5Label=Extract objects from
+Variable5Type=string
+IsFileBased=0
+Section1Name=Object
+Section1Tree=<Object number="$i"><Attribute value="$l" name="Object Heading"></Attribute><Picture>$b</Picture></Object>
+Requirement1Name=SHRRequirement
+Requirement1Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Attribute1Name=Status
+Attribute1Print=$i
+Attribute1Tree=<Object><Attribute name="_ReqStatusSHR" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Attribute2Name=SHR_ReqId
+Attribute2Print=$i
+Attribute2Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Attribute3Name=SHR_Type
+Attribute3Print=$i
+Attribute3Tree=<Object><Attribute name="_TypeSHR" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Attribute4Name=Cust_ReqId
+Attribute4Print=$i
+Attribute4Tree=<Object><Attribute name="_CustomerID" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Attribute5Name=SHR_Discipline
+Attribute5Print=$i
+Attribute5Tree=<Object><Attribute name="_Imp.*Discipline" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Attribute6Name=SHR_ASIL
+Attribute6Print=$i
+Attribute6Tree=<Object><Attribute name="_ASIL_level" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_TypeSHR"></Attribute><Attribute value="Obsolete" name="_ReqStatusSHR">$!</Attribute></Object>
+Type=xml
+
+[All SW Integration Tests Documents]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by using a Word style "Requirement_Coverage" then a text "Covered Requirements:" followed by the list of requirements separated by , or ;
+Tool=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=File
+Section1Print=$l
+Section1Image=word
+Section1IdentifyChildren=1
+Section1=^BEGIN_FILE: (.+):(.+)$
+Section1End=^END_FILE: .+$
+Entity1Name=Entity
+Entity1=^[hH]eading .+ (INT_\w+)
+Entity1Sub=(\w+\d+)
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[COVERS :
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=\[COVERS[\s]*:[\s]*([^\]]*)
+Reference1Sub=[\s;,]*((DES_|PRO_|DSG_|ARCH_SW_)\w+\d+)[\s]*
+Reference1Indexes=1,2,3,0
+Text1Name=Texte
+Text1RegularExpression=^[hH]eading 3\s*.+ INT_[\w\ ]+: ([\S ]+)
+FileExtension=doc,docx,docm
+MatchingFileNames=*Integration*Test*Plan*.doc*
+ExcludedFileNames=
+IntermediateFileEncoding=UTF8
+
+[Global Integration Test Result For Word Format]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=Entity
+Entity1=\|2\s?(INT_\w+\d+)
+Attribute1Name=Test Result
+Attribute1Print=Test Result: $i
+Attribute1IsMultiple=1
+Attribute1EnumValues=NOK|ko,OK|ok,Fixed|nt
+Attribute1=\|2\s?INT_\w+\d+\s*\|3.*\|15\s?(\w?Test OK|Test NOK|Fixed)
+Attribute1Sub=(OK|NOK|Fixed)
+Attribute2Name=Created Issue
+Attribute2Print=$i
+Attribute2IsMultiple=1
+Attribute2=\|2\s?INT_\w+\d+\s*\|3.*\|10\s*([\d\s,;]*)\s*
+Attribute2Sub=[\s;,]*(\d+)[\s]*
+FileExtension=xls,xlsx,xlsm
+IntermediateFileEncoding=UTF8
+
+[SW Integration Tests Result]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by using a Word style "Requirement_Coverage" then a text "Covered Requirements:" followed by the list of requirements separated by , or ;
+Tool=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Entity1Name=Entity
+Entity1=(TST_\w+)
+Attribute1Name=Test Result
+Attribute1IsMultiple=1
+Attribute1EnumValues=NOK|labview_failedToOpen,OK|ok,Fixed
+Attribute1=\|3[\ \w]*\t(\w?OK)
+Text1Name=Texte
+Text1RegularExpression=Heading 2\t6\.\d TST_\w+: ([\S ]+)
+FileExtension=doc,docx,docm
+MatchingFileNames=
+ExcludedFileNames=
+IncludeSubDirectories=0
+IntermediateFileEncoding=UTF8
+
+[DES_Requirements]
+;This type captures requirements from DOORS as follows :
+;- An object is a requirement if it has an attribute 'Requirement'=True
+;- The ObjectID is considered as the Requirement ID
+;The intermediate file is in XML format
+Tool=DoorsXML
+ToolEdit=Doors
+Image=doors
+Variable1Name=withDiagrams
+Variable1Label=Capture diagrams
+Variable1Type=boolean
+Variable2Name=purgeAttributes
+Variable2Label=Extract only defined attributes
+Variable2Type=boolean
+Variable3Name=baseline
+Variable3Label=Baseline
+Variable3Type=string
+Variable4Name=server
+Variable4Label=Server
+Variable4Type=string
+Variable5Name=regexpMatch
+Variable5Label=Extract objects from
+Variable5Type=string
+IsFileBased=0
+Section1Name=Object
+Section1Tree=<Object number="$i"><Attribute value="$l" name="Object Heading"></Attribute><Picture>$b</Picture></Object>
+Requirement1Name=Requirement
+Requirement1Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Reference1Name=Link to ACR module
+Reference1IsMultiple=0
+Reference1IsExternal=1
+Reference1Tree=<Out-link linkModule="Satisfies" target="$i"><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Out-link>
+Reference2Name=Link to ALR module
+Reference2IsMultiple=0
+Reference2IsExternal=1
+Reference2Tree=<Out-link linkModule="Satisfies" target="$i"><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Out-link>
+Reference3Name=Link to SYS module
+Reference3IsMultiple=0
+Reference3IsExternal=1
+Reference3Tree=<Out-link linkModule="Satisfies" target="$i"><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Out-link>
+Reference4Name=Link to SubSYS module
+Reference4IsMultiple=0
+Reference4IsExternal=1
+Reference4Tree=<Out-link linkModule="Satisfies" target="$i"><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Out-link>
+Attribute1Name=VerificationMethod
+Attribute1Print=Verification Method: $i
+Attribute1IsMultiple=1
+Attribute1Tree=<Object><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute name="AEEC_TestScope_PP4G" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Attribute2Name=Implemented
+Attribute2Print=Implemented: $i
+Attribute2Tree=<Object><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute value="$i" name="_Implemented$"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Attribute3Name=Status
+Attribute3Print=$i
+Attribute3Tree=<Object><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute name="_ReqStatus$" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Attribute4Name=ObjectType
+Attribute4Print=$i
+Attribute4Tree=<Object><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute name="_Type" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Attribute5Name=Discipline
+Attribute5Print=$i
+Attribute5IsMultiple=1
+Attribute5Tree=<Object><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute name="_Imp.*Discipline" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Attribute6Name=ASIL
+Attribute6Print=$i
+Attribute6Tree=<Object><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute name="_ASIL_level" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Attribute7Name=Target
+Attribute7Print=Target: $i
+Attribute7IsMultiple=1
+Attribute7Tree=<Object><Attribute name="_Target_Original$" value="$i"></Attribute><Attribute value=".*SW.*" name="_Imp.*Discipline"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="P[12345]0" name="_Target_Original"></Attribute><Attribute value="Generic|SBP_Basic|SBP_Mainstream|SBP_Extended" name="_TargetProject"></Attribute><Attribute value="To_be_clarified" name="_ReqStatus">$!</Attribute></Object>
+Type=xml
+
+[SW_Verification_EVA_Test_Result]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=Scenario : (\S+)
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Scenario : (\S+)
+Reference1Indexes=1,2,3,0
+Attribute1Name=Test Result
+Attribute1Print=$t: $i
+Attribute1EnumValues=NEGATIVE|ko,OK|ok
+Attribute1=^Test.*?result[ \w\S]*(NEGATIVE|OK)[ \w\S]*
+Attribute2Name=Test init start Result
+Attribute2Print=$t: $i
+Attribute2EnumValues=NEGATIVE|ko,OK|ok
+Attribute2=INIT_START[\s\S]+?End of initialization.*?result[ \w\S]*(NEGATIVE|OK)[ \w\S]*
+Attribute3Name=Test init end Result
+Attribute3Print=$t: $i
+Attribute3EnumValues=NEGATIVE|ko,OK|ok
+Attribute3=INIT_END[\s\S]+?End of initialization.*?result[ \w\S]*(NEGATIVE|OK)[ \w\S]*
+MatchingFileNames=*.res
+
+[Doxygen Design]
+Tool=Code
+Image=obingseqdgr
+Variable1Name=testDate
+Variable1Label=Prompt when files change
+Variable1Type=boolean
+MergeHomonymousEntities=1
+Section1Name=Directory
+Section1Print=$l
+Section1Image=code_directory
+Section1=^BEGIN_DIRECTORY: (.+):(.+)$
+Section1End=^END_DIRECTORY: .+$
+Section2Name=File
+Section2Parents=Directory
+Section2Print=$l
+Section2=^BEGIN_FILE: (.+):(.+)$
+Section2End=^END_FILE: .+$
+Requirement1Name=SW Design Requirement
+Requirement1=(DSG_\w+\d+)[ /t]*:[ \t\S\s]+?DSG_|\[COVERS[ \t]*:[ \t]*[^\]]*]
+Reference1Name=Covers
+Reference1Print=// Covers: $i
+Reference1Image=code
+Reference1IsMultiple=0
+Reference1=DSG_\w+\d+[ /t]*:[ \t\S\s]+?\[COVERS[ \t]*:[ \t]*([^\]]*)
+Reference1Sub=[ \t]*((?:DES|PRO|ARCH|HSIS)[^\,\;]+)[ \t]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=DSG_\w+\d+[ /t]*:[\s?\n]*(.*)
+MatchingFileNames=*.c,*.h,*.cpp
+
+[SW_Verification_EVA_Test_Plan]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=Scenario : (\S+)
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Traca : ([\S ]+)
+Reference1Sub=(DES_\w+)
+Reference1Indexes=1,2,3,0
+MatchingFileNames=*.scn
+
+[SW_Verification_CANOE_Test_Result]
+Tool=Text
+ToolEdit=Notepad
+Image=ea_objectNode
+Entity1Name=Entity
+Entity1=Report: (.+)<
+Entity1Indexes=1,1,3,0
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Report: (.+)<
+Reference1Indexes=1,2,3,0
+Attribute1Name=Test Result
+Attribute1Print=$t: $i
+Attribute1EnumValues=Test failed|ko,Test passed|ok
+Attribute1=<td class="(?:NegativeResult|PositiveResult)">([\s\w]*)
+MatchingFileNames=*.html
+
+[SW_Verification_CANOE_Test_Plan]
+Tool=Text
+ToolEdit=Notepad
+Image=ea_objectNode
+Entity1Name=Entity
+Entity1=^BEGIN_FILE: (.+):(.+).can$
+Entity1Indexes=3,1,3,0
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Requirements tested: ([\S ]+)"
+Reference1Sub=(DES_\w+)
+Reference1Indexes=1,2,3,0
+MatchingFileNames=*.can
+
+[SW_Verification_NeEVA_Test_Plan]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=Test case ID\s*:\s*(\S+)
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Requirement under test:([\s\S]+)[Dd]escription of the requirement
+Reference1Sub=(\w+)
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=[Dd]escription of the requirement:([\s\S]+)Software:
+MatchingFileNames=*.ts
+ExcludedFileNames=
+
+[SW_Verification_Manual_Test_Result]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+Tool=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Entity1Name=Entity
+Entity1=^BEGIN_FILE: (.+):(.+).doc
+Entity1Indexes=3,1,3,0
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=Requirem. trace:\|2 Normal[\t ]*(.+)
+Reference1Sub=(DES_\w+)
+Reference1Indexes=1,2,3,0
+Attribute1Name=Test Result
+Attribute1=^BEGIN_FILE: [\S\s]*(PASSED|Passed|passed|FAILED|Failed|failed)[\S\s]*$
+FileExtension=doc,docx,docm
+MatchingFileNames=*.doc*
+ExcludedFileNames=*Summary*Report*.doc*
+IntermediateFileEncoding=UTF8
+
+[SW Architecture]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+;
+;- Array with 4 colonns
+Tool=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=File
+Section1Print=$l
+Section1Image=word
+Section1IdentifyChildren=1
+Section1=^BEGIN_FILE: (.+):(.+)$
+Section1End=^END_FILE: .+$
+Requirement1Name=SW Architecture Design in Array
+Requirement1Value1Key=taggerRange
+Requirement1Value1Value=3
+Requirement1Value2Key=taggerNumber
+Requirement1Value2Value=001
+Requirement1Value3Key=taggerPrefix
+Requirement1Value3Value=ARCH_
+Requirement1Value4Key=taggerTextStyle
+Requirement1Value4Value=Requirement_Text
+Requirement1Value5Key=taggerIdentStyle
+Requirement1Value5Value=Requirement_ID
+Requirement1Value6Key=taggerStyleType
+Requirement1Value6Value=eNone
+Requirement1=^\|1 Requirement Identifier[\t ]*([a-wyzA-WYZ0-9_]+)\|2
+Requirement2Name=SW Architecture Design in Text
+Requirement2Value1Key=taggerRange
+Requirement2Value1Value=3
+Requirement2Value2Key=taggerNumber
+Requirement2Value2Value=001
+Requirement2Value3Key=taggerPrefix
+Requirement2Value3Value=ARCH_
+Requirement2Value4Key=taggerTextStyle
+Requirement2Value4Value=Requirement_Text
+Requirement2Value5Key=taggerIdentStyle
+Requirement2Value5Value=Requirement_ID
+Requirement2Value6Key=taggerStyleType
+Requirement2Value6Value=eNone
+Requirement2=(ARCH_[a-wyzA-WYZ0-9_]+)[\s\t]*:
+Requirement3Name=SW Architecture Design_3(PP4G)
+Requirement3Value1Key=taggerRange
+Requirement3Value1Value=3
+Requirement3Value2Key=taggerNumber
+Requirement3Value2Value=001
+Requirement3Value3Key=taggerPrefix
+Requirement3Value3Value=ARCH_
+Requirement3Value4Key=taggerTextStyle
+Requirement3Value4Value=Requirement_Text
+Requirement3Value5Key=taggerIdentStyle
+Requirement3Value5Value=Requirement_ID
+Requirement3Value6Key=taggerStyleType
+Requirement3Value6Value=eNone
+Requirement3=^\|1 Normal[\s]*Requirements[\s\S]+?!\|2|^\|1 Normal[\s]*(ARCH_SW_\w+\d+)\|
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=(\|4 [\S\t ]+DES_\S+)
+Reference1Sub=(DES_\w+)
+Reference1Indexes=1,2,3,0
+Reference2Name=Coverage1
+Reference2Print=[Covers: $i]
+Reference2IsMultiple=0
+Reference2Value1Key=taggerReferenceStyle
+Reference2Value1Value=Requirement_Reference
+Reference2Value2Key=taggerReferenceStyleType
+Reference2Value2Value=None
+Reference2Value3Key=taggerReferenceEnding
+Reference2Value3Value=]
+Reference2Value4Key=taggerReferenceBeginning
+Reference2Value4Value=[Covers:
+Reference2Value5Key=taggerReferenceIntermediate
+Reference2Value5Value=,
+Reference2=\[COVERS[\s]*:([^\]]*)
+Reference2Sub=[\s;,]*(\w+\d+)[\s]*
+Reference2Indexes=1,2,3,0
+Reference3Name=Coverage3(PP4G)
+Reference3Print=[Covers: $i]
+Reference3IsMultiple=0
+Reference3Value1Key=taggerReferenceStyle
+Reference3Value1Value=Requirement_Reference
+Reference3Value2Key=taggerReferenceStyleType
+Reference3Value2Value=None
+Reference3Value3Key=taggerReferenceEnding
+Reference3Value3Value=]
+Reference3Value4Key=taggerReferenceBeginning
+Reference3Value4Value=[Covers:
+Reference3Value5Key=taggerReferenceIntermediate
+Reference3Value5Value=,
+Reference3=^\|1 Normal[\s]*Covered requirements[\s\S]+?!\|2|^\|1 Normal[\s]*(.*)
+Reference3Sub=[\s;,]*((DES_)\w+)[\s]*
+Reference3Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=^\|1 Requirement Identifier[\t ]*\S+\|2 Normal\t([\S \t]*)\|3
+Text2Name=Text1
+Text2RegularExpression=Requirement Text\s*(.*)
+Picture1Name=Picture
+Picture1RegularExpression=<Picture<([\S\s]+?)>Picture>
+FileExtension=doc,docx,docm
+MatchingFileNames=*design*interface*
+ExcludedFileNames=*~*.doc,*~*.docx,*~*.docm
+IntermediateFileEncoding=UTF8
+
+[SW_Verification_NeEVA_Test_Result]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=^BEGIN_FILE: (.+):(.+).xml$
+Entity1Indexes=3,1,3,0
+Attribute1Name=Test Result
+Attribute1Print=$t: $i
+Attribute1EnumValues=FAILED|ko,PASSED|ok,TOBEANALYSED|nt
+Attribute1=Result Test:(FAILED|PASSED|TOBEANALYSED)
+MatchingFileNames=*.xml
+ExcludedFileNames=*FIB_All_Channel_Activation*,*Power_Supply_Voltage_Range_Check_*,*Send_Diagnostic_Service_*
+
+[Design Verification Plan And Report For System]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=SysEntity
+Entity1=\|2\s?(\w+_\w+)\s*\|3.*\|10\s?\w?SYS_.*
+Entity1Sub=((VAL_|GTP_)\w+)
+Reference1Name=CoverageSystem
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1=\|2\s?\w+_\w+\s*\|3.*\|10\s?(\w?[SYS_\w[;,\s]+]*)
+Reference1Sub=(SYS_[\w]*)
+Reference1Indexes=1,2,3,0
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|2\s?\w+_\w+\s*\|3.*\|10\s?\w?SYS_.*\|11.*\|22\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Test Result
+Attribute2Print=Test Result: $i
+Attribute2EnumValues=NOK|ko,OK|ok,CA|nt,NS|testStand_error,In Progress|testStand_RefSkipped,NA|rtds_compstate
+Attribute2=\|2\s?\w+_\w+\s*\|3.*\|10\s?\w?SYS_.*\|11.*\|21\s?(\w?OK|NOK|CA|NA|NS|In Progress)
+Text1Name=Text
+Text1RegularExpression=\|2\s?\w+_\w+\s*\|3.*\|4\s*(.+)\|5.*\|10\s?\w?SYS_.*
+FileExtension=xls,xlsx,xlsm
+IntermediateFileEncoding=UTF8
+
+[SW_Verification_SummaryReport_ForNeEVATests]
+;Doc used : Exxxxxx_ProjectName_SWV_SummaryReport_Vxx.doc
+;
+;MKS issue number is extracted from the 4th column of the Tables containing the issue tracking number for each test performed (Test identification number is found in the 1st column).
+Tool=WordWithStyles
+ToolEdit=WordWithStyles
+Image=text
+Entity1Name=Entity
+Entity1=\|1 Normal\s*(\w+\w*)\s*\|2\s*.*\|3 Normal\s*\w*\s*\|4 Normal\s*
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|1 Normal\s*\w+\w*\s*\|2\s*.*\|3 Normal\s*\w*\s*\|4 Normal\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Final Result
+Attribute2Print=Final Result: $i
+Attribute2=\|1 Normal\s*\w+\w*\s*\|2\s*.*\|3 Normal\s*(\w*)\s*\|4 Normal\s*
+FileExtension=doc,docx,docm
+MatchingFileNames=*Summary*Report*.doc*
+ExcludingText1=(?<=BeginHeadersFooters)([\s\S]+?)(?=\n[hH]eading\s1\t4\.)
+IntermediateFileEncoding=UTF8
+
+[Implementation Source Code]
+Tool=Code
+Image=obingseqdgr
+Variable1Name=testDate
+Variable1Label=Prompt when files change
+Variable1Type=boolean
+MergeHomonymousEntities=1
+Section1Name=Directory
+Section1Print=$l
+Section1Image=code_directory
+Section1=^BEGIN_DIRECTORY: (.+):(.+)$
+Section1End=^END_DIRECTORY: .+$
+Section2Name=File
+Section2Parents=Directory
+Section2Print=$l
+Section2=^BEGIN_FILE: (.+):(.+)$
+Section2End=^END_FILE: .+$
+Entity1Name=CodeEntity
+Entity1=(COD_\w+\d+)
+Reference1Name=Covers
+Reference1Print=// Covers: $i
+Reference1Image=code
+Reference1IsMultiple=0
+Reference1=\[COVERS[ \t]*:[ \t]*(\w+\d+[^\]]*)
+Reference1Sub=[ \t]*((?:DSG|ARCH_\d)[;,\s]+)[ \t]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=COD_\w+\d+[ /t]*:[\s?\n]*(.*)
+MatchingFileNames=*.c,*.h,*.cpp
+
+[SubSYS_Requirements]
+;This type captures requirements from DOORS as follows :
+;- An object is a requirement if it has an attribute 'Requirement'=True
+;- The ObjectID is considered as the Requirement ID
+;The intermediate file is in XML format
+Tool=DoorsXML
+ToolEdit=Doors
+Image=doors
+Variable1Name=withDiagrams
+Variable1Label=Capture diagrams
+Variable1Type=boolean
+Variable2Name=purgeAttributes
+Variable2Label=Extract only defined attributes
+Variable2Type=boolean
+Variable3Name=baseline
+Variable3Label=Baseline
+Variable3Type=string
+Variable4Name=server
+Variable4Label=Server
+Variable4Type=string
+Variable5Name=regexpMatch
+Variable5Label=Extract objects from
+Variable5Type=string
+IsFileBased=0
+Section1Name=Object
+Section1Tree=<Object number="$i"><Attribute value="$l" name="Object Heading"></Attribute><Picture>$b</Picture></Object>
+Requirement1Name=Requirement
+Requirement1Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Reference1Name=Link to ACR module
+Reference1IsMultiple=0
+Reference1IsExternal=1
+Reference1Tree=<Out-link linkModule="Satisfies" target="$i"></Out-link>
+Reference2Name=Link to ALR module
+Reference2IsMultiple=0
+Reference2IsExternal=1
+Reference2Tree=<Out-link linkModule="Satisfies" target="$i"></Out-link>
+Reference3Name=Link to SYS module
+Reference3IsMultiple=0
+Reference3IsExternal=1
+Reference3Tree=<Out-link linkModule="Satisfies" target="$i"></Out-link>
+Attribute1Name=VerificationMethod
+Attribute1Print=Verification Method: $i
+Attribute1IsMultiple=1
+Attribute1Tree=<Object><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute name="AEEC_TestScope_MyFirstProject_Pxx" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute2Name=Implemented
+Attribute2Print=Implemented: $i
+Attribute2Tree=<Object><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute value="$i" name="AEEC_IntoAccountOn_MyFirstProject"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute3Name=Status
+Attribute3Print=$i
+Attribute3Tree=<Object><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute name="_ReqStatus" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute4Name=ObjectType
+Attribute4Print=$i
+Attribute4Tree=<Object><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute name="_Type" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute5Name=Discipline
+Attribute5Print=$i
+Attribute5IsMultiple=1
+Attribute5Tree=<Object><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute name="_Imp.*Discipline" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute6Name=ASIL
+Attribute6Print=$i
+Attribute6IsMultiple=1
+Attribute6Tree=<Object><Attribute name="_ASIL_level" value="$i"></Attribute><Attribute value=".+Req.+" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="^E1$" name=".*_Target.*"></Attribute></Object>
+Type=xml
+
+[SYS_Requirements]
+;This type captures requirements from DOORS as follows :
+;- An object is a requirement if it has an attribute 'Requirement'=True
+;- The ObjectID is considered as the Requirement ID
+;The intermediate file is in XML format
+Tool=DoorsXML
+ToolEdit=Doors
+Image=doors
+Variable1Name=withDiagrams
+Variable1Label=Capture diagrams
+Variable1Type=boolean
+Variable2Name=purgeAttributes
+Variable2Label=Extract only defined attributes
+Variable2Type=boolean
+Variable3Name=baseline
+Variable3Label=Baseline
+Variable3Type=string
+Variable4Name=server
+Variable4Label=Server
+Variable4Type=string
+Variable5Name=regexpMatch
+Variable5Label=Extract objects from
+Variable5Type=string
+IsFileBased=0
+Section1Name=Object
+Section1Tree=<Object number="$i"><Attribute value="$l" name="Object Heading"></Attribute><Picture>$b</Picture></Object>
+Requirement1Name=Requirement
+Requirement1Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Reference1Name=Link to ACR module
+Reference1IsMultiple=0
+Reference1IsExternal=1
+Reference1Tree=<Out-link linkModule="Satisfies" target="$i"></Out-link>
+Reference2Name=Link to ALR module
+Reference2IsMultiple=0
+Reference2IsExternal=1
+Reference2Tree=<Out-link linkModule="Satisfies" target="$i"></Out-link>
+Attribute1Name=VerificationMethod
+Attribute1Print=Verification Method: $i
+Attribute1IsMultiple=1
+Attribute1Tree=<Object><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute name="_TestType" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Attribute2Name=Implemented
+Attribute2Print=Implemented: $i
+Attribute2Tree=<Object><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute value="$i" name="AEEC_IntoAccountOn_MyFirstProject"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Attribute3Name=Status
+Attribute3Print=$i
+Attribute3Tree=<Object><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute name="_ReqStatus" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Attribute4Name=ObjectType
+Attribute4Print=$i
+Attribute4Tree=<Object><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute name="_Type" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Attribute5Name=Discipline
+Attribute5Print=$i
+Attribute5IsMultiple=1
+Attribute5Tree=<Object><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute name="_Imp.*Discipline" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Attribute6Name=ASIL
+Attribute6Print=$i
+Attribute6IsMultiple=1
+Attribute6Tree=<Object><Attribute value=".*" name="_Imp.*Discipline"></Attribute><Attribute name="_ASIL_level" value="$i"></Attribute><Attribute value=".+Req.+" name="_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="Seat belt" name="AEE_ProductTarget"></Attribute></Object>
+Type=xml
+
+[Product Verification Plan And Report]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=ACREntity
+Entity1=\|2\s*(\w+_\w+)\s*\|3.*
+Entity1Sub=((VAL_|GTP_)\w+)
+Reference1Name=Coverage
+Reference1Print=[ID Requirements traceability : $j]
+Reference1IsMultiple=0
+Reference1=\|2\s*\w+_\w+\s*\|3.*\|10\s?(\w?[ACR_\w[;,\s]+]*)
+Reference1Sub=(ACR_[\w]*)
+Reference1Indexes=1,2,3,0
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|2\s*\w+_\w+\s*\|3.*\|22\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Test Result
+Attribute2Print=Test Result: $i
+Attribute2EnumValues=NOK|ko,OK|ok,Ca|nt,NS|testStand_error,In Progress|testStand_RefSkipped,NA|rtds_compstate
+Attribute2=\|2\s*\w+_\w+\s*\|3.*\|21\s?(\w?OK|NOK|Ca|NA|NS|In Progress)
+Text1Name=Text
+Text1RegularExpression=\|2\s*\w+_\w+\s*\|3.*\|4\s*(.+)\|5
+FileExtension=xls,xlsx,xlsm
+IntermediateFileEncoding=UTF8
+
+[PRO_Requirements]
+;This type captures requirements from DOORS as follows :
+;- An object is a requirement if it has an attribute 'Requirement'=True
+;- The ObjectID is considered as the Requirement ID
+;The intermediate file is in XML format
+Tool=DoorsXML
+ToolEdit=Doors
+Image=doors
+Variable1Name=withDiagrams
+Variable1Label=Capture diagrams
+Variable1Type=boolean
+Variable2Name=purgeAttributes
+Variable2Label=Extract only defined attributes
+Variable2Type=boolean
+Variable3Name=baseline
+Variable3Label=Baseline
+Variable3Type=string
+Variable4Name=server
+Variable4Label=Server
+Variable4Type=string
+Variable5Name=regexpMatch
+Variable5Label=Extract objects from
+Variable5Type=string
+IsFileBased=0
+Section1Name=Object
+Section1Tree=<Object number="$i"><Attribute value="$l" name="Object Heading"></Attribute><Picture>$b</Picture></Object>
+Requirement1Name=Requirement
+Requirement1Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".+" name="_ImpDiscipline"></Attribute><Attribute value=".+Req.+" name="_ObjectType"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Reference1Name=Link to ACR module
+Reference1IsMultiple=0
+Reference1IsExternal=1
+Reference1Tree=<Out-link linkModule="Satisfies" target="$i"></Out-link>
+Reference2Name=Link to ACR module1
+Reference2IsMultiple=0
+Reference2IsExternal=1
+Reference2Tree=<Out-link linkModule="DOORS Links" target="$i"></Out-link>
+Reference3Name=ReferenceToHSIS
+Reference3IsMultiple=0
+Reference3Tree=<Object><Text>$t</Text><Picture>$b</Picture><Attribute value=".+" name="_Imp.*Discipline"></Attribute><Attribute value="^E1$" name=".*_Target.*"></Attribute><Attribute value=".+Req.+" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value="$i[ \t]*(\w+\d[^\,\; ]+)[ \t]*" name="AEEC_HSISlink"></Attribute></Object>
+Attribute1Name=VerificationMethod
+Attribute1Print=Verification Method: $i
+Attribute1IsMultiple=1
+Attribute1Tree=<Object><Attribute value=".+" name="_ImpDiscipline"></Attribute><Attribute name="AEEC_TestScope_MyFirstProject_Pxx" value="$i"></Attribute><Attribute value=".+Req.+" name="_ObjectType"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute2Name=Implemented
+Attribute2Print=Implemented: $i
+Attribute2Tree=<Object><Attribute value=".+" name="_ImpDiscipline"></Attribute><Attribute value="$i" name="AEEC_IntoAccountOn_MyFirstProject"></Attribute><Attribute value=".+Req.+" name="_ObjectType"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute3Name=Status
+Attribute3Print=$i
+Attribute3Tree=<Object><Attribute value=".+" name="_ImpDiscipline"></Attribute><Attribute name="_ReqStatus" value="$i"></Attribute><Attribute value=".+Req.+" name="_ObjectType"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute4Name=ObjectType
+Attribute4Print=$i
+Attribute4Tree=<Object><Attribute value=".+" name="_ImpDiscipline"></Attribute><Attribute name="_ObjectType" value="$i"></Attribute><Attribute value=".+Req.+" name="_ObjectType"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Attribute5Name=Discipline
+Attribute5Print=$i
+Attribute5IsMultiple=1
+Attribute5Tree=<Object><Attribute value=".+" name="_ImpDiscipline"></Attribute><Attribute name="_ImpDiscipline" value="$i"></Attribute><Attribute value=".+Req.+" name="_ObjectType"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute></Object>
+Type=xml
+
+[SW_Verification_SummaryReport_ForManualTests]
+;Doc used : Exxxxxx_ProjectName_SWV_SummaryReport_Vxx.doc
+;
+;MKS issue number is extracted from the 4th column of the Tables containing the issue tracking number for each test performed (Test identification number is found in the 1st column).
+Tool=WordWithStyles
+ToolEdit=WordWithStyles
+Image=text
+Entity1Name=Entity
+Entity1=\|1 Normal\s*(\w*)\s*\|2 Normal\s*[\w\s,;]*\s*\|3 Normal\s*\w*\s*\|4 Normal\s*
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|1 Normal\s*\w*\s*\|2 Normal\s*[\w\s,;]*\s*\|3 Normal\s*\w*\s*\|4 Normal\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Final Result
+Attribute2Print=Final Result: $i
+Attribute2=\|1 Normal\s*\w*\s*\|2 Normal\s*[\w\s,;]*\s*\|3 Normal\s*(\w*)\s*\|4 Normal\s*
+FileExtension=doc,docx,docm
+MatchingFileNames=*Summary*Report*.doc*
+ExcludedFileNames=*~*.doc,*~*.docx,*~*.docm
+IntermediateFileEncoding=UTF8
+
+[HW Proof Of Design Document (POD)]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+Tool=WordWithStyles
+ToolEdit=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=File
+Section1Print=$l
+Section1Image=word
+Section1IdentifyChildren=1
+Section1=^BEGIN_FILE: (.+):(.+)$
+Section1End=^END_FILE: .+$
+Requirement1Name=HW Design Requirement
+Requirement1Value1Key=taggerRange
+Requirement1Value1Value=3
+Requirement1Value2Key=taggerIdentStyleType
+Requirement1Value2Value=None
+Requirement1Value3Key=taggerNumber
+Requirement1Value3Value=001
+Requirement1Value4Key=taggerTextStyleType
+Requirement1Value4Value=None
+Requirement1Value5Key=taggerPrefix
+Requirement1Value5Value=DSG_
+Requirement1Value6Key=taggerTextStyle
+Requirement1Value6Value=Requirement_Text
+Requirement1Value7Key=taggerIdentStyle
+Requirement1Value7Value=Requirement_ID
+Requirement1Value8Key=taggerStyleType
+Requirement1Value8Value=eNone
+Requirement1=Normal\s*(POD_\w+_d+)
+Requirement1Indexes=1,3,5,0
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=Normal\s*POD_\w+\d+[ /t]*:[ \t\S\s]+?!POD_|\[COVERS[ \t]*:[ \t]*([^\.\]]*)
+Reference1Sub=[ \t]*((?:HAD_|HSIS_|HW_)[;,\s]+)[ \t]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=^Requirement_Text\s*(.+)
+Picture1Name=Picture
+Picture1RegularExpression=<Picture<([\S\s]+?)>Picture>
+FileExtension=doc,docx,docm
+MatchingFileNames=*Proof*Design*.doc*
+IncludeSubDirectories=0
+IntermediateFileEncoding=UTF8
+
+[HSIS Document]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+Tool=WordWithStyles
+ToolEdit=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=File
+Section1Print=$l
+Section1Image=word
+Section1IdentifyChildren=1
+Section1=^BEGIN_FILE: (.+):(.+)$
+Section1End=^END_FILE: .+$
+Requirement1Name=HSIS Requirement
+Requirement1Value1Key=taggerRange
+Requirement1Value1Value=3
+Requirement1Value2Key=taggerIdentStyleType
+Requirement1Value2Value=None
+Requirement1Value3Key=taggerNumber
+Requirement1Value3Value=001
+Requirement1Value4Key=taggerTextStyleType
+Requirement1Value4Value=None
+Requirement1Value5Key=taggerPrefix
+Requirement1Value5Value=DSG_
+Requirement1Value6Key=taggerTextStyle
+Requirement1Value6Value=Requirement_Text
+Requirement1Value7Key=taggerIdentStyle
+Requirement1Value7Value=Requirement_ID
+Requirement1Value8Key=taggerStyleType
+Requirement1Value8Value=eNone
+Requirement1=Normal\s*(HW_\w+_\d+)
+Requirement1Indexes=1,3,5,0
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=Normal\s*HW_\w+\d+[ /t]*:[ \t\S\s]+?!HW_|\[COVERS[ \t]*:[ \t]*([^\.\]]*)
+Reference1Sub=[ \t]*((?:DES_)[;,\s]+)[ \t]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=^Requirement_Text\s*(.+)
+Picture1Name=Picture
+Picture1RegularExpression=<Picture<([\S\s]+?)>Picture>
+FileExtension=doc,docx,docm
+MatchingFileNames=*HSIS*.doc*
+IncludeSubDirectories=0
+IntermediateFileEncoding=UTF8
+
+[HW Document (HSIS part)]
+;This default type considers :
+;- Requirements use the Word style 'Requirement_ID", names being composed of a unique ID "ABCxx" and a label in natural language. ID and Label must be separated by a colon
+;- Requirement bodies use the Word style "Requirement_Text"
+;- Attributes "Allocation" and "Priority" are pre-defined.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+Tool=WordWithStyles
+ToolEdit=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=File
+Section1Print=$l
+Section1Image=word
+Section1IdentifyChildren=1
+Section1=^BEGIN_FILE: (.+):(.+)$
+Section1End=^END_FILE: .+$
+Requirement1Name=HSIS Requirement
+Requirement1Value1Key=taggerRange
+Requirement1Value1Value=3
+Requirement1Value2Key=taggerIdentStyleType
+Requirement1Value2Value=None
+Requirement1Value3Key=taggerNumber
+Requirement1Value3Value=001
+Requirement1Value4Key=taggerTextStyleType
+Requirement1Value4Value=None
+Requirement1Value5Key=taggerPrefix
+Requirement1Value5Value=DSG_
+Requirement1Value6Key=taggerTextStyle
+Requirement1Value6Value=Requirement_Text
+Requirement1Value7Key=taggerIdentStyle
+Requirement1Value7Value=Requirement_ID
+Requirement1Value8Key=taggerStyleType
+Requirement1Value8Value=eNone
+Requirement1=Normal\s*(HSIS_\w+\d+)
+Requirement1Indexes=1,3,5,0
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=Normal\s*HSIS_\w+\d+[ /t]*:[ \t\S\s]+?!HSIS|\[COVERS[ \t]*:[ \t]*([^\.\]]*)
+Reference1Sub=[ \t]*((?:DES_)[;,\s]+)[ \t]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=^Requirement_Text\s*(.+)
+Picture1Name=Picture
+Picture1RegularExpression=<Picture<([\S\s]+?)>Picture>
+FileExtension=doc,docx,docm
+MatchingFileNames=*Proof*Design*.doc*
+IncludeSubDirectories=0
+IntermediateFileEncoding=UTF8
+
+[All SW Integration Test Specifications and Results]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Section1Name=Workbook
+Section1=^BEGIN_FILE: .+:(.+).xls.*$
+Entity1Name=Entity
+Entity1=\|3\s?(SW_IT_\w+)\s*\|4
+Entity2Name=Entity1
+Entity2=\|3\s?(AAUT_\w+)\s*\|4
+Reference1Name=Coverage
+Reference1=\|3\s?SW_IT_\w+\s*\|4\s?([\w\s,;]*)
+Reference1Sub=[\s;,]*(\w+)[\s]*
+Reference1Indexes=1,2,3,0
+Reference2Name=Coverage1
+Reference2=\|3\s?AAUT_\w+\s*\|4\s?([\w\s,;]*)
+Reference2Sub=[\s;,]*(\w+)[\s]*
+Reference2Indexes=1,2,3,0
+Attribute1Name=Test Result
+Attribute1Print=Test Result: $i
+Attribute1IsMultiple=1
+Attribute1EnumValues=Nok|ko,Ok|ok,NA|nt,Not run|testStand_error
+Attribute1=\|3\s?SW_IT_\w+\s*\|4\s*.*\s*\|5.*\|11\s?(\w?Ok|Nok|Not run|NA)
+Attribute2Name=Created Issue
+Attribute2Print=$i
+Attribute2IsMultiple=1
+Attribute2=\|3\s?SW_IT_\w+\s*\|4\s*.*\s*\|5.*\|11[\w\s]*\|12.*\|13\s*([\d\s,;]*)\s*
+Attribute2Sub=[\s;,]*(\d+)[\s]*
+Attribute3Name=Created Issue1
+Attribute3Print=$i
+Attribute3IsMultiple=1
+Attribute3=\|3\s?AAUT_\w+\s*\|4\s*.*\s*\|5.*\|11[\w\s]*\|12.*\|13\s*([\d\s,;]*)\s*
+Attribute3Sub=[\s;,]*(\d+)[\s]*
+Text1Name=Text
+Text1RegularExpression=\|3\s?SW_IT_\w+\s*\|4\s*.*\s*\|5.*\|6[ ]*([^\t]+)
+Text2Name=Text1
+Text2RegularExpression=\|3\s?AAUT_\w+\s*\|4\s*.*\s*\|5.*\|6[ ]*([^\t]+)
+FileExtension=xls,xlsx,xlsm
+MatchingFileNames=*Integration*Test*.xls*
+ExcludedFileNames=*Peer*.xls*
+IntermediateFileEncoding=UTF8
+
+[HW Architecture]
+;This default type considers :
+;- Names being composed of a unique ID "HAD_xxxx" and a label in natural language.
+;- Coverage of requirements is defined by writing "[Covers: <some covers>]", <some covers> is the list of covered requirements separated by , or ; 
+;
+Tool=WordWithStyles
+Image=word
+Variable1Name=withImages
+Variable1Label=With images
+Variable1Type=boolean
+Variable2Name=withCharacterStyles
+Variable2Label=With Character styles
+Variable2Type=boolean
+Variable3Name=withBookmarks
+Variable3Label=With Bookmarks
+Variable3Type=boolean
+Variable4Name=withAnnotations
+Variable4Label=With Annotations
+Variable4Type=boolean
+Variable5Name=tabCellsFolding
+Variable5Label=One Cell Per Line
+Variable5Type=boolean
+Section1Name=Heading
+Section1=^[hH]eading (\d+)\t(?:([\d\.]+)[ \t](.*)|([^\d\n].+))$
+Section1Indexes=6,1,2,1
+Requirement1Name=HW Architecture Requirement
+Requirement1Value1Key=taggerRange
+Requirement1Value1Value=3
+Requirement1Value2Key=taggerNumber
+Requirement1Value2Value=001
+Requirement1Value3Key=taggerPrefix
+Requirement1Value3Value=ARCH_
+Requirement1Value4Key=taggerTextStyle
+Requirement1Value4Value=Requirement_Text
+Requirement1Value5Key=taggerIdentStyle
+Requirement1Value5Value=Requirement_ID
+Requirement1Value6Key=taggerStyleType
+Requirement1Value6Value=eNone
+Requirement1=(HAD_\w+\d+)[\s\t]*
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1Value1Key=taggerReferenceStyle
+Reference1Value1Value=Requirement_Reference
+Reference1Value2Key=taggerReferenceStyleType
+Reference1Value2Value=None
+Reference1Value3Key=taggerReferenceEnding
+Reference1Value3Value=]
+Reference1Value4Key=taggerReferenceBeginning
+Reference1Value4Value=[Covers:
+Reference1Value5Key=taggerReferenceIntermediate
+Reference1Value5Value=,
+Reference1=\[COVERS[\s]*:([^\]]*)
+Reference1Sub=[\s;,]*(\w+\d+)[\s]*
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=^\|1 Requirement Identifier[\t ]*\S+\|2 Normal\t([\S \t]*)\|3
+Text2Name=Text1
+Text2RegularExpression=Requirement Text\s*(.*)
+Picture1Name=Picture
+Picture1RegularExpression=<Picture<([\S\s]+?)>Picture>
+FileExtension=doc,docx,docm
+IntermediateFileEncoding=UTF8
+
+[ALR_Module]
+;This type captures requirements from DOORS as follows :
+;- An object is a requirement if it has an attribute 'Requirement'=True
+;- The ObjectID is considered as the Requirement ID
+;The intermediate file is in XML format
+Tool=DoorsXML
+ToolEdit=Doors
+Image=doors
+Variable1Name=withDiagrams
+Variable1Label=Capture diagrams
+Variable1Type=boolean
+Variable2Name=purgeAttributes
+Variable2Label=Extract only defined attributes
+Variable2Type=boolean
+Variable3Name=baseline
+Variable3Label=Baseline
+Variable3Type=string
+Variable4Name=server
+Variable4Label=Server
+Variable4Type=string
+Variable5Name=regexpMatch
+Variable5Label=Extract objects from
+Variable5Type=string
+IsFileBased=0
+Section1Name=Object
+Section1Tree=<Object number="$i"><Attribute value="$l" name="Object Heading"></Attribute><Picture>$b</Picture></Object>
+Requirement1Name=SHRRequirement
+Requirement1Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute></Object>
+Attribute1Name=Status
+Attribute1Print=$i
+Attribute1Tree=<Object><Attribute name="_ReqStatus" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute></Object>
+Attribute2Name=SHR_ReqId
+Attribute2Print=$i
+Attribute2Tree=<Object id="$i"><Text>$t</Text><Picture>$b</Picture><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute></Object>
+Attribute3Name=SHR_Type
+Attribute3Print=$i
+Attribute3Tree=<Object><Attribute name="_Type" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute></Object>
+Attribute4Name=Cust_ReqId
+Attribute4Print=$i
+Attribute4Tree=<Object><Attribute name="_CustomerID" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute></Object>
+Attribute5Name=SHR_Discipline
+Attribute5Print=$i
+Attribute5IsMultiple=1
+Attribute5Tree=<Object><Attribute name="_Imp.*Discipline" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute><Attribute value=".*" name="_Imp.*Discipline"></Attribute></Object>
+Attribute6Name=SHR_ASIL
+Attribute6Print=$i
+Attribute6Tree=<Object><Attribute name="_ASIL_level" value="$i"></Attribute><Attribute value=".*Req.*" name="_ObjectType|_Type"></Attribute><Attribute value="Obsolete" name="_ReqStatus">$!</Attribute><Attribute value=".*" name=".*_Target.*"></Attribute><Attribute value="Not Applicable" name="_Project_Use">$!</Attribute></Object>
+Type=xml
+
+[All SW Unit Tests Specifications]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Section1Name=Workbook
+Section1=^BEGIN_FILE: .+:(.+).xls.*$
+Entity1Name=Entity
+Entity1=\|1\s*Test Case ID\s*\|2.*\|3\s?(AAUT_\w+\d+)
+Reference1Name=Coverage1
+Reference1=\|1\s*Requirement\s*\|2.*\|3\s*\[(?i:covers[\s]*:([^\]]*))
+Reference1Sub=[\s;,]*(\w+\d+)[\s]*
+Reference1Indexes=1,2,3,0
+Reference2Name=Coverage2
+Reference2=\|1\s*Requirement\s*\|2.*\|3\s*(.*)\s*\|4
+Reference2Sub=[\s;,]*(\w+\d+)[\s]*
+Reference2Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=\|1\s*Purpose\s*\|2.*\|3\s?(.*)\s*\|4
+FileExtension=xls,xlsx,xlsm
+MatchingFileNames=*Integration*Test*.xls*
+IntermediateFileEncoding=UTF8
+
+[All SW Unit Tests Reports]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=Entity
+Entity1=\|1\s*.*\s*\|2\s?(AAUT_\w+\d+)
+Attribute1Name=Test Result
+Attribute1Print=Test Result: $i
+Attribute1IsMultiple=1
+Attribute1EnumValues=NOK|ko,OK|ok,Fixed|nt
+Attribute1=\|15\s?(\w?Test OK|Test NOK|Fixed)
+Attribute1Sub=(OK|NOK|Fixed)
+Attribute2Name=Created Issue
+Attribute2Print=Created Issue: $i
+Attribute2=\|10\s?(\d+)
+FileExtension=xls,xlsx,xlsm
+MatchingFileNames=*Integration*Test*.xls*
+IntermediateFileEncoding=UTF8
+
+[Design Verification Plan And Report For Domain Design (DES)]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=Entity
+Entity1=\|2\s?(\w+_\w+)\s*\|3.*\|10\s?\w?DES_.*
+Entity1Sub=((VAL_|GTP_)\w+)
+Reference1Name=CoverageDES
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1IsExternal=1
+Reference1=\|2\s?\w+_\w+\s*\|3.*\|10\s?(\w?[DES_\w[;,\s]+]*)
+Reference1Sub=(DES_[\w]*)
+Reference1Indexes=1,2,3,0
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|2\s?\w+_\w+\s*\|3.*\|10\s?\w?DES_.*\|11.*\|22\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Test Result
+Attribute2Print=Test Result: $i
+Attribute2EnumValues=NOK|ko,OK|ok,CA|nt,NS|testStand_error,In Progress|testStand_RefSkipped,NA|rtds_compstate
+Attribute2=\|2\s?\w+_\w+\s*\|3.*\|10\s?\w?DES_.*\|11.*\|21\s?(\w?OK|NOK|CA|NA|NS|In Progress)
+Text1Name=Text
+Text1RegularExpression=\|2\s?\w+_\w+\s*\|3.*\|4\s*(.+)\|5.*\|10\s?\w?DES_.*
+FileExtension=xls,xlsx,xlsm
+IntermediateFileEncoding=UTF8
+
+[All Automatic SW Integration Tests Specifications]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Section1Name=File
+Section1=^BEGIN_FILE: .+:(.+).ts.*$
+Entity1Name=Entity
+Entity1=Test case ID\s*:\s*(\S+)
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Requirement under test:([\s\S]+)[Dd]escription of the requirement
+Reference1Sub=(DES_\w+)
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=[Dd]escription of the requirement:([\s\S]+)Equipment
+FileExtension=.ts
+MatchingFileNames=*.ts
+
+[Global Integration Test Result For Automatic Tests]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=Entity
+Entity1=\|2\s?(\w+_\w+)
+Attribute1Name=Test Result
+Attribute1Print=Test Result: $i
+Attribute1IsMultiple=1
+Attribute1EnumValues=NOK|ko,OK|ok,Fixed|nt
+Attribute1=\|2\s?\w+_\w+\s*\|3.*\|15\s?(\w?Test OK|Test NOK|Fixed)
+Attribute1Sub=(OK|NOK|Fixed)
+Attribute2Name=Created Issue
+Attribute2Print=$i
+Attribute2IsMultiple=1
+Attribute2=\|2\s?\w+_\w+\s*\|3.*\|10\s*([\d\s,;]*)\s*
+Attribute2Sub=[\s;,]*(\d+)[\s]*
+FileExtension=xls,xlsx,xlsm
+IntermediateFileEncoding=UTF8
+
+[All SW MBD Unit Tests Specifications And Reports]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Print=$i
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Section1Name=Workbook
+Section1=^BEGIN_FILE: .+:(.+).xls.*$
+Entity1Name=Entity
+Entity1=\|1\s?(\w*MBD_\w*)\s*\|2.*\|5\s\s
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1=\|1\s?\w*MBD_\w*\s*\|2.*\|13\s?(\w?[DES_\w[;,\s]+]*)
+Reference1Sub=(DES_[\w]*)
+Reference1Indexes=1,2,3,0
+Attribute1Name=Test Result
+Attribute1Print=Test Result: $i
+Attribute1EnumValues=NOK|ko,OK|ok,CA|nt,NS|testStand_error,In Progress|testStand_RefSkipped,NA|rtds_compstate
+Attribute1=\|1\s?\w*MBD_\w*\s*\|2.*\|4\s?(\w?OK|NOK|CA|NA|NS|In Progress|Ok|Nok|Not run)\s*\|5\s\s
+Text1Name=Text
+Text1RegularExpression=\|1\s?\w*MBD_\w*\s*\|2\s*(.*)\s*\|5\s\s
+FileExtension=xls,xlsx,xlsm
+MatchingFileNames=*_MBD_TestsAndReport*.xls*
+ExcludedFileNames=
+IntermediateFileEncoding=UTF8
+
+[All Automatic SW Integration Tests Results]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=^BEGIN_FILE: (.+):(.+).xml$
+Entity1Indexes=3,1,3,0
+Attribute1Name=Test Result
+Attribute1Print=$t: $i
+Attribute1EnumValues=FAILED|ko,PASSED|ok,TOBEANALYSED|nt
+Attribute1=Result Test:(FAILED|PASSED|TOBEANALYSED)
+MatchingFileNames=*.xml
+
+[System Coverage Review]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=SysEntity
+Entity1=\|3\s?(SYS_Review\w+)\s*\|4
+Reference1Name=Coverage
+Reference1=\|3\s?SYS_Review_\w+\s*\|4\s?([\w\s,;]*)
+Reference1Sub=[\s;,]*(\w+)[\s]*
+Reference1Indexes=1,2,3,0
+Attribute1Name=Test Result
+Attribute1Print=Test Result: $i
+Attribute1IsMultiple=1
+Attribute1EnumValues=Nok|ko,Ok|ok,NA|nt,Not run|testStand_error
+Attribute1=\|3\s?SYS_Review_\w+\s*\|4\s*.*\s*\|5.*\|11\s?(\w?Ok|Nok|Not run|NA)
+Attribute2Name=Created Issue
+Attribute2Print=$i
+Attribute2IsMultiple=1
+Attribute2=\|3\s?SYS_Review_\w+\s*\|4\s*.*\s*\|5.*\|11[\w\s]*\|12.*\|13\s*([\d\s,;]*)\s*
+Attribute2Sub=[\s;,]*(\d+)[\s]*
+Text1Name=Text
+Text1RegularExpression=\|3\s?SYS_Review_\w+\s*\|4\s*.*\s*\|5.*\|6[ ]*([^\t]+)
+FileExtension=xls,xlsx,xlsm
+MatchingFileNames=
+IntermediateFileEncoding=UTF8
+
+[All SW Unit Test Specifications and Results]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Section1Name=Workbook
+Section1=^BEGIN_FILE: .+:(.+).xls.*$
+Entity1Name=Entity
+Entity1=\|3\s?(SW_IT_\w+)\s*\|4
+Entity2Name=Entity1
+Entity2=\|3\s?(AAUT_\w+)\s*\|4
+Reference1Name=Coverage
+Reference1=\|3\s?SW_IT_\w+\s*\|4\s?([\w\s,;]*)
+Reference1Sub=[\s;,]*(\w+)[\s]*
+Reference1Indexes=1,2,3,0
+Reference2Name=Coverage1
+Reference2=\|3\s?AAUT_\w+\s*\|4\s?([\w\s,;]*)
+Reference2Sub=[\s;,]*(\w+)[\s]*
+Reference2Indexes=1,2,3,0
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|3\s?SW_IT_\w+\s*\|4\s*.*\s*\|5.*\|11[\w\s]*\|12.*\|13\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Test Result
+Attribute2Print=Test Result: $i
+Attribute2IsMultiple=1
+Attribute2EnumValues=Nok|ko,Ok|ok,NA|nt,Not run|testStand_error
+Attribute2=\|3\s?\w+\s*\|4\s*.*\s*\|5.*\|11\s?(\w?Ok|Nok|Not run|NA)
+Attribute3Name=Created Issue1
+Attribute3Print=$i
+Attribute3IsMultiple=1
+Attribute3=\|3\s?AAUT_\w+\s*\|4\s*.*\s*\|5.*\|11[\w\s]*\|12.*\|13\s*([\d\s,;]*)\s*
+Attribute3Sub=[\s;,]*(\d+)[\s]*
+Text1Name=Text
+Text1RegularExpression=\|3\s?SW_IT_\w+\s*\|4\s*.*\s*\|5.*\|6[ ]*([^\t]+)
+Text2Name=Text1
+Text2RegularExpression=\|3\s?AAUT_\w+\s*\|4\s*.*\s*\|5.*\|6[ ]*([^\t]+)
+FileExtension=xls,xlsx,xlsm
+MatchingFileNames=*Unit*Test*.xls*
+ExcludedFileNames=*Peer*.xls*
+IntermediateFileEncoding=UTF8
+
+[DES_Requirements For NVP Configuration]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Requirement1Name=Requirement
+Requirement1IdentFormat=TF_J_\1
+Requirement1=\|2\s*([\w\[\]]+)\s*\|3\s*[1-9]+\s*\|4
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IsMultiple=0
+Reference1=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|35\s*((?:SYS)_[\w[;,\s]+]*)
+Reference1Sub=((?:SYS)_[\w]*)
+Reference1Indexes=1,2,3,0
+Attribute1Name=VerificationMethod
+Attribute1Print=Verification Method: $i
+Attribute1IsMultiple=1
+Attribute1=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|39(?=\s*(.*)\s*\|40|)
+Attribute2Name=Implemented
+Attribute2Print=Implemented: $i
+Attribute2=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|42(?=\s*(.*)\s*\|43|)
+Attribute3Name=Status
+Attribute3Print=$i
+Attribute3=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|44(?=\s*(.*)\s*\|45|)
+Attribute4Name=ObjectType
+Attribute4Print=$i
+Attribute4=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|37(?=\s*(.*)\s*\|38|)
+Attribute5Name=Discipline
+Attribute5Print=$i
+Attribute5IsMultiple=1
+Attribute5=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|41(?=\s*(.*)\s*\|42|)
+Attribute6Name=ASIL
+Attribute6Print=$i
+Attribute6=
+Attribute7Name=Target
+Attribute7Print=Target: $i
+Attribute7IsMultiple=1
+Attribute7=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|40(?=\s*(.*)\s*\|41|)
+Text1Name=Text
+Text1RegularExpression=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|8\s*(.+)\s*\|9
+FileExtension=xls,xlsx,xlsm
+ExcludingText1=(?<=Worksheet)([\s\S]+?)(?=\nWorksheet :	Calibration \(FLASH\))
+IntermediateFileEncoding=UTF8
+
+[DES Integration Tests For NVP Configuration]
+;This type uses Excel converter which presents each cell separated by character | followed by column number
+Tool=ExcelWithColNumbers
+ToolEdit=Excel
+Image=excel
+Variable1Name=worksheet
+Variable1Label=Worksheet
+Variable1Type=string
+Entity1Name=Entity
+Entity1IdentFormat=TestOf_TF_J_\1
+Entity1=\|2\s*([\w\[\]]+)\s*\|3\s*[1-9]+\s*\|4
+Reference1Name=Coverage
+Reference1Print=[Covers: $i]
+Reference1IdentFormat=TF_J_\1
+Reference1IsMultiple=0
+Reference1=\|2\s*([\w\[\]]+)\s*\|3\s*[1-9]+\s*\|4
+Reference1Indexes=1,2,3,0
+Attribute1Name=Created Issue
+Attribute1Print=$i
+Attribute1IsMultiple=1
+Attribute1=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|46\s*([\d\s,;]*)\s*
+Attribute1Sub=[\s;,]*(\d+)[\s]*
+Attribute2Name=Test Result
+Attribute2Print=Test Result: $i
+Attribute2EnumValues=NOK|ko,OK|ok,CA|nt,NS|testStand_error,In Progress|testStand_RefSkipped,NA|rtds_compstate
+Attribute2=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|45\s*(?i:(OK|NOK|CA|NA|NS|In Progress))\s*
+Text1Name=Text
+Text1RegularExpression=\|2\s*[\w\[\]]+\s*\|3\s*[1-9]+\s*\|4.*\|8\s*(.+)\s*\|9
+FileExtension=xls,xlsx,xlsm
+ExcludingText1=(?<=Worksheet)([\s\S]+?)(?=\nWorksheet :	Calibration \(FLASH\))
+IntermediateFileEncoding=UTF8
+
+[SW Integration NeEVA Test Plan]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=Test case ID\s*:\s*(\S+)
+Reference1Name=Reference
+Reference1IsMultiple=0
+Reference1=Requirement under test:([\s\S]+)[Dd]escription of the requirement
+Reference1Sub=(\w+)
+Reference1Indexes=1,2,3,0
+Text1Name=Text
+Text1RegularExpression=[Dd]escription of the requirement:([\s\S]+)Software:
+MatchingFileNames=*.ts
+ExcludedFileNames=*TESTCFG*
+
+[SW Integration NeEVA Test Result]
+Tool=Text
+ToolEdit=Notepad
+Image=text
+Entity1Name=Entity
+Entity1=^BEGIN_FILE: (.+):(.+).xml$
+Entity1Indexes=3,1,3,0
+Attribute1Name=Test Result
+Attribute1Print=$t: $i
+Attribute1EnumValues=FAILED|ko,PASSED|ok,TOBEANALYSED|nt
+Attribute1=Result Test:(FAILED|PASSED|TOBEANALYSED)
+MatchingFileNames=*.xml
+ExcludedFileNames=
+

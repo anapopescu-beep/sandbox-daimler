@@ -1,0 +1,511 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  int     iFlag = 0;
+  char    outVal[200];
+  char    outTemp[2000];
+  char    displayedVal[20];
+  char    dataArray[10][50];
+  dword   glbHandle = 0;
+  double  glbValue = 0;
+}
+
+/// <DMM Implementation>
+double ReadVoltageDC()
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[64];
+  long modeType = 0;
+
+  if(@sysvar::DigitalMultimeter::sysGetDCVButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureVoltage", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    if(glbValue == 0)
+    {
+      write("%s",buffer);
+    }
+    else{}
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+ 
+  if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in V] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in mV] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in uV] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);  
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in nV] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else{}
+  
+  return glbValue;  
+}
+
+/// <DMM Implementation>
+double ReadCurrentDC()
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[64];
+  long modeType = 0;
+
+  if(@sysvar::DigitalMultimeter::sysGetDCIButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureCurrent", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in A] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in mA] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in uA] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);   
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in nA] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+    write("Measured current is %fnA.",glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput);
+  }
+  else{}
+  
+  return glbValue;  
+}
+
+/// <DMM Implementation>
+double ReadVoltageAC()
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[64];
+  long modeType = 0;
+
+  if(@sysvar::DigitalMultimeter::sysGetACVButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureVoltageAC", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    if(glbValue == 0)
+    {
+      write("%s",buffer);
+    }
+    else{}
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in V] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in mV] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in uV] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);  
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST VOLTAGE READING ################         Measured voltage [in nV] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else{}
+  
+  return glbValue;  
+}
+
+/// <DMM Implementation>
+double ReadCurrentAC()
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[64];
+  long modeType = 0;
+
+  if(@sysvar::DigitalMultimeter::sysGetACIButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureCurrentAC", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    if(glbValue == 0)
+    {
+      write("%s",buffer);
+    }
+    else{}
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in A] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in mA] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in uA] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);   
+  }
+  else if((iFlag==1) && (@sysvar::DigitalMultimeter::sysSetConversionFactorInput == 1000000000))
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "################ PICOTEST CURRENT READING ################         Measured current [in nA] is: ", 100);
+    strncat(outVal, displayedVal, 119);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else{}
+  
+  return glbValue;  
+}
+
+/// <DMM Implementation>
+void ReadMultipleThermocouples(char cObtainedTemperature[])
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[2000];
+  long modeType = 0;
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureTemperatureTC", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    strncpy(cObtainedTemperature, buffer, elcount(buffer));
+    glbValue = atodbl (buffer);
+    if(glbValue == 0)
+    {
+      write("%s",buffer);
+    }
+    else{}
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+}
+
+/// <DMM Implementation>
+double ReadTemp()
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[64];
+  long modeType = 0;
+
+  if(@sysvar::DigitalMultimeter::sysGetTempButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureTemp", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    glbValue = atodbl (buffer);
+    if(glbValue == 0)
+    {
+      write("%s",buffer);
+    }
+    else{}
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if(iFlag==1)
+  {
+    _gcvt(glbValue * @sysvar::DigitalMultimeter::sysSetConversionFactorInput, 10, displayedVal);
+    strncpy(outVal, "############## PICOTEST TEMPERATURE READING ##############         Measured temperature [in degC] is: ", 110);
+    strncat(outVal, displayedVal, 120);
+    @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue;
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outVal);
+  }
+  else{}
+  
+  return glbValue; 
+}
+
+
+/// <DMM Implementation>
+void ReadTempTC()
+{
+  int  i;
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char cTemp[10];
+  char buffer[2000];
+  long modeType = 0;
+
+  if(@sysvar::DigitalMultimeter::sysGet10TempButton==1)
+  {
+    iFlag = 1;
+  }
+  else
+  {
+    iFlag = 0;
+  }
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sMeasureTemperatureTC", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    split_string(buffer,",");
+    glbValue = atodbl (dataArray[0]);
+    if(glbValue == 0)
+    {
+      write("%s",buffer);
+    }
+    else{}
+    fileClose (glbHandle);
+  }
+
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+
+  if(iFlag==1)
+  {
+    strncpy(outTemp, " ## PICOTEST TEMPERATURE FROM 10 [Thermocouples] READING ##                Measured temperature [in degC] is:          ", 1900);
+    for(i=0; i<elcount(dataArray); i++)
+    {
+      ltoa(i, cTemp, 10);
+      glbValue = atodbl (dataArray[i]);
+      _gcvt(glbValue, 10, displayedVal);
+      strncat(outTemp, "                    TCO_", 2000);
+      strncat(outTemp, cTemp , 2000);
+      strncat(outTemp, ": ", 2000);
+      strncat(outTemp, displayedVal, 2000);
+      strncat(outTemp, ";                     ", 2000);
+      @sysvar::DigitalMultimeter::sysDMMDisplay = glbValue; 
+    }  
+    sysSetVariableString("DigitalMultimeter", "sysDisplayPanel", outTemp);
+  }
+  else{}
+}
+
+/// <DMM Implementation>
+void ReadTerminalPos()
+{
+  char absFilePath[200] = "C:\\MKS\\DAIMLER_MMA\\Includes\\sMeasureFile.txt";
+  char buffer[64];
+  long modeType = 0;
+  
+  testwaitforsyscall("pyw C:\\MKS\\DAIMLER_MMA\\Includes\\DMMargs.pyw sGetTerminalsPos", 0, 10000);
+  
+  glbHandle = OpenFileRead(absFilePath, modeType);
+  if ( glbHandle!=0 )
+  {
+    while(fileGetString(buffer,elcount(buffer),glbHandle)!=0 ) {};
+    fileClose (glbHandle);
+  }
+  
+  else
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "Reading NOT done", "File can't be opened.");
+  }
+  
+  if (strncmp(buffer,"FRON", elCount(buffer))==0)
+  {
+    strncat(buffer, "T", elCount(buffer));
+    sysSetVariableString("DigitalMultimeter", "sysGetTerminalsPos", buffer);
+  }
+  else if (strncmp(buffer,"REAR", elCount(buffer))==0)
+  {
+   sysSetVariableString("DigitalMultimeter", "sysGetTerminalsPos", buffer);
+  }
+  else
+  {
+    SetControlBackColor("DigitalMultimeterPanel", "Input/Output Box 2", makeRGB(255,0,0));
+    sysSetVariableString("DigitalMultimeter", "sysGetTerminalsPos", "ERROR");
+  }
+}
+
+/// <helper>
+int split_string(char string[], char delim[])
+{
+  int start_pos, end_pos;
+  int i, j;
+  int num_strings;
+  
+  start_pos = 0;
+  end_pos = 0;
+  num_strings = 0;
+  
+  while (start_pos < strlen(string))
+  {
+    j = 0;
+    end_pos = strstr_off(string, start_pos, delim);
+    if (end_pos == -1)
+    {
+      end_pos = strlen(string);
+    }
+    for (i=start_pos; i<end_pos; i++)
+    {
+      dataArray[num_strings][j++] = string[i];
+    }
+    dataArray[num_strings][j] = '\0';
+    num_strings++;
+    start_pos = end_pos+strlen(delim);
+  }
+  
+  return num_strings;
+}

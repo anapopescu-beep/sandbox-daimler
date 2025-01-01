@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1228</w>
+      <h>753</h>
+    </coordinates>
+    <panel_attributes>title:pal_u8MotorCurrent_ManageMediumCurrentFailureDetection
+Start
+Check if the PWM order is over medium threshold
+If
+	[TRUE]
+	Reset the medium reset counter
+	Check if the time threshold for medium current is reached
+	If
+		[TRUE]
+		Set result as KU8_ATM_TEST_NOK
+
+		[FALSE]
+		Increment the medium time counter
+		Set result as KU8_ATM_TEST_NOT_DECIDED
+	EndIf
+
+	[FALSE]
+	Check if the medium current reset time is reached
+	If
+		[TRUE]
+		Reset qualification counter only
+		Set result as KU8_ATM_TEST_OK
+
+		[FALSE]
+		Increment the medium reset counter
+		Set result as KU8_ATM_TEST_NOT_DECIDED
+	EndIf
+EndIf
+
+Return the computed result
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

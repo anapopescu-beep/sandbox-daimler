@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0037
+ARCH_SW_ERH_0037: The ERH_KU8_SYSTEM_OV_AEC_CFG should have the following properties: Qualification_time = 15s; Deskill_time = 15sec; associated group: KU32_AEC_GROUP_MASK_SYSTEM_OV
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function atm_executeAutoTest() at line Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED);.
+
+Action: ARCH_SW_ERH_0037
+
+	Step 3: Step in function Rte_Call_pclAecStatus_SetAecEvent(U8_GET_AEC_ID(cu8AutotestID), (u8AecCommandType)KU8_AEC_PASSED). 
+		Expected result:  Stepped in ERH_runSetAecEvent()
+
+	Step 4: Set a breakpoint in function ERH_Init().
+
+	Step 5: Set a breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;.
+
+	Step 6: Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1
+
+	Step 7: Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.
+
+	Step 8: Set variable u32GroupStatusForDTC to 16777216.
+
+Action: ARCH_SW_ERH_0037
+
+	Step 9: Set a breakpoint in function erh_UpdateGroup() at line case (uint32) KU32_AEC_GROUP_MASK_SYSTEM_OV:.
+		Expected result:  BP set
+
+Postcondition
+
+	Step 10: Return ECU to default values

@@ -1,0 +1,46 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0039, ARCH_SW_CIL_0037, ARCH_SW_CIL_0038
+ARCH_SW_CIL_0039: Frame Impact2_ST3 shall be manipulated to read all it�s signals and send the values through application.
+ARCH_SW_CIL_0037: Signal Impact_Y_ST3 shall be removed from application.
+ARCH_SW_CIL_0038: All values for Impact Y shall be ignored.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Impact_Y_ST3 from frame Impact2_ST3 to KU8_ONE.
+
+	Step 3: Set a breakpoint in function CIL_ComNotification_ORC_Impact2_Pr5_ST3_b9l09rrslyv7vj3o92j69irnd_2f5ae8ac_Rx().
+
+	Step 4: Check if CPU stopped at line '(void)Rte_Read_CIL_AC_CommunicationInteractionLayer_IG_ORC_Impact2_Pr5_ST3_ORC_Impact2_Pr5_ST3(&cil_stImpactSignalsStatus2);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0039
+
+	Step 5: Evaluate if variable cil_stImpactSignalsStatus2 is equla to KU8_ONE 
+		Expected result:  KU8_ONE.
+
+	Step 6: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 7: Check if CPU stopped at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function cil_ManageInputSignals().
+
+Action: ARCH_SW_CIL_0037, ARCH_SW_CIL_0038
+
+	Step 9: Check if CPU stopped in function cil_ManageInputSignals(). 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 10: Return ECU to default values

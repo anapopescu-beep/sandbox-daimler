@@ -1,0 +1,1167 @@
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\Debugger_Functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\Diagnostic_Functions.cin"
+  #include "S:\Tools\CANoe\Config\DAIMLER_MMA_INTEGRATION\Includes\Helper_Functions.cin"
+}
+
+/*------------------------------------------------------------------------------
+                                    GLOBALS
+ ------------------------------------------------------------------------------*/
+/* To declare the constants used throurough the entire module, and global variables */
+variables
+{
+/*-------------------------------Constants-------------------------------------*/
+
+/*----------------------------Global Variables---------------------------------*/
+  char fin[255];
+  int time = 250;
+  long ret;
+  int iterator;
+//  int actual_result = 0;
+}
+
+/*------------------------------------------------------------------------------
+                                REPORT INFO
+ ------------------------------------------------------------------------------*/
+/* Information to be added in the report. Mostly module specific */
+void addGeneralReportInfo()
+{
+testReportAddEngineerInfo("Test Engineer: " ,"Insert_Name");
+testReportAddSetupInfo("Debugger: " , "IC5000");
+testReportAddSetupInfo("Power Supply: " , "PSW 30-108");
+testReportAddSetupInfo("Mock-up: " , "SBE V2.1");
+}
+
+/*------------------------------------------------------------------------------
+                           ENVIROMENT INITIALIZATION
+------------------------------------------------------------------------------*/
+/* To prepare the test enviroment for the test execution. */
+/* The following checks will take place before executing the TC's:
+  - Identification of SW Version (ALV and customer)
+  - Identification of HW Version
+  - Check correct state of the SW.
+
+
+/*------------------------------------------------------------------------------
+                                TEST FUNCTIONS
+------------------------------------------------------------------------------*/
+/*------------------------- Test Preconditions ------------------------------*/
+/* For operations to ensure the correct execution of the test case, such as IGN_ON,
+checking that CAN communication is present, etc.
+/* Varies from module to module, use from Helper_Functions.cin only the ones you need */
+testfunction Precondtions()
+{
+  Check_ECU_ON();
+}
+
+/*------------------------- Test Postconditions ------------------------------*/
+/* For operations to ensure that after the test case was executed, the enviroment
+would go back to a blank state, to be ready for the next test step in queue. Call it a Cleanup phase. */
+testfunction Postconditions()
+{
+  Check_ECU_ON();
+}
+
+
+void MainTest()
+{
+//  SetFilePath();
+//  SW_IT_MMG_0001();
+//  SW_IT_MMG_0002();
+  SW_IT_MMG_0003();
+//  SW_IT_MMG_0004(); // NOT OK AT ALL
+//  SW_IT_MMG_0005(); //NOT OK
+//  SW_IT_MMG_0006(); // Check values
+//  SW_IT_MMG_0007(); 
+//  SW_IT_MMG_0008(); 
+//  SW_IT_MMG_0009(); 
+//  SW_IT_MMG_0010();
+//  SW_IT_MMG_0011();
+//  SW_IT_MMG_0012();
+//  SW_IT_MMG_0013();
+//  SW_IT_MMG_0014();
+//  SW_IT_MMG_0015(); // mmg_CheckCycleEnable() function cannot be found! 
+//  SW_IT_MMG_0016();
+//  SW_IT_MMG_0017();
+//  SW_IT_MMG_0018();
+}
+
+
+/*------------------------------------------------------------------------------
+                                TEST EXECUTION
+------------------------------------------------------------------------------*/
+
+
+void testSpecificReport(
+  char moduleName[],          // "SW_IT_modulename_0001"
+  char testCaseTitle[],       // "Test case title" 
+  char testPurpose[],         // "Purpose of test: "
+  char testedRequirements[],  // "Requirement Under Test: ARCH_SW_MMG_0004"
+  char testType[],            // "Test Type: Requirement-Based/Interface test")
+  char faultInjectionMethod[],// "Fault injection method used: Yes/No"
+  char resourceUsage[],       // "Resource usage evaluation: Yes/No"
+  char priotrity[],           // "Priority: Yes/No"
+  char safetyRelevant[]       // "Safety relevant: Yes/No"
+                        )
+{
+  char text[255];
+  
+  testCaseTitle(moduleName, testCaseTitle);
+  
+  snprintf(text, elcount(text), "Purpose of test: %s\n", testPurpose);
+  testCaseDescription (text);
+  
+  snprintf(text, elcount(text), "Requirement Under Test: %s\n", testedRequirements);
+  testCaseDescription (text);
+  
+  snprintf(text, elcount(text), "Test Type: %s\n", testType);
+  testCaseDescription (text);
+  
+  snprintf(text, elcount(text), "Fault injection method used: %s\n", faultInjectionMethod);
+  testCaseDescription ( text);
+  
+  snprintf(text, elcount(text), "Resource usage evaluation: %s\n", resourceUsage);
+  testCaseDescription (text);
+  
+  snprintf(text, elcount(text), "Priority: %s\n", priotrity);
+  testCaseDescription (text);
+  
+  snprintf(text, elcount(text), "Safety relevant: %s\n", safetyRelevant);
+  testCaseDescription (text);
+}
+
+void InitTestCase()
+{
+  debugger_deleteAllBreakpoints(); // Ask if delete, reset, run can be put in Preconditions()
+  testWaitForTimeout(500);
+  debugger_reset();
+  testWaitForTimeout(500);
+  debugger_run();
+  testWaitForTimeout(500);
+}
+
+testcase SW_IT_MMG_0001()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0001", "Context update", "Context should be periodically updated in order to inhibit/abort cycles.",
+  "ARCH_SW_MMG_0004", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0001");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(4, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(700);
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in MMG_runUpdateModeStatus() at function mmg_UpdateModeStatus_CriticalAutotestsNok() and step in.", "True\n", 0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "mmg_UpdateModeStatus_CriticalAutotestsNok");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in mmg_UpdateModeStatus_CriticalAutotestsNok() at line: if (0u != (MMG_u32ModesStatus & MMG_KU32_MASK_CRITICAL_AT_NOK)).", "True\n", 0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(12, "mmg_UpdateModeStatus_CriticalAutotestsNok");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK).", "True\n",0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 4  **************************/ // CHECK THIS STEP
+    debugger_writeVariable("MMG_u32ModesStatus,,app.elf", "uint32", 8, 0);
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Change variable MMG_u32ModesStatus value to 8 to pass the condition from step 2.", "True\n",0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 5  **************************/
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("5", "Step in to stop at line M_SET_MODE_MASK_OFF (MMG_KU32_MASK_CRITICAL_AT_NOK).", "True\n",0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0002()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0002", "ModeStatus request interface", "The test shall verify if this module informs other modules about the requested mode status.",
+  "ARCH_SW_MMG_0006", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0002");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(8, "BSR_runBeltSlackReductionAlgo");
+    testWaitForTimeout(700);
+    ExpectedTestResult("1", "Set a breakpoint in BSR_runBeltSlackReductionAlgo() at line Rte_Call_pclModeManagement_CheckModeStatus(CFG_KU32_BSR_MASK_INT_ABORTING_MODES, &bModeStatus_b).", "True\n", 0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 2  **************************/
+    debugger_writeVariable("bModeStatus_b,,app.elf", "uint8", 170, 0);
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "At line Rte_Call_pclModeManagement_CheckModeStatus(CFG_KU32_BSR_MASK_INT_ABORTING_MODES, &bModeStatus_b), modify parameter bModeStatus_b to 170.", "True\n", 0);
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runCheckModeStatus");
+    testWaitForTimeout(500);
+    debugger_run();
+    testWaitForTimeout(500);
+    /*********************************************************/
+
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(38, "MMG_runCheckModeStatus");
+    testWaitForTimeout(1000);
+    ExpectedTestResult("3","Set a breakpoint in MMG_runCheckModeStatus() at the last line of the function.", "True\n", 0);
+    debugger_run();
+    testWaitForTimeout(300);
+    /*********************************************************/
+    debugger_stop();
+  }
+}
+  
+
+
+testcase SW_IT_MMG_0003()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0003", "Management of delay executed cycle", "The test shall verify if modes for delayed executed cycle are managed by this module",
+  "ARCH_SW_MMG_0007", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0003");
+//  InitTestCase();
+  
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(4, "MMG_runManageModeDelays");
+    testWaitForTimeout(700);
+    ExpectedTestResult("1", "Set a breakpoint in MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle() and step in.", "True\n", 0);
+    debugger_step();
+    testWaitForTimeout(500);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 1  **************************/
+//    debugger_setRelativeFunctionBpAtLine(0, "mmg_ManageModeDelays_ExecutedCycle");
+//    testWaitForTimeout(500);
+//    ExpectedTestResult("2", "Set a breakpoint in mmg_ManageModeDelays_ExecutedCycle().", "True\n", 0);
+    /*********************************************************/
+  }
+//  debugger_stop();
+}
+
+/***************************
+*          TO DO           *
+***************************/
+testcase SW_IT_MMG_0004() 
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0004", "Inhibition of HWA", "Tensioning request and HWA request shall be inhibitted if cycles are not valid (different from 0xFF)",
+  "ARCH_SW_MMG_0008", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0004");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/  
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_Init");
+    testWaitForTimeout(1500);
+    ExpectedTestResult("1", "Set a breakpoint after line MMG_u32ModesStatus = MMG_U32_INITIAL_VALUES_FOR_ALL_MODES.", "True\n", 0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 2  **************************/
+    debugger_readVariable("uint32", "MMG_u32ModesStatus,,app.elf", 0);
+    testWaitForTimeout(1500);
+    ExpectedTestResult("2", "Check if MMG_u32ModesStatus is inhibited.", "0\n", 0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0005() // TO BE VERIFIED. ERROR ON READ VARIABLE
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0005", "Access delay before MMG_Init", "In MMG_Init() function a delay of 5 sec shall be performed before running the autotest.",
+  "ARCH_SW_MMG_0009", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0005");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(5, "MMG_Init");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_Init at line MMG_astDelayAfterCycleThrsandModes.", "True\n", 0);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+
+    /*********************  STEP 2  **************************/ 
+    debugger_readLocalVariable("u16DelayThrs");
+//    debugger_readVariable("u32AssociatedMode,,app.elf", "uint32", 0);
+    testWaitForTimeout(300);
+    ExpectedTestResult("1","Check if MMG_astDelayAfterCycleThrsandModes array is set", "True\n", 0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+
+
+testcase SW_IT_MMG_0006()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0006", "UpdateModeStatus function interfaces", 
+  "The test shall verify if the following ERH statuses are inputs: HW Self Protection, Power Supply Under Voltage, under voltage during tensioning, Motor Power Order.",
+  "ARCH_SW_MMG_0128, ARCH_SW_MMG_0129,  ARCH_SW_MMG_0133, ARCH_SW_MMG_0134, ARCH_SW_MMG_0135, ARCH_SW_MMG_0136, ARCH_SW_MMG_0138, ARCH_SW_MMG_0157, ARCH_SW_MMG_0159, ARCH_SW_MMG_0160", 
+  "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0006");
+  InitTestCase();
+//  debugger_reset();
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(44, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(700);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles", "True\n", 0);
+    debugger_run();
+    testWaitForTimeout(500);
+    /*********************************************************/
+
+    
+    /*********************  STEP 2  **************************/
+    debugger_step();
+    testWaitForTimeout(300);
+    ExpectedTestResult("2","Step in mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles", "True\n", 0);
+    /*********************************************************/
+    
+    debugger_run();
+
+    /*********************  STEP 3 TO 6  **************************/ // DE VERIFICAT !!!
+//    debugger_setRelativeFunctionBpAtLine(59, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles");
+    debugger_setRelativeFunctionBpAtLine(12, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles");
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(13, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles");
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(14, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles");
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(15, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_TensioningCycles");
+    testWaitForTimeout(500);
+    debugger_run();
+    
+    testWaitForTimeout(500);
+    debugger_readLocalVariable("u8AecStatus_TensioningCycles[0]"); // MMG_KU8_IDX_SW_SELF_PROTECTION
+    testWaitForTimeout(2000);
+    ExpectedTestResult("3","Check if u8AecStatus_TensioningCycles[MMG_KU8_IDX_SW_SELF_PROTECTION] is equal to 0.", "0\n", 1);
+    
+    debugger_readLocalVariable("u8AecStatus_TensioningCycles[4]"); // MMG_KU8_IDX_BAT_PWR_UNDER_VOLTAGE
+    testWaitForTimeout(300);
+    ExpectedTestResult("4","Check if u8AecStatus_TensioningCycles[MMG_KU8_IDX_BAT_PWR_UNDER_VOLTAGE] is equal to 1.", "1\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_TensioningCycles[5]"); // MMG_KU8_IDX_BAT_PWR_UNDER_VOLTAGE_DURING_TENS
+    testWaitForTimeout(300);
+    ExpectedTestResult("5","Check if u8AecStatus_TensioningCycles[MMG_KU8_IDX_BAT_PWR_UNDER_VOLTAGE_DURING_TENS] is equal to 1.", "1\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_TensioningCycles[1]"); // MMG_KU8_IDX_MOTOR_ORDER
+    testWaitForTimeout(300);
+    ExpectedTestResult("6","Check if u8AecStatus_TensioningCycles[MMG_KU8_IDX_MOTOR_ORDER] is equal to 1.", "1\n", 0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+
+testcase SW_IT_MMG_0007()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0007", "UpdateModeStatus to Motor interfaces", 
+  "The test shall verify if the following ERH statuses are inputs: Motor current, Enable Out Of Order, High Side Switch Regulation, MOSFET High Circuit, MOSFET Short Circuit, MOSFET Open Circuit, Motor connection, Motor Short Circuit",
+  "ARCH_SW_MMG_0130, ARCH_SW_MMG_0137, ARCH_SW_MMG_0150,ARCH_SW_MMG_0151, ARCH_SW_MMG_0156, ARCH_SW_MMG_0152, ARCH_SW_MMG_0153, ARCH_SW_MMG_0154, ARCH_SW_MMG_0155, ARCH_SW_CIL_0257", 
+  "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0007");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(40, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles", "True\n", 0);
+    /*********************************************************/
+
+    
+    /*********************  STEP 2  **************************/ 
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("2","Step in mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles", "True\n", 0);
+    /*********************************************************/
+    
+    debugger_deleteAllBreakpoints();
+    testWaitForTimeout(250);
+    
+    /*********************************************************/
+    debugger_setRelativeFunctionBpAtLine(23, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_MOTOR_CURREN
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(17, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_ENABLE_OUT_OF_ORDER
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(13, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_HIGH_SIDE_SWITCH
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(14, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_MOSFET_HIGH_SC
+    testWaitForTimeout(500);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(800);
+    
+    /*********************  STEP 3 TO 6  **************************/ // DE VERIFICAT !!!
+//    debugger_readLocalVariable("u8AecStatus_AllCycles[8])"); // MMG_KU8_IDX_MOTOR_CURRENT // Not working ?!
+//    testWaitForTimeout(500);
+//    ExpectedTestResult("3","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_MOTOR_CURRENT]) is equal to 0.", "0\n", 1);
+    
+    debugger_readLocalVariable("u8AecStatus_AllCycles[4]"); // MMG_KU8_IDX_ENABLE_OUT_OF_ORDER
+    testWaitForTimeout(500);
+    ExpectedTestResult("4","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_ENABLE_OUT_OF_ORDER] is equal to 0.", "0\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_AllCycles[0]"); // MMG_KU8_IDX_HIGH_SIDE_SWITCH
+    testWaitForTimeout(500);
+    ExpectedTestResult("5","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_HIGH_SIDE_SWITCH] is equal to 0.", "0\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_AllCycles[1]"); // MMG_KU8_IDX_MOSFET_HIGH_SC
+    testWaitForTimeout(500);
+    ExpectedTestResult("6","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_MOSFET_HIGH_SC] is equal to 0.", "0\n", 0);
+    /*********************************************************/
+    
+    debugger_deleteAllBreakpoints();
+    testWaitForTimeout(250);
+    
+    /*********************************************************/
+    debugger_setRelativeFunctionBpAtLine(15, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_MOSFET_LOW_SC
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(20, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_MOSFET_OC
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(16, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_MOTOR_DISCONNECTED
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(21, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles"); // MMG_KU8_IDX_MOTOR_IN_SC
+    testWaitForTimeout(500);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 7 TO 10  **************************/     
+    debugger_readLocalVariable("u8AecStatus_AllCycles[2]"); // MMG_KU8_IDX_MOSFET_LOW_SC
+    testWaitForTimeout(500);
+    ExpectedTestResult("7","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_MOSFET_LOW_SC] is equal to 0.", "0\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_AllCycles[5]"); // MMG_KU8_IDX_MOSFET_OC
+    testWaitForTimeout(500);
+    ExpectedTestResult("8","Check u8AecStatus_AllCycles[MMG_KU8_IDX_MOSFET_OC] is equal to 0.", "0\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_AllCycles[3]"); // MMG_KU8_IDX_MOTOR_DISCONNECTED
+    testWaitForTimeout(500);
+    ExpectedTestResult("9","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_MOTOR_DISCONNECTED] is equal to 0.", "0\n", 0);
+    
+    debugger_readLocalVariable("u8AecStatus_AllCycles[6]"); // MMG_KU8_IDX_MOTOR_IN_SC
+    testWaitForTimeout(500);
+    ExpectedTestResult("10","Check if u8AecStatus_AllCycles[MMG_KU8_IDX_MOTOR_IN_SC] is equal to 0.", "0\n", 0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+
+testcase SW_IT_MMG_0008()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0008", "UpdateModeStatus interface to ERH module", 
+  "The test shall verify if the following ERH statuses are inputs: Motor current, Enable Out Of Order, High Side Switch Regulation, MOSFET High Circuit, MOSFET Short Circuit, MOSFET Open Circuit, Motor connection, Motor Short Circuit",
+  "ARCH_SW_MMG_0156, ARCH_SW_MMG_0158", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0008");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(40, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(17, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_ENABLE_OUT_OF_ORDER_AEC_CFG, &u8AecStatus_AllCycles[MMG_KU8_IDX_ENABLE_OUT_OF_ORDER]).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(16, "mmg_UpdateModeStatus_InhibitionOfCyclesByInternalFailure_AllCycles");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_MOTOR_DISCONNECTED_AEC_CFG, &u8AecStatus_AllCycles[MMG_KU8_IDX_MOTOR_DISCONNECTED]).", "True\n", 1);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+
+testcase SW_IT_MMG_0009()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0009", "UpdateModeStatus interface to ERH module", 
+  "The test shall verify if the following ERH statuses are inputs: Motor current, Enable Out Of Order, High Side Switch Regulation, MOSFET High Circuit, MOSFET Short Circuit, MOSFET Open Circuit, Motor connection, Motor Short Circuit",
+  "ARCH_SW_MMG_0156, ARCH_SW_MMG_0158", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0009");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(47, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_InhibitionOfCyclesEndOfLife().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(12, "mmg_UpdateModeStatus_InhibitionOfCyclesEndOfLife");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_END_OF_LIFE_HIGH_AEC_CFG, &u8AecStatus_TensioningCycles[MMG_KU8_IDK_HIGH_FORCE_EOL]).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 5  **************************/
+    debugger_setRelativeFunctionBpAtLine(15, "mmg_UpdateModeStatus_InhibitionOfCyclesEndOfLife");
+    testWaitForTimeout(500);
+    ExpectedTestResult("5", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_END_OF_LIFE_COMFORT_AEC_CFG, &u8AecStatus_TensioningCycles[MMG_KU8_IDK_COMFORT_EOL]).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_deleteAllBreakpoints();
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 6  **************************/
+    debugger_setRelativeFunctionBpAtLine(32, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor().", "True\n", 2);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 6  **************************/
+    debugger_setRelativeFunctionBpAtLine(6, "mmg_UpdateModeStatus_NoHallEffectSensor");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_HALL_SENSOR_AEC_CFG, &mmg_u8AECStatus).", "True\n", 1);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0010()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0010", "UpdateModeStatus interface to PMP module", 
+  "PMP_runGetBatteryVoltageSurveyStatus shall be called to get the battery voltage",
+  "ARCH_SW_MMG_0202, ARCH_SW_CIL_0251", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_00010");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(8, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_PowerVoltageUnstable().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(6, "mmg_UpdateModeStatus_PowerVoltageUnstable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at line Rte_Call_pclSurveyBatteryVoltage_GetStatus( &u8BatteryVoltageSurveyStatus).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(6, "mmg_UpdateModeStatus_PowerVoltageUnstable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint at line Rte_Call_pclSurveyBatteryVoltage_GetStatus( &u8BatteryVoltageSurveyStatus ).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_deleteAllBreakpoints();
+    testWaitForTimeout(500);
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 5  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "PMP_runGetBatteryVoltageSurveyStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("5", "Set a breakpoint at line pu8BatteryVoltageSurveyStatus = PMP_stBatterySurveyParam.u8BatteryVoltageSurveyState.", "True\n", 2);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0011()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0011", "UpdateModeStatus interface to BMM module", 
+  "Rte_Read_prrExecutedCycle_u8CycleNumber shall be called to get the executed cycle for different contexts.",
+  "ARCH_SW_MMG_0203, ARCH_SW_CIL_0252,ARCH_SW_CIL_0253, ARCH_SW_CIL_0254", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0011");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(16, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(9, "mmg_UpdateModeStatus_ExecutedCycle");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at line Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(12, "mmg_UpdateModeStatus_ExecutedCycle");
+    testWaitForTimeout(500);
+    debugger_stepOver();
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_deleteAllBreakpoints();
+    testWaitForTimeout(500);
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 5  **************************/
+    debugger_setRelativeFunctionBpAtLine(20, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("5", "Set a breakpoint at line mmg_UpdateModeStatus_ExecutedTensioningCycle().", "True\n", 2);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 6  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "mmg_UpdateModeStatus_ExecutedTensioningCycle");
+    testWaitForTimeout(500);
+    ExpectedTestResult("6", "Set a breakpoint at line Rte_Read_prrExecutedCycle_u8CycleNumber(&mmg_u8ExecutedCycle).", "True\n", 1);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0012()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0012", "UpdateModeStatus interface to pyro activation", 
+  "BMM_runGetPyroActivationStatus shall be called to get pyro activation status.",
+  "ARCH_SW_MMG_0204", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0012");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(16, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_ExecutedCycle().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(12, "mmg_UpdateModeStatus_ExecutedCycle");
+    testWaitForTimeout(500);
+    debugger_stepOver();
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "BMM_runGetPyroActivationStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint in function BMM_runGetPyroActivationStatus().", "True\n", 2);
+    /*********************************************************/
+  }
+}
+
+
+testcase SW_IT_MMG_0013()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0013", "UpdateModeStatus interface to HES", 
+  "ERH_runGetAecStatus shall be called to get de status of the AEC for different contexts.",
+  "ARCH_SW_MMG_0205", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0013");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(32, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(6, "mmg_UpdateModeStatus_NoHallEffectSensor");
+    testWaitForTimeout(500);
+    debugger_stepOver();
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at line Rte_Call_pclAecStatus_GetAecStatus(ERH_KU8_HALL_SENSOR_AEC_CFG, &mmg_u8AECStatus).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "ERH_runGetAecStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint in function ERH_runGetAecStatus().", "True\n", 2);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0014()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0014", "Fail of SW Self Protection", 
+  "BMM_runEnableHBSMonitoring shall be called to notify BMM about restoring the puls counting.",
+  "ARCH_SW_MMG_0206", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0014");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runUpdateModeStatus at line if(B_TRUE == MMG_b8MMGHAsBeenInitialized).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(32, "MMG_runUpdateModeStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function MMG_runUpdateModeStatus at line mmg_UpdateModeStatus_NoHallEffectSensor().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_step();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(14, "mmg_UpdateModeStatus_NoHallEffectSensor");
+    testWaitForTimeout(500);
+    debugger_stepOver();
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint at line if (KU8_TRUE == MMG_u8PrevHESModeStatus).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_writeVariable("uint8", "MMG_u8PrevHESModeStatus", 170, 0);
+    testWaitForTimeout(500);
+    debugger_setRelativeFunctionBpAtLine(17, "mmg_UpdateModeStatus_NoHallEffectSensor");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Change varibale MMG_u8PrevHESModeStatus tp 170", "True\n", 3);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 5  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "BMM_runEnableHBSMonitoring");
+    testWaitForTimeout(500);
+    ExpectedTestResult("5", "Set a breakpoint at line GPT120_T3CON.B.T3R = 1.", "True\n", 3);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0015()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0015", "Check cycle enable validity", 
+  "Write Rte_MMG_psrEnableCycle",
+  "ARCH_SW_MMG_0300", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0015");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "mmg_CheckCycleEnable"); // FUNCTION CANNOT BE FOUND
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle0_b8CycleValidity(B_FALSE).", "True\n", 2);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(1, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle1_b8CycleValidity(B_FALSE).", "True\n", 2);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(2, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle2_b8CycleValidity(B_FALSE).", "True\n", 2);
+    /*********************************************************/
+
+    debugger_run();
+    testWaitForTimeout(500);
+    
+    /*********************  STEP 4  **************************/
+    debugger_setRelativeFunctionBpAtLine(3, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Set a breakpoint in function mmg_CheckCycleEnable at line (void)Rte_Write_psrEnableCycle3_b8CycleValidity(B_FALSE).", "True\n", 2);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0016()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0016", "Check Cycle enable is step valid check", 
+  "mmg_CheckCycleEnable shall be called to set validity of the cycle.",
+  "ARCH_SW_MMG_0301", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0016");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(6, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function mmg_CheckCycleEnable at line if ( B_TRUE == mmg_CheckIfCycleStepIsvalid(MMG_KU8_CYCLE0_STEP0) ).", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+   /*********************  STEP 2  **************************/
+    debugger_setRelativeFunctionBpAtLine(16, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Set a breakpoint in function mmg_CheckCycleEnable at line if ( B_TRUE == mmg_CheckIfCycleStepIsvalid(MMG_KU8_CYCLE1_STEP0) ).", "True\n", 2);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+   /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(26, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint in function mmg_CheckCycleEnable at line if ( B_TRUE == mmg_CheckIfCycleStepIsvalid(MMG_KU8_CYCLE2_STEP0) ).", "True\n", 2);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+   /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(36, "mmg_CheckCycleEnable");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint in function mmg_CheckCycleEnable at line if ( B_TRUE == mmg_CheckIfCycleStepIsvalid(MMG_KU8_CYCLE3_STEP0) ).", "True\n", 2);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0017()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0017", "Check Cycle enable is step valid check", 
+  "mmg_CheckCycleEnable shall be called to set validity of the cycle.",
+  "ARCH_SW_MMG_0400", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0017");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(4, "MMG_runManageModeDelays");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle().", "True\n", 1);
+    /*********************************************************/
+    
+    
+   /*********************  STEP 2  **************************/
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Step in mmg_ManageModeDelays_ExecutedCycle().", "True\n", 1);
+    /*********************************************************/
+    
+    debugger_run();
+    testWaitForTimeout(500);
+    
+   /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(16, "mmg_ManageModeDelays_ExecutedCycle");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint in function mmg_ManageModeDelays_ExecutedCycle() at line Rte_Call_pclResetCause_GetResetCause(&mmg_u32ResetCause).", "True\n", 1);
+    /*********************************************************/
+    
+    
+   /*********************  STEP 4  **************************/
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Step in Rte_Call_pclResetCause_GetResetCause(&mmg_u32ResetCause).", "True\n", 1);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "RCM_runGetResetCause");
+    testWaitForTimeout(500);
+    debugger_run();
+    ExpectedTestResult("3", "Set a breakpoint in function RCM_runGetResetCause() at line if ( ((uint32 *) KPU8_NULL) != pu32ResetCause).", "True\n", 0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}
+
+
+testcase SW_IT_MMG_0018()
+{
+  /*-------------------------Test specific report info------------------------------*/  
+  testSpecificReport("SW_IT_MMG_0018", "Manage mode delays interface to pyro activation", 
+  "BMM_runGetPyroActivationStatus shall be called to get the pyro activation status.",
+  "ARCH_SW_MMG_0401, ARCH_SW_MMG_0402", "Requirement-Based", "No", "No", "Yes", "Yes");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  write("__________________________________________________________________________________________________________________");
+  write("CASE NO.:                                        SW_IT_MMG_0018");
+  InitTestCase();
+  
+  
+  {
+    /*********************  STEP 1  **************************/
+    debugger_setRelativeFunctionBpAtLine(4, "MMG_runManageModeDelays");
+    testWaitForTimeout(500);
+    ExpectedTestResult("1", "Set a breakpoint in function MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle().", "True\n", 1);
+    /*********************************************************/
+    
+    
+   /*********************  STEP 2  **************************/
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("2", "Step in mmg_ManageModeDelays_ExecutedCycle().", "True\n", 1);
+    /*********************************************************/
+    
+    
+   /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(16, "mmg_ManageModeDelays_ExecutedCycle");
+    testWaitForTimeout(500);
+    debugger_run();
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint in function mmg_ManageModeDelays_ExecutedCycle() at line Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).", "True\n", 28);
+    /*********************************************************/
+    
+    
+   /*********************  STEP 4  **************************/
+    debugger_step();
+    testWaitForTimeout(500);
+    ExpectedTestResult("4", "Step in Rte_Call_pclPyroDevice_GetPyroActivationStatus(&mmg_pb8PyroActivationStatus).", "True\n", 0);
+    /*********************************************************/
+    
+    
+    /*********************  STEP 3  **************************/
+    debugger_setRelativeFunctionBpAtLine(0, "BMM_runGetPyroActivationStatus");
+    testWaitForTimeout(500);
+    ExpectedTestResult("3", "Set a breakpoint in function BMM_runGetPyroActivationStatus.", "True\n", 0);
+    /*********************************************************/
+  }
+  
+  debugger_stop();
+}

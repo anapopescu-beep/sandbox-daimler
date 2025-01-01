@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0040
+ARCH_SW_BMM_0040: This module shall provide to the rest of the application the minimum and maximum displacement of the belt in millimeters observed since its initial position recorded at product startup (T0) by the BMM.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 14.
+
+	Step 3: Set a breakpoint in function BMM_runGetPositionRange_mm at line '*ps16BeltPosition_min_mm'.
+
+	Step 4: Check if CPU stopped at line '*ps16BeltPosition_min_mm'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_0040
+
+	Step 5: Evaluate variable ps16BeltPosition_min_mm.  
+		Expected result:  0x76d8
+
+	Step 6: Set a breakpoint in function BMM_runGetPositionRange_mm at line '*ps16BeltPosition_max_mm'.
+
+	Step 7: Check if CPU stopped at line '*ps16BeltPosition_max_mm'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_0040
+
+	Step 8: Evaluate variable ps16BeltPosition_max_mm.  
+		Expected result:  0x7001
+
+Postcondition
+
+	Step 9: Return ECU to default values

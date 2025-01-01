@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <help_text/>
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>150</x>
+      <y>180</y>
+      <w>1404</w>
+      <h>579</h>
+    </coordinates>
+    <panel_attributes>title:cil_Pre_Safe_ManageBeltFunctionsConditions
+Start
+
+Set cil_u8PreSafeActivationRequest to cil_auProfileRequestMap[cil_stPresfActAdjFrame.Presf_Lvl_ST3]
+
+  
+
+                 Check\ cil_u8PreSafeActivationRequest
+If
+	[Not equal to KU8_NO_CYCLE]
+	u8BeltFunction = 1 &lt;&lt; (cil_u8PreSafeActivationRequest - 1)
+	
+	[Equal to KU8_NO_CYCLE]
+	QAC
+EndIf 
+
+Call Rte_Read_prrCycleNumber_u8CycleNumber function
+
+                 Check\ u8BeltFunction
+If
+	[u8BeltFunction &amp; KU8_CIL_TENSIONING_REQUEST_MASK == u8BeltFunction]
+	If
+		[cil_u8PreSafeActivationRequest == KU8_NO_CYCLE and u8ExecutedCycle != KU8_NO_CYCLE and cil_u8APIActivationRequest == u8ExecutedCycle]
+		QAC
+	
+		[u8BeltFunction &amp; KU8_CIL_HAPTIC_REQUEST_MASK == u8BeltFunction ]
+		Call cil_CheckTensioningPreconditions function
+	EndIf
+	
+	
+	[u8BeltFunction &amp; KU8_CIL_HAPTIC_REQUEST_MASK == u8BeltFunction ]
+	Call cil_CheckHapticPreconditions function
+
+	[FALSE]
+	QAC
+EndIf 
+
+Call cil_ManageHapticRepetition function
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

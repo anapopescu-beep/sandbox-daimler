@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0315; ARCH_SW_DIA_0316; ARCH_SW_DIA_0317; ARCH_SW_DIA_0318; ARCH_SW_DIA_0319; ARCH_SW_DIA_0320; ARCH_SW_DIA_0321
+ARCH_SW_DIA_0315: Service 0x2E (Write Data By Identifier) will be implemented for DID FD31 (ECU Calibration Parameters)
+ARCH_SW_DIA_0316: The ECU calibration parameters shall be modified in non-volatile and RAM memories. It means the changes will immediately affect the current SW session (ECU reset is not necessary to take into account the modifications).
+ARCH_SW_DIA_0317: The Write ECU Calibration Parameters service shall be available in the following sessions: Supplier Session/Development Session (0x7E)
+ARCH_SW_DIA_0318: Service Write ECU Location shall be available under the following forms of Authentication: Supplier Development ENHANCED Production
+ARCH_SW_DIA_0319: Data Identifier of Write ECU Calibration Parameters shall be: 0xFD31
+ARCH_SW_DIA_0320: Write ECU Calibration Parameters Request data shall be 40 bytes long.
+ARCH_SW_DIA_0321: Bytes #2-#3:  DataIdentifier of the Write ECU Calibration Parameters shall be: 0xFD31
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD31_HBCalibrationWrite*.
+
+Action: ARCH_SW_DIA_0315; ARCH_SW_DIA_0316; ARCH_SW_DIA_0317; ARCH_SW_DIA_0318; ARCH_SW_DIA_0319; ARCH_SW_DIA_0320; ARCH_SW_DIA_0321
+
+	Step 4: Send diag request for 2E FD31 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD31_HBCalibrationWrite was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0368
+ARCH_SW_PAL_0368: The component shall check if high switch regulation works well.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckHighSideSwRegulation at the RTE Call for CheckHighSideSwRegulation autotest 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function PAL_Autotest_CheckHighSideSwRegulation at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 4: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0368
+
+	Step 5: Set a breakpoint in function PAL_cbk_CheckHighSideSwRegulation after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 6: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 7: Return ECU to default values

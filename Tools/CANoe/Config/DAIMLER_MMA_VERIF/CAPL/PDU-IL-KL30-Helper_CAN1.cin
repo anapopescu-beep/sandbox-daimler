@@ -1,0 +1,250 @@
+variables
+{
+  /* IL Include for PDU IL for NM (KL30) nodes
+   *
+   * This include file establishes partly the coupling between IL --> NM.
+   * The coupling is mainly established automatically between both DLLs.
+   *
+   * The simulation node needs to load the components AsrPDUIL.dll.
+   *
+   * Call ILCAN1_OnInit() in "on preStart()" of the main program!
+   * Call ILCAN1_OnStart() in "on start()" of the main program!
+   *
+   * Version 6.5, (c) 2016 Vector Informatik GmbH, Department for Networks and Distributed Systems
+   */
+
+  dword gILCAN1_DebugFlags              = 0;
+
+  const dword cILCAN1_ILIndDebug      = 0x0001;
+  const dword cILCAN1_ILInitDebug     = 0x0002;
+  const dword cILCAN1_ILControlDebug  = 0x0010;
+  
+  const dword cILCAN1_NSToS = 1000000000;
+
+  // Internally used variables and timers:
+  dword   gILCAN1_BusContext = 0;
+  int     gILCAN1_EnableNode = 1;
+}
+
+/*****************************************************************************
+ * Include Initialization
+ *****************************************************************************/
+
+void ILCAN1_OnInit ()
+{
+  gILCAN1_BusContext = GetBusNameContext(gCAN1BusName);
+  if (gILCAN1_BusContext == 0)
+  {
+    write("[%.6f %NODE_NAME%] ERROR: cannot determine bus context of CAN bus '%s'!", TimeNowNS()/cILCAN1_NSToS, gCAN1BusName);
+  }
+
+  gILCAN1_EnableNode = ((@sysvar::IL_CAN1::NODES::N_%NODE_NAME%::EnableNode == 0) || (@sysvar::IL_CAN1::enable_AllNodes == 0)) ? 0 : 1;
+ 
+  if (strncmp("%NODE_NAME%", "_BC_F", 50) == 0)
+  {
+    gILCAN1_DebugFlags |= cILCAN1_ILIndDebug;
+    gILCAN1_DebugFlags |= cILCAN1_ILInitDebug;
+    gILCAN1_DebugFlags |= cILCAN1_ILControlDebug;
+  }
+
+  if (@sysvar::IL::StartWithoutSending > 0)
+  {
+    SetBusContext(gILCAN1_BusContext);
+    ILControlInit(); // Initialize IL; but disables the automatic IL start
+    if (@sysvar::IL::StartWithoutSending > 0)
+      NMCAN1_Enable(0); // defined in the NM-Helper include file
+    ILCAN1_Enable(0);
+  }
+  else
+  {
+    // The IL must be initialized anyway. Otherwise, we cannot set specific operation modes for signals and/or messages.
+    SetBusContext(gILCAN1_BusContext);
+    ILControlInit(); // Initialize IL; but disables the automatic IL start
+    ILCAN1_Enable(1);
+    NMCAN1_Enable(1); // defined in the NM-Helper include file
+  }
+}
+
+void ILCAN1_OnStart ()
+{
+  if (gILCAN1_DebugFlags & cILCAN1_ILInitDebug)
+  {
+    write("+++++++++ %NODE_NAME%: IL on start()");
+  }
+
+  if ((@sysvar::IL::Klemme15 > 0) && (@sysvar::IL::StartWithoutSending == 0))
+  {
+    ILCAN1_SetIgnitionState(@sysvar::IL::Klemme15);
+  }
+  if (@sysvar::IL::StartWithoutSending == 0)
+  {
+    ILCAN1_StartStop(1);
+  }
+}
+
+/*****************************************************************************
+ * IL Control
+ * These functions can be called from the main program or react on
+ * panel controls or the NM status of the controlled node.
+ *****************************************************************************/
+
+void ILCAN1_Enable (int enable)
+{
+  /* void ILCAN1_Enable (int enable);
+   *
+   *  Function enables/disables the cyclic sending of all messages
+   *  that are controlled by the Interaction Layer.
+   */
+  int wasEnabled = -1;
+
+  //if (enable == wasEnabled) return;
+  SetBusContext(gILCAN1_BusContext);
+  if (gILCAN1_DebugFlags & cILCAN1_ILControlDebug)
+  {
+    write("[%.6f %NODE_NAME%] ILCAN1_Enable(%d) called ...", TimeNowNS()/cILCAN1_NSToS, enable);
+  }
+
+  if (enable == 1)
+  {
+    gILCAN1_EnableNode = 1;
+    ILControlSimulationOn();
+    ILCAN1_SetIgnitionState(@sysvar::IL::Klemme15);
+    ILCAN1_WaitResume(@sysvar::IL::Klemme15);
+    StartSim(gILCAN1_BusContext, 1, 3);
+  }
+  else
+  {
+    StopSim(gILCAN1_BusContext, 1, 3);
+    ILControlSimulationOff();
+    gILCAN1_EnableNode = 0;
+  }
+
+  wasEnabled = enable;
+}
+
+void ILCAN1_StartStop (int dostart)
+{
+  /* void ILCAN1_StartStop (int dostart);
+   *
+   *  Function starts/stops the cyclic sending of all messages
+   *  that are controlled by the Interaction Layer.
+   */
+  int wasStarted = -1;
+
+  //if (dostart == wasStarted) return;
+  if (gILCAN1_EnableNode == 0) return;
+
+  SetBusContext(gILCAN1_BusContext);
+  if (gILCAN1_DebugFlags & cILCAN1_ILControlDebug)
+  {
+    write("[%.6f %NODE_NAME%] ILCAN1_StartStop(%d) called ...", TimeNowNS()/cILCAN1_NSToS, dostart);
+  }
+
+  if (dostart == 1)
+  {
+    ILControlStart();
+    StartSim(gILCAN1_BusContext, 1, 2);
+  }
+  else
+  {
+    StopSim(gILCAN1_BusContext, 1, 2);
+    ILControlStop();
+  }
+
+  wasStarted = dostart;
+}
+
+void ILCAN1_WaitResume (int resume)
+{
+  /* void ILCAN1_WaitResume (int resume);
+   *
+   *  Function resumes/waits the cyclic sending of all messages
+   *  that are controlled by the Interaction Layer.
+   */
+  int wasResumed = -1;
+
+  //if (resume == wasResumed) return;
+  if (gILCAN1_EnableNode == 0) return;
+
+  SetBusContext(gILCAN1_BusContext);
+  if (gILCAN1_DebugFlags & cILCAN1_ILControlDebug)
+  {
+    write("[%.6f %NODE_NAME%] ILCAN1_WaitResume(%d) called ...", TimeNowNS()/cILCAN1_NSToS, resume);
+  }
+
+  if (resume == 1)
+  {
+    ILControlResume(0);
+    StartSim(gILCAN1_BusContext, 1, 1);
+  }
+  else
+  {
+    StopSim(gILCAN1_BusContext, 1, 1);
+    ILControlWait(0);
+  }
+
+  wasResumed = resume;
+}
+
+void ILCAN1_SetIgnitionState (int ignition)
+{
+  /* void ILCAN1_SetIgnitionState (int ignition);
+   *
+   *  Function sets the ignition state at the Interaction Layer.
+   */
+  int wasIgnition = -1;
+
+  //if (ignition == wasIgnition) return;
+  SetBusContext(gILCAN1_BusContext);
+  if (gILCAN1_DebugFlags & cILCAN1_ILControlDebug)
+  {
+    write("[%.6f %NODE_NAME%] ILCAN1_SetIgnitionState(%d) called ...", TimeNowNS()/cILCAN1_NSToS, ignition);
+  }
+
+  if (ignition > 0)
+  {
+    //@sysvar::_ILControl::Ignition = 1;
+    SysSetVariableInt("_ILControl", "Ignition", 1);
+    ILActivateClamp15();
+  }
+  else
+  {
+    ILDeactivateClamp15();
+    //@sysvar::_ILControl::Ignition = 0;
+    SysSetVariableInt("_ILControl", "Ignition", 0);
+  }
+
+  wasIgnition = ignition;
+}
+
+void ILCAN1_OnEnvKlemme15(int enable)
+{
+  if ((enable == 1) && (@sysvar::IL::StartWithoutSending == 1) && ((TimeNowNS() != 0))) {
+    NMCAN1_Enable(1); //sequence issue: NM needs to be enabled first
+  }
+  ILCAN1_SetIgnitionState(enable);
+  if ((@sysvar::IL::StartWithoutSending == 0) && (TimeNowNS() != 0))
+  {
+    if (enable > 0) {
+      NMCAN1_RequestBus(); // defined in the NM-Helper include file
+    } else {
+      NMCAN1_ReleaseBus(); // defined in the NM-Helper include file
+    }
+  }
+}
+
+void ILCAN1_OnEnvStartWithoutSending(int enable)
+{
+  if(enable == 0)
+  {
+    NMCAN1_Enable(1); // defined in the NM-Helper include file
+    ILCAN1_Enable(1);
+    // Restore ignition state at IL (and toggle if on):
+    ILCAN1_SetIgnitionState(0);
+    ILCAN1_SetIgnitionState(@sysvar::IL::Klemme15);
+  }
+}
+
+/*****************************************************************************
+ * EOF
+ *****************************************************************************/

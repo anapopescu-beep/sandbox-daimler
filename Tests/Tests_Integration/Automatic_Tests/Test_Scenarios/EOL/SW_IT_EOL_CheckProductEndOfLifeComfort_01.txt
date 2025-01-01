@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_EOL_0006
+ARCH_SW_EOL_0006: EOL_Autotest_CheckProductEndOfLifeComfort function shall verify if the Comfort counter has exceeded the Comfort EOL threshold(NVP_u32ComfortCyclesEOLThrs = 60000).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeComfort.
+
+Action: ARCH_SW_EOL_0006
+
+	Step 3: Check if CPU is stopped at line *pu8TestResult = u8ResultOfAutoTest;. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_EOL_0006
+
+	Step 4: Evaluate if u8ResultOfAutoTest is 0x1 
+		Expected result:  u8ResultOfAutoTest == 0x1
+
+Postcondition
+
+	Step 5: Return ECU to default values

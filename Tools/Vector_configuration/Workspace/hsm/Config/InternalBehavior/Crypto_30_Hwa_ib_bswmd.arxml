@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_4-0-3.xsd">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="ff55d029-386d-43a2-b3c2-dfef4c7a5e36">
+      <SHORT-NAME>MICROSAR</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="1932d651-7a03-4fe4-ac3f-c6f39c056938">
+          <SHORT-NAME>Crypto_30_Hwa_ib_bswmd</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE UUID="8ab87358-b994-4626-91f0-df38b2d3f604">
+              <SHORT-NAME>BswModuleDescriptions</SHORT-NAME>
+              <ELEMENTS>
+                <BSW-MODULE-DESCRIPTION UUID="6b94168d-8da2-4a30-bd57-1854a28b96b2">
+                  <SHORT-NAME>Crypto</SHORT-NAME>
+                  <PROVIDED-ENTRYS>
+                    <BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                      <BSW-MODULE-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/Crypto_30_Hwa_ib_bswmd/BswModuleDescriptions/Crypto_30_Hwa_MainFunction</BSW-MODULE-ENTRY-REF>
+                    </BSW-MODULE-ENTRY-REF-CONDITIONAL>
+                  </PROVIDED-ENTRYS>
+                  <INTERNAL-BEHAVIORS>
+                    <BSW-INTERNAL-BEHAVIOR UUID="726b6993-6be6-476b-ac79-66d9af8a8f0a">
+                      <SHORT-NAME>Crypto_30_Hwa</SHORT-NAME>
+                      <EXCLUSIVE-AREAS>
+                        <EXCLUSIVE-AREA UUID="267d4762-4623-4e81-ac94-8ab3a91560f6">
+                          <SHORT-NAME>CRYPTO_30_HWA_EXCLUSIVE_AREA_0</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects the HAL driver objects on locking and freeing. Also LibCv key read locking is donewith the protection of this exclusive area.</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="5876f147-da3b-4b90-a7d9-0fdea55b718f">
+                          <SHORT-NAME>CRYPTO_30_HWA_EXCLUSIVE_AREA_1</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects protects hardware access to AES/AEAD/CMAC crypto accelerators</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="6991f881-7f6c-44b8-b4af-47383bb3be02">
+                          <SHORT-NAME>CRYPTO_30_HWA_EXCLUSIVE_AREA_2</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects hardware access to Hash crypto accelerators</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                        <EXCLUSIVE-AREA UUID="2c7750a4-5e68-4539-a34d-5f6c4a4aac51">
+                          <SHORT-NAME>CRYPTO_30_HWA_EXCLUSIVE_AREA_3</SHORT-NAME>
+                          <DESC>
+                            <L-2 L="FOR-ALL">This critical section protects hardware access to Trng crypto accelerators</L-2>
+                          </DESC>
+                        </EXCLUSIVE-AREA>
+                      </EXCLUSIVE-AREAS>
+                      <ENTITYS>
+                        <BSW-SCHEDULABLE-ENTITY UUID="e4046133-09e3-43df-87d7-a1ea97ee17bf">
+                          <SHORT-NAME>Crypto_30_Hwa_MainFunction</SHORT-NAME>
+                          <IMPLEMENTED-ENTRY-REF DEST="BSW-MODULE-ENTRY">/MICROSAR/Crypto_30_Hwa_ib_bswmd/BswModuleDescriptions/Crypto_30_Hwa_MainFunction</IMPLEMENTED-ENTRY-REF>
+                        </BSW-SCHEDULABLE-ENTITY>
+                      </ENTITYS>
+                      <EVENTS>
+                        <BSW-BACKGROUND-EVENT UUID="6eca0def-8cfa-4df2-a4e4-185d2f7c7e30">
+                          <SHORT-NAME>Crypto_30_Hwa_MainFunctionBackgroundEvent0</SHORT-NAME>
+                          <STARTS-ON-EVENT-REF DEST="BSW-SCHEDULABLE-ENTITY">/MICROSAR/Crypto_30_Hwa_ib_bswmd/BswModuleDescriptions/Crypto/Crypto_30_Hwa/Crypto_30_Hwa_MainFunction</STARTS-ON-EVENT-REF>
+                        </BSW-BACKGROUND-EVENT>
+                      </EVENTS>
+                    </BSW-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </BSW-MODULE-DESCRIPTION>
+                <BSW-MODULE-ENTRY UUID="ef918d44-66df-4a99-9e35-940fe5129802">
+                  <SHORT-NAME>Crypto_30_Hwa_MainFunction</SHORT-NAME>
+                  <CALL-TYPE>SCHEDULED</CALL-TYPE>
+                  <EXECUTION-CONTEXT>TASK</EXECUTION-CONTEXT>
+                </BSW-MODULE-ENTRY>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

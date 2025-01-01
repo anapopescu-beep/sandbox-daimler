@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0605; ARCH_SW_DIA_0606; ARCH_SW_DIA_0607; ARCH_SW_DIA_0608; ARCH_SW_DIA_0609; ARCH_SW_DIA_0610; ARCH_SW_DIA_0611
+ARCH_SW_DIA_0605: Service 0x22 (Read Data By Identifier) will be implemented for DID 010A (Vehicle Odometer in Low Resolution)
+ARCH_SW_DIA_0606: The Read Vehicle Odometer in Low Resolution service shall be available in the following sessions: ?Default Session (0x01) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0607: The Read Vehicle Odometer in Low Resolution service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0608: DataIdentifier of the Read Vehicle Odometer in Low Resolution shall be: 0x010A
+ARCH_SW_DIA_0609: Response data length shall be 2 bytes long. Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0610: Bytes #2-#3:  DataIdentifier of the Read Vehicle Odometer in Low Resolution shall be: 0x010A.
+ARCH_SW_DIA_0611: Byte #4 #5: ?Vehicle Odometer In Low Resolution Offset is 0 (i.e. 0x00 = 0 km) Resolution is 16 (e.g. 0x10 = 16 km) Range is 0 km -> 1048544 km.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Vehicle_Odometer_in_Low_Resolution_Read_Vehicle_Odometer_in_Low_Resolution_ReadData*.
+
+Action: ARCH_SW_DIA_0605; ARCH_SW_DIA_0606; ARCH_SW_DIA_0607; ARCH_SW_DIA_0608; ARCH_SW_DIA_0609; ARCH_SW_DIA_0610; ARCH_SW_DIA_0611
+
+	Step 3: Send diag request for 22 010A and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Vehicle_Odometer_in_Low_Resolution_Read_Vehicle_Odometer_in_Low_Resolution_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

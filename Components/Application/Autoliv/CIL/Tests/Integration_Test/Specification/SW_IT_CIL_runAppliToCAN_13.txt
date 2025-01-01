@@ -1,0 +1,32 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0170
+ARCH_SW_CIL_0170: If PRE-SAFE12 is executed (cycle 10) (and his next cycle ) then RBTM _FL/FR Actv_Lvl_ST35 should be equal to 0x0C=�PRE-SAFE 12� no matter the source of the request: API interface, Diagnostic request.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_ManageActiveLevelSignal.
+
+Action: ARCH_SW_CIL_0170
+
+	Step 3: Check if variable CIL_u8Actv_Lvl is I_C06_RBTM_LVL_STAT_PROFILE10. 
+		Expected result:  12
+
+Action: ARCH_SW_CIL_0170
+
+	Step 4: Check if signal RBTMFL_Actv_Lvl_ST35 value is I_C06_RBTM_LVL_STAT_PROFILE12. 
+		Expected result:  12
+
+Postcondition
+
+	Step 5: Return ECU to default values

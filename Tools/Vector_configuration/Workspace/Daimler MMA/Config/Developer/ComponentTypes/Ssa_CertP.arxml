@@ -1,0 +1,503 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--This file was saved with a tool from Vector Informatik GmbH-->
+<AUTOSAR xsi:schemaLocation="http://autosar.org/schema/r4.0 AUTOSAR_00048.xsd" xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <AR-PACKAGES>
+    <AR-PACKAGE UUID="BF49836D-9B09-4B38-A95A-87664ECFB6DD">
+      <SHORT-NAME>SecurityArchitecture</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE UUID="3C46045F-2B6B-49F4-9218-9DA34D15029F">
+          <SHORT-NAME>ComponentTypes</SHORT-NAME>
+          <ELEMENTS>
+            <APPLICATION-SW-COMPONENT-TYPE UUID="3DDBAA33-E8FD-4422-A919-4981A5BDD8C0">
+              <SHORT-NAME>Ssa_CertP</SHORT-NAME>
+              <PORTS>
+                <P-PORT-PROTOTYPE UUID="43AFE5CC-DF3A-43E9-8CD5-3F07F80EBA68">
+                  <SHORT-NAME>CallbackNotification_SignatureVerify</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Callback notification from the CSM signature verification job used for verifying the signature of certificates.
+Configuration Variant(s): Asynchronous job processing.</L-2>
+                  </DESC>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <PROVIDED-COM-SPECS>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CallbackNotification/CallbackNotification</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                  </PROVIDED-COM-SPECS>
+                  <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CallbackNotification</PROVIDED-INTERFACE-TREF>
+                </P-PORT-PROTOTYPE>
+                <P-PORT-PROTOTYPE UUID="F5A2C15B-B695-4104-803C-1D7BE8D7A15C">
+                  <SHORT-NAME>CertP_Functions</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <PROVIDED-COM-SPECS>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/AttributeCertificate_Parse</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Compare</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Parse</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Verify</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Verify_Extended</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                    <SERVER-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/ParseTime</OPERATION-REF>
+                      <QUEUE-LENGTH>1</QUEUE-LENGTH>
+                    </SERVER-COM-SPEC>
+                  </PROVIDED-COM-SPECS>
+                  <PROVIDED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/CertP_Functions</PROVIDED-INTERFACE-TREF>
+                </P-PORT-PROTOTYPE>
+                <R-PORT-PROTOTYPE UUID="E23E1B65-F43B-4729-92E8-D6361C654F11">
+                  <SHORT-NAME>Coding_VIN</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <REQUIRED-COM-SPECS>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/Coding_VIN/Get</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                  </REQUIRED-COM-SPECS>
+                  <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/Coding_VIN</REQUIRED-INTERFACE-TREF>
+                </R-PORT-PROTOTYPE>
+                <R-PORT-PROTOTYPE UUID="4365D986-4B40-4D7D-9D80-EB2DFEFACA74">
+                  <SHORT-NAME>Key_SignatureRamKey</SHORT-NAME>
+                  <DESC>
+                    <L-2 L="FOR-ALL">Sets a key just before the verification of a signature.
+Connect to a Csm Key which is able to store a signature key and is used in job of port CsmSignatureVerify.
+</L-2>
+                  </DESC>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <REQUIRED-COM-SPECS>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeyElementGet</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeyElementSet</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeySetValid</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                  </REQUIRED-COM-SPECS>
+                  <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey</REQUIRED-INTERFACE-TREF>
+                </R-PORT-PROTOTYPE>
+                <R-PORT-PROTOTYPE UUID="4C49B9A6-5C21-4489-866D-175953F1F06F">
+                  <SHORT-NAME>SecLog_FailedCertVerificationEvent</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <REQUIRED-COM-SPECS>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecLog_FailedCertVerificationEvent/FailedCertificateVerification</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                  </REQUIRED-COM-SPECS>
+                  <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/SecLog_FailedCertVerificationEvent</REQUIRED-INTERFACE-TREF>
+                </R-PORT-PROTOTYPE>
+                <R-PORT-PROTOTYPE UUID="3D8027B3-5158-4D2B-BCF1-3B2A3163D06A">
+                  <SHORT-NAME>SecLog_SuccessfulCertVerificationEvent</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <REQUIRED-COM-SPECS>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecLog_SuccessfulCertVerificationEvent/SuccessfulCertificateVerification</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                  </REQUIRED-COM-SPECS>
+                  <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/SecLog_SuccessfulCertVerificationEvent</REQUIRED-INTERFACE-TREF>
+                </R-PORT-PROTOTYPE>
+                <R-PORT-PROTOTYPE UUID="EC95BF30-0F55-41AE-A4F0-B549F32573BE">
+                  <SHORT-NAME>TimeM_RealTime</SHORT-NAME>
+                  <ADMIN-DATA>
+                    <SDGS>
+                      <SDG GID="DV:DEV">
+                        <SD GID="DV:ImportModePreset">Keep</SD>
+                      </SDG>
+                    </SDGS>
+                  </ADMIN-DATA>
+                  <REQUIRED-COM-SPECS>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Compare</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Get</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Set</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                  </REQUIRED-COM-SPECS>
+                  <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/TimeM_RealTime</REQUIRED-INTERFACE-TREF>
+                </R-PORT-PROTOTYPE>
+                <R-PORT-PROTOTYPE UUID="10502C17-B456-4352-A277-F547AC9A79AF">
+                  <SHORT-NAME>SsaCdd_Csm</SHORT-NAME>
+                  <REQUIRED-COM-SPECS>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface/CancelJob</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface/Hash</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface/SignatureGenerate</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                    <CLIENT-COM-SPEC>
+                      <OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface/SignatureVerify</OPERATION-REF>
+                    </CLIENT-COM-SPEC>
+                  </REQUIRED-COM-SPECS>
+                  <REQUIRED-INTERFACE-TREF DEST="CLIENT-SERVER-INTERFACE">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface</REQUIRED-INTERFACE-TREF>
+                </R-PORT-PROTOTYPE>
+              </PORTS>
+              <INTERNAL-BEHAVIORS>
+                <SWC-INTERNAL-BEHAVIOR UUID="DD1DBB9F-8886-45DF-87F0-5D1F0FA3CC9C">
+                  <SHORT-NAME>Ssa_CertP_InternalBehavior</SHORT-NAME>
+                  <EVENTS>
+                    <OPERATION-INVOKED-EVENT UUID="F590797E-0BCF-44B4-B430-9ED1B76D6C1D">
+                      <SHORT-NAME>OIT_CertP_Functions_AttributeCertificate_Parse_CertP_Functions_AttributeCertificate_Parse</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_AttributeCertificate_Parse</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/AttributeCertificate_Parse</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                    <OPERATION-INVOKED-EVENT UUID="0B653604-A515-4E91-B93F-96B29000FF92">
+                      <SHORT-NAME>OIT_CertP_Certificate_Compare_CertP_Functions_Certificate_Compare</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_Certificate_Compare</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Compare</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                    <OPERATION-INVOKED-EVENT UUID="BB9E5B19-6507-4685-94F5-F32C922CCAD0">
+                      <SHORT-NAME>OIT_CertP_Parse_CertP_Functions_CertP_Parse</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_Certificate_Parse</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Parse</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                    <OPERATION-INVOKED-EVENT UUID="D5281023-285E-4681-B921-36B844D63E04">
+                      <SHORT-NAME>OIT_CertP_Verify_CertP_Functions_Cert_Verify</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_Certificate_Verify</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Verify</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                    <OPERATION-INVOKED-EVENT UUID="59AEC26D-D986-43DE-A97B-4F39752913DB">
+                      <SHORT-NAME>OIT_CertP_Functions_Certificate_Verify_Extended_CertP_Functions_Certificate_Verify_Extended</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_Certificate_Verify_Extended</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/Certificate_Verify_Extended</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                    <OPERATION-INVOKED-EVENT UUID="95490C2C-BA96-4001-958F-1A9FA8BF7D1E">
+                      <SHORT-NAME>OIT_CallbackNotification_SignatureVerify_CallbackNotification_CallbackNotification_SignatureVerify_CallbackNotification</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_CsmCallbackNotification_SignatureVerify</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CallbackNotification_SignatureVerify</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CallbackNotification/CallbackNotification</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                    <INIT-EVENT UUID="86CDCADF-4FEA-4E3E-82FC-DFE0597765F3">
+                      <SHORT-NAME>Ssa_CertP_InitEvent</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_Init</START-ON-EVENT-REF>
+                    </INIT-EVENT>
+                    <OPERATION-INVOKED-EVENT UUID="5605CE34-58BB-42BB-91DC-4A31027CD8C4">
+                      <SHORT-NAME>OIT_CertP_Functions_ParseTime_CertP_Functions_ParseTime</SHORT-NAME>
+                      <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior/Ssa_CertP_ParseTime</START-ON-EVENT-REF>
+                      <OPERATION-IREF>
+                        <CONTEXT-P-PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</CONTEXT-P-PORT-REF>
+                        <TARGET-PROVIDED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/CertP_Functions/ParseTime</TARGET-PROVIDED-OPERATION-REF>
+                      </OPERATION-IREF>
+                    </OPERATION-INVOKED-EVENT>
+                  </EVENTS>
+                  <INCLUDED-DATA-TYPE-SETS>
+                    <INCLUDED-DATA-TYPE-SET>
+                      <DATA-TYPE-REFS>
+                        <DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/SecurityArchitecture/DataTypes/Ssa_KeyElementType</DATA-TYPE-REF>
+                      </DATA-TYPE-REFS>
+                    </INCLUDED-DATA-TYPE-SET>
+                  </INCLUDED-DATA-TYPE-SETS>
+                  <PORT-API-OPTIONS>
+                    <PORT-API-OPTION>
+                      <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                      <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                      <INDIRECT-API>false</INDIRECT-API>
+                      <PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CallbackNotification_SignatureVerify</PORT-REF>
+                    </PORT-API-OPTION>
+                    <PORT-API-OPTION>
+                      <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                      <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                      <INDIRECT-API>false</INDIRECT-API>
+                      <PORT-REF DEST="P-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/CertP_Functions</PORT-REF>
+                    </PORT-API-OPTION>
+                    <PORT-API-OPTION>
+                      <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                      <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                      <INDIRECT-API>false</INDIRECT-API>
+                      <PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Coding_VIN</PORT-REF>
+                    </PORT-API-OPTION>
+                    <PORT-API-OPTION>
+                      <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                      <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                      <INDIRECT-API>false</INDIRECT-API>
+                      <PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Key_SignatureRamKey</PORT-REF>
+                    </PORT-API-OPTION>
+                    <PORT-API-OPTION>
+                      <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                      <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                      <INDIRECT-API>false</INDIRECT-API>
+                      <PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SecLog_FailedCertVerificationEvent</PORT-REF>
+                    </PORT-API-OPTION>
+                    <PORT-API-OPTION>
+                      <ENABLE-TAKE-ADDRESS>false</ENABLE-TAKE-ADDRESS>
+                      <ERROR-HANDLING>NO-TRANSFORMER-ERROR-HANDLING</ERROR-HANDLING>
+                      <INDIRECT-API>false</INDIRECT-API>
+                      <PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/TimeM_RealTime</PORT-REF>
+                    </PORT-API-OPTION>
+                  </PORT-API-OPTIONS>
+                  <RUNNABLES>
+                    <RUNNABLE-ENTITY UUID="D08BD2F2-70AF-42A9-B158-C980B416D9E3">
+                      <SHORT-NAME>Ssa_CertP_AttributeCertificate_Parse</SHORT-NAME>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SYMBOL>Ssa_CertP_AttributeCertificate_Parse</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="91A4FEB5-3ED0-4407-9108-09478C9D479B">
+                      <SHORT-NAME>Ssa_CertP_Certificate_Compare</SHORT-NAME>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SYMBOL>Ssa_CertP_Certificate_Compare</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="C7CD750B-3835-4A3F-8782-C6C6304A1CF5">
+                      <SHORT-NAME>Ssa_CertP_Certificate_Parse</SHORT-NAME>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SYMBOL>Ssa_CertP_Certificate_Parse</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="F9956EFF-4500-4637-A403-A21CFBE9C606">
+                      <SHORT-NAME>Ssa_CertP_Certificate_Verify</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Verifies the certificate against issuer.</L-2>
+                      </DESC>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SERVER-CALL-POINTS>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="6B189647-0B4E-4081-9EF1-8A8B0D2280F7">
+                          <SHORT-NAME>SC_Coding_VIN_Get</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Coding_VIN</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/Coding_VIN/Get</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="622EB8A9-32B2-4120-A3A7-BDB75E939BB2">
+                          <SHORT-NAME>SC_Key_SignatureRamKey_KeyElementSet</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Key_SignatureRamKey</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeyElementSet</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="25C1F0F0-75C6-409B-8F04-A5AEF87EE3C5">
+                          <SHORT-NAME>SC_Key_SignatureRamKey_KeySetValid</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Key_SignatureRamKey</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeySetValid</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="56564AE3-17E2-4FD6-B16F-FEA8DCB9DF3E">
+                          <SHORT-NAME>SC_SecLog_FailedCertVerificationEvent_FailedCertificateVerification</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SecLog_FailedCertVerificationEvent</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecLog_FailedCertVerificationEvent/FailedCertificateVerification</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="BA5B775C-1E12-47E7-BFF8-DE1B67F4C139">
+                          <SHORT-NAME>SC_SecLog_SuccessfulCertVerificationEvent_SuccessfulCertificateVerification</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SecLog_SuccessfulCertVerificationEvent</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecLog_SuccessfulCertVerificationEvent/SuccessfulCertificateVerification</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="3E7E991B-8E7E-4918-921D-56AEFF67065E">
+                          <SHORT-NAME>SC_TimeM_RealTime_TimeM_CompareRealTime</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/TimeM_RealTime</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Compare</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="0F402A87-A0A7-4654-9654-5DF1A77B5AF5">
+                          <SHORT-NAME>SC_TimeM_RealTime_TimeM_GetRealTime</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/TimeM_RealTime</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Get</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="2335B8BC-96C3-4EC8-86F4-F9B857D7C217">
+                          <SHORT-NAME>SC_SsaCdd_Csm_SignatureVerify</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SsaCdd_Csm</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface/SignatureVerify</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                      </SERVER-CALL-POINTS>
+                      <SYMBOL>Ssa_CertP_Certificate_Verify</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="A16542C1-3B7F-4A70-B39F-ABB45706851D">
+                      <SHORT-NAME>Ssa_CertP_Certificate_Verify_Extended</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Verifies the certificate against issuer. Do additional checks, e.g. against ECU certificate.</L-2>
+                      </DESC>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SERVER-CALL-POINTS>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="84DED8EA-B434-428C-A45B-09AE01747BBE">
+                          <SHORT-NAME>SC_Coding_VIN_Get</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Coding_VIN</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/Coding_VIN/Get</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="33CFBB43-0D1F-4B25-B9A9-EDE6881A1EA5">
+                          <SHORT-NAME>SC_Key_SignatureRamKey_KeyElementSet</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Key_SignatureRamKey</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeyElementSet</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="9678BEE5-363C-4467-906F-7900CBDC3550">
+                          <SHORT-NAME>SC_Key_SignatureRamKey_KeySetValid</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Key_SignatureRamKey</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/extSwc/Csm_swc/Interfaces/CsmKeyManagement_Ssa_SignatureRamKey/KeySetValid</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="314AB7AC-BDD0-4062-911D-332E28CBAEF7">
+                          <SHORT-NAME>SC_SecLog_FailedCertVerificationEvent_FailedCertificateVerification</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SecLog_FailedCertVerificationEvent</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecLog_FailedCertVerificationEvent/FailedCertificateVerification</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="09D47ECF-A385-4858-A3CB-B15744C8B1FD">
+                          <SHORT-NAME>SC_SecLog_SuccessfulCertVerificationEvent_SuccessfulCertificateVerification</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SecLog_SuccessfulCertVerificationEvent</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SecLog_SuccessfulCertVerificationEvent/SuccessfulCertificateVerification</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="73D96C5C-5E14-46A7-9742-8943A7EDE63A">
+                          <SHORT-NAME>SC_TimeM_RealTime_Compare</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/TimeM_RealTime</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Compare</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="FC07FDB5-8233-49A3-8CA6-19A76DDC2429">
+                          <SHORT-NAME>SC_TimeM_RealTime_Get</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/TimeM_RealTime</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/TimeM_RealTime/Get</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                        <SYNCHRONOUS-SERVER-CALL-POINT UUID="F2DF4982-C8BB-4A30-BE96-A02D6061CD1C">
+                          <SHORT-NAME>SC_SsaCdd_Csm_SignatureVerify</SHORT-NAME>
+                          <OPERATION-IREF>
+                            <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/SecurityArchitecture/ComponentTypes/Ssa_CertP/SsaCdd_Csm</CONTEXT-R-PORT-REF>
+                            <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/SecurityArchitecture/PortInterfaces/SsaCdd_CryptoInterface/SignatureVerify</TARGET-REQUIRED-OPERATION-REF>
+                          </OPERATION-IREF>
+                        </SYNCHRONOUS-SERVER-CALL-POINT>
+                      </SERVER-CALL-POINTS>
+                      <SYMBOL>Ssa_CertP_Certificate_Verify_Extended</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="2777817B-DA6D-4069-A6DE-86AF5DA93FC7">
+                      <SHORT-NAME>Ssa_CertP_CsmCallbackNotification_SignatureVerify</SHORT-NAME>
+                      <DESC>
+                        <L-2 L="FOR-ALL">Configuration Variant(s): Asynchronous job processing.</L-2>
+                      </DESC>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SYMBOL>Ssa_CertP_CsmCallbackNotification_SignatureVerify</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="D68971F8-8E38-4718-A733-0D39619C2233">
+                      <SHORT-NAME>Ssa_CertP_Init</SHORT-NAME>
+                      <ADMIN-DATA>
+                        <SDGS>
+                          <SDG GID="edve:RunnableKind">
+                            <SD>InitRunnable</SD>
+                          </SDG>
+                        </SDGS>
+                      </ADMIN-DATA>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SYMBOL>Ssa_CertP_Init</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                    <RUNNABLE-ENTITY UUID="E586968F-BF38-4BF9-8A82-01C04FB205A2">
+                      <SHORT-NAME>Ssa_CertP_ParseTime</SHORT-NAME>
+                      <MINIMUM-START-INTERVAL>0</MINIMUM-START-INTERVAL>
+                      <CAN-BE-INVOKED-CONCURRENTLY>true</CAN-BE-INVOKED-CONCURRENTLY>
+                      <SYMBOL>Ssa_CertP_ParseTime</SYMBOL>
+                    </RUNNABLE-ENTITY>
+                  </RUNNABLES>
+                  <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                </SWC-INTERNAL-BEHAVIOR>
+              </INTERNAL-BEHAVIORS>
+            </APPLICATION-SW-COMPONENT-TYPE>
+            <SWC-IMPLEMENTATION UUID="CD6B52E0-6C26-4C02-8A4A-D4DD64C5B556">
+              <SHORT-NAME>Ssa_CertP_Implementation</SHORT-NAME>
+              <CODE-DESCRIPTORS>
+                <CODE UUID="0E3B2633-9FFF-4ECE-8E79-518ECAC4072A">
+                  <SHORT-NAME>Default</SHORT-NAME>
+                  <ARTIFACT-DESCRIPTORS>
+                    <AUTOSAR-ENGINEERING-OBJECT>
+                      <CATEGORY>SWSRC</CATEGORY>
+                    </AUTOSAR-ENGINEERING-OBJECT>
+                  </ARTIFACT-DESCRIPTORS>
+                </CODE>
+              </CODE-DESCRIPTORS>
+              <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/SecurityArchitecture/ComponentTypes/Ssa_CertP/Ssa_CertP_InternalBehavior</BEHAVIOR-REF>
+            </SWC-IMPLEMENTATION>
+          </ELEMENTS>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

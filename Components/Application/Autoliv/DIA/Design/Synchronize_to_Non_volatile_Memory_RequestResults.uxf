@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>13</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>195</x>
+      <y>169</y>
+      <w>2829</w>
+      <h>476</h>
+    </coordinates>
+    <panel_attributes>title:Synchronize_to_Non_volatile_Memory_RequestResults
+Start
+
+If
+	[DiagFunction_NvmWriteAll_Status == DIAGFUNCTION_NVMWRITEALL_FLAG_TRIGGERED]
+	*routineInfo = DIAGFUNCTION_ROUTINE_IN_PROGRESS
+
+	[DiagFunction_WriteAllFlag == DIAGFUNCTION_NVMWRITEALL_FLAG_COMPLETED]
+	*routineInfo = DIAGFUNCTION_ROUTINE_COMPLETED_SUCCESSFULLY
+
+	[else]
+	routineInfo = DIAGFUNCTION_ROUTINE_STOPPED_WITHOUT_RESULTS
+
+Return RTE_E_OK
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

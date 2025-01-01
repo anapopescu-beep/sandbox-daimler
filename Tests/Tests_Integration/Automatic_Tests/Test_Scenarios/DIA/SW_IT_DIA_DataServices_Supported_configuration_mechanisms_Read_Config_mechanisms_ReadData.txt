@@ -1,0 +1,39 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0725; ARCH_SW_DIA_0726; ARCH_SW_DIA_0727; ARCH_SW_DIA_0728; ARCH_SW_DIA_0729; ARCH_SW_DIA_0730
+ARCH_SW_DIA_0725: Service 0x22 (Read Data By Identifier) will be implemented for DID F131 (Supported Configuration Mechanisms)
+ARCH_SW_DIA_0726: Bytes #2-#3:  DataIdentifier of the Read Reprograming Capabilities shall be: 0xF130
+ARCH_SW_DIA_0727: The Read Supported Configuration Mechanisms service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0728: DataIdentifier of the Read Supported Configuration Mechanisms shall be: 0xF131
+ARCH_SW_DIA_0729: Response data length shall be 1 byte long Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0730: Byte #4: ?bits 0-7: Configuration Mechanisms
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Supported_configuration_mechanisms_Read_Config_mechanisms_ReadData*.
+
+Action: ARCH_SW_DIA_0725; ARCH_SW_DIA_0726; ARCH_SW_DIA_0727; ARCH_SW_DIA_0728; ARCH_SW_DIA_0729; ARCH_SW_DIA_0730
+
+	Step 3: Send diag request for 22 F131 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Supported_configuration_mechanisms_Read_Config_mechanisms_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

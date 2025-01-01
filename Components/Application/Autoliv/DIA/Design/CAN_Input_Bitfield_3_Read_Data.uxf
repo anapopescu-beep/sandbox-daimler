@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>1045</w>
+      <h>774</h>
+    </coordinates>
+    <panel_attributes>title:CAN Input Bitfield 3 Read Data
+Start
+Get values &amp; apply bitmasks for u8BeltHdOvr_FL &amp; stPTCoor4 signals
+
+	[ECU_SIDE_RBTM_FR == NVP_u8ECULocation]
+	u8BeltHdOvr_FR = u8BeltHdOvr_FL
+	u8BeltHdOvr_FL = 0
+
+	[Else]
+	u8BeltHdOvr_FR = 0
+
+Check Data for Null pointer
+If
+	[Data == nullPointer]
+	ret = NOT_OK
+	
+	[Data pointer valid]
+	Copy 'u8BeltHdOvr_FL' &amp; 'u8BeltHdOvr_FR' &amp; 'stPTCoor4' signals into Data Buffer
+	ret = OK
+EndIf
+Return ret
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

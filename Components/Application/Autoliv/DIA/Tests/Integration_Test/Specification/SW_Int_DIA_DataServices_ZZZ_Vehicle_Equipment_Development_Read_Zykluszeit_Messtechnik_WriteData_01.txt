@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0030; ARCH_SW_DIA_0152; ARCH_SW_DIA_0153; ARCH_SW_DIA_0394; ARCH_SW_DIA_0395
+ARCH_SW_DIA_0030: Service 0x2E will be implemented for DID 0311.
+ARCH_SW_DIA_0152: Request data shall be 3 byte long.
+ARCH_SW_DIA_0153: Runnable shall write Zykluszeit Messtechnik stored in Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development. Zykluszeit_Messtechnik
+ARCH_SW_DIA_0394: The new data written by Vehicle Equipment Configuration Data service (0x2E 0311) shall be stored in non-volatile memoy and shall be available only after reset.
+ARCH_SW_DIA_0395: Byte 0: Reserved (shall not be used) ----------------------------------------------- Byte1_bit0 - Activation/deactivation of PRE-SAFE function 0x00 - yes - PRE-SAFE function activated 0x01 - no - PRE-SAFE function not activated Byte1_bit1 - Activation/deactivation of Display message (signal RBTM_xy_Disp_Rq_ST3) 0x00 - yes - Display message activated 0x01 - no - Display message not activated Byte1_bit2 - Activation / deactivation of counter limit. 0x00 - yes - counter limit deactivated 0x01 - no - counter limit activated Byte1_bit3 - CRC Fault monitoring 0x00 - yes - deactivated 0x01 - no - Activated Byte1_bits4-7: Reserved ----------------------------------------------- Byte 2: Reserved (shall not be used).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData*.
+
+Action: ARCH_SW_DIA_0028; ARCH_SW_DIA_0142; ARCH_SW_DIA_0143;
+
+	Step 4: Send diag request for 2E 0311 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_ZZZ_Vehicle_Equipment_Development_Read_Zykluszeit_Messtechnik_WriteData was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Overwrite Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development with 0x1
+
+Postcondition
+
+	Step 7: Return ECU to default values

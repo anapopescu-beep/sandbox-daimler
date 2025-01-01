@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0117
+ARCH_SW_ATM_0117: ATM_runMainFunction shall call the  PAL_Autotest_CheckMosfetLowSC function.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_ATM_0117
+
+	Step 2: Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. 
+		Expected result:  BP set.
+
+	Step 3: Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).
+
+	Step 4: Step in function atm_PlayCyclicTests().
+
+	Step 5: Step in function atm_executeAutoTest().
+
+	Step 6: Set a breakpoint in PAL_Autotest_CheckMosfetLowSC().
+
+Action: ARCH_SW_ATM_0117
+
+	Step 7: Check if CPU stopped at PAL_Autotest_CheckMosfetLowSC()*. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 8: Return ECU to default values

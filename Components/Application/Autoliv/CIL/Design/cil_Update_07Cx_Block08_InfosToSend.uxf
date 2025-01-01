@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>7</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>350</x>
+      <y>56</y>
+      <w>587</w>
+      <h>834</h>
+    </coordinates>
+    <panel_attributes>title:cil_Update_07Cx_Block08_InfosToSend
+Start
+
+Call Rte_Call_pclMotor_P_GetPowerOrder function
+
+Check if PWM Duty Cycle is signed
+If
+	[TRUE]
+	s16PWMDutyCycle 6 right shift
+		 
+	[FALSE]
+	s16PWMDutyCycle 6 right shift
+EndIf
+
+Check if there is no overflow
+If
+	[s16PWMDutyCycle &gt; KS16_MAX_S8]
+	Set s16PWMDutyCycle to MAX_S8
+		 
+	[s16PWMDutyCycle &lt; KS16_MIN_S8]
+	Set s16PWMDutyCycle to MIN_S8
+
+	[ELSE]
+	QAC
+EndIf
+
+Cast s16PWMDutyCycle to uint8
+
+Call Rte_Read_prrSelectedCycle_u8CycleNumber function
+
+Call Rte_Read_prrCycleNumber_u8CycleNumber function
+
+Call Rte_Read_prrStepNumber_u8StepNumber function
+
+
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_01 = CU8_BLOCK_ID_08;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_02 = KU8_MAX;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_03 = KU8_MAX;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_04 = u8BeltProfile;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_05 = u8CurrentCycle;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_06 = u8CurrentStep;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_07 = u8PWMDutyCycle;
+   cil_stMeasurementFrameContent.Meas_RBTM_FL_08 = KU8_MAX;
+
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

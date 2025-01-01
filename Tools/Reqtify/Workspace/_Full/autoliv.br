@@ -1,0 +1,100 @@
+// Method to select a style in Excel sheet for SRM report
+METHOD Entity.myExcelStyles() : 
+{
+//   STRMATCHRE(THIS.document.type.name, "(?i:Integ|Unit Test)") 
+//   IF TRUE :
+//   {
+//      STRMATCH(attributeValue("Test Result"), "OK") 
+//      IF TRUE:
+//      {
+//         "OK style";
+//      } 
+//      ELSE :
+//      {
+//         STRMATCH(attributeValue("Test Result"), "NOK") 
+//         IF TRUE:
+//	      {
+//            "NOK style";
+//    	   } 
+//	      ELSE :
+//	      {
+//	         "Without format but centered";
+//	      }
+//      }
+//   } 
+//   ELSE :
+//   {
+//      STRMATCHRE(THIS.document.type.name, "(?i:Verif)") 
+//      IF TRUE:
+//      {
+//         $CNT(attributes) 
+//         IF 0 : 
+//         {
+//            "Without format but centered";
+//         } 
+//         ELSE: 
+//         {
+//            "NEGATIVE" $< attributes[STRMATCHRE(typeName,"(?i:result)")][TRUE].ident 
+//            IF TRUE :
+//            {
+//               STRCNT(attributeValue("Final Result")) 
+//               IF 0 : 
+//               {
+//                  "NOK"+" style";
+//               } 
+//               ELSE: 
+//               {
+//                  attributeValue("Final Result")+" style";
+//               }
+//            }
+//            ELSE:
+//            {
+// 		         "FAILED" $< STRLOWER(attributes[STRMATCHRE(typeName,"(?i:result)")][TRUE].ident) 
+// 		         IF TRUE :
+// 		         {
+//                  "NOK style";
+//               }
+//               ELSE:
+//               {
+//    	            "Test failed" $< attributes[STRMATCHRE(typeName,"(?i:result)")][TRUE].ident 
+//    	            IF TRUE :
+// 		            {
+//                     "NOK style";
+//                  }
+//                  ELSE: 
+//                  {
+//                     "OK style";
+//                  }
+//               }
+//            }
+//         }
+//      }
+//      ELSE: 
+//      {
+        "Without format but centered";
+//      }
+//   }
+};
+
+
+
+
+//RULE AbstractRequirement.inconsistentTestAttribute -e1 : {
+//(
+//  (STRMATCHRE(STRLOWER(THIS.attributes[typeName="VerificationMethod"].ident),"(?i:inte|module)") OR $NO(allReferencers[STRMATCHRE(STRLOWER(document.type.name), "(?i:inte|module)")]))
+//    AND
+//  (STRMATCHRE(STRLOWER(THIS.attributes[typeName="VerificationMethod"].ident),"(?i:verif)") OR $NO(allReferencers[STRMATCHRE(STRLOWER(document.type.name), "(?i:verif)")]))
+//)
+//AND
+//(
+//  (NOT(STRMATCHRE(STRLOWER(THIS.attributes[typeName="VerificationMethod"].ident),"(?i:inte|module)")) OR $SOME(allReferencers[STRMATCHRE(STRLOWER(document.type.name), "(?i:inte|module)")]))
+//    AND
+//  (NOT(STRMATCHRE(STRLOWER(THIS.attributes[typeName="VerificationMethod"].ident),"(?i:verif)")) OR $SOME(allReferencers[STRMATCHRE(STRLOWER(document.type.name), "(?i:verif)")]))
+//);
+//}LABEL "Inconsistent Test Attribute"|"Incoherence Attribut/Test";
+
+
+
+
+
+

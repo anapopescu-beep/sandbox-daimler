@@ -1,0 +1,2180 @@
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "..\Includes\Helper_Functions.cin"
+  #include "..\Includes\Debugger_Functions.cin"
+  #include "..\Includes\Diagnostic_Functions.cin"
+}
+
+/*------------------------------------------------------------------------------
+                                    GLOBALS
+ ------------------------------------------------------------------------------*/
+/* To declare the constants used throurough the entire module, and global variables */
+variables
+{
+/*-------------------------------Constants-------------------------------------*/
+
+/*----------------------------Global Variables---------------------------------*/
+  int actual_result = 0;
+  int expected_result = 0;
+}
+
+/*------------------------------------------------------------------------------
+                                REPORT INFO
+ ------------------------------------------------------------------------------*/
+/* Information to be added in the report. Mostly module specific */
+void addGeneralReportInfo()
+{
+testReportAddEngineerInfo("Test Engineer: " ,"Insert_Name");
+testReportAddSetupInfo("Debugger: " , "IC5000");
+testReportAddSetupInfo("Power Supply: " , "PSW 30-108");
+testReportAddSetupInfo("Mock-up: " , "SBE V2.1");
+}
+
+/*------------------------------------------------------------------------------
+                           ENVIROMENT INITIALIZATION
+------------------------------------------------------------------------------*/
+/* To prepare the test enviroment for the test execution. */
+/* The following checks will take place before executing the TC's:
+  - Identification of SW Version (ALV and customer)
+  - Identification of HW Version
+  - Check correct state of the SW.
+
+
+/*------------------------------------------------------------------------------
+                                TEST FUNCTIONS
+------------------------------------------------------------------------------*/
+/*------------------------- Test Preconditions ------------------------------*/
+/* For operations to ensure the correct execution of the test case, such as IGN_ON,
+checking that CAN communication is present, etc.
+/* Varies from module to module, use from Helper_Functions.cin only the ones you need */
+testfunction Precondtions()
+{
+  /*
+PRECONDITIONS:
+  1. Reset
+  2. Run
+  3. Check KL15 is on.
+  4. Authenticate with dev enhanced and wait for the "authenticated" message.
+  5. Check HW and SW version.
+  */
+  fctSetTestId (0);
+  debugger_deleteAllBreakpoints();
+  debugger_reset();
+  debugger_run();
+  fctIncrementTestStepId();
+  testStep(gTestIdStr, "Set Ignition to ON");
+  Check_KL15_ON();
+  
+  fctIncrementTestStepId();
+  testStep (gTestIdStr, "Check HW and SW versions"); 
+  diagFctSendRequestAndWaitForFirstResponse(dHW_VersionRequest, TRUE, FALSE); 
+  diagFctSendRequestAndWaitForFirstResponse(dSW_VersionRequest, TRUE, FALSE); 
+}
+
+/*------------------------- Test Postconditions ------------------------------*/
+/* For operations to ensure that after the test case was executed, the enviroment
+would go back to a blank state, to be ready for the next test step in queue. Call it a Cleanup phase. */
+testfunction Postconditions()
+{
+  testWaitForTimeout(2000);
+  debugger_deleteAllBreakpoints();
+  debugger_run();
+  testWaitForTimeout(1000);
+  fctIncrementTestStepId();
+  testStep(gTestIdStr, "Soft reset the ECU.");
+  ResetECU("SOFT");
+}
+
+/*------------------------------------------------------------------------------
+                                TEST EXECUTION
+------------------------------------------------------------------------------*/
+  
+  /*------------------------- Test scenario start ------------------------------*/
+
+testcase SW_IT_ATM_0001()
+{
+  testCaseTitle ("SW_IT_ATM_0001", "Test Initialization");
+  testCaseDescription ("Purpose of test: Purpose of test: Verify that all autotests are initialized with status NOT_DECIDED\n");
+  testCaseDescription ("Requirement Under Test: ARCH_SW_ATM_0001\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+ Precondtions();
+ debugger_setRelativeFunctionBpAtLine(84, "Os_Task_ApplInitTask_Core0");
+ fctIncrementTestStepId();
+ ExpectedTestResult(gTestIdStr,"Set a breakpoint in the task *ApplInitTask_Core0* at line *ATM_Init();*", "True\n",0);
+  
+ debugger_setRelativeFunctionBpAtLine(10, "ATM_Init");
+ fctIncrementTestStepId();
+ ExpectedTestResult(gTestIdStr,"Set a breakpoint in the task *ATM_Init* at line *atm_u16CurrentDecade = KU16_ZERO;*", "True\n",0);
+  
+ debugger_reset();
+ testWaitForTimeout(1000);
+ debugger_run();
+ fctIncrementTestStepId();
+ ExpectedTestResult(gTestIdStr,"Perform a reset, then run the SW.*", "True\n",0);
+  
+ debugger_isCPUStoppedAtBP();
+ fctIncrementTestStepId();
+ ExpectedTestResult(gTestIdStr,"Check if the SW has reached Step 1 breakpoint.*", "True\n",0);
+  
+ debugger_readVariable("uint8", "atm_au8AtStatuses,,app.elf", 0);
+ fctIncrementTestStepId();
+ ExpectedTestResult(gTestIdStr,"Evaluate au8AtStatuses to check if autotests are initialized with KU8_ATM_TEST_NOT_DECIDED.*", "0x4\n",0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0002()
+{
+  testCaseTitle ("SW_IT_ATM_0002", "Autotest results");
+  testCaseDescription ("Verify if each autotest returns a result and check if it's reported to the rest of the SW application\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0002\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  debugger_setRelativeFunctionBpAtLine(6, "RCM_cbk_RunResetCause_Autotest");
+  debugger_setRelativeFunctionBpAtLine(4, "RCM_cbk_RunResetCause_Autotest");
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Place a breakpoint in the function *RCM_cbk_RunResetCause_Autotest* at line *Rte_Call_pclRunResetCause_AutotestCallback(&u8TestResult); *", "True\n",0);
+
+  debugger_reset();
+  testWaitForTimeout(2000);
+  debugger_run();
+  testWaitForTimeout(2000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Check if CPU is stopped at the breakpoint.*", "True\n",0);
+  
+  debugger_readLocalVariable("u8TestResult");
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Read *u8TestResult* and confirm it is equal to KU8_ATM_TEST_NOT_DECIDED", "0x4\n",0);
+  
+  debugger_run();
+  debugger_setRelativeFunctionBpAtLine(42, "RCM_Autotest_RunResetCause");
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Place a breakpoint in the function *RCM_Autotest_RunResetCause* at line *pu8TestResult = u8ResultOfAutoTest; *", "True\n",0);
+  
+  testWaitForTimeout(2000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Check if CPU is stopped at the breakpoint.*", "True\n",0);
+  
+  debugger_readLocalVariable("u8TestResult");
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Read u8TestResult is equal to KU8_ATM_TEST_OK","0x1\n",0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0003()
+{
+  testCaseTitle ("SW_IT_ATM_0003", "Autotest main entry");
+  testCaseDescription ("Verify if ATM_runMainFunction is the entry point for execution in an autotest\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0003\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine (30, "PAL_Autotest_CheckMotorConnection");
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function PAL_Autotest_CheckMotorConnection() at line *Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT, &u8PreviousMosfetHighSCTestResult);*", "True\n", 0);
+  
+  debugger_deleteAllBreakpoints();
+  testWaitForTimeout(500);
+  debugger_setRelativeFunctionBpAtLine(69, "ATM_runMainFunction");
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in, and check if the we enter the ATM_runMainFunction.*", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0004()
+{
+  testCaseTitle ("SW_IT_ATM_0004", "Check critical autotests.");
+  testCaseDescription ("Verify that cyclic tests won't run unless critical tests are not passed or finished.\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0004\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(14, "ATM_Init");
+  debugger_reset();
+  debugger_run();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in ATM_Init at line *Cfg_SpecificFunction_Init_ATM();* and check if CPU is stopped at BP", "True\n", 0);
+
+  debugger_writeVariable("uint8", "atm_u8StartupTestIndex,,app.elf", 11, 0);
+  debugger_readVariable("uint8", "atm_u8StartupTestIndex,,app.elf", 0);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Change the value of atm_u8StartupTestIndex to 0x11.", "0x11\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(21, "ATM_runMainFunction");
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayOneShotTests();* and run the SW. ", "True\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0005()
+{
+  testCaseTitle ("SW_IT_ATM_0005", "Check critical autotests.");
+  testCaseDescription ("Verify that autotests are inhibited.\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0030, ARCH_SW_ATM_0031, ARCH_SW_ATM_0032, ARCH_SW_ATM_0033, ARCH_SW_ATM_0034, ARCH_SW_ATM_0035, ARCH_SW_ATM_0036, ARCH_SW_ATM_0037, ARCH_SW_ATM_0038, ARCH_SW_ATM_0039, ARCH_SW_ATM_0040, ARCH_SW_ATM_0041, ARCH_SW_ATM_0042, ARCH_SW_ATM_0043, ARCH_SW_ATM_0044, ARCH_SW_ATM_0045, ARCH_SW_ATM_0046, ARCH_SW_ATM_0047, ARCH_SW_ATM_0048, ARCH_SW_ATM_0049, ARCH_SW_ATM_0050, ARCH_SW_ATM_0051, ARCH_SW_ATM_0052, ARCH_SW_ATM_0053, ARCH_SW_ATM_0054, ARCH_SW_ATM_0055, ARCH_SW_ATM_0056, ARCH_SW_ATM_0057\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  debugger_setRelativeFunctionBpAtLine(78, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 13);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_HIGH_SIDE_SWITCH] has ((castATMConfig)[ATM_KU8_ID_TEST_HIGH_SIDE_SWITCH]).u8InhibIndex,,app.elf = KU8_MODES________VOLTAG_CRANKI_INHIB", "0x2\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 21);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_DRIVER_COMMAND] has ((castATMConfig)[ATM_KU8_ID_TEST_DRIVER_COMMAND]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 29);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT] has ((castATMConfig)[ATM_KU8_ID_TEST_MOSFET_HIGH_SHORT_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 37);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOSFET_LOW_SHORT_CIRCUIT] has ((castATMConfig)[ATM_KU8_ID_TEST_MOSFET_LOW_SHORT_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 45);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOTOR_DISCONNECTION] has ((castATMConfig)[ATM_KU8_ID_TEST_MOTOR_DISCONNECTION]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 53);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_DRIVER_SELF_PROTECTION] has ((castATMConfig)[ATM_KU8_ID_TEST_DRIVER_SELF_PROTECTION]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 61);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOSFET_OPEN_CIRCUIT] has ((castATMConfig)[ATM_KU8_ID_TEST_MOSFET_OPEN_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 69);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_HALL_EFFECT_SENSORS] has ((castATMConfig)[ATM_KU8_ID_TEST_HALL_EFFECT_SENSORS]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 85);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOTOR_CURRENT] has ((castATMConfig)[ATM_KU8_ID_TEST_MOTOR_CURRENT]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 93);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOTOR_BLOCKED] has ((castATMConfig)[ATM_KU8_ID_TEST_MOTOR_BLOCKED]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 101);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOTOR_TEMPERATURE] has ((castATMConfig)[ATM_KU8_ID_TEST_MOTOR_TEMPERATURE]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 109);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_MOTOR_SHORT_CIRCUIT] has ((castATMConfig)[ATM_KU8_ID_TEST_MOTOR_SHORT_CIRCUIT]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 125);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_SENSOR_TEMPERATURE] has ((castATMConfig)[ATM_KU8_ID_TEST_SENSOR_TEMPERATURE]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 117);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_PWM_ORDER] has ((castATMConfig)[ATM_KU8_ID_TEST_PWM_ORDER]).u8InhibIndex,,app.elf = KU8_MODES_BELTFN_VOLTAG_CRANKI_INHIB", "0x3\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 133);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_UNDER_VOLTAGE_POWER] has ((castATMConfig)[ATM_KU8_ID_TEST_UNDER_VOLTAGE_POWER]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 141);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_OVER_VOLTAGE_POWER] has ((castATMConfig)[ATM_KU8_ID_TEST_OVER_VOLTAGE_POWER]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 149);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_UNDER_VOLTAGE_TENSIONING_POWER] has ((castATMConfig)[ATM_KU8_ID_TEST_UNDER_VOLTAGE_TENSIONING_POWER]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 157);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TEST_OVER_VOLTAGE_TENSIONING_POWER] has ((castATMConfig)[ATM_KU8_ID_TEST_UNDER_VOLTAGE_TENSIONING_POWER]).u8InhibIndex,,app.elf = KU8_MODES_______________CRANKI_INHIB", "0x1\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 165);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_EXT_WDG_OUT_OF_ORDER] has ((castATMConfig)[ATM_KU8_ID_EXT_WDG_OUT_OF_ORDER]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 173);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_RESET_CAUSE] has ((castATMConfig)[ATM_KU8_ID_RESET_CAUSE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 229);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_END_OF_LIFE_LOW_FORCE] has ((castATMConfig)[ATM_KU8_ID_END_OF_LIFE_LOW_FORCE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 237);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_END_OF_LIFE_HIGH_FORCE] has ((castATMConfig)[ATM_KU8_ID_END_OF_LIFE_HIGH_FORCE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 245);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_END_OF_LIFE_COMFORT] has ((castATMConfig)[ATM_KU8_ID_END_OF_LIFE_COMFORT]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 253);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TIMEOUT_PRESAFE] has ((castATMConfig)[ATM_KU8_ID_TIMEOUT_PRESAFE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 277);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_TIMEOUT_BUCKLE] has ((castATMConfig)[ATM_KU8_ID_TIMEOUT_PRESAFE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 285);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA_PRESAFE] has ((castATMConfig)[ATM_KU8_ID_IMPLAUSIBLE_DATA_PRESAFE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 293);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA_IGNITION] has ((castATMConfig)[ATM_KU8_ID_IMPLAUSIBLE_DATA_IGNITION]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  debugger_readVariable("uint8", "castATMConfig,,app.elf", 301);
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Evaluate that castATMConfig[ATM_KU8_ID_IMPLAUSIBLE_DATA_BUCKLE] has ((castATMConfig)[ATM_KU8_ID_IMPLAUSIBLE_DATA_BUCKLE]).u8InhibIndex,,app.elf = KU8_MODES______________________INHIB", "0x0\n", 0);
+  
+  testWaitForTimeout(1000);
+  Postconditions();
+}
+testcase SW_IT_ATM_0006()
+{
+  testCaseTitle ("SW_IT_ATM_0006", "Modes activation");
+  testCaseDescription ("Verify if MMG_runCheckModeStatus is called to check if all conditions are fulfilled to execute the tests.\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0021\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+//  testWaitForTimeout(5000);
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(3, "atm_executeAutoTest");
+  debugger_step();
+  debugger_run();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *Rte_Call_pclModeManagement_CheckModeStatus(cau32InhibitingModes[u8InhibModesIndex], &u8InhibitingContextStatus);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is MMG_runCheckModeStatus", "CPU stopped by step\n", 0);
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0007()
+{
+  testCaseTitle ("SW_IT_ATM_0007", "RCM_Autotest_RunResetCause() function call");
+  testCaseDescription ("Verify if RCM_Autotest_RunResetCause is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0106\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  testWaitForTimeout(5000);
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *RCM_cbk_RunResetCause_Autotest* at line *Rte_Call_pclRunResetCause_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is MMG_runCheckModeStatus", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0008()
+{
+  testCaseTitle ("SW_IT_ATM_0008", "EOL_Autotest_CheckProductEndOfLifeLowForce function call");
+  testCaseDescription ("Verify if EOL_Autotest_CheckProductEndOfLifeLowForce is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0107\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  testWaitForTimeout(5000);
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *EOL_cbk_CheckProductEndOfLifeLowForce* at line * Rte_Call_pclCheckProductEndOfLifeLowForce_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is EOL_Autotest_CheckProductEndOfLifeLowForce", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0009()
+{
+  testCaseTitle ("SW_IT_ATM_0009", "EOL_Autotest_CheckProductEndOfLifeHighForce function call");
+  testCaseDescription ("Verify if EOL_Autotest_CheckProductEndOfLifeHighForce is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0107\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  testWaitForTimeout(5000);
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *EOL_cbk_CheckProductEndOfLifeHighForce* at line *Rte_Call_pclCheckProductEndOfLifeHighForce_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is EOL_Autotest_CheckProductEndOfLifeHighForce", "CPU stopped by step\n", 0);
+}
+
+testcase SW_IT_ATM_0010()
+{
+  testCaseTitle ("SW_IT_ATM_0010", "EOL_Autotest_CheckProductEndOfLifeComfort function call");
+  testCaseDescription ("Verify if EOL_Autotest_CheckProductEndOfLifeComfort is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0108\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *EOL_cbk_CheckProductEndOfLifeComfort* at line *Rte_Call_pclCheckProductEndOfLifeComfort_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is EOL_Autotest_CheckProductEndOfLifeComfort", "CPU stopped by step\n", 0);
+ 
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0011()
+{
+  testCaseTitle ("SW_IT_ATM_0011", " PAL_Autotest_CheckHighSideSwRegulation function call");
+  testCaseDescription ("Verify if  PAL_Autotest_CheckHighSideSwRegulation is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0114\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckHighSideSwRegulation* at line *Rte_Call_pclCheckHighSideSwRegulation_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckHighSideSwRegulation", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0012()
+{
+  testCaseTitle ("SW_IT_ATM_0012", " PAL_Autotest_CheckCommandConsistency function call");
+  testCaseDescription ("Verify if  PAL_Autotest_CheckCommandConsistency is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0115\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckCommandConsistency* at line *Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckCommandConsistency", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0013()
+{
+  testCaseTitle ("SW_IT_ATM_0013", " PAL_Autotest_CheckMosfetHighSC function call");
+  testCaseDescription ("Verify if  PAL_Autotest_CheckMosfetHighSC is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0116\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMosfetHighSC* at line *Rte_Call_pclCheckMosfetHighSC_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMosfetHighSC", "CPU stopped by step\n", 0);
+  
+  Precondtions();
+
+}
+
+testcase SW_IT_ATM_0014()
+{
+  testCaseTitle ("SW_IT_ATM_0014", " PAL_Autotest_CheckMosfetLowSC function call");
+  testCaseDescription ("Verify if  PAL_Autotest_CheckMosfetLowSC is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0117\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMosfetLowSC* at line *Rte_Call_pclCheckMosfetLowSC_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMosfetLowSC", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+
+}
+
+testcase SW_IT_ATM_0015()
+{
+  testCaseTitle ("SW_IT_ATM_0015", " PAL_Autotest_CheckMotorConnection function call");
+  testCaseDescription ("Verify if PAL_Autotest_CheckMotorConnection is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0118\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorConnection* at line *Rte_Call_pclCheckMotorConnection_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorConnection", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+
+testcase SW_IT_ATM_0016()
+{
+  testCaseTitle ("SW_IT_ATM_0016", " PAL_Autotest_CheckHWSelfProtection function call");
+  testCaseDescription ("Verify if  PAL_Autotest_CheckHWSelfProtection is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0119\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckHWSelfProtection* at line *Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorConnection", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0017()
+{
+  testCaseTitle ("SW_IT_ATM_0017", " PMP_Autotest_CheckPowerSupplyUV function call");
+  testCaseDescription ("Verify if  PMP_Autotest_CheckPowerSupplyUV is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0150\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyUV* at line *Rte_Call_pclCheckPowerSupplyUV_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyUV", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0018()
+{
+  testCaseTitle ("SW_IT_ATM_0018", " PMP_Autotest_CheckPowerSupplyOV function call");
+  testCaseDescription ("Verify if  PMP_Autotest_CheckPowerSupplyOV is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0151\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castStartupCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyOV* at line *Rte_Call_pclCheckPowerSupplyOV_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyOV", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0019()
+{
+  testCaseTitle ("SW_IT_ATM_0019", " PMP_Autotest_CheckPowerSupplyUVDuringActivation function call");
+  testCaseDescription ("Verify if  PMP_Autotest_CheckPowerSupplyUVDuringActivation is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0202\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyUVDuringActivation* at line *Rte_Call_pclCheckPowerSupplyUVDuringActivation_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyUVDuringActivation", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0020()
+{
+  testCaseTitle ("SW_IT_ATM_0020", " PMP_Autotest_CheckPowerSupplyOVDuringActivation function call");
+  testCaseDescription ("Verify if  PMP_Autotest_CheckPowerSupplyOVDuringActivation is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0203\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyOVDuringActivation* at line *Rte_Call_pclCheckPowerSupplyOVDuringActivation_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyOVDuringActivation", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0021()
+{
+  testCaseTitle ("SW_IT_ATM_0021", "CIL_Autotest_Presafe_CheckTimeoutError function call");
+  testCaseDescription ("Verify if  CIL_Autotest_Presafe_CheckTimeoutError is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0222\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *CIL_cbk_Presafe_CheckTimeoutError* at line *Rte_Call_pclCheckTimeoutError_AutotestCallback(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is CIL_Autotest_Presafe_CheckTimeoutError", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0022()
+{
+  testCaseTitle ("SW_IT_ATM_0022", "CIL_Autotest_CheckImplausibleData_Presafe function call");
+  testCaseDescription ("Verify if  CIL_Autotest_CheckImplausibleData_Presafe is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0224\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *CIL_cbk_CheckImplausibleData_Presafe* at line *CIL_Autotest_CheckImplausibleData_Presafe(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is CIL_Autotest_CheckImplausibleData_Presafe", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0023()
+{
+  testCaseTitle ("SW_IT_ATM_0023", "CIL_Autotest_CheckImplausibleData_Ignition function call");
+  testCaseDescription ("Verify if  CIL_Autotest_CheckImplausibleData_Ignition is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0225\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *CIL_cbk_CheckImplausibleData_Ignition* at line *CIL_Autotest_CheckImplausibleData_Presafe(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is CIL_Autotest_CheckImplausibleData_Ignition", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0024()
+{
+  testCaseTitle ("SW_IT_ATM_0024", "CIL_Autotest_CheckImplausibleData_Ignition function call");
+  testCaseDescription ("Verify if  CIL_Autotest_CheckImplausibleData_Buckle is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0226\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *CIL_cbk_CheckImplausibleData_Buckle* at line *CIL_Autotest_CheckImplausibleData_Buckle(&u8TestResult);* and run the SW", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is CIL_Autotest_CheckImplausibleData_Buckle", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0025()
+{
+  testCaseTitle ("SW_IT_ATM_0025", "PAL_Autotest_CheckCommandConsistency function call");
+  testCaseDescription ("Verify if PAL_Autotest_CheckCommandConsistency is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0206\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckCommandConsistency* at line *Rte_Call_pclCheckCommandConsistency_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckCommandConsistency", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0026()
+{
+  testCaseTitle ("SW_IT_ATM_0026", "PAL_cbk_CheckMosfetLowSC function call");
+  testCaseDescription ("Verify if PAL_Autotest_CheckMosfetLowSC is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0207\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMosfetLowSC* at line *Rte_Call_pclCheckMosfetLowSC_AutotestCallback(&u8TestResult)s;", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMosfetLowSC", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0027()
+{
+  testCaseTitle ("SW_IT_ATM_0027", "PAL_cbk_CheckMotorConnection function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckMotorConnection is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0208\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorConnection* at line *Rte_Call_pclCheckMotorConnection_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorConnection", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0028()
+{
+  testCaseTitle ("SW_IT_ATM_0028", "PAL_cbk_CheckHWSelfProtection function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckHWSelfProtection is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0209\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckHWSelfProtection* at line *te_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckHWSelfProtection", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0029()
+{
+  testCaseTitle ("SW_IT_ATM_0029", "PAL_cbk_CheckMotorDisengagement function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckMotorDisengagement is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0210\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorDisengagement* at line *Rte_Call_pclCheckMotorDisengagement_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorDisengagement", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0030()
+{
+  testCaseTitle ("SW_IT_ATM_0030", "BMM_cbk_CheckHallEffectSensor function call");
+  testCaseDescription ("Verify if BMM_cbk_CheckHallEffectSensor is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0211\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *BMM_cbk_CheckHallEffectSensor* at line *Rte_Call_pclCheckHallEffectSensor_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is BMM_Autotest_CheckHallEffectSensor", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0031()
+{
+  testCaseTitle ("SW_IT_ATM_0031", "PAL_cbk_CheckMotorCurrent function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckMotorCurrent is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0212\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorCurrent* at line *Rte_Call_pclCheckMotorCurrent_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorCurrent", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0032()
+{
+  testCaseTitle ("SW_IT_ATM_0032", "EOL_cbk_CheckProductEndOfLifeLowForce function call");
+  testCaseDescription ("Verify if EOL_cbk_CheckProductEndOfLifeLowForce is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0213\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *EOL_cbk_CheckProductEndOfLifeLowForce* at line *Rte_Call_pclCheckProductEndOfLifeLowForce_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is EOL_Autotest_CheckProductEndOfLifeLowForce", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0033()
+{
+  testCaseTitle ("SW_IT_ATM_0033", "PMP_cbk_CheckPowerSupplyUV function call");
+  testCaseDescription ("Verify if PMP_cbk_CheckPowerSupplyUV is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0214\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyUV* at line *Rte_Call_pclCheckPowerSupplyUV_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyUV", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0034()
+{
+  testCaseTitle ("SW_IT_ATM_0034", "PMP_cbk_CheckPowerSupplyOV function call");
+  testCaseDescription ("Verify if PMP_cbk_CheckPowerSupplyOV is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0214\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyOV* at line *Rte_Call_pclCheckPowerSupplyOV_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyOV", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0035()
+{
+  testCaseTitle ("SW_IT_ATM_0035", "PMP_cbk_CheckPowerSupplyOV function call");
+  testCaseDescription ("Verify if PMP_cbk_CheckPowerSupplyOV is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0215\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckPowerSupplyOV* at line *Rte_Call_pclCheckPowerSupplyOV_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckPowerSupplyOV", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0036()
+{
+  testCaseTitle ("SW_IT_ATM_0036", "PAL_cbk_CheckMotorPowerOrder function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckMotorPowerOrder is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0216\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorPowerOrder* at line *Rte_Call_pclCheckMotorPowerOrder_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorPowerOrder", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0037()
+{
+  testCaseTitle ("SW_IT_ATM_0037", "PMP_cbk_CheckTemperatureSensor function call");
+  testCaseDescription ("Verify if PMP_cbk_CheckTemperatureSensor is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0217\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PMP_cbk_CheckTemperatureSensor* at line *Rte_Call_pclCheckTemperatureSensor_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PMP_Autotest_CheckTemperatureSensor", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0038()
+{
+  testCaseTitle ("SW_IT_ATM_0038", "EOL_cbk_CheckProductEndOfLifeHighForce function call");
+  testCaseDescription ("Verify if EOL_cbk_CheckProductEndOfLifeHighForce is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0218\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *EOL_cbk_CheckProductEndOfLifeHighForce* at line *Rte_Call_pclCheckProductEndOfLifeHighForce_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is EOL_cbk_CheckProductEndOfLifeHighForce", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0039()
+{
+  testCaseTitle ("SW_IT_ATM_0039", "EOL_cbk_CheckProductEndOfLifeComfort function call");
+  testCaseDescription ("Verify if EOL_cbk_CheckProductEndOfLifeComfort is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0219\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *EOL_cbk_CheckProductEndOfLifeComfort* at line *Rte_Call_pclCheckProductEndOfLifeComfort_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is EOL_cbk_CheckProductEndOfLifeComfort.", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0040()
+{
+  testCaseTitle ("SW_IT_ATM_0040", "PAL_cbk_CheckMotorSC function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckMotorSC is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0220\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorSC* at line *Rte_Call_pclCheckMotorSC_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_cbk_CheckMotorSC.", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0041()
+{
+  testCaseTitle ("SW_IT_ATM_0041", "PAL_cbk_CheckMotorThermalProctection function call");
+  testCaseDescription ("Verify if PAL_cbk_CheckMotorThermalProctection is called by the ATM_runMainFunction\n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0221\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *u8ReturnedAutoTestStatus = castATMConfig[cu8AutotestID].pfAutotestCallback();* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Set a breakpoint in the function *PAL_cbk_CheckMotorThermalProctection* at line *Rte_Call_pclCheckMotorThermalProctection_AutotestCallback(&u8TestResult);", "True\n", 0);
+  
+  debugger_step();
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step in and check if the current function is PAL_Autotest_CheckMotorThermalProctection.", "CPU stopped by step\n", 0);
+  
+  Postconditions();
+}
+
+testcase SW_IT_ATM_0042()
+{
+  testCaseTitle ("SW_IT_ATM_0042", "ATM_runMainFunction status");
+  testCaseDescription ("Verify if an auto-test cannot be executed ATM_runMainFunction shall set the status of the tests to “NOT DECIDED” \n");
+  testCaseDescription ("Linked requirement: ARCH_SW_ATM_0260\n");
+  testCaseDescription ("Test Type: Requirement-Based test \n");
+  testCaseDescription ("Fault injection method used: No \n");
+  testCaseDescription ("Resource usage evaluation: No \n");
+  testCaseDescription ("Priority: No\n");
+  testCaseDescription ("Safety relevant: No \n");
+  
+  Precondtions();
+  
+  debugger_setRelativeFunctionBpAtLine(27, "ATM_runMainFunction");
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr,"Set a breakpoint in function ATM_runMainFunction() at line *atm_PlayCyclicTests(castRunningCyclicList);* and check if the CPU has reached the BP.*", "True\n", 0);
+  
+  debugger_setRelativeFunctionBpAtLine(16, "atm_PlayCyclicTests");
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_PlayCyclicTests() and set a breakpoint at line *atm_executeAutoTest(u8AutotestID);* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  debugger_step();
+  debugger_run();
+  testWaitForTimeout(1000);
+  debugger_isCPUStoppedAtBP();
+  fctIncrementTestStepId();
+  ExpectedTestResult(gTestIdStr, "Step In the function atm_executeAutoTest() and set a breakpoint at line *au8AtStatuses[cu8AutotestID] =  KU8_ATM_TEST_NOT_DECIDED;* and check if the CPU has reached the BP. ", "True\n", 0);
+  
+  
+  Postconditions();
+}
+/*------------------------------------------------------------------------------
+                                TEST SEQUENCE
+------------------------------------------------------------------------------*/
+void MainTest()
+{
+  addGeneralReportInfo();
+  SW_IT_ATM_0007();
+}

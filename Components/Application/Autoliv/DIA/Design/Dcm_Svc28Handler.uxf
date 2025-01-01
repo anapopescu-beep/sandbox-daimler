@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>898</w>
+      <h>511</h>
+    </coordinates>
+    <panel_attributes>title:Dcm_Svc28Handler
+Start
+Prepare all generic part (independently of the SF validation result
+lStdResult = Dcm_DiagVerifyServiceWithSubFunction()
+
+	[lStdResult == DCM_E_OK]
+	Dcm_RepeaterNextStep(pContext, DCM_SVC28_PROGRESS_SUBFUNCTION)
+	lStdResult = DCM_E_LOOP
+
+	[lStdResult == DCM_E_NOT_OK]
+	ErrorCode is already set
+	
+return lStdResult
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

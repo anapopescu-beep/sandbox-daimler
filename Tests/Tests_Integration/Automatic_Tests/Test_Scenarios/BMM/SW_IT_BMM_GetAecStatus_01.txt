@@ -1,0 +1,30 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_BMM_0348
+ARCH_SW_BMM_0348: ERH_GetAecStatus shall be called to get the status ot specific aec.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function BMM_Autotest_CheckHallEffectSensor at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'.
+
+	Step 3: Check if CPU stopped at line 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_BMM_0348
+
+	Step 4: Step in function 'Rte_Call_pclAECStatus_GetAecStatus(ERH_KU8_UVO_POWER_AEC_CFG, &u8AECBatteryUVStatus);'. 
+		Expected result:  ERH_runGetAecStatus,,app.elf
+
+Postcondition
+
+	Step 5: Return ECU to default values

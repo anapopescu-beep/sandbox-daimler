@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0077, ARCH_SW_PAL_0078, ARCH_SW_PAL_0079.
+ARCH_SW_PAL_0077: This function shall set the power stage in IDLE state .
+ARCH_SW_PAL_0078: The Dio_WriteChannel function shall be called to activate the half bridge connected to the VP pin of the motor.
+ARCH_SW_PAL_0079: The Dio_WriteChannel function shall be called to activate the half bridge connected to the VN pin of the motor.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PAL_0077
+
+	Step 2: Set a breakpoint in function PAL_Autotest_CheckHighSideSwRegulation at the PAL_KU8_HIGH_SIDE_SW_REG_INIT state to add a free wheeling phase 
+		Expected result:  BP reached.
+
+	Step 3: Set a breakpoint in function pal_HighSideSWRegFreeWheelingPhase at the PAL_StartFreeWheelingState call to set both half bridge in free wheeling state 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0078
+
+	Step 4: Set a breakpoint in function PAL_StartFreeWheelingState at the Dio_WriteChannel call to to activate the half bridge connected to the Vn pin of the motor 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0079
+
+	Step 5: Set a breakpoint in function PAL_StartFreeWheelingState at the Dio_WriteChannel call to to activate the half bridge connected to the Vn pin of the motor 
+		Expected result:  BP reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

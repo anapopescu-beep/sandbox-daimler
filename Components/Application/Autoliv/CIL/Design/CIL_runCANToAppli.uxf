@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>4</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>2376</w>
+      <h>1008</h>
+    </coordinates>
+    <panel_attributes>title:cil_TriggerTensioningProfiles
+Start
+
+Read u8ExecutedCycle
+cil_ManageInputSignals();
+Write ActvLvlSignal
+Check if cil_u8BSRStarted is TRUE &amp;(CIL_u16InhibitionStatus &amp; KU16_CIL_BSR_INHIB_MASK)!=0
+If
+	[TRUE]
+	Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+	Check if cil_u8Actv_Lvl==REJECTED
+	If
+		[TRUE]
+		cil_u8BSRStarted = FALSE
+		
+		[FALSE]
+		Nothing
+	EndIf
+	
+	[FALSE]
+	Nothing
+EndIf
+
+Switch u8RequestSource
+If
+	[case I_C04_RBTM_ACTVCLIENT_NONE]
+	Check cil_u8PreSafeActivationRequest!=NO_CYCLE
+	If
+		[TRUE]
+		bInhibitionStatus=(boolean)((InhibitionStatus &amp; PRESAFE_INHIB_MASK)!=ZERO)
+		Check If (0 == (InhibitionStatus&amp;PRESAFE_INHIB_MASK))
+		If
+			[TRUE]
+			u8RequestSource = I_C04_RBTM_ACTVCLIENT_PRESAFE;
+			u8CurrentRequestedCycle = PreSafeActivationRequest;
+			u8TensioningStateType = TENSIONING_START;			
+			
+			[FALSE]
+			Write u8ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+			u8TensioningStateType=TENSIONING_INHIBIT
+		EndIf
+					
+		[FALSE]
+		Check if (NO_CYCLE!=APIActivationRequest)&amp;&amp;(FALSE == bPresfAbortApi)
+		If
+			[TRUE]
+			bInhibitionStatus=((InhibitionStatus &amp;CIL_API_INHIB_MASK) !=ZERO)
+			Check if ZERO ==(InhibitionStatus &amp; API_INHIB_MASK)
+			If
+				[TRUE]
+				u8RequestSource=I_C04_RBTM_ACTVCLIENT_SERVICE_PROVIDER
+				u8CurrentRequestedCycle=APIActivationRequest
+				
+				[FALSE]
+				Write u8ActvLvlSignal TO I_C06_RBTM_LVL_STAT_REJECTED			
+			EndIf
+			
+			[FALSE]
+			Write IsCarAccelerationLow to TRUE
+			Write PreCrashSeverityLevel to NO_PRECRASH_SEVERITY_LEVEL
+			Check if NO_CYCLE == cil_u8APIActivationRequest
+			If
+				[TRUE]
+				CIL_bPresfAbortApi = B_FALSE
+
+				[FALSE]
+				Nothing
+			EndIf
+			
+		EndIf
+	EndIf
+		
+	[case I_C04_RBTM_ACTVCLIENT_PRESAFE]
+	Check if PreSafeActivationRequest!=CurrentRequestedCycle
+	If
+		[TRUE]
+		bInhibitionStatus = (boolean)((InhibitionStatus &amp;PRESAFE_INHIB_MASK)!=ZERO)
+		Check if (ZERO ==(InhibitionStatus &amp;PRESAFE_INHIB_MASK))||(NO_CYCLE ==PreSafeActivationRequest )
+		If
+			[TRUE]
+			u8OldRequestedCycle=u8CurrentRequestedCycle
+			u8CurrentRequestedCycle=PreSafeActivationRequest
+			u8TensioningStateType=TENSIONING_START	
+				
+			[FALSE]
+			Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+			u8TensioningStateType=KU8_TENSIONING_INHIBIT
+		EndIf
+		
+		[FALSE]
+		Check if (ZERO!= (AbortionStatus &amp; PRESAFE_ABORT_MASK)) &amp;&amp; (FALSE==TensioningAbortedStatus).
+		If
+			[TRUE]
+			TensioningAbortedStatus=TENSIONING_INHIBIT
+			u8TensioningStateType=KU8_TENSIONING_ABORT
+			
+			[FALSE]
+			Do nothing
+		EndIf		
+	EndIf
+	
+	[case I_C04_RBTM_ACTVCLIENT_SERVICE_PROVIDER]
+	Check if (PreSafeActivationRequest == NO_CYCLE)||(u8SourcePrio[cil_u8PreSafeActivationRequest]&lt;CIL_u8SourcePrio[cil_u8APIActivationRequest]))&amp;&amp;(B_FALSE == CIL_bPresfAbortApi) 
+	If
+		[TRUE]
+		Check if APIActivationRequest!=CurrentRequestedCycle
+		If
+			[TRUE]
+			bInhibitionStatus=((InhibitionStatus &amp;API_INHIB_MASK)!=ZERO) 
+			Check if ZERO==(InhibitionStatus &amp;API_INHIB_MASK))||(NO_CYCLE==APIActivationRequest)
+			If
+				[TRUE]
+				u8OldRequestedCycle=u8CurrentRequestedCycle
+				u8CurrentRequestedCycle=APIActivationRequest
+				
+				[FALSE]
+				Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+			EndIf
+			
+			[FALSE]
+			Check if (ZERO!=(AbortionStatus&amp;API_ABORT_MASK))&amp;&amp;(FALSE==TensioningAbortedStatus)
+			If
+				[TRUE]
+				TensioningAbortedStatus=TRUE
+				 
+				[FALSE]
+				Do nothing
+			EndIf			
+		EndIf
+		
+		[FALSE]
+      Check if SourcePrio[PreSafeActivationRequest]&gt;=SourcePrio[APIActivationRequest]
+		If
+			[TRUE]
+			PresfAbortApi=TRUE
+			Check if InhibitionStatus=(boolean)((InhibitionStatus&amp;PRESAFE_INHIB_MASK)!=ZERO)
+			If
+				[TRUE]
+				u8RequestSource=I_C04_RBTM_ACTVCLIENT_PRESAFE
+				u8OldRequestedCycle=u8CurrentRequestedCycle
+				u8CurrentRequestedCycle=PreSafeActivationRequest
+				u8TensioningStateType=TENSIONING_START
+				
+				[FALSE]
+				Write ActvLvlSignal to I_C06_RBTM_LVL_STAT_REJECTED
+				u8TensioningStateType=TENSIONING_INHIBIT
+			EndIf
+						
+			[FALSE]
+			Do nothing
+		EndIf			
+	EndIf
+	
+	[default]
+	u8RequestSource=I_C04_RBTM_ACTVCLIENT_NONE
+	u8CurrentRequestedCycle=NO_CYCLE
+	bInhibitionStatus=FALSE
+	u8TensioningStateType=TENSIONING_NONE
+
+EndIf
+
+Check if (SMO_CYCLE!=ExecutedCycle)&amp;&amp;(NO_CYCLE!=ExecutedCycle)&amp;&amp;(PAT_CYCLE!=ExecutedCycle)&amp;&amp;(ACTVCLIENT_PRESAFE==u8RequestSource)
+If
+	[TRUE]
+	TensioningStarted=TRUE
+	
+	[FALSE]
+	Check if (SMO_CYCLE==ExecutedCycle)&amp;&amp;(TRUE==TensioningStarted)&amp;&amp;(FALSE==TensioningAbortedStatus)
+	If
+		[TRUE]
+		TensioningStarted=KU8_FALSE
+		u8TensioningStateType=TENSIONING_END
+		
+		[FALSE]
+		Nothing
+	EndIf
+	Write RequestSource
+	cil_TriggerProfiles(u8CurrentRequestedCycle)
+	cil_AbortProfiles()
+EndIf
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

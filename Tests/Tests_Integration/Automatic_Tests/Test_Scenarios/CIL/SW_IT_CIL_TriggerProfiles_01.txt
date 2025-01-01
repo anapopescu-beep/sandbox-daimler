@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0022
+ARCH_SW_CIL_0022: If signal is received with value 1, then tensioning cycle 0 shall be requested.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1.
+
+	Step 3: Set a breakpoint in fucntion CIL_runCANToAppli().
+
+	Step 4: Check if CPU stopped at function CIL_runCANToAppli(). 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles.
+
+	Step 6: Set a breakpoint in function cil_RequestTensioning.
+
+Action: ARCH_SW_CIL_0022
+
+	Step 7: Evaluate variable Rte_CIL_prrCrashSeverityLevel_u8PreCrashSeverityLevel. 
+		Expected result:  KU8_PRECRASH_SEVERITY_LEVEL_1 (0x0)
+
+Postcondition
+
+	Step 8: Return ECU to default values

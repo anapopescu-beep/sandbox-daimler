@@ -1,0 +1,52 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0712, ARCH_SW_CIL_0764
+ARCH_SW_CIL_0712: If selected, the content of the measurement frame - block #2 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0764: PMP_runGetBatteryVoltage_(Ext)* shall be called to get the battery voltage.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 2.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block02_InfosToSend at line Rte_Call_pclKL30_V_Get(&u16ScaledKL30Voltage);.
+
+Action: ARCH_SW_CIL_0764
+
+	Step 4: Check if CPU stopped at line Rte_Call_pclKL30_V_Get(&u16ScaledKL30Voltage);. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Set a breakpoint at the last line of function cil_Update_07Cx_Block02_InfosToSend.
+
+Action: ARCH_SW_CIL_0712
+
+	Step 6: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0712
+
+	Step 7: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0712
+
+	Step 8: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_06 and signal Meas_RBTM_FL_06_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Action: ARCH_SW_CIL_0712
+
+	Step 9: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_07 and signal Meas_RBTM_FL_07_ST3 are equal with KU8_ZERO. 
+		Expected result:  0x0
+
+Postcondition
+
+	Step 10: Return ECU to default values

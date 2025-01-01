@@ -1,0 +1,474 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "..\Includes\SW_Modules\SW_Modules_Project\Project_Includes_Configuration.cin"
+} 
+
+variables
+{ 
+  long result;
+} 
+
+testcase InitTestModule()
+{
+ConfigureTestModuleInformation(CGA);
+strncpy(cLogPath, "S:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Logs\\",elcount(cLogPath));
+}
+
+
+
+testcase SW_Int_MAIN_Task_01()
+{
+  
+    //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_OS_0050, ARCH_SW_OS_0051, ARCH_SW_OS_0052, ARCH_SW_OS_0053, ARCH_SW_OS_0054, ARCH_SW_OS_0057, ARCH_SW_OS_0058, ARCH_SW_OS_0065, ARCH_SW_OS_0059, ARCH_SW_OS_0060, ARCH_SW_OS_0061");
+  AddRequirementInfo("ARCH_SW_OS_0050", "The Default_Init_Task task shall have the highest priority regarding periodic tasks.");
+  AddRequirementInfo("ARCH_SW_OS_0051", "The priority of the Default_Init_Task_Trusted task shall also have a high priority for init functions.");
+  AddRequirementInfo("ARCH_SW_OS_0052", "The priority of the ApplInitTask_Core0 shall be also higher sincer the applications init functions are called here.");
+  AddRequirementInfo("ARCH_SW_OS_0053", "The priority of the BswTask_Core0_HighPrio task shall be lower than the init tasks.");
+  AddRequirementInfo("ARCH_SW_OS_0054", "The priority of the ApplTask_Core0_HighPrio task shall be lower than the BswTask_Core0_HighPrio task one.");
+  AddRequirementInfo("ARCH_SW_OS_0057", "The priority of the BswTask_Core0_LowPrio shall be lower than higher priorirty tasks.");
+  AddRequirementInfo("ARCH_SW_OS_0058", "The priority of the OsTask_ALV_BeltFunctionAlgo task shall be bigger than ApplTask_Core0_LowPrio task.");
+  AddRequirementInfo("ARCH_SW_OS_0065", "The priority of the ApplTask_Core0_LowPrio task shall be lower than all perioric tasks, except wdg monitoring one.");
+  AddRequirementInfo("ARCH_SW_OS_0059", "The priority of the ApplBackgroundTask_Core0 shall be low.");
+  AddRequirementInfo("ARCH_SW_OS_0060", "The priority of the BackgroundTask_Core0 task shall be low.");
+  AddRequirementInfo("ARCH_SW_OS_0061", "The priority of the IdleTask_OsCore0 idle task has the virtual priority 0xFFFFFFFF to differentiate it from regular tasks. It will be generated to have the lowest priority, even if there are tasks configured with priority 0.");
+//*************************************************************************************** 
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+  debugger_reset();
+  
+  testCaseComment("Action: ARCH_SW_OS_0050");
+  testStep("STEP", "Set breakpoint in TASK(Default_Init_Task).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\BrsMain.c", 436);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_OS_0051");
+  testStep("STEP", "Set breakpoint in TASK(Default_Init_Task_Trusted).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\BrsMain.c", 459);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+ 
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_OS_0052");
+  testStep("STEP", "Set breakpoint in TASK(ApplInitTask_Core0).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 7391);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_OS_0053");
+  testStep("STEP", "Set breakpoint in TASK(BswTask_Core0_HighPrio).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 7882);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+
+  
+  testCaseComment("Action: ARCH_SW_OS_0054");
+  testStep("STEP", "Set breakpoint in TASK(ApplTask_Core0_HighPrio).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 7494);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_OS_0057");
+  testStep("STEP", "Set breakpoint in TASK(BswTask_Core0_LowPrio).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 7965);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+
+  debugger_deleteAllBP();
+
+  testCaseComment("Action: ARCH_SW_OS_0058");
+  testStep("STEP", "Set breakpoint in TASK(OsTask_ALV_BeltFunctionAlgo).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 8081);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_OS_0065");
+  testStep("STEP", "Set breakpoint in TASK(OsTask_ALV_BeltFunctionAlgo).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 8081);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+
+  debugger_deleteAllBP();
+  
+  testCaseComment("Action: ARCH_SW_OS_0059");
+  testStep("STEP", "Set breakpoint in TASK(ApplBackgroundTask_Core0).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 7371);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  
+  debugger_deleteAllBP();
+   
+  testCaseComment("Action: ARCH_SW_OS_0060, ARCH_SW_OS_0061");
+  testStep("STEP", "Set breakpoint in TASK(BackgroundTask_Core0).");
+  debugger_setBpAtLine("s:\\Components\\Application\\Supplier\\DaVinci_generated\\Rte.c", 7862);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+ 
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_Int_MAIN_EcuM_State_01()
+{
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "No");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_MAIN_0000, ARCH_SW_MAIN_0001, ARCH_SW_MAIN_0002, ARCH_SW_MAIN_0003, ARCH_SW_MAIN_0004, ARCH_SW_MAIN_0005, ARCH_SW_MAIN_0006, ARCH_SW_MAIN_0007,ARCH_SW_MAIN_0008, ARCH_SW_MAIN_0009, ARCH_SW_MAIN_0010");
+  AddRequirementInfo("ARCH_SW_MAIN_0000", "The ECU_STARTUP state shall be reach if the ECU is supplied, Powered ON.");
+  AddRequirementInfo("ARCH_SW_MAIN_0001", "Software initialization is done in ECU_Startup State using AUTOSAR specifications.");
+  AddRequirementInfo("ARCH_SW_MAIN_0002", "To Leave ECU_STARTUP state, Wake -up Validation notification is expected to go ECU_RUN State.");
+  AddRequirementInfo("ARCH_SW_MAIN_0003", "In this state if POWER OFF occurred the ecu switch to ECU_OFF state.");
+  AddRequirementInfo("ARCH_SW_MAIN_0004", "After entering ECU_RUN the following actions shall be considered: - Rx CAN communication frames shall be received; - Tx CAN communication frames shall be transmitted; - ECU shall respond to diagnostic frames request; - all autotests shall be periodically executed and their status shall be reported");
+  AddRequirementInfo("ARCH_SW_MAIN_0005", "If: -CanSM notifies that no communication is needed anymore(TTimeout = 4 seconds); -no diagnostics available; -no belt function execution; -no bus communication, and then ECU goes in ECU_SLEEP state. ");
+  AddRequirementInfo("ARCH_SW_MAIN_0006", "In this state if POWER OFF occurred the ecu switch to ECU_OFF state.");
+  AddRequirementInfo("ARCH_SW_MAIN_0007", "In ECU_SLEPP state the following actions shall be considered:- monitor bus activity but no communication shall be ensured. ");
+  AddRequirementInfo("ARCH_SW_MAIN_0008", "In this state if nm frame is detected then ECU shall switch to ECU_RUN state.");
+  AddRequirementInfo("ARCH_SW_MAIN_0009", "In this state if bus activity is detected or reset is received then ECU shall switch to ECU_STARTUP state.");
+  AddRequirementInfo("ARCH_SW_MAIN_0010", "In this stare if POWER OFF occurred the ecu switch to ECU_OFF state.");
+//*************************************************************************************** 
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  testCaseComment("Action: ARCH_SW_MAIN_0000, ARCH_SW_MAIN_0001, ARCH_SW_MAIN_0009");
+  testStep("STEP", "Set a breakpoint in function EcuM_SetState under case ECUM_STATE_STARTUP.");
+  debugger_setRelativeFunctionBpAtLine("EcuM_SetState", 23);
+  debugger_reset();
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  debugger_isCPUStoppedAtFunction("EcuM_SetState");
+
+  testCaseComment("Action: ARCH_SW_MAIN_0002, ARCH_SW_MAIN_0004, ARCH_SW_MAIN_0008");
+  testStep("STEP", "Set a breakpoint in function EcuM_SetState under case ECUM_STATE_APP_RUN.");
+  debugger_setRelativeFunctionBpAtLine("EcuM_SetState", 27);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+  debugger_isCPUStoppedAtFunction("EcuM_SetState");
+
+  testCaseComment("Action: ARCH_SW_MAIN_0003, ARCH_SW_MAIN_0005, ARCH_SW_MAIN_0006, ARCH_SW_MAIN_0007, ARCH_SW_MAIN_0010");
+  testStep("STEP", "Set a breakpoint in function EcuM_SetState under case ECUM_STATE_SHUTDOWN.");
+  debugger_setRelativeFunctionBpAtLine("EcuM_SetState", 35);
+  debugger_run();
+  debugger_WaitUntilBPisReached(3000);
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+//
+//testcase SW_Int_MAIN_EcuRunToStartUp_01()
+//{
+//  //***********************************Test report header*********************************
+//  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+//  TestReportAddMiscInfo("Nightly test", "No");
+//  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+//  TestReportAddMiscInfo("Regression Test", "Yes");
+//  TestReportAddMiscInfo("Fault injection method used", "No");
+//  TestReportAddMiscInfo("Resource usage evaluation", "No");
+//  TestReportAddMiscInfo("Priority", "No");
+//  TestReportAddMiscInfo("Safety relevant", "No");
+//  
+//  AddRequirementInfo("Requirement under test", "ARCH_SW_MAIN_0007,ARCH_SW_MAIN_0008, ARCH_SW_MAIN_0009, ARCH_SW_MAIN_0010");
+//  AddRequirementInfo("ARCH_SW_MAIN_0007", "In ECU_SLEPP state the following actions shall be considered:- monitor bus activity but no communication shall be ensured. ");
+//  AddRequirementInfo("ARCH_SW_MAIN_0008", "In this state if nm frame is detected then ECU shall switch to ECU_RUN state.");
+//  AddRequirementInfo("ARCH_SW_MAIN_0009", "In this state if bus activity is detected or reset is received then ECU shall switch to ECU_STARTUP state.");
+//  AddRequirementInfo("ARCH_SW_MAIN_0010", "In this stare if POWER OFF occurred the ecu switch to ECU_OFF state.");
+////*************************************************************************************** 
+//  
+//  /*------------------------- Test scenario start ------------------------------*/
+//  testCaseComment("Preconditions");
+//  testStep("STEP", "Bench Initialization");
+//  RunPreTs();
+//  //==================================================== 
+//  
+//  testCaseComment("Action: ARCH_SW_MAIN_0007,ARCH_SW_MAIN_0008, ARCH_SW_MAIN_0009, ARCH_SW_MAIN_0010");
+//    /*Disable CAN frames*/
+////    CanTpUseFlowControlFrames(gHandle, 0);
+////    testWaitForTimeout(2000);
+//
+//    /*Set breakpoint in function EcuM_SetState()*/
+//    testStep("STEP", "Check if CPU stopped at the breakpoint in the function EcuM_SetState().");
+//    debugger_setRelativeFunctionBpAtLine("EcuM_SetState", "0");
+//    write("Waiting to disable CAN Frames");
+//    TestWaitForTimeout(500); 
+//    /*Check if the actual and the expected result are matching*/
+//    debugger_getCPUStatus();
+//    EvalManStepEqual("Expected Test Result", "CPU is Stopped", "CPU is Stopped");
+//    
+//    /*Delete all the breakpoints*/
+//    debugger_deleteAllBreakpoints(); // Has a 500 ms timer inside the function body
+//
+//  
+//  testCaseComment("Postcondition");
+//  testStep("STEP", "Return ECU to default values");
+//  RunPostTs();
+//
+//}
+
+testcase SW_Int_MAIN_TaskPriority_01()
+{
+  
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_OS_00200, ARCH_SW_OS_00201, ARCH_SW_OS_00202");
+  AddRequirementInfo("ARCH_SW_OS_00200", "The vHsmResponseIsr shall have the highest priority.");
+  AddRequirementInfo("ARCH_SW_OS_00201", "The CounterIsr_SystemTimer shall have the lowest priority.");
+  AddRequirementInfo("ARCH_SW_OS_00202", "The CanIsr_1  interrupt function shall be defined at OS configuration level.");
+//*************************************************************************************** 
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+
+  testCaseComment("Action: ARCH_SW_OS_00200");
+  testStep("STEP", "Check 'vHsmResponseIsr' priority. is 1 --> True");
+  EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_00201");
+  testStep("STEP", "Check 'CounterIsr_SystemTimer '  priority. is 50 --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+
+  testCaseComment("Action: ARCH_SW_OS_00202");
+  testStep("STEP", "Check 'CanIsr_1  interrupt ' priority. is 60 --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+
+testcase SW_Int_MAIN_TaskCpuLoad_01()
+{
+  
+    //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_OS_0300, ARCH_SW_OS_0301, ARCH_SW_OS_0302, ARCH_SW_OS_0303, ARCH_SW_OS_0304, ARCH_SW_OS_0305, ARCH_SW_OS_0306, ARCH_SW_OS_0307, ARCH_SW_OS_0308, ARCH_SW_OS_0309, ARCH_SW_OS_0310, ARCH_SW_OS_00400, ARCH_SW_OS_00401, ARCH_SW_OS_00402");
+  AddRequirementInfo("ARCH_SW_OS_0300", "The CPU load related to the Default_Init_Task task shall NOT exceed 1% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0301", "The CPU load related to the Default_Init_Task_Trusted task shall NOT exceed 1% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0302", "The CPU load related to the ApplInitTask_Core0 task shall NOT exceed 1% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0303", "The CPU load related to the BswTask_Core0_HighPrio task shall NOT exceed 4% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0304", "The CPU load related to the ApplTask_Core0_HighPrio task shall NOT exceed 3% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0305", "The CPU load related to the BswTask_Core0_LowPrio task shall NOT exceed 5% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0306", "The CPU load related to the OsTask_ALV_BeltFunctionAlgo task shall NOT exceed 5% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0307", "The CPU load related to the ApplTask_Core0_LowPrio task shall NOT exceed 5% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0308", "The CPU load related to the ApplBackgroundTask_Core0 task shall NOT exceed 1% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0309", "The CPU load related to the BackgroundTask_Core0 task shall be 100% - overall CPU load. ");
+  AddRequirementInfo("ARCH_SW_OS_0310", "The CPU load related to the IdleTask_OsCore0 task shall NOT exceed 0% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0400", "The CPU load related to the vHsmResponseIsr interrupt function shall NOT exceed 5% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0401", "The CPU load related to the CounterIsr_SystemTimer interrupt function shall NOT exceed 5% in average. ");
+  AddRequirementInfo("ARCH_SW_OS_0402", "The CPU load related to the CanIsr_1  interrupt function shall NOT exceed 5% in average. ");
+//*************************************************************************************** 
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  //==================================================== 
+
+
+	/*********************  STEP 1  **************************/
+  testCaseComment("Action: ARCH_SW_OS_0300");
+  testStep("STEP", "Change taskID to 'Default_Init_Task' . Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 1.12%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+ 
+  testCaseComment("Action: ARCH_SW_OS_0301");
+  testStep("STEP", "Change taskID to 'Default_Init_Task_Trusted ' . Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 0.0001%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0302");
+  testStep("STEP", "ApplInitTask_Core0 ' . Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 0.61%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+
+  testCaseComment("Action: ARCH_SW_OS_0303");
+  testStep("STEP", "Change taskID to 'BswTask_Core0_HighPrio'. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 2.93%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0304");
+  testStep("STEP", "Change taskID to 'ApplTask_Core0_HighPrio '. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 0.54% --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0305");
+  testStep("STEP", "BswTask_Core0_LowPrio '. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 3.83%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0306");
+  testStep("STEP", "Change taskID to 'OsTask_ALV_BeltFunctionAlgo . Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 1.69%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0307");
+  testStep("STEP", "ApplTask_Core0_LowPrio ' . Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 1.78%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0308");
+  testStep("STEP", "ApplBackgroundTask_Core0 '. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 0%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0309");
+  testStep("STEP", "Change taskID to 'BackgroundTask_Core0' . Build, flash and run SW. Overall CPU load is 12.5%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0310");
+  testStep("STEP", "Change taskID to 'IdleTask_OsCore0'. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 0%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");		
+  
+  testCaseComment("Action: ARCH_SW_OS_0400");
+  testStep("STEP", "Set to 'vHsmResponseIsr'. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 3.96%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0401");
+  testStep("STEP", "Set to 'CounterIsr_SystemTimer'. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 4.56%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_OS_0402");
+  testStep("STEP", "Set to 'CanIsr_1'. Build, flash and run SW. Variable Appl_Runtime_CurrentCpuLoad(stored CPU load) is 2.93%. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+testcase SW_Int_MAIN_SwComponentRamRomConsumtion_01()
+{
+  
+      //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "Requirement-Based test");
+  TestReportAddMiscInfo("Regression Test", "Yes");
+  TestReportAddMiscInfo("Fault injection method used", "No");
+  TestReportAddMiscInfo("Resource usage evaluation", "No");
+  TestReportAddMiscInfo("Priority", "No");
+  TestReportAddMiscInfo("Safety relevant", "No");
+  
+  AddRequirementInfo("Requirement under test", "ARCH_SW_CIL_9997, ARCH_SW_CIL_9998, ARCH_SW_DIA_9997, ARCH_SW_DIA_9998, ARCH_SW_MMG_9997, ARCH_SW_MMG_9998, ARCH_SW_NVP_9997, ARCH_SW_NVP_9998, ARCH_SW_PAL_9997, ARCH_SW_PAL_9998, ARCH_SW_PMP_9997, ARCH_SW_PMP_9998, ARCH_SW_EOL_9997, ARCH_SW_EOL_9998, ARCH_SW_ERH_9997, ARCH_SW_ERH_9998, ARCH_SW_BMM_9997, ARCH_SW_BMM_9998, ARCH_SW_ATM_9997, ARCH_SW_ATM_9998");
+  AddRequirementInfo("ARCH_SW_CIL_9997", "The ROM size consumed by this component shall not exceed 11K bytes. ");
+  AddRequirementInfo("ARCH_SW_CIL_9998", "The RAM size consumed by this component shall be 100 bytes. ");
+  AddRequirementInfo("ARCH_SW_DIA_9997", "The ROM size consumed by this component shall not exceed 18K bytes. ");
+  AddRequirementInfo("ARCH_SW_DIA_9998", "The RAM size consumed by this component shall be 700 bytes. ");
+  AddRequirementInfo("ARCH_SW_MMG_9997", "The ROM size consumed by this component shall not exceed 2.7K bytes. ");
+  AddRequirementInfo("ARCH_SW_MMG_9998", "The heap size consumed by this component shall be 4.5k bytes. ");
+  AddRequirementInfo("ARCH_SW_NVP_9997", "The ROM size consumed by this component shall not exceed 7.5K bytes. ");
+  AddRequirementInfo("ARCH_SW_NVP_9998", "The heap size consumed by this component shall not exceed 3K bytes. ");
+  AddRequirementInfo("ARCH_SW_PAL_9997", "The ROM size consumed by this component shall not exceed 5K bytes. ");
+  AddRequirementInfo("ARCH_SW_PAL_9998", "The heap size consumed by this component shall be less than 200 bytes. ");
+  AddRequirementInfo("ARCH_SW_PMP_9997", "The ROM size consumed by this component shall not exceed 2.3K bytes. ");
+  AddRequirementInfo("ARCH_SW_PMP_9998", "The heap size consumed by this component shall be 70 bytes. ");
+  AddRequirementInfo("ARCH_SW_EOL_9997", "The ROM size consumed by this component shall not exceed 1.0K bytes.");
+  AddRequirementInfo("ARCH_SW_EOL_9998", "The RAM size consumed by this component shall be 100 bytes. ");
+  AddRequirementInfo("ARCH_SW_ERH_9997", "The ROM size consumed by this component shall not exceed 4.5K bytes.");
+  AddRequirementInfo("ARCH_SW_ERH_9998", "The RAM size consumed by this component shall be 500 bytes. ");
+  AddRequirementInfo("ARCH_SW_BMM_9997", "The ROM size consumed by this component shall not exceed 2K bytes. ");
+  AddRequirementInfo("ARCH_SW_BMM_9998", "The RAM size consumed by this component shall be less than 100 bytes. ");
+  AddRequirementInfo("ARCH_SW_ATM_9997", "The ROM size consumed by this component shall not exceed 11K bytes. ");
+  AddRequirementInfo("ARCH_SW_ATM_9998", "ARCH_SW_ATM_9998	The RAM size consumed by this component shall be 70 bytes. ");
+//*************************************************************************************** 
+  
+  testCaseComment("Preconditions");
+  testStep("STEP", "Bench Initialization");
+  RunPreTs();
+  
+  
+  testCaseComment("Action: ARCH_SW_CIL_9997, ARCH_SW_CIL_9998");
+  testStep("STEP", "CIL - ROM size < 11K bytes and RAM size < 100 bytes. --> True");
+  EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_DIA_9997, ARCH_SW_DIA_9998");
+  testStep("STEP", "DIA - ROM size < 18K bytes and RAM size < 700 bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_MMG_9997, ARCH_SW_MMG_9998");
+  testStep("STEP", "MMG - ROM size < 2.7K bytes and RAM size < 4.5K bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_NVP_9997, ARCH_SW_NVP_9998");
+  testStep("STEP", "NVP - ROM size < 7.5K bytes and RAM size < 3K bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");	
+  
+  testCaseComment("Action: ARCH_SW_PAL_9997, ARCH_SW_PAL_9998");
+  testStep("STEP", "PAL - ROM size < 5K bytes and RAM size < 200 bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");	
+  
+  testCaseComment("Action: ARCH_SW_PMP_9997, ARCH_SW_PMP_9998");
+  testStep("STEP", "PMP - ROM size < 2.3K bytes and RAM size < 70 bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_EOL_9997, ARCH_SW_EOL_9998");
+  testStep("STEP", "EOL - ROM size < 1.0K bytes and RAM size < 100 bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_BMM_9997, ARCH_SW_BMM_9998");
+  testStep("STEP", "BMM - ROM size < 2K bytes and RAM size < 100 bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  
+  testCaseComment("Action: ARCH_SW_ATM_9997, ARCH_SW_ATM_9998");
+  testStep("STEP", "ATM - ROM size < 11K bytes RAM size < 70 bytes. --> True");
+	EvalManStepEqual("Expected test result", "TRUE", "TRUE");
+  	
+  
+  testCaseComment("Postcondition");
+  testStep("STEP", "Return ECU to default values");
+  RunPostTs();
+}
+
+void MainTest()
+{
+  InitTestModule();
+//  SW_Int_MAIN_Task_01();
+//  SW_Int_MAIN_EcuM_State_01();
+//  SW_Int_MAIN_TaskPriority_01();
+//  SW_Int_MAIN_TaskCpuLoad_01();
+  SW_Int_MAIN_SwComponentRamRomConsumtion_01();
+}

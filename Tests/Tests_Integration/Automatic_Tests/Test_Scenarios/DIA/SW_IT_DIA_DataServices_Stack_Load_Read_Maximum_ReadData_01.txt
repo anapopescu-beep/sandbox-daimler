@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0350; ARCH_SW_DIA_0351; ARCH_SW_DIA_0352; ARCH_SW_DIA_0353; ARCH_SW_DIA_0354
+ARCH_SW_DIA_0350: Service 0x22 (Read Data By Identifier) will be implemented for DID 01E3 (Stack Load)
+ARCH_SW_DIA_0351: The Read Stack Load service shall be available in the following sessions: Default Session (0x01) Programming (0x02) Extended Session (0x03) Supplier Session/Development Session (0x7E) Update Session (0x42)
+ARCH_SW_DIA_0352: Read Stack Load service shall be available under the following forms of Authentication: Supplier Development ENHANCED Internal Diagnostic Test Tool
+ARCH_SW_DIA_0353: DataIdentifier of the Read Stack Load shall be: 0x01E3
+ARCH_SW_DIA_0354: Response data length shall be 2 bytes long: Bytes #2-#3: DataIdentifier of the Read Stack Load shall be: 0x01E3 Byte #4 = Task Stack ID [1byte] [0x00] Core 1 Byte #5 = Maximum[1 byte] Note: Full Response length = 3 bytes + Response data length
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Stack_Load_Read_Maximum_ReadData*.
+
+Action: ARCH_SW_DIA_0350; ARCH_SW_DIA_0351; ARCH_SW_DIA_0352; ARCH_SW_DIA_0353; ARCH_SW_DIA_0354
+
+	Step 3: Send diag request for 22 01 E3 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Stack_Load_Read_Maximum_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

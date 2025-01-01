@@ -1,0 +1,66 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0281; ARCH_SW_DIA_0282; ARCH_SW_DIA_0283; ARCH_SW_DIA_0284; ARCH_SW_DIA_0525; ARCH_SW_DIA_0526; ARCH_SW_DIA_0527; ARCH_SW_DIA_0528; ARCH_SW_DIA_0530; ARCH_SW_DIA_0531; ARCH_SW_DIA_0532; ARCH_SW_DIA_0775; ARCH_SW_DIA_0776; ARCH_SW_DIA_0777; ARCH_SW_DIA_0778; ARCH_SW_DIA_0779; ARCH_SW_DIA_0780; ARCH_SW_DIA_0781; ARCH_SW_DIA_0782; ARCH_SW_DIA_0783; ARCH_SW_DIA_0785; ARCH_SW_DIA_0786; ARCH_SW_DIA_0787; ARCH_SW_DIA_0788; ARCH_SW_DIA_0789; ARCH_SW_DIA_0790; ARCH_SW_DIA_0791; ARCH_SW_DIA_0792; ARCH_SW_DIA_0793; ARCH_SW_DIA_0794; ARCH_SW_DIA_0795; ARCH_SW_DIA_0796; ARCH_SW_DIA_0800; ARCH_SW_DIA_0801; ARCH_SW_DIA_0802; ARCH_SW_DIA_0803 
+ARCH_SW_DIA_0010: Service Read DTC Information shall be implemented with subfunction 0x02 ReportDTCByStatusMask.
+ARCH_SW_DIA_0281: Service 0x19 (Read DTC Information) will be implemented for ReportDTCByStatusMask (RDTCBST  0x02)
+ARCH_SW_DIA_0282: The ReportDTCByStatusMask shall be available in the following sessions: Update session
+ARCH_SW_DIA_0283: The byte 3 shall be reserved for the DTCStatusAvailabilityMask of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0284: DTCStatusAvailabilityMask shall be 0x39. REVAS supported status bits are the following ones: - Test Failed (bit 0) - Confirmed DTC (bit 3) - Test Not Completed SinÅ“ Last Clear (bit 4) - Test Failed this Operation Cycle (bit 5)
+ARCH_SW_DIA_0525: Service 0x19 (Read DTC Information) will be implemented for ReportNumberOfDTCByStatusMask (RNODTCBSM  0x01)
+ARCH_SW_DIA_0526: The byte 1 shall be reserved for the SID-RQ of the ReadDiagnosticInformation service: â¦ The value 0x19 shall correspond to the SID-RQ of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0527: The byte 2 shall be reserved for the ReportType of the ReadDiagnosticInformation service: â¦ The value 0x01 shall correspond to the ReportType: ReportNumberOfDTCByStatusMask
+ARCH_SW_DIA_0528: The byte 3 shall be reserved for the DTCStatusMask of the ReadDiagnosticInformation service: â¦The bit 0 shall correspond to 'Test failed' â¦The bit 1 shall correspond to 'Test failed this Operation cycle' â¦The bit 2 shall correspond to 'Pending DTC' â¦The bit 3 shall correspond to 'Confirmed DTC' â¦The bit 4 shall correspond to 'Test not completed since last clear' â¦The bit 5 shall correspond to 'Test failed since last clear' â¦The bit 6 shall correspond to 'Test not completed this operation cycle' â¦The bit 7 shall correspond to 'Warning indicator requested'
+ARCH_SW_DIA_0530: Service 0x19 (Read DTC Information) will be implemented for ReportSupportedDTC (RSDTC) - 0x0A
+ARCH_SW_DIA_0531: The byte 1 shall be reserved for the SID-RQ of the ReadDiagnosticInformation service: â¦The value 0x19 shall correspond to the SID-RQ of theReadDiagnosticInformation service
+ARCH_SW_DIA_0532: The byte 2 shall be reserved for the ReportType of the ReadDiagnosticInformation service: â¦The value 0x0A shall correspond to the ReportType: ReportSupportedDTC
+ARCH_SW_DIA_0775: Service 0x19 (Read DTC Information) will be implemented for ReportDTCSnapshotRecordByDTCNumber (RDTCSRBDTCN) - 0x04
+ARCH_SW_DIA_0785: Service 0x19 (Read DTC Information) will be implemented for ReportDTCExtendedDataRecordByDTCNumber (RDTCEDRBDTCN) - 0x06
+ARCH_SW_DIA_0800: Service 0x19 (Read DTC Information) will be implemented for ReportDTCFaultDetectionCounte (RDTCFDC) - 0x14
+ARCH_SW_DIA_0776: The ReportDTCSnapshotRecordByDTCNumber shall be available in the following diagnostic sessions: ?Default Session ?Extended Session ?Development Session Service shall be available under any form of Authentication 
+ARCH_SW_DIA_0777: ?The value 0x19 shall correspond to the SID-RQ of theReadDiagnosticInformation service. ?The value 0x04 shall correspond to the ReportType: ReportDTCSnapshotRecordByDTCNumber 
+ARCH_SW_DIA_0778: The bytes #3...#5 shall be reserved for the DTCRecord of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0779: The byte #6 shall be reserved for the DTCSnapshotRecordNumber of the ReadDiagnosticInformation service. 0x10 = First Occurence (triggered on CONFIRMED) 0x20 = Last Occurence (triggered on TEST_FAILED) 0xFF = All Snapshot records 
+ARCH_SW_DIA_0780: The byte #6 shall be reserved for the StatusOfDTC of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0781: The byte #7 shall be reserved for the DTCSnapshotRecordNumber
+ARCH_SW_DIA_0782: The byte #8 shall be reserved for DTCSnapshotRecordNumberOfIdentifiers
+ARCH_SW_DIA_0783: The bytes #9 ... #9 + length(DTCSnapshotRecord #x) -1 shall be reserved for DTCSnapshotRecord Note: DTCSnapshotRecord contains several dataIdentifiers and their returned data. Each DTC has its specific dataidentifiers which can be found in CDD. x= DTCSnapshotRecordNumber 
+ARCH_SW_DIA_0786: The ReportDTCExtendedDataRecordByDTCNumber shall be available in the following diagnostic sessions: ?Default Session ?Extended Session ?Development Session Service shall be available under any form of Authentication 
+ARCH_SW_DIA_0787:  The value 0x19 (byte1) shall correspond to the SID-RQ of theReadDiagnosticInformation service. ? The value 0x06 (byte2) shall correspond to the ReportType: ReportDTCExtendedDataRecordByDTCNumber 
+ARCH_SW_DIA_0788: The bytes #3..#5 shall be reserved for the DTCRecord of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0789: The byte #6 shall be reserved for the DTCExtendedDataRecordNumber of the ReadDiagnosticInformation service. 0x01 = StandardEnvironmentalData 0xFF = All environmental data 
+ARCH_SW_DIA_0790: The bytes #3...#5 shall be reserved for the DTCRecord of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0791: The byte #6 shall be reserved for the StatusOfDTC of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0792: The byte #7 shall be reserved for the ExtDataRecordlist of the ReadDiagnosticInformation service. byte #7 shall be set to 0x01 because the list of ExtendedDataRecordNumber contains only one element: StandardEnvironmentalData 
+ARCH_SW_DIA_0793: ?Standardized DTCExtendedData byte #8 shall correspond to 'Occurrence Flag' 0x00 - Occurence 0x01 - Fault 
+ARCH_SW_DIA_0794: ?Standardized DTCExtendedData byte #9 shall correspond to 'External tester present Flag' 0x00 - Not present 0x01 - Present 
+ARCH_SW_DIA_0795: ?Standardized DTCExtendedData byte #10 shall correspond to 'Frequency Counter
+ARCH_SW_DIA_0796: ?Standardized DTCExtendedData byte #11 shall correspond to 'Ignition Cycle Counter'
+ARCH_SW_DIA_0801: ?The value 0x14 shall correspond to the ReportType: ReportDTCFaultDetectionCounter
+ARCH_SW_DIA_0802: The bytes #3..#5 shall be reserved for the DTCRecord of the ReadDiagnosticInformation service.
+ARCH_SW_DIA_0803: The byte #6 shall be reserved for the DTCFaultDetectionCounter of the ReadDiagnosticInformation service. (The DTCFaultDetectionCounter reports the number of fault detection counts of a DTC.) See SYS_DAI_MF09_692 for more details 
+ARCH_SW_DIA_0826: Each Root Cause will be reported on 1 byte and will have a dependency with AEC Groups and DTCs:?1 byte: AEC ID (#)
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *Dcm_Svc19Handler*.
+
+Action: ARCH_SW_DIA_0281; ARCH_SW_DIA_0282; ARCH_SW_DIA_0283; ARCH_SW_DIA_0284; ARCH_SW_DIA_0525; ARCH_SW_DIA_0526; ARCH_SW_DIA_0527; ARCH_SW_DIA_0528; ARCH_SW_DIA_0530; ARCH_SW_DIA_0531; ARCH_SW_DIA_0532; ARCH_SW_DIA_0775; ARCH_SW_DIA_0776; ARCH_SW_DIA_0777; ARCH_SW_DIA_0778; ARCH_SW_DIA_0779; ARCH_SW_DIA_0780; ARCH_SW_DIA_0781; ARCH_SW_DIA_0782; ARCH_SW_DIA_0783; ARCH_SW_DIA_0785; ARCH_SW_DIA_0786; ARCH_SW_DIA_0787; ARCH_SW_DIA_0788; ARCH_SW_DIA_0789; ARCH_SW_DIA_0790; ARCH_SW_DIA_0791; ARCH_SW_DIA_0792; ARCH_SW_DIA_0793; ARCH_SW_DIA_0794; ARCH_SW_DIA_0795; ARCH_SW_DIA_0796; ARCH_SW_DIA_0800; ARCH_SW_DIA_0801; ARCH_SW_DIA_0802; ARCH_SW_DIA_0803
+
+	Step 3: Send fault memory clear request.
+
+	Step 4: Check if BP was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

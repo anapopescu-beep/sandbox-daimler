@@ -1,0 +1,66 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0140, ARCH_SW_PAL_0147, ARCH_SW_PAL_0342
+ARCH_SW_PAL_0140: The component shall check for HW thermanl protection.
+ARCH_SW_PAL_0147: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0342: ATM_runGetTestResult shall be called to get the status of specific tests (inhibiting the execution of the present one if failed).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckHWSelfProtection at line 'Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);'.
+
+	Step 3: Check if CPU stopped in function PAL_cbk_CheckHWSelfProtection at line 'Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_PAL_0140
+
+	Step 4: Step in function 'Rte_Call_pclCheckHWSelfProtection_AutotestCallback(&u8TestResult);'. 
+		Expected result:  PAL_Autotest_CheckHWSelfProtection,,app.elf
+
+	Step 5: Check if CPU stopped in function PAL_Autotest_CheckHWSelfProtection(). 
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection() at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_DRIVER_COMMAND, &pal_u8PreviousDriverCommandTestResult);'.
+
+	Step 7: Check if CPU stopped in function PAL_Autotest_CheckHWSelfProtection() at line 'Rte_Call_pclAutotestServices_GetTestResult(ATM_KU8_ID_TEST_DRIVER_COMMAND, &pal_u8PreviousDriverCommandTestResult);'. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_PAL_0147, ARCH_SW_PAL_0342
+
+	Step 8: Step in function Rte_Call_pclAutotestServices_GetTestResult(). 
+		Expected result:  ATM_runGetTestResult,,app.elf
+
+	Step 9: Check if CPU stopped in function ATM_runGetTestResult(). 
+		Expected result:  CPU stopped at BP
+
+	Step 10: Write variable u8TestResult with KU8_ATM_TEST_OK.
+
+	Step 11: Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection at line '*pu8TestResult = pal_u8ResultOfAutoTest;'.
+
+	Step 12: Check if CPU stopped at line *pu8TestResult = pal_u8ResultOfAutoTest;
+
+	Step 13: Overwrite variable pu8TestResult with KU8_ATM_TEST_OK.
+
+	Step 14: Set a breakpoint in function PAL_cbk_CheckHWSelfProtection after the return of the autotest result.
+
+Action: ARCH_SW_PAL_0147, ARCH_SW_PAL_0342
+
+	Step 15: Check if CPU stopped after the return of the autotest result'. 
+		Expected result:  CPU is stopped at BP
+
+	Step 16: Read autotest result transmited from ATM. 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 17: Return ECU to default values

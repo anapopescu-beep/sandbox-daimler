@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>1681</w>
+      <h>1610</h>
+    </coordinates>
+    <panel_attributes>title:PMP_runComputeDeficiencyLevel
+Start
+Read measured motor current in A
+Read deficiency level IRV to get Previous value
+Check if motor curent is not null
+If
+	[TRUE]
+	Calculate the absolute value of measured motor current
+	If
+		[Value is negative]
+		Take the opposite
+
+		[Value is positive]
+		Take itself
+	EndIf
+	Calculate the Square of the motor current
+	Get the internal temperature
+	If
+		[Bigger than threshold]
+		Add the square of the motor current to the previous level taking internal temperature into consideration
+		
+		[Smaller or equal than the threshold]
+		Add the square of the motor current to the previous level
+	EndIf
+	Check if sum is over U32 size
+	If
+		[TRUE]
+		Saturate to the maximum
+
+		[FALSE]
+		
+	EndIf
+	Set new deficiency level
+	
+	[FALSE]
+	Check previous deficiency level
+	If
+		[Smaller than threshold]
+		Level becomes null
+
+		[Bigger or equal to the threshold]
+		 Decrement level
+	EndIf
+
+Check if deficiency level range exeeds the maximum value
+If
+	[TRUE]
+	Clamp the deficiency level to its maximum value
+
+	[FALSE]
+EndIf
+
+Write deficiency level IRV
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

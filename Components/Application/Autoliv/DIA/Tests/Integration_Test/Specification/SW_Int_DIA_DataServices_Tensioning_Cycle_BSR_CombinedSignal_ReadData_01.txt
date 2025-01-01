@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0025; ARCH_SW_DIA_0096; ARCH_SW_DIA_0097; ARCH_SW_DIA_0098;
+ARCH_SW_DIA_0025: Service 0x22 will be implemented for DID 0302.
+ARCH_SW_DIA_0096: Service shall be available in Default, Extended and Development session.
+ARCH_SW_DIA_0097: Response data shall be 228 bytes long.
+ARCH_SW_DIA_0098: Data contained in NVP_BLOCK_ID_CYCLE_26 to NVP_BLOCK_ID_CYCLE_28 and NVP_BLOCK_ID_STEP_116 to NVP_BLOCK_ID_STEP_144 shall be returned.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_Tensioning_Cycle_BSR_CombinedSignal_ReadData*.
+
+Action: ARCH_SW_DIA_0025; ARCH_SW_DIA_0096; ARCH_SW_DIA_0097; ARCH_SW_DIA_0098;
+
+	Step 3: Send diag request for 22 0302 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_Tensioning_Cycle_BSR_CombinedSignal_ReadData. 
+		Expected result:  BP was reached.
+
+	Step 5: Read 26th byte of NVP_BLOCK_ID_CYCLE_0_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

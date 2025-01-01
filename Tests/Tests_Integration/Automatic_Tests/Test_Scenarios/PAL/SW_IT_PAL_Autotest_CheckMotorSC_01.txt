@@ -1,0 +1,111 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0383, ARCH_SW_PAL_0384, ARCH_SW_PAL_0385, ARCH_SW_PAL_0386, ARCH_SW_PAL_0387, ARCH_SW_PAL_0388, ARCH_SW_PAL_0389
+ARCH_SW_PAL_0383: The current executed cycle data from BFE shall be an input.
+ARCH_SW_PAL_0384: The PMP_runGetBatteryVoltage_10ms function shall be called to get the battery voltage.
+ARCH_SW_PAL_0385: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+ARCH_SW_PAL_0386: PAL_runReadMotorCurrentInmA shall be called to get the Motor current.
+ARCH_SW_PAL_0387: PMP_runGetBatteryVoltage_10ms shall be called to mesure motor SC current.
+ARCH_SW_PAL_0388: PMP_runGetFilteredTemperature_deg shall be called to get the filtred value of the ECU temperature.
+ARCH_SW_PAL_0389: PMP_runGetMotorResistance shall be called to get the value for motor resitance.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_PAL_0386, ARCH_SW_PAL_0383
+
+	Step 2: Set a breakpoint in function PAL_cbk_CheckMotorSC at the RTE Call for CheckMotorSC autotest.
+
+	Step 3: Check if CPU stopped in function PAL_cbk_CheckMotorSC() at the RTE Call for CheckMotorSC autotest. 
+		Expected result:  BP reached.
+
+	Step 4: Step in.
+
+	Step 5: Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE call for GetTestResult.
+
+	Step 6: Check if CPU stopped in function PAL_Autotest_CheckMotorSC() at the RTE call for GetTestResult. 
+		Expected result:  BP reached.
+
+	Step 7: Step in.
+
+	Step 8: Run until return in function ATM_runGetTestResult.
+
+	Step 9: Write autotest result with 0x01
+
+	Step 10: Set a breakpoint in function PAL_Autotest_CheckMotorSC at the PAL_runReadMotorCurrentInmA function call.
+
+	Step 11: Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the PAL_runReadMotorCurrentInmA function call. 
+		Expected result:  BP reached.
+
+	Step 12: Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetBatteryVoltage_10ms.
+
+	Step 13: Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetBatteryVoltage_10ms. 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0086
+
+	Step 14: Run until return PMP_runGetBatteryVoltage_10ms and evaluate *pu16Voltage data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 15: Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetFilteredTemperature_deg.
+
+	Step 16: Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetFilteredTemperature_deg. 
+		Expected result:  BP reached.
+
+	Step 17: Run until return PMP_runGetFilteredTemperature_deg and evaluate *ps16InternalTemperature_deg data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 18: Set a breakpoint in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetMotorResistance.
+
+	Step 19: Check if CPU stopped in function PAL_Autotest_CheckMotorSC at the RTE Call for PMP_runGetMotorResistance. 
+		Expected result:  BP reached.
+
+	Step 20: Run until return PMP_runGetMotorResistance and evaluate *pu16Resistance_mOhm data pointer 
+		Expected result:  Variable read from ADC.
+
+	Step 21: Check if CPU stopped in function PMP_runGetMotorResistance(). 
+		Expected result:  BP reached.
+
+	Step 22: Set a breakpoint in function PAL_Autotest_CheckMotorSC() at the autotest result.
+
+	Step 23: Check if CPU stopped in function PAL_Autotest_CheckMotorSC(). 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0385
+
+	Step 24: Evaluate u8ADCTestResult 
+		Expected result:  Variable is equal to 0x01.
+
+Action: ARCH_SW_PAL_0389
+
+	Step 25: Evaluate ECUInternalTemperature 
+		Expected result:  Variable is equal to *ps16InternalTemperature_deg data pointer.
+
+Action: ARCH_SW_PAL_0384, ARCH_SW_PAL_0387
+
+	Step 26: Evaluate KL30Voltage_mV 
+		Expected result:  Variable is equal to *pu16Voltage data pointer data pointer.
+
+Action: ARCH_SW_PAL_0388
+
+	Step 27: Evaluate MotorResistance_mOhm 
+		Expected result:  Variable is equal to *pu16Resistance_mOhm data pointer.
+
+	Step 28: Set a breakpoint in function PAL_cbk_CheckMotorSC after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 29: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x01.
+
+Postcondition
+
+	Step 30: Return ECU to default values

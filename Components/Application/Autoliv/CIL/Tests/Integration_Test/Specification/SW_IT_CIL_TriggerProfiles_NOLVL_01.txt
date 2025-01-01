@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0057, ARCH_SW_CIL_0080
+ARCH_SW_CIL_0057: If any other value than the ones mentioned above is received for signal RBTMFL_SP_Lvl_Rq_ST35 then no cycle should be requested.
+ARCH_SW_CIL_0080: A requested cycle will end if RBTMFL_SP_Lvl_Rq_ST35 signal is received on CAN with value 0.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C04_PRESF_LVL_V2_NOLVL.
+
+	Step 4: Set a breakpoint in function CIL_runCANToAppli at line cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);.
+
+	Step 5: Set a breakpoint in function cil_TriggerProfiles under case KU8_NO_CYCLE:.
+
+Action: ARCH_SW_CIL_0057, ARCH_SW_CIL_0080
+
+	Step 6: Check if CPU stopped in function cil_RequestTensioning. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

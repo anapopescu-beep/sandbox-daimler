@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0285; ARCH_SW_DIA_0286; ARCH_SW_DIA_0287; ARCH_SW_DIA_0288; ARCH_SW_DIA_0289; ARCH_SW_DIA_0290; ARCH_SW_DIA_0291
+ARCH_SW_DIA_0285: Service 0x22 (Read Data By Identifier) will be implemented for DID FD01 (SW Version)
+ARCH_SW_DIA_0286: The Read SW Version shall be available in the following sessions: Supplier Session/Development Session (0x7E)
+ARCH_SW_DIA_0287: Service Read SW Version shall be processed with or without Any form of Authentication.
+ARCH_SW_DIA_0288: DataIdentifier of SW Version shall be 0xFD01
+ARCH_SW_DIA_0289: Read SW Version service Response DataRecord shall have 12 bytes length
+ARCH_SW_DIA_0290: DataRecord: SW Version Bytes 'SN1' to 'SN12' are coded in ASCII and shall reflect the SW Identification (letters and digits allowed)
+ARCH_SW_DIA_0291: SNx shall be ordered from MSB to LSB, ASCI coded i.e. bytes #4 to #15 form a string in that order that can be read directly. It will be formatted as follow:Â Â   â¦Â Â Â Â Â Â Â Â Â Â AABCCZWH.YYY Where: AA-reflects product code, e.g. ER for ECU PP (a.k.a. ERR) B -reflects BM identification according to current software version, e.g. 0 for PP4G Extended CC-reflects customer code, e.g. 18 for DAI Group Z-reflects software type code, 6 for DAI MMA W-Digit subject to change in case the SW release have been modified between SW Freeze and M2 Milestone. H-defines a FLASHED software version YYY-reflects the software version over 3 digit
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD01_SWVersionRead*.
+
+	Step 3: Enter development session*.
+
+Action: ARCH_SW_DIA_0285; ARCH_SW_DIA_0286; ARCH_SW_DIA_0287; ARCH_SW_DIA_0288; ARCH_SW_DIA_0289; ARCH_SW_DIA_0290; ARCH_SW_DIA_0291
+
+	Step 4: Send diag request for 22 0242 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD01_SWVersionRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Evaluate Data Record 
+		Expected result:  Variable was read.
+
+Postcondition
+
+	Step 7: Return ECU to default values

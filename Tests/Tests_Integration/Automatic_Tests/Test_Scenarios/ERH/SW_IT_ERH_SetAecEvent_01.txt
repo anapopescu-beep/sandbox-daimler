@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0080, ARCH_SW_ERH_0083
+ARCH_SW_ERH_0080: This prototype shall manage the Qualification status and Deskill status of the AECs.
+ARCH_SW_ERH_0083: This prototype shall manage the Qualification status and Deskill status of the DTCs by AECs group status.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_runSetAecEvent () at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);'.
+
+Action: ARCH_SW_ERH_0080, ARCH_SW_ERH_0083
+
+	Step 3: Check if CPU stopped in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);
+
+	Step 4: Step in function erh_ManageAECCommand().
+
+	Step 5: Set a breakpoint in function erh_ManageFailedCounterEvent () at line 'u16AECQualificationThresold = ((uint16)'.
+
+Action: ARCH_SW_ERH_0080, ARCH_SW_ERH_0083
+
+	Step 6: Check if CPU stopped at line 'u16AECQualificationThresold = ((uint16)' 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

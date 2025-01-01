@@ -1,0 +1,36 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0625; ARCH_SW_DIA_0626; ARCH_SW_DIA_0627; ARCH_SW_DIA_0628
+ARCH_SW_DIA_0625: Service 0x2E (Write Data By Identifier) will be implemented for DID 010B (Adjust ISO 15765-2 Block Size and STmin Parameter)
+ARCH_SW_DIA_0626: The Write Adjust ISO 15765-2 Block Size and STmin Parameter service shall be available in the following sessions: ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) 
+ARCH_SW_DIA_0627: The Write Adjust ISO 15765-2 Block Size and STmin Parameter service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0628: Bytes #2-#3: DataIdentifier of the Write Adjust ISO 15765-2 Block Size and STmin Parameter shall be: 0x010B
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_Adjust_ISO_15765_2_Block_Size_and_STmin_Parameter_Read_Block_Size_Value_WriteData*.
+
+ARCH_SW_DIA_0625; ARCH_SW_DIA_0626; ARCH_SW_DIA_0627; ARCH_SW_DIA_0628
+
+	Step 4: Send diag request for 2E 010B and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_Adjust_ISO_15765_2_Block_Size_and_STmin_Parameter_Read_Block_Size_Value_WriteData was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

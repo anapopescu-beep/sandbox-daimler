@@ -1,0 +1,108 @@
+/*@!Encoding:1252*/
+/*------------------------------------------------------------------------------
+                                IMPORT LIBRARY
+ ------------------------------------------------------------------------------*/
+/* To include all the libraries used by the .capl script. */
+/* WARNING: Some things such as diagnostic functions are different from project
+to project, change those according to your project requirements */
+includes
+{
+  #include "Includes\Helper_Functions.cin"
+  #include "Includes\Debugger_Functions.cin"
+  #include "Includes\Diagnostic_Functions.cin"
+}
+
+/*------------------------------------------------------------------------------
+                                    GLOBALS
+ ------------------------------------------------------------------------------*/
+/* To declare the constants used throurough the entire module, and global variables */
+variables
+{
+/*-------------------------------Constants-------------------------------------*/
+
+/*----------------------------Global Variables---------------------------------*/
+  int actual_result = 0;
+  int expected_result = 0;
+}
+
+/*------------------------------------------------------------------------------
+                                REPORT INFO
+ ------------------------------------------------------------------------------*/
+/* Information to be added in the report. Mostly module specific */
+void addGeneralReportInfo()
+{
+testReportAddEngineerInfo("Test Engineer: " ,"Insert_Name");
+testReportAddSetupInfo("Debugger: " , "IC5000");
+testReportAddSetupInfo("Power Supply: " , "PSW 30-108");
+testReportAddSetupInfo("Mock-up: " , "SBE V2.1");
+}
+
+/*------------------------------------------------------------------------------
+                           ENVIROMENT INITIALIZATION
+------------------------------------------------------------------------------*/
+/* To prepare the test enviroment for the test execution. */
+/* The following checks will take place before executing the TC's:
+  - Identification of SW Version (ALV and customer)
+  - Identification of HW Version
+  - Check correct state of the SW.
+
+
+/*------------------------------------------------------------------------------
+                                TEST FUNCTIONS
+------------------------------------------------------------------------------*/
+/*------------------------- Test Preconditions ------------------------------*/
+/* For operations to ensure the correct execution of the test case, such as IGN_ON,
+checking that CAN communication is present, etc.
+/* Varies from module to module, use from Helper_Functions.cin only the ones you need */
+testfunction Precondtions()
+{
+  Check_ECU_ON();
+}
+
+/*------------------------- Test Postconditions ------------------------------*/
+/* For operations to ensure that after the test case was executed, the enviroment
+would go back to a blank state, to be ready for the next test step in queue. Call it a Cleanup phase. */
+testfunction Postconditions()
+{
+  Check_ECU_ON();
+}
+
+/*------------------------------------------------------------------------------
+                                TEST EXECUTION
+------------------------------------------------------------------------------*/
+testcase SW_IT_modulename_0001()
+{
+  /*-------------------------Test specific report info------------------------------*/
+  testCaseTitle("SW_IT_modulename_0001", "Test case title");
+  testCaseDescription ("Purpose of test: \n");
+  testCaseDescription ("Requirement Under Test: (SW Architecture Interface/Requirement ID) \n");
+  testCaseDescription ("Test Type: Requirement-Based/Interface test \n");
+  testCaseDescription ("Fault injection method used: Yes/No \n");
+  testCaseDescription ("Resource usage evaluation: Yes/No \n");
+  testCaseDescription ("Priority: Yes/No \n");
+  testCaseDescription ("Safety relevant: Yes/No \n");
+  
+  /*------------------------- Test scenario start ------------------------------*/
+  testStepBegin ("1", "Description of teststep");
+  debugger_reset();
+  debugger_run();
+  debugger_writeVariable("au8AtStatuses,,app.elf", "uint8", 2, 2);
+  debugger_deleteAllBreakpoints();
+  /* TBA: Read from file the response from python library, and put the answer in the report */
+  if (actual_result == expected_result)
+  {
+    testStepPass("Result of the execution of test step (what is returned from the debugger_ functions in py)");
+  }
+  else
+  {
+    testStepFail("Reason why test step failed (what is returned from the debugger_ functions in py)");
+  }
+}
+/*------------------------------------------------------------------------------
+                                TEST SEQUENCE
+------------------------------------------------------------------------------*/
+void MainTest()
+{
+  addGeneralReportInfo();
+  SW_IT_modulename_0001();
+}

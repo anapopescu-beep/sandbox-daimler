@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AUTOSAR xmlns="http://autosar.org/schema/r4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://autosar.org/schema/r4.0 autosar_4-2-2.xsd">
+<AR-PACKAGES>
+    <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="cf7544a4-ca00-496f-a739-13033ff1458a">
+      <SHORT-NAME>AUTOLIV</SHORT-NAME>
+      <AR-PACKAGES>
+        <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="1d745ded-da5a-4f23-8507-93ac6fa2a3e2">
+          <SHORT-NAME>SoftwareComponents</SHORT-NAME>
+          <AR-PACKAGES>
+            <AR-PACKAGE T="2017-01-04T08:25:38+01:00" UUID="6a560f7f-7e98-44bf-b283-78d4bf445070">
+              <SHORT-NAME>SFR</SHORT-NAME>
+              <ELEMENTS>
+                <APPLICATION-SW-COMPONENT-TYPE T="2017-04-24T16:32:33+02:00" UUID="27059243-769f-4432-a6c8-e6f78c4ebb75">
+                  <SHORT-NAME>SFR_AC_StandardFunctionRecovery</SHORT-NAME>
+                  <CATEGORY>SWC</CATEGORY>
+                  <INTERNAL-BEHAVIORS>
+                    <SWC-INTERNAL-BEHAVIOR T="2017-01-04T08:25:38+01:00" UUID="6de7171f-4b0c-4b6e-a9ad-e5d268168233">
+                      <SHORT-NAME>SFR_IB_StandardFunctionRecovery</SHORT-NAME>
+                      <CONSTANT-VALUE-MAPPING-REFS>
+                        <CONSTANT-VALUE-MAPPING-REF DEST="CONSTANT-SPECIFICATION-MAPPING-SET">/AUTOLIV/GlobalDictionary/Constants/ConstantsMappingSet_PP4G</CONSTANT-VALUE-MAPPING-REF>
+                      </CONSTANT-VALUE-MAPPING-REFS>
+                      <DATA-TYPE-MAPPING-REFS>
+                        <DATA-TYPE-MAPPING-REF DEST="DATA-TYPE-MAPPING-SET">/AUTOLIV/GlobalDictionary/DataTypeMappingSet/DataTypeMappingSet_PP4G</DATA-TYPE-MAPPING-REF>
+                      </DATA-TYPE-MAPPING-REFS>
+                      <EVENTS>
+                        <TIMING-EVENT T="2017-01-04T08:25:38+01:00" UUID="0578889d-c14e-438e-b607-85fd0c6d5e36">
+                          <SHORT-NAME>SFR_evReleasingAlgorithm</SHORT-NAME>
+                          <START-ON-EVENT-REF DEST="RUNNABLE-ENTITY">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/SFR_IB_StandardFunctionRecovery/SFR_runStandardFunctionRecovery</START-ON-EVENT-REF>
+                          <PERIOD>0.01</PERIOD>
+                        </TIMING-EVENT>
+                      </EVENTS>
+                      <HANDLE-TERMINATION-AND-RESTART>NO-SUPPORT</HANDLE-TERMINATION-AND-RESTART>
+                      <RUNNABLES>
+                        <RUNNABLE-ENTITY T="2017-04-24T16:32:44+02:00" UUID="def66e06-8718-402f-90fe-9ccbb78a47bf">
+                          <SHORT-NAME>SFR_runStandardFunctionRecovery</SHORT-NAME>
+                          <MINIMUM-START-INTERVAL>0.0</MINIMUM-START-INTERVAL>
+                          <SW-ADDR-METHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDR-METHOD-REF>
+                          <CAN-BE-INVOKED-CONCURRENTLY>false</CAN-BE-INVOKED-CONCURRENTLY>
+                          <DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="532ff479-16f6-42c2-b4de-470c9e327f1e">
+                              <SHORT-NAME>DRP_prrExecutedCycle_u8CycleNumber</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/prrExecutedCycle</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCycleNumber/u8CycleNumber</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="159fb2e6-4916-475d-986b-19a23490965d">
+                              <SHORT-NAME>DRP_prrCarAcceleration_b8IsCarAccelerationLow</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/prrCarAcceleration</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCarAcceleration/b8IsCarAccelerationLow</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="864fbd16-592b-47b7-961d-2602b0542ae3">
+                              <SHORT-NAME>DRP_prrCustomerSpecific_b8IsCarCrashDetected</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/prrCustomerSpecific</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrCustomerSpecific/b8IsCarCrashDetected</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-RECEIVE-POINT-BY-ARGUMENTS>
+                          <DATA-SEND-POINTS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="85628f61-a542-44a1-b9cc-7a5b6e9d73e8">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PAT_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_PAT</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="cdb641b7-ec0e-4263-9e94-499762b3a0f9">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PAT_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_PAT</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="46805f72-bbf2-4532-8bd8-75c72abe4cb5">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BCK_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_BCK</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="1201bca9-b74f-439e-949d-940a714390dd">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BCK_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_BCK</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="c2c800bc-ad2e-49f6-a735-a9f2ec774d92">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PAT_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_PAT</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="ffd5eaf8-e266-4f09-bdcf-9c8563667243">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_SMO_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_SMO</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="f67b92e9-eb7d-4cfa-9959-570ec6690dbe">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_HRD_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_HRD</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="9056ea4b-46fe-4b15-8999-977950aa3374">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_SMO_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_SMO</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="df7771c0-dfa4-493d-8894-5c3836bc0a0a">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BCK_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_BCK</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="9277b005-514b-447a-9982-712f77d39b49">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_HRD_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_HRD</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="f2734e22-f081-4e56-bc01-9a86245a793f">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_HRD_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_HRD</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="a39a9a13-ecf0-4e44-8d5f-8fad7e25e196">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PAT_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_PAT</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="fee68b4d-6bb5-4593-82eb-485583bcd296">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_SMO_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_SMO</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="111aa810-29c4-43b0-b72f-1ba2891faedd">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_HRD_u8TriggeringSource</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_HRD</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/u8TriggeringSource</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="aeea01e7-7185-4a1f-a998-0460e68e961e">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_PAT_b8TriggerFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_PAT</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8TriggerFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="f0fc1b20-3989-4192-8d07-cc8133c06096">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_HRD_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_HRD</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="34343865-8bcb-4d8d-8866-7806ba35babd">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BCK_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_BCK</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="8b9032b2-90c2-4945-8102-73a09a48f56e">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_SMO_b8PreActivationFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_SMO</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreActivationFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="f59be079-e326-439e-9fce-ef88d9f11b49">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_SMO_b8InterruptFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_SMO</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8InterruptFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                            <VARIABLE-ACCESS T="2017-01-04T08:25:38+01:00" UUID="03f760a4-8cc7-4150-82aa-ddbe922d73c4">
+                              <SHORT-NAME>DSP_psrAlgo_Flags_BCK_b8PreConditionsFlag</SHORT-NAME>
+                              <ACCESSED-VARIABLE>
+                                <AUTOSAR-VARIABLE-IREF>
+                                  <PORT-PROTOTYPE-REF DEST="P-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/psrAlgo_Flags_BCK</PORT-PROTOTYPE-REF>
+                                  <TARGET-DATA-PROTOTYPE-REF DEST="VARIABLE-DATA-PROTOTYPE">/AUTOLIV/GlobalDictionary/SenderReceiverInterfaces/isrAlgorithmFlagsStatus/b8PreConditionsFlag</TARGET-DATA-PROTOTYPE-REF>
+                                </AUTOSAR-VARIABLE-IREF>
+                              </ACCESSED-VARIABLE>
+                            </VARIABLE-ACCESS>
+                          </DATA-SEND-POINTS>
+                          <SERVER-CALL-POINTS>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="fe4d9505-df16-477d-a6c4-e20584255143">
+                              <SHORT-NAME>SSCP_pclTestResult_GetTestResult</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/pclAutotestServices</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsAutotestServices/GetTestResult</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="e3dfde1d-f6a2-4de8-a485-5e1cbff1fb92">
+                              <SHORT-NAME>SSCP_pclDiagRequestCycle_GetDiagRequestCycle</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/pclDiagRequestCycle</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsDiagRequestCycle/GetDiagRequestCycle</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="0b27c634-33fe-497b-ab5f-e86121832daf">
+                              <SHORT-NAME>SSCP_pclModeManagement_CheckModeStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/pclModeManagement</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsModeManagement/CheckModeStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="5415ff0f-9c8b-4866-9729-4f5825d517ea">
+                              <SHORT-NAME>SSCP_pclSystemContextManagement_GetLastTensionningState</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/pclSystemContextManagement</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsSystemContextManagement/GetLastTensionningState</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-01-04T08:25:38+01:00" UUID="538bc7ab-5799-44f7-9747-e4c4301abe57">
+                              <SHORT-NAME>SSCP_pclDiagRequestCycle_ClearDiagRequestCycle</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/pclDiagRequestCycle</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOLIV/GlobalDictionary/ClientServerInterfaces/icsDiagRequestCycle/ClearDiagRequestCycle</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                            <SYNCHRONOUS-SERVER-CALL-POINT T="2017-04-24T16:32:44+02:00" UUID="c147189f-58f2-4a93-bd0a-0db32cd7feab">
+                              <SHORT-NAME>scp_GetEventStatus</SHORT-NAME>
+                              <OPERATION-IREF>
+                                <CONTEXT-R-PORT-REF DEST="R-PORT-PROTOTYPE">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/pclEvtInfoHallSensor</CONTEXT-R-PORT-REF>
+                                <TARGET-REQUIRED-OPERATION-REF DEST="CLIENT-SERVER-OPERATION">/AUTOSAR_Dem/ASR42/PortInterfaces/Dem_ASR42_DiagnosticInfo/GetEventStatus</TARGET-REQUIRED-OPERATION-REF>
+                              </OPERATION-IREF>
+                              <TIMEOUT>0.0</TIMEOUT>
+                            </SYNCHRONOUS-SERVER-CALL-POINT>
+                          </SERVER-CALL-POINTS>
+                          <SYMBOL>SFR_runStandardFunctionRecovery</SYMBOL>
+                        </RUNNABLE-ENTITY>
+                      </RUNNABLES>
+                      <SUPPORTS-MULTIPLE-INSTANTIATION>false</SUPPORTS-MULTIPLE-INSTANTIATION>
+                    </SWC-INTERNAL-BEHAVIOR>
+                  </INTERNAL-BEHAVIORS>
+                </APPLICATION-SW-COMPONENT-TYPE>
+                <SWC-IMPLEMENTATION T="2017-01-04T08:25:38+01:00" UUID="2f730a75-63de-48a0-b1e1-16a3dddf69c3">
+                  <SHORT-NAME>SFR_impStandardFunctionRecovery</SHORT-NAME>
+                  <CODE-DESCRIPTORS>
+                    <CODE T="2017-01-04T08:25:38+01:00" UUID="22d4b1d3-3029-4293-8852-a29f1a879517">
+                      <SHORT-NAME>SFR_Impl_Code</SHORT-NAME>
+                      <ARTIFACT-DESCRIPTORS>
+                        <AUTOSAR-ENGINEERING-OBJECT>
+                          <SHORT-LABEL>SFR_Impl_Code_CodeDesc</SHORT-LABEL>
+                          <CATEGORY>SWSRC</CATEGORY>
+                        </AUTOSAR-ENGINEERING-OBJECT>
+                      </ARTIFACT-DESCRIPTORS>
+                    </CODE>
+                  </CODE-DESCRIPTORS>
+                  <PROGRAMMING-LANGUAGE>C</PROGRAMMING-LANGUAGE>
+                  <RESOURCE-CONSUMPTION T="2016-06-02T10:55:01+02:00" UUID="DCE:b161ae56-68de-47c7-9667-6f038435e22a">
+                    <SHORT-NAME>SFR_Impl_ResCons</SHORT-NAME>
+                    <MEMORY-SECTIONS>
+                      <MEMORY-SECTION T="2017-02-07T16:27:18+01:00" UUID="DCE:1adc0dd8-4731-4b1c-bad8-8ed6bee90a79">
+                        <SHORT-NAME>CODE</SHORT-NAME>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/CODE</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:27:21+01:00" UUID="DCE:957bef36-41dc-4756-9a88-609c6b4dd62d">
+                        <SHORT-NAME>VAR_INIT_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_INIT</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                      <MEMORY-SECTION T="2017-02-07T16:27:24+01:00" UUID="DCE:dd99ce84-1425-407c-abf9-fc5aef8bb5f4">
+                        <SHORT-NAME>VAR_UNSPECIFIED</SHORT-NAME>
+                        <ALIGNMENT>UNSPECIFIED</ALIGNMENT>
+                        <SIZE>0</SIZE>
+                        <SW-ADDRMETHOD-REF DEST="SW-ADDR-METHOD">/AUTOLIV/GlobalDictionary/SwAddrMethods/VAR_ALV</SW-ADDRMETHOD-REF>
+                      </MEMORY-SECTION>
+                    </MEMORY-SECTIONS>
+                  </RESOURCE-CONSUMPTION>
+                  <SW-VERSION>1.0.0</SW-VERSION>
+                  <VENDOR-ID>0</VENDOR-ID>
+                  <BEHAVIOR-REF DEST="SWC-INTERNAL-BEHAVIOR">/AUTOLIV/SoftwareComponents/SFR/SFR_AC_StandardFunctionRecovery/SFR_IB_StandardFunctionRecovery</BEHAVIOR-REF>
+                </SWC-IMPLEMENTATION>
+              </ELEMENTS>
+            </AR-PACKAGE>
+          </AR-PACKAGES>
+        </AR-PACKAGE>
+      </AR-PACKAGES>
+    </AR-PACKAGE>
+  </AR-PACKAGES>
+</AUTOSAR>

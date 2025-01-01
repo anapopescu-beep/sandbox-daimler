@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0212
+ARCH_SW_CIL_0212: CIL component should ensure that if a BSR is request by ALGO ( on Buckle Switch / BeltSlackMode Switch) and it is inhibitted by: Measured KL30 battery voltage is outside Normal Operating Range or value received on CAN for signal PT4_PTCoor_PT_Rdy_ST3(only for buckle switch) or value received on CAN for corresponding belt for signal BeltHdOvr_FL_Stat_ST3 or BeltHdOvr_FR_Stat_ST if enabled in the coding value received on CAN for for signal PT4_PTCoor_DrvPosn_Stat_ST
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal PT4_PTCoor_PT_Rdy_ST3 to NOT_RDY.
+
+	Step 3: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_NOT.
+
+	Step 4: Set a breakpoint in function cil_ManageInputSignals().
+
+	Step 5: Set signal Bckl_Sw_D_Stat_ST3 to I_C02_BCKL_SW_STAT_OK.
+
+	Step 6: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_DTCInhibitionOfBSR);'.
+
+Action: ARCH_SW_CIL_0212
+
+	Step 7: Check if CPU stopped in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_ON (KU8_CIL_DTCInhibitionOfBSR);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0212
+
+	Step 8: Evaluate if variable cil_u8BSRBuckleStarted is equal to KU8_FALSE. 
+		Expected result:  KU8_FALSE
+
+Postcondition
+
+	Step 9: Return ECU to default values

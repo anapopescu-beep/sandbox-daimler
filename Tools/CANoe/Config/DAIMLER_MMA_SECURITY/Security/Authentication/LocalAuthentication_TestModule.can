@@ -1,0 +1,86 @@
+/*@!Encoding:1252*/
+/*
+This test module realizes the local authentication.
+to use this module the sysvar file Sysvar_Authentication_Testmodule.vsysvar
+must be included in CANoe. 
+It provides variables for DiagTarget, DiagnosticsRole and AuthResult.
+*/
+
+includes
+{
+  #include "LocalAuthentication_Helper.cin"
+}
+
+variables
+{
+  char cTestNodeName[40] = "Local Authentication Test Module";
+  
+ 
+  char AuthenticatedTargetList[200]; //buffer for panel output
+  char NotAuthenticatedTargetList[200]; //buffer for panel output
+  char messageBuf[400]; //buffer for panel output
+  
+  int AuthResultOverAll = 0; 
+  
+}
+
+testcase LocalAuthentication()
+{
+  char targetName[400]; 
+  int i;
+  char ecuQual[100];
+
+  AuthResultOverAll = 0;
+  // prepare message buffer for panels
+  sysSetVariableString("LocalAuthentication","AuthenticatedTargets"," ");
+  strncat(AuthenticatedTargetList,"Authenticated: " ,elcount(AuthenticatedTargetList));
+  strncat(NotAuthenticatedTargetList,"Not Authenticated: ",elcount(NotAuthenticatedTargetList));
+   
+  // switch between Authentication modes
+  if(@sysvar::LocalAuthentication::TargetMode == 1 ) // AuthForSingleTarget
+  {
+    TestStep("","Authentication for single target");
+    sysGetVariableString("LocalAuthentication","DiagTarget",targetName,elCount(targetName));
+    if( Authenticate(targetName,@sysvar::LocalAuthentication::DiagnosticsRole)==1) // successful
+    {
+      strncat(AuthenticatedTargetList,targetName,elcount(AuthenticatedTargetList));
+    }
+    else // not successful
+    {
+      strncat(NotAuthenticatedTargetList,ecuQual,elcount(NotAuthenticatedTargetList));
+      strncat(NotAuthenticatedTargetList,",",elcount(NotAuthenticatedTargetList));  
+    }
+  }
+  else if(@sysvar::LocalAuthentication::TargetMode == 0 ) //AuthForAllTargets
+  {
+    TestStep("","Authentication for all targets");
+    ReadDiagQualifier();
+    testStepPass("","Available targets: %s",DiagTargetList);
+    
+    i = DiagTargetCount;
+    while( i-- > 0) // for each target
+    {
+      diagGetTargetQualifier( i, ecuQual, elcount(ecuQual));
+      if( Authenticate(ecuQual,@sysvar::LocalAuthentication::DiagnosticsRole)==1 ) // successful
+      {
+        strncat(AuthenticatedTargetList,ecuQual,elcount(AuthenticatedTargetList));
+        strncat(AuthenticatedTargetList,",",elcount(AuthenticatedTargetList));  
+      }
+      else // not successful
+      {
+        strncat(NotAuthenticatedTargetList,ecuQual,elcount(NotAuthenticatedTargetList));
+        strncat(NotAuthenticatedTargetList,",",elcount(NotAuthenticatedTargetList));  
+      }
+    }
+  }
+  
+  strncat(messageBuf,AuthenticatedTargetList,elcount(messageBuf));
+  strncat(messageBuf," ",elcount(messageBuf));
+  strncat(messageBuf,NotAuthenticatedTargetList,elcount(messageBuf));
+  sysSetVariableString("LocalAuthentication","AuthenticatedTargets",messageBuf);
+  if(   strlen(NotAuthenticatedTargetList) > 20)
+  {
+    @sysvar::LocalAuthentication::AuthResult = 0;
+  }
+}
+

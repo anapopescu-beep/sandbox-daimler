@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0345; ARCH_SW_DIA_0346; ARCH_SW_DIA_0347; ARCH_SW_DIA_0348; ARCH_SW_DIA_0349
+ARCH_SW_DIA_0345: Service 0x22 (Read Data By Identifier) will be implemented for DID 01E2 (E2E Timing).
+ARCH_SW_DIA_0346: The Read E2E Timing service shall be available in the following sessions:Default Session (0x01)Programming (0x02) Extended Session (0x03) Supplier Session/Development Session (0x7E) Update Session (0x42)
+ARCH_SW_DIA_0347: Read E2E Timing service shall be available under the following forms of Authentication:SupplierDevelopment ENHANCEDInternal Diagnostic Test Tool
+ARCH_SW_DIA_0348: DataIdentifier of the Read E2E Timing shall be: 0x01E2
+ARCH_SW_DIA_0349: Response data length shall be 2 bytes long: Bytes #2-#3:  DataIdentifier of the Read E2E Timing shall be: 0x01E2
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DataServices_E2E_Timing_Read_Maximum_ReadData*.
+
+Action: ARCH_SW_DIA_0345; ARCH_SW_DIA_0346; ARCH_SW_DIA_0347; ARCH_SW_DIA_0348; ARCH_SW_DIA_0349
+
+	Step 3: Send diag request for 22 01 E2 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DataServices_E2E_Timing_Read_Maximum_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Read Data variable 
+		Expected result:  Variable read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

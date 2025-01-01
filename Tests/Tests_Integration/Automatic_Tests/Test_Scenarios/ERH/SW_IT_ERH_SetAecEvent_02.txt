@@ -1,0 +1,98 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0096, ARCH_SW_ERH_0097, ARCH_SW_ERH_0098, ARCH_SW_ERH_0099, ARCH_SW_ERH_0150
+ARCH_SW_ERH_0096: For the following AECs ECU level storage condition shall be applicable: ERH_KU8_ENABLE_OUT_OF_ORDER_AEC_CFG, ERH_KU8_MOSFET_HIGH_SC_AEC_CFG, ERH_KU8_MOSFET_LOW_SC_AEC_CFG, ERH_KU8_MOTOR_DISCONNECTED_AEC_CFG, ERH_KU8_HALL_SENSOR_AEC_CFG, ERH_KU8_TEMPERATURE_SENSOR_FAILURE_AEC_CFG, ERH_KU8_EXT_WDG_OUT_OF_ORDER_AEC_CFG, ERH_KU8_HW_SELF_PROTECTION_AEC_CFG, ERH_KU8_SW_SELF_PROTECTION_AEC_CFG, ERH_KU8_END_OF_LIFE_COMFORT_AEC_CFG, ERH_KU8_END_OF_LIFE_LOW_AEC_CFG, ERH_KU8_END_OF_LIFE_HIGH_AEC_CFG, ERH_KU8_END_OF_LIFE_MAX_FORCE_AEC_CFG, ERH_KU8_STEERING_CONFIG_AEC_CFG, ERH_KU8_VARIANT_CODING_AEC_CFG.
+ARCH_SW_ERH_0097: For the following AECs Network Communication storage condition shall be applicable: ERH_KU8_TIMEOUT_PRESAFE_AEC_CFG, ERH_KU8_TIMEOUT_BUCKLE_AEC_CFG, ERH_KU8_IMPLAUSIBLE_DATA_PRESAFE_AEC_CFG, ERH_KU8_IMPLAUSIBLE_DATA_IGNITION_AEC_CFG, ERH_KU8_IMPLAUSIBLE_DATA_BUCKLE_AEC_CFGERH_KU8_IMPLAUSIBLE_DATA_ORC_AEC_CFG, ERH_KU8_IMPLAUSIBLE_DATA_POWERTRAIN_RDY_AEC_CFG, ERH_KU8_IMPLAUSIBLE_DATA_POWERTRAIN_DRV_AEC_CFG, ERH_KU8_TIMEOUT_BLTHD_R_AEC_CFG, ERH_KU8_TIMEOUT_BLTHD_L_AEC_CFG, ERH_KU8_TIMEOUT_POWERTRAIN_AEC_CFG, ERH_KU8_TIMEOUT_ODOSPEEDOMETER_AEC_CFG, ERH_KU8_IMPLAUSIBLE_DATA_API_AEC_CFG, ERH_KU8_TIMEOUT_BELT_ADJ_AEC_CFG, ERH_KU8_TIMEOUT_API.
+ARCH_SW_ERH_0098: For the following AECs Network Communication without Clam 15 storage condition shall be applicable: ERH_KU8_TIMEOUT_IGNITION_AEC_CFG.
+ARCH_SW_ERH_0099: For the following AECs Power Distribution storage condition shall be applicable: ERH_KU8_OVO_POWER_AEC_CFG, ERH_KU8_UVO_POWER_AEC_CFG, ERH_KU8_UVO_TENSIONING_POWER_AEC_CFG, ERH_KU8_OVO_TENSIONING_POWER_AEC_CFG, ERH_KU8_SYSTEM_OV_AEC_CFG, ERH_KU8_SYSTEM_UV_AEC_CFG.
+ARCH_SW_ERH_0150: The following AECs shall not have any storage condition applicable: ERH_KU8_SPI_ERROR_AEC_CFG, ERH_KU8_HIGH_SIDE_SWITCH_AEC_CFG, ERH_KU8_MOSFET_OC_AEC_CFG, ERH_KU8_WARM_RESET_AEC_CFG, ERH_KU8_MOTOR_CURRENT_AEC_CFG, ERH_KU8_MOTOR_BLOCKED_AEC_CFG, ERH_KU8_MOTOR_ORDER_AEC_CFG, ERH_KU8_MOTOR_IN_SC_AEC_CFG.
+ARCH_SW_ERH_0151: ECU level shall include the folowing storage conditions: �	SC1: Control DTC settings�	SC3: Local Voltage (KL30 input)�	SC11: Vehicle Startup.
+ARCH_SW_ERH_0152: Network Communication shall include the folowing storage conditions: �	SC1: Control DTC settings �	SC2: Ignition Status �	SC4: System Voltage �	SC5: Transportation mode �	SC8: Communication Status �	SC10: De-bounce Timer network �	SC11: Vehicle Startup �	SC12: production mode.
+ARCH_SW_ERH_0153: Network Communication - Timeout monitoring without Clamp 15 shall include the folowing storage conditions: �	SC1: Control DTC settings �	SC4: System Voltage �	SC5: Transportation mode �	SC8: Communication Status �	SC10: De-bounce Timer Network w/o KL15 �	SC11: Vehicle Startup �	SC12: production mode.
+ARCH_SW_ERH_0154: Power Distribution shall include the folowing storage conditions: �	SC1: Control DTC settings �	SC2: Ignition Status �	SC5: Transportation mode �	SC10: De-bounce Timer Power �	SC11: Vehicle Startup �	SC12: production mode.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_runSetAecEvent() at line 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_ECU_LEVEL) == KU16_ERH_MASK_ECU_LEVEL)'.
+
+Action: ARCH_SW_ERH_0096, ARCH_SW_ERH_0151
+
+	Step 3: Check if CPU stopped in function ERH_runSetAecEvent() at line 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_ECU_LEVEL) == KU16_ERH_MASK_ECU_LEVEL)'.
+		Expected result:  CPU stopped at BP
+
+	Step 4: Set a breakpoint in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_ECU_LEVEL) == KU16_ERH_MASK_ECU_LEVEL)'.
+
+Action: ARCH_SW_ERH_0096, ARCH_SW_ERH_0151
+
+	Step 5: Check if CPU stopped in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_ECU_LEVEL) == KU16_ERH_MASK_ECU_LEVEL)'.
+		Expected result:  CPU stopped at BP
+
+	Step 6: Set a breakpoint in function ERH_runSetAecEvent() at line 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_POWER_DISTRIBUTION) == KU16_ERH_MASK_POWER_DISTRIBUTION)'.
+
+Action: ARCH_SW_ERH_0099, ARCH_SW_ERH_0154
+
+	Step 7: Check if CPU stopped in function ERH_runSetAecEvent() at line 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_POWER_DISTRIBUTION) == KU16_ERH_MASK_POWER_DISTRIBUTION)'.
+		Expected result:  CPU stopped at BP
+
+	Step 8: Set a breakpoint in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_POWER_DISTRIBUTION) == KU16_ERH_MASK_POWER_DISTRIBUTION)'.
+
+Action: ARCH_SW_ERH_0099, ARCH_SW_ERH_0154
+
+	Step 9: Check if CPU stopped in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if ((ERH_u16StorageConditionStatus & KU16_ERH_MASK_POWER_DISTRIBUTION) == KU16_ERH_MASK_POWER_DISTRIBUTION)'.
+		Expected result:  CPU stopped at BP
+
+	Step 10: Set a breakpoint in function ERH_runSetAecEvent() at line 'if( KU16_ERH_MASK_NETWORK_COM == (ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM))'.
+
+Action: ARCH_SW_ERH_0097, ARCH_SW_ERH_0152
+
+	Step 11: Check if CPU stopped in function ERH_runSetAecEvent() at line 'if( KU16_ERH_MASK_NETWORK_COM == (ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM))'.
+		Expected result:  CPU stopped at BP
+
+	Step 12: Set a breakpoint in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if( KU16_ERH_MASK_NETWORK_COM == (ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM))'.
+
+Action: ARCH_SW_ERH_0097, ARCH_SW_ERH_0152
+
+	Step 13: Check if CPU stopped in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if( KU16_ERH_MASK_NETWORK_COM == (ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM))'.
+		Expected result:  CPU stopped at BP
+
+	Step 14: Set a breakpoint in function ERH_runSetAecEvent() at line '((ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM15) == KU16_ERH_MASK_NETWORK_COM15))'.
+
+Action: ARCH_SW_ERH_0098, ARCH_SW_ERH_0153
+
+	Step 15: Check if CPU stopped in function ERH_runSetAecEvent() at line '((ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM15) == KU16_ERH_MASK_NETWORK_COM15))'.
+		Expected result:  CPU stopped at BP
+
+	Step 16: Set a breakpoint in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under '((ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM15) == KU16_ERH_MASK_NETWORK_COM15))'.
+
+Action: ARCH_SW_ERH_0098, ARCH_SW_ERH_0153
+
+	Step 17: Check if CPU stopped in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under '((ERH_u16StorageConditionStatus & KU16_ERH_MASK_NETWORK_COM15) == KU16_ERH_MASK_NETWORK_COM15))'.
+		Expected result:  CPU stopped at BP
+
+	Step 18: Set a breakpoint in function ERH_runSetAecEvent() at line 'if( KU16_ERH_MASK_CONTROL_DTC == (uint16)(ERH_u16StorageConditionStatus & KU16_ERH_MASK_CONTROL_DTC) )'.
+
+Action: ARCH_SW_ERH_0150
+
+	Step 19: Check if CPU stopped in function ERH_runSetAecEvent() at line 'if( KU16_ERH_MASK_CONTROL_DTC == (uint16)(ERH_u16StorageConditionStatus & KU16_ERH_MASK_CONTROL_DTC) ))'.
+		Expected result:  CPU stopped at BP
+
+	Step 20: Set a breakpoint in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if( KU16_ERH_MASK_CONTROL_DTC == (uint16)(ERH_u16StorageConditionStatus & KU16_ERH_MASK_CONTROL_DTC) )'.
+
+Action: ARCH_SW_ERH_0150
+
+	Step 21: Check if CPU stopped in function ERH_runSetAecEvent() at line 'erh_ManageAECCommand(u8Command, u8Index, &stAecData);' under 'if( KU16_ERH_MASK_CONTROL_DTC == (uint16)(ERH_u16StorageConditionStatus & KU16_ERH_MASK_CONTROL_DTC) )'.
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 22: Return ECU to default values

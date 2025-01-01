@@ -1,0 +1,63 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0805; ARCH_SW_DIA_0806; ARCH_SW_DIA_0807; ARCH_SW_DIA_0808; ARCH_SW_DIA_0809; ARCH_SW_DIA_0810; ARCH_SW_DIA_0811; ARCH_SW_DIA_0812; ARCH_SW_DIA_0813; ARCH_SW_DIA_0814
+ARCH_SW_DIA_0805: Service 0x31 (Routine Control) 0x31 01 Start for RID 0x0203 (Check Reprogramming Preconditions) will be implemented 
+ARCH_SW_DIA_0806: RoutineIdentifier shall be 0x0203.
+ARCH_SW_DIA_0807: The folowing request shall be available for this RID: - Start Routine (01) 
+ARCH_SW_DIA_0808: If the ECU does not need any preconditions to be fulfilled for being reprogrammed or all preconditions are fulfilled, it shall return 0x00 as Number of Unfulfilled Preconditions.
+ARCH_SW_DIA_0809: If there are unfulfilled preconditions, the ECU shall include each of them in the List of Unfulfilled Preconditions.
+ARCH_SW_DIA_0810: If there are additional preconditions necessary which are not contained in the List of Unfulfilled Preconditions, these shall be added in consultation with the Diagnostic Development Team.
+ARCH_SW_DIA_0811: Routine Start shall be available in the following diagnostic sessions: ?Programming Session ?Extended Session ?Development Session.
+ARCH_SW_DIA_0812: Routine Start shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED 
+ARCH_SW_DIA_0813: Routine Start shall be responsible to check if any system or ECU conditions to successfully reprogram the ECU are not fulfilled. 
+ARCH_SW_DIA_0814: RID specific Routine Start Result shall be represented by the following: ?Byte 0: Number of Unfulfilled Preconditions. ?Byte 1: List of Unfulfilled Preconditions 
+ARCH_SW_DIA_1019: The programming shall still be possible in the folowing cases ?vehicle_speed information or Impact_x information (CAN signals) not received since last power on/wake-up. ?vehicle_speed information or Impact_x information is SNA ?if vehicle_speed information or Impact_x information is lost during the active diagnostic session, the ECU shall use the last known valid preconditions to determine if a transition from Application Software to Reprogramming Software is allowed. 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0805; ARCH_SW_DIA_0806; ARCH_SW_DIA_0807; ARCH_SW_DIA_0808; ARCH_SW_DIA_0809; ARCH_SW_DIA_0810; ARCH_SW_DIA_0811; ARCH_SW_DIA_0812; ARCH_SW_DIA_0813; ARCH_SW_DIA_0814
+
+	Step 2: Enter development session 
+		Expected result:  Response is received.
+
+	Step 3: Set BP in function *DIA_runCheckProgrammingPreconditions* at the start of the validation of preprogramming preconditons. 
+		Expected result:  BP is set.
+
+	Step 4: Precondition 1: Crash (Impact x set to True at leat once during the curent wake-up cycle ) 
+		Expected result:  stImpact3.Impact_X_ST3 set to TRUE
+
+	Step 5: Precondition 2: Vehicle speed > 0 ( input from VehSpd_Disp_ST3) 
+		Expected result:  u16NewVehicleSpeed > 0
+
+	Step 6: Precondition 3: Low battery voltage (KL30<=9V) 
+		Expected result:  u16BatteryVoltage <= DIA_PROG_PRECOND_UNDERVOLTAGE
+
+	Step 7: Set BP in function *DIA_runRid0203_CheckProgrammingPreconditionsStart* at line *VStdMemCpy(List_of_Preconditions, DIA_u8ProgrammingPreconditionsList, DIA_u8ActiveProgrammingPreconditions);* 
+		Expected result:  BP is set.
+
+	Step 8: Use the Start Routine service 0x31 01 for RID 0203, and check that BP was reached. 
+		Expected result:  BP is reached.
+
+	Step 9: Use the Start Routine service 0x31 01 for RID 0203 
+		Expected result:  BP is reached.
+
+	Step 10: Evaluate Byte 0 of RID 0x0203 response. 
+		Expected result:  Byte = 0x2
+
+	Step 11: Evaluate Byte 1 of RID 0x0203 response. 
+		Expected result:  Byte = 0x2
+
+Postcondition
+
+	Step 12: Return ECU to default values

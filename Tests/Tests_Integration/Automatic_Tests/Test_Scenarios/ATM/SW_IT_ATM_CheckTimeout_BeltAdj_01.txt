@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0239
+ARCH_SW_ATM_0239: ATM_runMainFunction shall call the CIL_Autotest_CheckTimeout_BeltAdj function.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in ATM_runMainFunction() at line 'atm_PlayCyclicTests(castStartupCyclicList);'.
+
+	Step 3: Check if CPU stopped at line 'atm_PlayCyclicTests(castRunningCyclicList);'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function atm_PlayCyclicTests() at line 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))' to step in atm_executeAutoTest().
+
+	Step 5: Check if CPU stopped in function atm_PlayCyclicTests() at line 'if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID))' to step in atm_executeAutoTest(). 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function atm_executeAutoTest() at line 'u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;'.
+
+	Step 7: Check if CPU stopped in function atm_executeAutoTest() at line 'u8InhibModesIndex = castATMConfig[cu8AutotestID].u8InhibIndex;'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function CIL_cbk_CheckTimeoutError_BeltAdj() at line 'Rte_Call_pclCheckTimeoutErrorBeltAdj_AutotestCallback(&u8TestResult);' and press run.
+
+	Step 9: Check if CPU stopped in function CIL_cbk_CheckTimeoutError_BeltAdj() at line 'Rte_Call_pclCheckTimeoutErrorBeltAdj_AutotestCallback(&u8TestResult);'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in function CIL_Autotest_CheckTimeoutError_BeltAdj()' and press run.
+
+Action: ARCH_SW_ATM_0239
+
+	Step 11: Check if CPU stopped in function CIL_Autotest_CheckTimeoutError_BeltAdj() . 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 12: Return ECU to default values

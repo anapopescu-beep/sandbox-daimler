@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0401
+ARCH_SW_MMG_0401: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be called to get cycle number.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runManageModeDelays() at line mmg_ManageModeDelays_ExecutedCycle().
+
+	Step 3: Step in mmg_ManageModeDelays_ExecutedCycle().
+
+	Step 4: Set a breakpoint in function mmg_ManageModeDelays_ExecutedCycle().
+
+Action: ARCH_SW_MMG_0400, ARCH_SW_MMG_0401
+
+	Step 5: Step in function Rte_Call_pclPyroDevice_GetPyroActivationStatus(). 
+		Expected result:  BMM_runGetPyroActivationStatus,,app.elf
+
+Postcondition
+
+	Step 6: Return ECU to default values

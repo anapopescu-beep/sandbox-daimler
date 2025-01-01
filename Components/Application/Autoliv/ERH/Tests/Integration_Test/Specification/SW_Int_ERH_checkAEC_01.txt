@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ERH_0070, ARCH_SW_ERH_0073, ARCH_SW_ERH_0084, ARCH_SW_ERH_0085
+ARCH_SW_ERH_0073: The erh_UpdateGroup function shall be called to update the group status after all errors of the group has just been cleared.
+ARCH_SW_ERH_0084: A DTC shall be qualified if a group of AECs is qualified (minim one AEC from group is qualified).
+ARCH_SW_ERH_0085: A DTC shall be deskilled if all AECs from the associated group are deskilled.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function ERH_Init().
+
+Action: ARCH_SW_ERH_0084, ARCH_SW_ERH_0085
+
+	Step 3: Check if CPU stopped at breakpoint in function ERH_Init() at line erh_au16AecCounter[u8Index] = u16AECDeskillThreshold;. 
+		Expected result:  CPU stopped in function ERH_Init()
+
+	Step 4: Set variable NVP_BLOCK_ID_AEC_STATUS_RamBlockData.NVP_au8AECStatus[0] to 0x1
+
+	Step 5: Step in function erh_UpdateGroup().
+
+	Step 6: Set a breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;.
+
+Action: ARCH_SW_ERH_0073, ARCH_SW_ERH_0070
+
+	Step 7: Check if CPU stopped at breakpoint in function erh_UpdateGroup() at line u32GroupStatusForDTC = (uint32)KU32_ONE << u8Group;. 
+		Expected result:  CPU stopped in function erh_UpdateGroup()
+
+Postcondition
+
+	Step 8: Return ECU to default values

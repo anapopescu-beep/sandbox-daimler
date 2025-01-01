@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0015; ARCH_SW_DIA_0192; ARCH_SW_DIA_0193
+ARCH_SW_DIA_0015: Service 0x31 01 will be implemented for RID 0329
+ARCH_SW_DIA_0192: Service shall be available in Extended and Development session
+ARCH_SW_DIA_0193: Result can have the following values: 0x00, 0x01 and 0x02
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0015; ARCH_SW_DIA_0192; ARCH_SW_DIA_0193
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runRid0329_TriggerBSRStart*.
+
+	Step 4: Send diag request for RID 03 29 Start 
+		Expected result:  Request Sent.
+
+	Step 5: Check if breakpoint from function DIA_runRid0329_TriggerBSRStart was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

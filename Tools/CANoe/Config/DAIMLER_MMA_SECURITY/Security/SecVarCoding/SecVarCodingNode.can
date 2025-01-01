@@ -1,0 +1,786 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+  #include "..\Authentication\LocalAuth_Utilities.cin"
+  #include "SecVarCodingValues.cin"
+}
+
+variables
+{
+  char DDS_dataBuf_Symbolic[cMaxBufferSize];
+  char d[cMaxBufferSize]; // temporrary buffer for debug messages
+  long bytesCopied = 0;
+  
+  //// Certificate data
+  byte DDS_Backend_certKeyID[20];// = {0x51,0x82,0xB1,0xC2,0xD6,0x8C,0xF7,0x9A,0x52,0xEC,0x83,0x4A,0x1A,0x80,0x82,0x8F,0x0C,0x53,0x58,0xD4};
+  int GetVariantCodingUserCertificateCompleted_CallId = 0;
+  
+  //// VINDataIdentifier_Read
+  byte vinRespData[32];
+  byte vinRespSize;
+  char ECU_VIN[18];
+  diagRequest "VINDataIdentifier_Read" Req_VINDataIdentifier_Read;
+  diagResponse "VINDataIdentifier_Read" Resp_VINDataIdentifier_Read;
+  int SecVarCodingNodeProcessID = -1;
+  
+  //// BackendID_Read
+  byte ECU_Backend_Cert_KeyID[20];
+  byte BACertReadRespData[30];
+  byte BACertReadRespSize;
+  diagRequest "Backend_CA_Certificate_Identification_Read" Req_Backend_CA_Certificate_Identification_Read;
+  diagResponse "Backend_CA_Certificate_Identification_Read" Resp_Backend_CA_Certificate_Identification_Read;
+  
+  //// Data_Verification_Certificate_Start
+  diagRequest "Evaluate_Data_Verification_Certificate_Start" Req_Evaluate_Data_Verification_Certificate_Start;
+  diagResponse "Evaluate_Data_Verification_Certificate_Start" Resp_Evaluate_Data_Verification_Certificate_Start;
+    
+  //// Coding Requests
+  byte codingDataReq[cMaxBufferSize];
+  long codingDataReqSize;
+  diagRequest "Activate_SAR_Data_Storage_Write" Req_WriteData_Activate_SAR_Data_Storage_Write;
+  diagResponse "Activate_SAR_Data_Storage_Write" Resp_WriteData_Activate_SAR_Data_Storage_Write;
+
+  byte codingDataBuffer[cMaxBufferSize];
+  long codingDataBufferMaxSize = cMaxBufferSize;
+  long copiedBytesCodingDataBuffer = 0;
+  
+  //// Calibration_Identifications_CAL_ID
+  byte calidReq[8192];
+  long calidReqSize;
+  diagRequest Default_Start dummy_ReqCalibration;
+  
+  //// Array for coding data
+  char signatureSymbolic[1024];
+  byte hashData[cMaxBufferSize];
+  long hashDataSize;
+  diagRequest "Verify_Signature_Start" Req_Verify_Signature_Start;
+  diagResponse "Verify_Signature_Start" Resp_Verify_Signature_Start;
+  
+  // Timeout handling: timer to manage timeoutHandling
+  msTimer CodingWatchDogTimer;
+  
+  // Required ZenZefi Nodelayer version
+  const  ZenZefi_MinMajor = 1;
+  const  ZenZefi_MinMinor = 4; 
+  const  ZenZefi_MinPatch = 10;
+}
+
+on start
+{
+  char targetName[400];
+  
+  ReadDiagQualifier();
+  @sysvar::LocalAuthentication::TargetMode = 1; //AuthForSingleTarget;
+  
+  // Init DiagTarget by ECU Name
+  SetDiagTargetByECU();
+  
+  // Init Panel
+  PrintSecVarCodingState();
+  SetSecVarCodingSequenceLED();
+  ResetPanelData();
+  
+  if( CheckZenZefiNLVersion(ZenZefi_MinMajor,ZenZefi_MinMinor,ZenZefi_MinPatch) == 0)
+  {
+    writeLineEx(0,2,"ZenZefi Nodelayer needs to be updated. Min version is %i.%i.%i",ZenZefi_MinMajor,ZenZefi_MinMinor,ZenZefi_MinPatch);
+  }
+}
+
+// Return: 1= version okay, 0= version to old
+int CheckZenZefiNLVersion(  long minMajor, long minMinor, long minPatch)
+{
+  long major;
+  long minor;
+  long patch;
+  char buffer[100];
+   
+  GetZenZefiNodeLayerVersion(major,minor,patch);
+  snprintf(buffer,elcount(buffer),"ZenZefi Nodelayer Version: %i.%i.%i",major,minor,patch);
+  write("%s",buffer);
+  putValueToControl("SecVarCodingControl","ZenZefiNLVersion",buffer);
+  if( (major > minMajor) ||
+      (major == minMajor && minor > minMinor) ||
+      (major == minMajor && minor == minMinor && patch >= minPatch))
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+
+// Timeout handling: timer handler for timout behavior during sec var coding sequence
+on timer CodingWatchDogTimer
+{ 
+  // timeout handling is active
+  if( @sysvar::CodingTimeout::TimeoutHandlingActive == 1)
+  {
+      write("Timeout handling: Finish Coding");
+      if( @sysvar::SecVarCodingControl::SecVarCodingSequence == WriteData)
+      {
+        @sysvar::SecVarCodingControl::SecVarCodingSequence = FinishCoding;
+        //ReleaseAuthState();
+      }
+  }
+}
+
+// Timeout handling: Watchdog for timeout observation
+void RestartCodingWatchDog()
+{
+  setTimer(CodingWatchDogTimer,@sysvar::CodingTimeout::TimeoutTime*1000);
+}
+
+
+// Register a new ECU as Diag Target
+on sysvar_update sysvar::LocalAuthentication::DiagTarget
+{ 
+    SetDiagTargetByECU();
+}
+
+// sync handler to react on the local authentication result 
+on sysvar_update sysvar::LocalAuthentication::AuthResult
+{  
+  if( @this == 1 && @sysvar::SecVarCodingPanel::CheckBox_ExtendedSession == 1)
+  {
+    diagRequest Extended_Start Req_Extended_Start;
+  
+    @sysvar::SecVarCodingPanel::LED_LocalAuth = @this;
+    Req_Extended_Start.SendRequest();
+  }
+}
+
+
+
+on sysvar_update sysvar::SecVarCodingPanel::Button_LocalAuth
+{
+  if(@this == 1)
+    @sysvar::LocalAuthentication::AuthResult = 2;
+}
+
+// utility function to set new DiagTarget
+void SetDiagTargetByECU()
+{
+  char targetName[400];
+  
+  if( @sysvar::SecVarCodingControl::SecVarCodingSequence != Standby)
+  {
+    GoToStandby();
+  }
+  
+  if( @sysvar::SecVarCodingControl::SecVarCodingSequence == Standby)
+  {
+    sysGetVariableString("LocalAuthentication","DiagTarget",targetName,elCount(targetName));
+    if( diagSetTarget(targetName) == 0 )
+    {
+      write("Current diag target node is %s",targetName );
+      enableControl("SecVarCodingControl", "Button_StartCoding", 1);
+      @sysvar::SecVarCodingPanel::LED_Target = 1;
+    }
+    else
+    {
+      enableControl("SecVarCodingControl", "Button_StartCoding", 0);
+      @sysvar::SecVarCodingPanel::LED_Target = 0;
+    }
+  }
+  else
+  {
+    _TestStepFail("Change of Diag Target is only possible outside of an active coding sequence");
+  }
+}
+
+// Panel handler for Button Start Coding
+on sysvar_update sysvar::SecVarCodingPanel::Button_CodingStart
+{
+  if(@this == 1)
+    @sysvar::SecVarCodingControl::SecVarCodingSequence = StartCoding;
+}
+
+
+// Actions for change of state of coding sequence
+on sysvar_update sysvar::SecVarCodingControl::SecVarCodingSequence
+{
+  SetSecVarCodingSequenceLED();
+  switch( @this )
+  {
+    case StartCoding:
+      ResetPanelData();
+      ReadVIN();
+      copiedBytesCodingDataBuffer = 0;
+      enableControl("SecVarCodingControl", "Button_StartCoding", 0);
+      enableControl("SecVarCodingControl", "Button_CancelSequence",1);
+      break;
+    case WriteData:
+      enableControl("SecVarCodingControl", "Button_FinishCoding", 1);
+      break;
+    case Standby:
+      enableControl("SecVarCodingControl", "Button_StartCoding", 1);
+      //ReleaseAuthState();
+      break;
+    case FinishCoding:
+      WriteCalibration_Identification();
+      enableControl("SecVarCodingControl", "Button_FinishCoding", 0);
+      break;
+    default:
+      break;
+  }
+  PrintSecVarCodingState();
+}
+
+
+// Step 1a: 
+// Send a Diagnostic Request to Read the VIN currently stored in the ECU using the
+// Service "VINDataIdentifier" (DID 0xF190) 
+void ReadVIN()
+{
+  SecVarCodingNodeProcessID = 1;
+  Req_VINDataIdentifier_Read.SendRequest();
+}
+
+// Step 1b: 
+// Waits until the Ecu has responded on the Service "VINDataIdentifier"
+on diagResponse VINDataIdentifier_Read
+{
+  int VINLength = 17;
+  byte vin[17];
+  byte VIN_Default[17] = {0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F, 0x3F};
+  int i=0;
+  
+  if( SecVarCodingNodeProcessID !=1)
+  {
+    return;
+  }
+  else
+  {
+    SecVarCodingNodeProcessID = -1;
+  }
+  
+  if( CheckCurrentDiagTarget() == 1 )
+  {
+    if( diagGetResponseCode (this) == -1 ) //pos
+    {
+      vinRespSize = diagGetPrimitiveData(this, vinRespData, elcount(vinRespData));
+      memcpy_off(vin, 0, vinRespData, 3, VINLength);
+      @sysvar::SecVarCodingPanel::ECU_VIN_Length = VINLength;
+      write("Step 1b: VINDataIdentifier_Read vinRespSize=%i",vinRespSize);
+      sysSetVariableData("SecVarCodingPanel","ECU_VIN",vin,VINLength);
+      VIN_Byte2Char(ECU_VIN,vin);
+
+      ReadBackendID();
+    }
+    else
+    {
+     snprintf(ECU_VIN,17,"?????????????????");
+     sysSetVariableData("SecVarCodingPanel","ECU_VIN",VIN_Default,elcount(VIN_Default));
+    }
+  }
+  else
+  {
+    _TestStepFail("Mismatch between target ECU and response ECU ");
+  }
+}
+
+// Convert VIN to char
+void VIN_Byte2Char(char outVIN[], byte inVIN[])
+{
+  memcpy(outVIN,inVIN,elcount(outVIN)-1);
+  outVIN[elcount(outVIN)-1] = 0;
+}
+
+// Step 1.1a: ReadBackendID of ECU
+void ReadBackendID()
+{
+  Req_Backend_CA_Certificate_Identification_Read.SendRequest();
+}
+
+// Step 1.1b: Response for ReadBackendID of ECU
+on diagResponse Backend_CA_Certificate_Identification_Read
+{
+  if( CheckCurrentDiagTarget() == 1 )
+  {
+    if( diagGetResponseCode (this) == -1 ) //pos
+    {
+      BACertReadRespSize = diagGetPrimitiveData(this, BACertReadRespData, elcount(BACertReadRespData));
+      memcpy_off(ECU_Backend_Cert_KeyID, 0, BACertReadRespData, 3, 20);
+      write("Step 1.1b: Backend_CA_Certificate_Identification_Read BACertReadResp  ID=0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX 0x%LX",
+                        ECU_Backend_Cert_KeyID[0],ECU_Backend_Cert_KeyID[1],ECU_Backend_Cert_KeyID[2],ECU_Backend_Cert_KeyID[3],ECU_Backend_Cert_KeyID[4],ECU_Backend_Cert_KeyID[5],ECU_Backend_Cert_KeyID[6],ECU_Backend_Cert_KeyID[7],ECU_Backend_Cert_KeyID[8],ECU_Backend_Cert_KeyID[9],ECU_Backend_Cert_KeyID[10],ECU_Backend_Cert_KeyID[11],ECU_Backend_Cert_KeyID[12],ECU_Backend_Cert_KeyID[13],ECU_Backend_Cert_KeyID[14],ECU_Backend_Cert_KeyID[15],ECU_Backend_Cert_KeyID[16],ECU_Backend_Cert_KeyID[17],ECU_Backend_Cert_KeyID[18],ECU_Backend_Cert_KeyID[19]);
+      sysSetVariableData("SecVarCodingPanel","ECU_AuthorityKeyID",ECU_Backend_Cert_KeyID,20);
+      Evaluate_Data_Verification_Certificate_Start_Seq1();
+    }
+  }
+    else
+  {
+    _TestStepFail("Mismatch between target ECU and response ECU ");
+  }
+}
+
+// Step 2a: 
+// Prepare the Diagnostic Routine to transmit the Certificate for Signature Verification 
+// to the ECU using the Service "Evaluate Signature Verification Key Certificate" (DID 0x0262)
+// Reads the certificate at ZenZefi with serial and backend ID
+void Evaluate_Data_Verification_Certificate_Start_Seq1()
+{    
+  char qualifier[100]; 
+  dword bufferLen = 100;
+  byte data[1];
+  
+  sysGetVariableData("SecVarCodingPanel", "ECU_AuthorityKeyID", DDS_Backend_certKeyID, bytesCopied);// sync from panel
+  if( bytesCopied != 20)
+    { 
+      write("Step 2a: bytesCopied=%i",bytesCopied);
+      _TestStepFail("Step 2a: The exspected number of bytes for Authority_Key_ID could not be read.");
+      return;
+    }
+  
+  diagGetCurrentEcu ( qualifier,  bufferLen);
+  GetVariantCodingUserCertificateCompleted_CallId =1;
+  GetVariantCodingUserCertificateAsync(ECU_Backend_Cert_KeyID,20,data,1,qualifier,ECU_VIN);
+}
+
+// Step 2b: 
+// ZenZefi: certificate Read is finished
+long GetVariantCodingUserCertificateCompleted(long statusCode,  byte serialNumber[],  byte signature[], 
+                                              byte varCodingCertificate[],int64 expirationDate[],  char msg[]) 
+{
+  if( GetVariantCodingUserCertificateCompleted_CallId == 1)
+  {
+    if (statusCode != 0 && statusCode != 200)
+    {
+      snprintf(d, elcount(d), "Step 2b: Cannot get certificate (Error message: %s)", msg);
+      sysSetVariableString("SecVarCodingPanel","MessageString",d);
+      _TestStepFail(d);
+      @sysvar::SecVarCodingControl::SecVarCodingSequence = Standby; // go back into initial state
+    }
+    else
+    {
+      DDS_byte2HexString(varCodingCertificate, elCount(varCodingCertificate), DDS_dataBuf_Symbolic);
+         Evaluate_Data_Verification_Certificate_Start_Seq2();
+    }
+  }
+  else if( GetVariantCodingUserCertificateCompleted_CallId == 2) // step 4c
+  {
+    write( "Step 4c: statuscode %i", statusCode);
+    DDS_byte2HexString(signature, elcount(signature), signatureSymbolic);
+    diagSetParameterRawTo(Req_Verify_Signature_Start,"Data_to_be_checked",0x00,1);
+    DiagSetParameter(Req_Verify_Signature_Start, "Signature_Value", signatureSymbolic);
+    sysSetVariableData("SecVarCodingControl","Signature",signature,elcount(signature));  
+    @sysvar::SecVarCodingControl::SignatureLength = elcount(signature);
+    SendSignatureVerify();
+    cancelTimer(CodingWatchDogTimer);
+    SetZenZefiClientTimeout(5000); // reset Zenzefi timeout
+  }
+  GetVariantCodingUserCertificateCompleted_CallId = 0;
+  return statusCode;
+}
+  
+// Step 2c: 
+// Send the Diagnostic Routine to transmit the Certificate for Signature Verification 
+// to the ECU using the Service "Evaluate Signature Verification Key Certificate" (DID 0x0262)
+void Evaluate_Data_Verification_Certificate_Start_Seq2()
+{
+  DiagSetParameter(Req_Evaluate_Data_Verification_Certificate_Start, "Data_Verification_Certificate", DDS_dataBuf_Symbolic);
+  Req_Evaluate_Data_Verification_Certificate_Start.SendRequest();
+  
+}
+
+// Step 2d: 
+// Waits until the Ecu has responded on the Service "Evaluate Signature Verification Key Certificate"
+on diagResponse Evaluate_Data_Verification_Certificate_Start
+{
+  
+  if( CheckCurrentDiagTarget() == 1 )
+  {
+    if( diagGetResponseCode (this) == -1 ) //pos
+    {
+      @sysvar::SecVarCodingControl::SecVarCodingSequence = WriteData;
+      @SecVarCodingPanel::LED_CodingStart = 1;
+    }
+    else
+    {
+      snprintf(d, elcount(d), "No positive response received, responseCode=%i",diagGetResponseCode (this) );
+      _TestStepFail(d);
+    }
+  }
+  else
+  {
+    _TestStepFail("Mismatch between traget ECU and response ECU ");
+  }
+  
+  //Timeout handling: start watchdog
+  if( @sysvar::CodingTimeout::TimeoutHandlingActive == 1)
+    RestartCodingWatchDog();
+}
+
+// Step 3a: 
+// Write Secure Coding Data using WriteDataByIdentifier for "Activate_SAR_Data_Storage_Write"
+
+on sysvar_update sysvar::SecVarCodingControl::CodingVariantWriteData
+{
+  byte tmpCodingBuffer[cMaxBufferSize];
+  long copiedBytes;
+  
+  if( @sysvar::SecVarCodingControl::SecVarCodingSequence == WriteData)
+  {
+    // get data of writeDataByIdentifier
+    sysGetVariableData("SecVarCodingControl","CodingVariantWriteData",tmpCodingBuffer,copiedBytes);
+    memcpy_off(codingDataBuffer,copiedBytesCodingDataBuffer,tmpCodingBuffer,1,@sysvar::SecVarCodingControl::CodingVariantWriteDataLength-1);
+    copiedBytesCodingDataBuffer += @sysvar::SecVarCodingControl::CodingVariantWriteDataLength-1;
+    // update buffer for hash
+    sysSetVariableData("SecVarCodingControl","CumulatedCodingBufferVariantData",codingDataBuffer,copiedBytesCodingDataBuffer);
+    @sysvar::SecVarCodingControl::CumulatedCodingBufferVariantDataLength = copiedBytesCodingDataBuffer;
+    
+    //start watchdog
+    RestartCodingWatchDog();
+  }
+}
+
+// Step 4a: 
+// Send the Diagnostic Service to transmit the Calibration ID (=CAL-ID = SCN) to the ECU 
+// using the Service "Calibration Identifications" (CALID) (DID 0xF804)
+void WriteCalibration_Identification()
+{
+  byte tmpCalidBuffer[16]; // cal id from panel
+  long copiedBytes;
+  byte calIdHeader[4];
+  byte diagData[20]; //complete Data of diag request
+  int i;
+  int sizeDiagRequest = 20;
+  @sysvar::SecVarCodingPanel::LED_CodingFinished = 2;
+  
+  diagResize (dummy_ReqCalibration, sizeDiagRequest);
+  diagData[0] = 0x2E;
+  diagData[1] = 0xF8;
+  diagData[2] = 0x04;
+  diagData[3] = @sysvar::SecVarCodingControl::CALIDNumberOfItems; // Calibration_Identifications_CAL_ID/Number_of_data_items
+  sysGetVariableData("SecVarCodingControl","CALIDId",tmpCalidBuffer,copiedBytes);
+  
+  for( i=0;i<copiedBytes;i++) //"Calibration_Identifications_CAL_ID/Calibration_Identification/EndOfServiceIteration0/CAL_ID
+  {
+    diagData[i+4] = tmpCalidBuffer[i];
+  }
+  DiagSetPrimitiveData(dummy_ReqCalibration, diagData, sizeDiagRequest);
+    
+  dummy_ReqCalibration.SendRequest();
+  calidReqSize = diagGetPrimitiveData(dummy_ReqCalibration, calidReq, elcount(calidReq));
+}
+
+// Step 4b: 
+// Waits until the Ecu has responded on the Service "Calibration Identifications"
+on diagResponse StoredData::*
+{
+  byte rawData[200];
+  long size;
+  
+  byte tmpCodingBuffer[cMaxBufferSize];
+  long copiedBytes;
+  char targetName[100];
+  
+  size=diagGetPrimitiveData(this, rawData, elcount(rawData));
+  if (rawData[1]==0xF8 && rawData[2]==0x04) // DID=0xF804 "Calibration Identifications"
+  {
+    if( CheckCurrentDiagTarget() == 1 )
+    {
+      if( diagGetResponseCode (this) == -1 ) //pos
+      {
+        sysGetVariableData("SecVarCodingControl","CumulatedCodingBufferVariantData",tmpCodingBuffer,copiedBytes);
+        hashDataSize = DDS_CreateCodingDataHash(vinRespData, tmpCodingBuffer, @sysvar::SecVarCodingControl::CumulatedCodingBufferVariantDataLength, calidReq, calidReqSize, hashData);
+        //ActivateCertifacte(serial,serialLength); // Activate is not yet possible in ZenZefi. Has to be done manually. 
+        sysGetVariableData("Backend", "Authority_Key_ID", DDS_Backend_certKeyID, bytesCopied); // sync from panel
+        if( bytesCopied != 20)
+        { 
+          _TestStepFail("Step 4b: The expected number of bytes for Authority_Key_ID could not be read.");
+          return;
+        }
+        sysGetVariableString("LocalAuthentication","DiagTarget",targetName,elCount(targetName));
+      
+        SetZenZefiClientTimeout(120000); // increase Zenzefi timeout
+        GetVariantCodingUserCertificateCompleted_CallId = 2;
+        GetVariantCodingUserCertificateAsync(ECU_Backend_Cert_KeyID,elcount(ECU_Backend_Cert_KeyID),hashData,hashDataSize,targetName,ECU_VIN);
+      }
+    }
+    else
+    {
+      _TestStepFail("Mismatch between target ECU and response ECU ");
+    }    
+  }
+  else
+  {
+    // ignore
+  }
+}
+
+// Step 4c:
+// ZenZefi: Signature creation using VariantCodingUserCertificate finshed
+// callback is usesd already in step 1.1, for this call  GetVariantCodingUserCertificateCompleted_CallId = 2 is used
+
+
+// Step 5a:
+// Send the Diagnostic Service to verify the Signature to the ECU using the Service
+// "Verify_Signature_Start" (DID 0x0263) 
+SendSignatureVerify()
+{
+  Req_Verify_Signature_Start.SendRequest();
+}
+
+// Step 5b:
+// Waits until the Ecu has responded on the Service "Verify_Signature_Start"
+on diagResponse Verify_Signature_Start
+{
+  char buffer[100];
+  int verificationResult;
+  
+  if( CheckCurrentDiagTarget() == 1 )
+  {
+    if( diagGetResponseCode (this) == -1) // pos
+    {
+      DiagGetLastResponse(Resp_Verify_Signature_Start);
+      Resp_Verify_Signature_Start.GetParameter("Verification_Result",buffer,elcount(buffer));
+      verificationResult = (int)Resp_Verify_Signature_Start.GetParameter("Verification_Result");
+      write("Step 5b: Verify_Signature_Start: Verification_Result = %s 0x%x",buffer,verificationResult );
+      if( verificationResult == 0 )
+        @sysvar::SecVarCodingPanel::LED_CodingFinished = 1;
+      else
+        @sysvar::SecVarCodingPanel::LED_CodingFinished = 0;
+      snprintf(d, elcount(d), "%s", buffer);
+      putValueToControl("SecVarCodingControl","FinishCodingResult",d);
+    }
+  }
+  else
+  {
+    @sysvar::SecVarCodingPanel::LED_CodingFinished = 0;
+    _TestStepFail("Mismatch between traget ECU and response ECU ");
+  }
+  
+  @sysvar::SecVarCodingControl::SecVarCodingSequence = Standby;
+}
+
+
+////////// Utility Functions  ///////////////////////////////////////////////////////////////////
+
+int CheckCurrentDiagTarget()
+{
+  char qualifier[100]; 
+  dword bufferLen = 100;
+  char targetName[100];
+  
+  diagGetCurrentEcu ( qualifier,  bufferLen);
+  sysGetVariableString("LocalAuthentication","DiagTarget",targetName,elCount(targetName));
+  
+  if( strncmp(qualifier, targetName ,strlen(qualifier) )== 0)
+  {
+    return 1;
+  }
+  else
+  {
+    return 0;
+  }
+}
+
+
+void PrintSecVarCodingState()
+{
+  switch( @sysvar::SecVarCodingControl::SecVarCodingSequence)
+  {
+    case StartCoding:
+      write("SecVarCodingState: %s","Start Coding");
+      break;
+    case WriteData:
+      write("SecVarCodingState: %s","Write Data");
+      break;
+    case FinishCoding:
+      write("SecVarCodingState: %s","Finish Coding");
+      break;
+    case Standby:
+      write("SecVarCodingState: %s","Standby");
+      break;
+    default:
+      write("SecVarCodingState: %s","Unknown state");
+      break;
+  }
+  
+}
+
+void ResetPanelData()
+{
+  byte buffer[10];
+  
+  @sysvar::SecVarCodingPanel::ECU_VIN_Length = 0;
+  sysSetVariableData("SecVarCodingPanel","ECU_VIN",buffer,0);
+  sysSetVariableData("SecVarCodingPanel","ECU_AuthorityKeyID",buffer,0);
+  if(@sysvar::SecVarCodingControl::CumulatedCodingBufferVariantDataLength >0)
+    sysSetVariableData("SecVarCodingControl","CumulatedCodingBufferVariantData",buffer,0);
+  @sysvar::SecVarCodingControl::CumulatedCodingBufferVariantDataLength = 0;
+  if( @sysvar::SecVarCodingControl::CodingVariantWriteDataLength > 0)
+    sysSetVariableData("SecVarCodingControl","CodingVariantWriteData",buffer,0);
+  @sysvar::SecVarCodingControl::CodingVariantWriteDataLength = 0;
+  enableControl("SecVarCodingControl", "Button_FinishCoding", 0);
+  sysSetVariableData("SecVarCodingControl","HashData",buffer,0);
+  sysSetVariableData("SecVarCodingControl","Signature",buffer,0);
+  enableControl("SecVarCodingControl", "Button_CancelSequence",0);
+  sysSetVariableString("SecVarCodingPanel","MessageString","");
+  putValueToControl("SecVarCodingControl","FinishCodingResult","");
+}
+
+// Panel handler for Button Finish Coding
+on sysvar_update sysvar::SecVarCodingPanel::Button_CodingFinished
+{
+  if( @this == 1)
+  {
+    if(@this == 1 && @sysvar::SecVarCodingControl::SecVarCodingSequence == WriteData)
+    {
+      @sysvar::SecVarCodingControl::SecVarCodingSequence = FinishCoding;
+    }
+    else
+    {
+      write("Coding Finished can be called in state Write Sec Var Coding Data only.");
+    }
+  }
+}
+
+// Utility function to Update the Sequence LEDs
+void SetSecVarCodingSequenceLED()
+{
+  if( @sysvar::SecVarCodingControl::SecVarCodingSequence == StartCoding )
+  {
+    @sysvar::SecVarCodingPanel::LED_CodingFinished = -1;
+    @sysvar::SecVarCodingPanel::LED_CodingStart = 2;
+    @sysvar::SecVarCodingPanel::LED_WriteData = -1;
+
+  }
+  else if( @sysvar::SecVarCodingControl::SecVarCodingSequence == WriteData)
+  {
+    @sysvar::SecVarCodingPanel::LED_CodingStart = 1;
+    @sysvar::SecVarCodingPanel::LED_WriteData = 1;
+  }
+  else if( @sysvar::SecVarCodingControl::SecVarCodingSequence == FinishCoding )
+  {
+    @sysvar::SecVarCodingPanel::LED_CodingStart = 1;
+    @sysvar::SecVarCodingPanel::LED_WriteData = 1; 
+  }
+  else if(@sysvar::SecVarCodingControl::SecVarCodingSequence == Standby)
+  {
+    @sysvar::SecVarCodingPanel::LED_CodingStart = -1;
+    @sysvar::SecVarCodingPanel::LED_WriteData = -1; 
+  }
+}
+
+// Get hash data from variant coding data for signature
+// hash data = VIN|coding data (with DID)|CALID data (with DID)
+// return length of hash data
+long DDS_CreateCodingDataHash(byte vinRespData[], byte codingDataReq[], long codingDataReqSize, byte calidReq[], long calidReqSize, byte hashDataOut[])
+{
+  long vinSize = 17;
+  long codingDataSize;
+  long calidDataSize;
+  long hashDataSize;
+  char hashstring[cMaxBufferSize];
+
+  // hash data = VIN|coding data (with DID)|CALID data (with DID)
+  codingDataSize = codingDataReqSize;
+  calidDataSize = calidReqSize - 1/*SID*/;
+  hashDataSize = vinSize + codingDataSize + calidDataSize;
+  
+  memcpy_off(hashDataOut, 0, vinRespData, 3, vinSize);
+  memcpy_off(hashDataOut, vinSize, codingDataReq, 0, codingDataSize);
+  memcpy_off(hashDataOut, vinSize + codingDataSize, calidReq, 1, calidDataSize);
+
+  sysSetVariableData("SecVarCodingControl","HashData",hashDataOut,hashDataSize); // display in panel
+  @sysvar::SecVarCodingControl::HashDataSize = hashDataSize; // display in panel
+  
+  // write window output
+  if( (hashDataSize*5) < elcount(hashstring) )
+  {    
+    DDS_byte2HexString(hashDataOut, hashDataSize, hashstring); 
+    write("Hash data for signature: %s", hashstring );
+  }
+
+  return hashDataSize;
+}
+
+
+diagSetParameterRawTo(diagRequest * obj,char diagSpecRef[],byte val,int length)
+{
+  byte dataBuffer [cMaxBufferSize];
+  int i;
+  for(i=0;i<length;i++)
+  {
+    dataBuffer[i]=val;
+  }
+  diagSetParameterRaw(obj,diagSpecRef, dataBuffer, length);
+}
+
+void _TestStepFail ( char msg[])
+{
+  writeLineEx(0,3,msg);
+}
+
+void DDS_byte2HexString(byte data[], int length, char outString[])
+{
+  char emptyString[2] = "";
+  int i=0;
+  int val;
+  dword outPos;
+  int isCut=0;
+  i=0;
+  isCut=0;
+  
+  if( elcount(outString) < length*5)
+  {
+    write("buffersize mismatch in DDS_byte2HexString.");
+    return;
+  }
+  snprintf(outString, elCount(emptyString), emptyString);
+  if (elcount(data)<length) length=elcount(data);
+  outPos=strlen(outString);
+  if (outPos+(3*length)+2>elcount(outString))
+  {
+    length=(elcount(outString)-outPos);//rest string length
+    length=length-2; //leading 0x
+    length=length/3; //count of numbers, 3 chars per number
+    length=length-1; //reserve space for '...'
+    isCut=1;
+  }
+  if(length > 0)
+  {
+    for(i=0; i < length; i++)
+    {
+      outString[outPos++]='0';
+      outString[outPos++]='x';
+      val = data[i] >> 4;
+      outString[outPos++] = (val <= 9) ? val + '0' : val + 'A' - 10;
+      val = data[i] & 0xF;
+      outString[outPos++] = (val <= 9) ? val + '0' : val + 'A' - 10;
+      outString[outPos++] = ' ';
+    }
+    outString[outPos++]=0;
+    if (isCut>0)
+    {
+      strncat(outString, "...", elcount(outString));
+    }
+  }
+}
+
+on sysvar_update sysvar::SecVarCodingPanel::Button_CancelSequence
+{
+  if(@this == 1)
+  {
+    GoToStandby();
+  }
+}
+
+void GoToStandby()
+{
+    @sysvar::SecVarCodingControl::SecVarCodingSequence = Standby;
+    ResetPanelData();
+    enableControl("SecVarCodingControl", "Button_StartCoding", 1);
+    //ReleaseAuthState();
+}
+
+
+void ReleaseAuthState()
+{
+  @sysvar::LocalAuthentication::AuthResult = 0;
+}
+

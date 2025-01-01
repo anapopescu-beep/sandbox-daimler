@@ -1,0 +1,34 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0166
+ARCH_SW_CIL_0166: If PRE-SAFE8 is executed (cycle 6) (and his next cycle ) then RBTM _FL/FR Actv_Lvl_ST35 should be equal to 0x08=�PRE-SAFE 8� no matter the source of the request: API interface, PRE SAFE interface, Diagnostic request , ORC req.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 3: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function cil_ManageActiveLevelSignal() after line 'CIL_u8Actv_Lvl = I_C06_RBTM_LVL_STAT_PROFILE8;'.
+
+	Step 5: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL8.
+
+Action: ARCH_SW_CIL_0166
+
+	Step 6: Check if CPU stopped in function cil_ManageActiveLevelSignal() after line 'CIL_u8Actv_Lvl = I_C06_RBTM_LVL_STAT_PROFILE8;'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 7: Return ECU to default values

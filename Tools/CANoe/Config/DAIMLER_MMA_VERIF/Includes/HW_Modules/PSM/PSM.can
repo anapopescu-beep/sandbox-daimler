@@ -1,0 +1,116 @@
+/*@!Encoding:1252*/
+includes
+{
+  #include "PowerSupplyControl.cin"
+}
+
+variables
+{
+  
+}
+
+on preStart
+{
+  @sysvar::PSM::sysPowerSupplyState = @sysvar::PSM::sysPowerSupplyState::Off;
+  @sysvar::PSM::sysVoltageDisplay   = 0;
+  @sysvar::PSM::sysCurrentDisplay   = 0;
+}
+
+void MainTest()
+{
+  switch(@sysvar::PSM::sysPSM)
+  {
+    case sysvar::PSM::sysPSM::Power_On: PSM_Power_On();
+      break;
+    case sysvar::PSM::sysPSM::Power_Off: PSM_Power_Off();
+      break;
+    case sysvar::PSM::sysPSM::Set_Voltage: PSM_Set_Voltage();
+      break;
+    case sysvar::PSM::sysPSM::Set_Current: PSM_Set_Current();
+      break;
+    case sysvar::PSM::sysPSM::Live_Update: PSM_Live_Update();
+      break;
+    case sysvar::PSM::sysPSM::Clear: DeleteControlContent(cPowerSupplyPannel, "PS_Output");
+      break;
+    default:
+        break;
+  }
+}
+
+testcase PSM_Power_On()
+{
+  @sysvar::CORE::sysLevelOfDetailStep = 3;
+  @sysvar::CORE::sysLevelOfDetailFail = 3;
+  @sysvar::CORE::sysLevelOfDetailPass = 3;
+  PowerOn();
+  testwaitfortimeout(100);
+  ReadPowerSupplyState();
+  ReadVoltage();
+  ReadCurrent();
+}
+
+testcase PSM_Power_Off()
+{
+  PowerOff();
+  ReadPowerSupplyState();
+  
+  @sysvar::PSM::sysCurrentDisplay = 0;
+  @sysvar::PSM::sysVoltageDisplay = 0;
+}
+
+testcase PSM_Set_Voltage()
+{
+  SetVoltage(@sysvar::PSM::sysSetVoltageInput);
+  ReadPowerSupplyState();
+  ReadVoltage();
+  ReadCurrent();
+}
+
+testcase PSM_Set_Current()
+{
+  SetCurrent(@sysvar::PSM::sysSetCurrentInput);
+  ReadPowerSupplyState();
+  ReadVoltage();
+  ReadCurrent();
+}
+
+testcase PSM_Live_Update()
+{
+  stack char cPanelOutput[200];
+  
+  @sysvar::PSM::sysPSEnablePanelOutput = 0;
+  SetControlVisibility(cPowerSupplyPannel, "LIVE_UPDATE_LED", 1);
+  while (@sysvar::PSM::sysPSM == sysvar::PSM::sysPSM::Live_Update)
+  {
+    ReadPowerSupplyState();
+    
+    switch (@sysvar::PSM::sysPowerSupplyState)
+    {
+     case 0:
+      {
+        ReadVoltage();
+        ReadCurrent();
+        snprintf(cPanelOutput, elcount(cPanelOutput), "Power supply is OFF: %.2f V %.2f A", @sysvar::PSM::sysVoltageDisplay,  @sysvar::PSM::sysCurrentDisplay);
+        PSM_Output_View(WHITE_Color, cPanelOutput);
+      }
+       break;
+     case 1:
+      {
+        ReadVoltage();
+        ReadCurrent();
+        snprintf(cPanelOutput, elcount(cPanelOutput), "Power supply is ON: %.2f V %.2f A", @sysvar::PSM::sysVoltageDisplay,  @sysvar::PSM::sysCurrentDisplay);
+        PSM_Output_View(WHITE_Color, cPanelOutput);
+      }
+      break;
+     default: PSM_Output_View(WARNING_Color, "Error occured while reading Power Supply status.");
+      break;
+    }
+    
+    TestWaitForTimeout(@sysvar::PSM::sysLiveUpdateInterval);
+    
+  }
+  @sysvar::PSM::sysPSEnablePanelOutput = 1;
+  @sysvar::PSM::sysVoltageDisplay = 0;
+  @sysvar::PSM::sysCurrentDisplay = 0;
+  SetControlVisibility(cPowerSupplyPannel, "LIVE_UPDATE_LED", 0);
+}

@@ -1,0 +1,1207 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+  #include "Debugger_Functions_Configuration.cin"
+}
+
+/* debugger_ */
+/* Usage: */
+/* Params: */
+/* Return: */
+
+variables
+{
+  double table;
+  int   debuggerBufferTime = 500;
+  char  lCommandLine [256];
+  char  bat_deleteCommand [256] = "s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\delete_command.bat";
+  char  py_debugger_run [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\run.py";
+  char  py_debugger_stop [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\stop.py";
+  char  py_debugger_reset [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\reset.py";
+  char  py_debugger_stepIn [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\stepIn.py";
+  char  py_debugger_stepOver [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\stepOver.py";
+  char  py_debugger_runUntilReturn [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\runUntilReturn.py";
+  char  py_debugger_getCPUStatus [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\getCPUStatus.py";
+  char  py_debugger_readVariable [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\readVariable.py";
+  char  py_debugger_writeVariable [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\writeVariable.py";
+  char  py_debugger_readLocalVariable [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\readLocalVariable.py";
+  char  py_debugger_writeLocalVariable [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\writeLocalVariable.py";
+  char  py_debugger_setRelativeFunctionBpAtLine [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\setRelativeFunctionBpAtLine.py";
+  char  py_debugger_setBpAtLine [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\setBpAtLine.py";
+  char  py_debugger_deleteAllBreakpoints [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\deleteAllBreakpoints.py";
+  char  py_debugger_runUntilFunction [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\runUntilFunction.py";
+  char  py_debugger_waitUntilBPisReached [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\waitUntilBPisReached.py";
+  char  py_debugger_isCPUStoppedAtBP [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\isCPUStoppedAtBP.py";
+  char  py_debugger_enableRelativeFunctionBpAtLine [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\enableRelativeFunctionBpAtLine.py";
+  char  py_debugger_deleteRelativeFunctionBpAtLine [256] = "py s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\src\\deleteRelativeFunctionBpAtLine.py";
+  char  txt_isystemResponse [256] = "s:\\Tools\\CANoe\\Config\\DAIMLER_MMA_INTEGRATION\\Includes\\HW_Modules\\IC5000\\isystem_response.txt";
+  char  debugger_result [256];
+  dword glbHandle;
+}
+
+/* debugger_run */
+/* Runs the target. */
+/* Usage: debugger_run(); */
+/* Params: */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_run()
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command
+  sysExec (py_debugger_run, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: run");
+  writeToLog ("debugger command: run");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+    // Delete the content of the buffer
+    for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+    {
+    readStringFromFile[i] = 0;
+    }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+ 
+}
+
+/* debugger_stop */
+/* Stops the target. */
+/* Usage: debugger_stop(); */
+/* Params: */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_stop()
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_stop, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: stop");
+  writeToLog ("debugger command: stop");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+    fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+  // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+      
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_reset */
+/* Resets the target. */
+/* Usage: debugger_reset(); */
+/* Params: */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_reset()
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_reset, lCommandLine);
+  write ("debugger command: reset");
+  writeToLog ("debugger command: reset");
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+      write ("----");
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+      // Delete the content of the buffer
+  for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+  {
+  readStringFromFile[i] = 0;
+  }
+
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_stepIn */
+/* Advances 1 step into the program. */
+/* Usage: debugger_stepIn(); */
+/* Params: */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_stepIn()
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_stepIn, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: stepIn");
+  writeToLog ("debugger command: stepIn");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+    fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_stepOver */
+/* Advances 1 statement over into the program. */
+/* Usage: debugger_stepOver(); */
+/* Params: */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_stepOver()
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_stepOver, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: stepOver");
+  writeToLog ("debugger command: stepOver");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+      // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+      
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_runUntilReturn */
+/* Runs the program until it reaches the end of the current function. There is a timeout of max 10s until it reaches the function end. */
+/* Usage: debugger_runUntilReturn(); */
+/* Params: (string) max timeout until end of function is reached. Possible values: 1, 10, 100 ONLY*/
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_runUntilReturn(char timeout[])
+{
+  long    ltimeout ;
+  int     ltimeoutres;
+  int     fileResponseGet;
+  char    readStringFromFile [256];
+  int     i = 0;
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Timeout
+  strncat (lCommandLine, " -t ", 256);
+  strncat (lCommandLine, timeout, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_runUntilReturn, lCommandLine);
+  write ("debugger command: runUntilReturn");
+  writeToLog ("debugger command: runUntilReturn");
+  // Convert string to integer for timeout.
+  ltimeoutres = strtol(timeout, ltimeout);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  
+  
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(ltimeoutres);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+      // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+      
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_getCPUStatus */
+/* Checks the current status of the CPU */
+/* Usage: debugger_getCPUStatus(); */
+/* Params: */
+/* Return: (string) Current CPU status*/
+void debugger_getCPUStatus()
+{
+  int i = 0;
+  int fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_getCPUStatus, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: getCPUStatus");
+  writeToLog ("debugger command: getCPUStatus");
+  
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+    fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+    // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+  
+/* debugger_readVariable */
+/* Read a specific GLOBAL variable. */
+/* Usage: debugger_readVariable("uint8","NVP_BLOCK_ID_ECU_LOCATION_DefaultData,,app.elf", "0"); */
+/* Params: (string) variable type - uint8, sint8, uint16, sint16, uint32, sint32, uint64, sint64 
+           (string) variable name - In winIDEA, put the global variable in Watch and Copy Name 
+           (string) offset - The n-th element in the variable vector. e.g Var[9], offset will be 9 */
+/* Return: (string) variable value in hex.*/
+long debugger_readVariable(char type[], char name[], char offset[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  long  readNumber;
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Variable type
+  strncat (lCommandLine, " -t ", 256);
+  strncat (lCommandLine, type, 256);
+  
+  // param: Variable name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, name, 256);
+  
+  // param: Offset
+  strncat (lCommandLine, " -s ", 256);
+  strncat (lCommandLine, offset, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_readVariable, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: readVariable %s", name);
+  writeToLog ("debugger command: readVariable %s", name);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Return the read number.
+    if (strstr(readStringFromFile, "0x")>=0)
+    {
+      readNumber = atol(readStringFromFile);
+    }
+    else
+      readNumber = -1;
+    
+    
+    // Delete the content of the buffer
+    for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+    {
+    readStringFromFile[i] = 0;
+    }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+      
+  return readNumber;
+ 
+}
+
+
+/* debugger_writeVariable */
+/* Write a specific GLOBAL variable. In order to check if the variable was written, make a step in the program. */
+/* Usage: debugger_writeVariable("uint8","NVP_BLOCK_ID_CYCLE_0_RamBlockData,,app.elf", "1", "9C"); */
+/* Params: (string) variable type - uint8, sint8, uint16, sint16, uint32, sint32, uint64, sint64 
+           (string) variable name - In winIDEA, put the global variable in Watch and Copy Name 
+           (string) offset - The n-th element in the variable vector. e.g Var[9], offset will be 9 
+           (string) new value - The value you want to give to the variable in hex.*/
+/* Return: (string) True if succesful*/
+void debugger_writeVariable(char type[], char name[], char offset[], char value[])
+{
+  int i = 0;
+  int fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Variable type
+  strncat (lCommandLine, " -t ", 256);
+  strncat (lCommandLine, type, 256);
+  
+  // param: Variable name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, name, 256);
+  
+  // param: Offset
+  strncat (lCommandLine, " -s ", 256);
+  strncat (lCommandLine, offset, 256);
+  
+  // param: New value
+  strncat (lCommandLine, " -v ", 256);
+  strncat (lCommandLine, value, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_writeVariable, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: writeVariable %s with value %s", name, value);
+  writeToLog ("debugger command: writeVariable %s with value %s", name, value);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+/* debugger_readLocalVariable */
+/* Reads the value of a LOCAL variable. The execution point must be in the right function to have access to the variable. */
+/* Usage: debugger_readLocalVariable("u8TestResult");   -> for variables
+          debugger_readLocalVariable("*u8TestResult");  -> for pointers */
+/* Params: (string) variable name - In winIDEA from Locals window, Copy Name of the variable*/
+/* Return: (string) variable value in hex.*/
+long debugger_readLocalVariable(char name[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  long  readNumber;
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Variable name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, name, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_readLocalVariable, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: readLocalVariable %s", name);
+  writeToLog ("debugger command: readLocalVariable %s", name);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+
+    // Return the read number.
+    if (strstr(readStringFromFile, "0x")>=0)
+    {
+      readNumber = atol(readStringFromFile);
+    }
+    else
+      readNumber = -1;
+    
+    
+    // Delete the content of the buffer
+    for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+    {
+    readStringFromFile[i] = 0;
+    }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+
+    return readNumber;
+}
+
+/* debugger_writeLocalVariable */
+/* Write the value of a LOCAL variable. The execution point must be in the right function to have access to the variable. */
+/* Usage: debugger_writeLocalVariable("u8TestResult"); */
+/* Params: (string) variable name - In winIDEA from Locals window, Copy Name of the variable
+           (string) new value - new value in hex*/
+/* Return: (string) True if changed*/
+void debugger_writeLocalVariable(char name[], char value[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Variable name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, name, 256);
+  
+  // param: New value
+  strncat (lCommandLine, " -v ", 256);
+  strncat (lCommandLine, value, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_writeLocalVariable, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: writeLocalVariable: %s with value %s", name, value);
+  writeToLog ("debugger command: writeLocalVariable: %s with value %s", name, value);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a buffer so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+/* debugger_setRelativeFunctionBpAtLine */
+/* Set a BP at a specific line in a given function.  */
+/* Usage: debugger_setRelativeFunctionBpAtLine("ATM_runGetTestResult", "0"); */
+/* Params: (string) function name
+           (string) line offset - The n-th line of the function you want to set a breakpoint at. Calculated by adding function line number and given offset.
+           IMPORTANT: Note that winIDEA takes the function line number as the first line you can set a breakpoint to in a certain function.*/
+/* Return: (string) Confirmation that BP was set. */
+void debugger_setRelativeFunctionBpAtLine(char function_name[], char line_offset[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Function name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, function_name, 256);
+  
+  // param: Line offset
+  strncat (lCommandLine, " -l ", 256);
+  strncat (lCommandLine, line_offset, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_setRelativeFunctionBpAtLine, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: setRelativeBpAtLine in function: %s, offset: %s", function_name, line_offset);
+  writeToLog ("debugger command: setRelativeBpAtLine in function: %s, offset: %s", function_name, line_offset);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+
+/* debugger_enableRelativeFunctionBpAtLine */
+/* Enable/Disable a BP at a specific line in a given function.  */
+/* Usage: debugger_enableRelativeFunctionBpAtLine("enable", "ATM_runGetTestResult", "0"); */
+/* Params: (string) enable/disable
+           (string) function name
+           (string) line offset - The n-th line of the function you want to enable/disable a breakpoint at. Calculated by adding function line number and given offset.
+           IMPORTANT: Note that winIDEA takes the function line number as the first line you can set a breakpoint to in a certain function.*/
+/* Return: (string) Confirmation that BP was set. */
+void debugger_enableRelativeFunctionBpAtLine(char is_Enabled[], char function_name[], char line_offset[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Is BP enabled/disabled
+  strncat (lCommandLine, " -i ", 256);
+  strncat (lCommandLine, is_Enabled, 256);
+  
+  // param: Function name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, function_name, 256);
+  
+  // param: Line offset
+  strncat (lCommandLine, " -l ", 256);
+  strncat (lCommandLine, line_offset, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_enableRelativeFunctionBpAtLine, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: enableRelativeFunctionBpAtLine in function: %s, offset: %s", function_name, line_offset);
+  writeToLog ("debugger command: enableRelativeFunctionBpAtLine in function: %s, offset: %s", function_name, line_offset);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+/* debugger_deleteRelativeFunctionBpAtLine */
+/* Set a BP at a specific line in a given function.  */
+/* Usage: debugger_deleteRelativeFunctionBpAtLine("ATM_runGetTestResult", "0"); */
+/* Params: (string) function name
+           (string) line offset - The n-th line of the function you want to delete a breakpoint at. Calculated by adding function line number and given offset.
+           IMPORTANT: Note that winIDEA takes the function line number as the first line you can set a breakpoint to in a certain function.*/
+/* Return: (string) Confirmation that BP was set. */
+void debugger_deleteRelativeFunctionBpAtLine(char function_name[], char line_offset[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Function name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, function_name, 256);
+  
+  // param: Line offset
+  strncat (lCommandLine, " -l ", 256);
+  strncat (lCommandLine, line_offset, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_deleteRelativeFunctionBpAtLine, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: deleteRelativeBpAtLine in function: %s, offset: %s", function_name, line_offset);
+  writeToLog ("debugger command: deleteRelativeBpAtLine in function: %s, offset: %s", function_name, line_offset);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+/* debugger_setBpAtLine */
+/* Set a BP at a specific line in a given file.  */
+/* Usage: debugger_setBpAtLine("s:\\Components\\Application\\Autoliv\\ATM\\Implementation\\src\\ATM.c", "209"); */
+/* Params: (string) path of the file
+           (string) file line number where the breakpoint should be set.*/
+/* Return: (string) Confirmation that BP was set. */
+void debugger_setBpAtLine(char file_name[], char line_number[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: File name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, file_name, 256);
+  
+  // param: Line offset
+  strncat (lCommandLine, " -l ", 256);
+  strncat (lCommandLine, line_number, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_setBpAtLine, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: setBpAtLine in file: %s, offset: %s", file_name, line_number);
+  writeToLog ("debugger command: setBpAtLine in file: %s, offset: %s", file_name, line_number);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+    // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+/* debugger_deleteAllBreakpoints */
+/* Deletes all BP's in winIDEA */
+/* Usage: debugger_deleteAllBreakpoints(); */
+/* Params: */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_deleteAllBreakpoints()
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  
+      // Delete the content of the buffer
+  for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+  {
+  readStringFromFile[i] = 0;
+  }
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_deleteAllBreakpoints, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: deleteAllBreakpoints");
+  writeToLog ("debugger command: deleteAllBreakpoints");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+        // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_runUntilFunction */
+/* Runs the program until the beginning of the given function is reached, within a given timeout */
+/* Usage: debugger_runUntilFunction("ATM_Init", "100"); */
+/* Params: */
+/* Return: (string) Current execution point location.*/
+void debugger_runUntilFunction(char function[], char timeout[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Function name
+  strncat (lCommandLine, " -f ", 256);
+  strncat (lCommandLine, function, 256);
+  
+  // param: Timeout
+  strncat (lCommandLine, " -t ", 256);
+  strncat (lCommandLine, timeout, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_runUntilFunction, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: runUntilFunction");
+  writeToLog ("debugger command: runUntilFunction");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+        // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_waitUntilBPisReached */
+/* Will wait until the first BP is reached in the program for a given amount of time. Reccomended to use with setRelativeFunctionBpAtLine */
+/* Usage: debugger_waitUntilBPisReached("1000"); */
+/* Params: (string) max timeout in ms until BP is reached.*/
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_waitUntilBPisReached(char timeout[])
+{
+  long    ltimeout ;
+  int     ltimeoutres;
+  int     fileResponseGet;
+  int     i = 0;
+  char    readStringFromFile [256];
+  
+    // Delete the content of the buffer
+  for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+  {
+  readStringFromFile[i] = 0;
+  }  
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Timeout
+  strncat (lCommandLine, " -t ", 256);
+  strncat (lCommandLine, timeout, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_waitUntilBPisReached, lCommandLine);
+  write ("Debugger command: waitUntilBPisReached");
+  writeToLog ("Debugger command: waitUntilBPisReached");
+  
+  // Convert string to integer for timeout.
+  ltimeoutres = strtol(timeout, ltimeout);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(ltimeoutres);
+    };
+      
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+        // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+    
+}
+
+/* debugger_isCPUStoppedAtBP */
+/* Confirms that the reason CPU stopped because it reached a BP. */
+/* Usage: debugger_isCPUStoppedAtBP("5000"); */
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_isCPUStoppedAtBP(char timeout[])
+{
+  long    ltimeout ;
+  int     ltimeoutres;
+  int     fileResponseGet;
+  int     i = 0;
+  char    readStringFromFile [256];
+  
+      // Delete the content of the buffer
+  for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+  {
+  readStringFromFile[i] = 0;
+  }  
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+    // param: Timeout
+  strncat (lCommandLine, " -t ", 256);
+  strncat (lCommandLine, timeout, 256);
+  
+  // Execute the debugger command
+  sysExec (py_debugger_isCPUStoppedAtBP, lCommandLine);
+  write ("Debugger command: isCPUStoppedAtBP");
+  writeToLog ("Debugger command: isCPUStoppedAtBP");
+  
+    // Convert string to integer for timeout.
+  ltimeoutres = strtol(timeout, ltimeout);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(ltimeoutres);
+    };
+      
+      write("Return: %s", readStringFromFile);
+      writetoLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+        // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+      
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+/* debugger_deleteFunctionBreakpoint */
+/* Deletes a BP's at a specified function. */
+/* Usage: debugger_deleteFunctionBreakpoint("ATM_Init"); */
+/* Params: (string) function name*/
+/* Return: (string) Confirmation that command was succesful.*/
+void debugger_deleteFunctionBreakpoint(char function_name[])
+{
+  int   i = 0;
+  int   fileResponseGet;
+  char  readStringFromFile [256];
+  
+      // Delete the content of the buffer
+  for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+  {
+  readStringFromFile[i] = 0;
+  }
+  
+  // param: Output file
+  strncpy (lCommandLine, "-o ", 256);
+  strncat (lCommandLine, txt_isystemResponse, 256);
+  
+  // param: Function name
+  strncat (lCommandLine, " -n ", 256);
+  strncat (lCommandLine, function_name, 256);
+  
+  // Execute the debugger command:
+  sysExec (py_debugger_deleteAllBreakpoints, lCommandLine);
+  glbHandle = OpenFileRead (txt_isystemResponse, 0);
+  write ("debugger command: deleteAllBreakpoints");
+  writeToLog ("debugger command: deleteAllBreakpoints");
+
+  // Check if the py script has written the response from winIdea in the .txt file and show result in write window
+  fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+    while (fileResponseGet == 0)
+    {
+      fileGetString(readStringFromFile, elcount(readStringFromFile), glbHandle);
+      fileResponseGet = strncmp(readStringFromFile, "", strlen(readStringFromFile));
+      testWaitForTimeout(100);
+    };
+
+      write("Return: %s", readStringFromFile);
+      writeToLog("Return: %s", readStringFromFile);
+      fileClose (glbHandle);
+    
+        // Place result in a string so it can be used in ExpectedTestResult function as the actual_result argument.
+    strncpy(debugger_result, readStringFromFile, elcount(debugger_result));
+    
+        // Delete the content of the buffer
+      for (i = 0; i<=elcount(readStringFromFile)-1; i++)
+      {
+      readStringFromFile[i] = 0;
+      }
+    
+    testWaitForTimeout(100);
+    sysExec (bat_deleteCommand, "");
+    testWaitForTimeout(debuggerBufferTime);
+}
+
+
+/* ExpectedTestResult */
+/* Compares the result from debugger functions with the expected result given by the user. Also creates the Expected vs Actual table in the report. */
+/* Usage: ExpectedTestResult(debugger_result, RUN_SUCCESSFUL, "Run command was successfully executed"); */
+/* Params: (string) Response from the python debugger functions.
+           (string) A keyword given by the tester. WARNING: If keyword is found in the actual_result string, it will PASS the teststep. A list with the reccomened keywords is available in Debugger_defines.cin
+           (string) A short description of the expected result. Will appear in the Expected Result column in the report.*/
+void ExpectedTestResult(char actual_result[], char expected_result[], char expected_description[])
+{
+  int i = 0;
+  
+  CreateActualExpectedTable(expected_description, actual_result);
+  
+  // Search for the keyword from the tester in the returned string from py.
+  if (strstr(actual_result, expected_result)>=0)
+  {
+     // Keyword was found in the actual_result string
+    testStepPass(0, "", table);
+  }
+  else
+  {
+    // Keyword was not found in the actual_result string
+    testStepFail(0, "", table);
+  }
+
+  // Delete contents of buffer.
+  for (i = 0; i<=elcount(debugger_result)-1; i++)
+  {
+  debugger_result[i] = 0;
+  }
+}
+
+void CreateActualExpectedTable(char expected_result[], char actual_result[])
+{
+  table = testInfoTable("");
+  TestInfoHeadingBegin(table, 0);
+  TestInfoCell(table, "Expected Result");
+  TestInfoCell(table, "Actual Result");
+  TestInfoHeadingEnd(table);  
+  // info row
+  TestInfoRow(table, 0);
+  TestInfoCell(table, expected_result);
+  TestInfoCell(table, actual_result);
+}
+  

@@ -1,0 +1,41 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0565; ARCH_SW_DIA_0566; ARCH_SW_DIA_0567; ARCH_SW_DIA_0568; ARCH_SW_DIA_0569; ARCH_SW_DIA_0570; ARCH_SW_DIA_0571; ARCH_SW_DIA_0572
+ARCH_SW_DIA_0565: Service 0x22 (Read Data By Identifier) will be implemented for DID 0240 (Internal ECU Information)
+ARCH_SW_DIA_0566: The Read Internal ECU Information service shall be available in the following sessions: ?Default Session (0x01) ?Extended Session (0x03) ?Supplier Session/Development Session (0x7E) ?Update Session (0x42)  
+ARCH_SW_DIA_0567: The Read Internal ECU Information service shall be available under the following forms of Authentication: ?Supplier ?Development ENHANCED ?Production ?After-Sales ENHANCED ?After-Sales ?After-Sales BASIC ?Internal Diagnostic Test Tool ?ePTI Test Tool 
+ARCH_SW_DIA_0568: DataIdentifier of the Read Internal ECU Information shall be: 0x0240
+ARCH_SW_DIA_0569: Response data length shall be 6 bytes long Note: Full Response length = 3 bytes + Response data length 
+ARCH_SW_DIA_0570: Bytes #2-#3:  DataIdentifier of the Read Internal ECU Information shall be: 0x0240
+ARCH_SW_DIA_0571: Byte #4: ?bits 0-7: Autosar System State (EcuM_State) 0x10 - Startup 0x20 - Wakeup 0x30 - Run 0x40 - Shutdown 0x50 - Sleep 
+ARCH_SW_DIA_0572: Read Internal ECU Information service shall return the values measured.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0240_Internal_ECU_information_Read_Autosar_System_State_EcuM_State_ReadData*.
+
+Action: ARCH_SW_DIA_0565; ARCH_SW_DIA_0566; ARCH_SW_DIA_0567; ARCH_SW_DIA_0568; ARCH_SW_DIA_0569; ARCH_SW_DIA_0570; ARCH_SW_DIA_0571; ARCH_SW_DIA_0572
+
+	Step 3: Send diag request for 22 0220 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDid0240_Internal_ECU_information_Read_Autosar_System_State_EcuM_State_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

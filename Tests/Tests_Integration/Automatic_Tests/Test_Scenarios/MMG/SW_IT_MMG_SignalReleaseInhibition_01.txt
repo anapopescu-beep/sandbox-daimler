@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_MMG_0301, ARCH_SW_MMG_0302
+ARCH_SW_MMG_0301: The Release Inhibition signal from CIL shall be an input for MMG_KU32_MASK_SIGNAL_RELEASE_INHIBITION context qualification.
+ARCH_SW_MMG_0302: Rte_Read_prrCustomerSpecific_b8SignalRelInhibition shall be called to read release inhibition for costumer signals.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function MMG_runUpdateModeStatus() at line 'mmg_UpdateModeStatus_SignalReleaseInhibition()'.
+
+	Step 3: Check if CPU stopped in function MMG_runUpdateModeStatus() at line 'mmg_UpdateModeStatus_SignalReleaseInhibition()'. 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set a breakpoint in function mmg_UpdateModeStatus_SignalReleaseInhibition at line '(void)Rte_Read_prrCustomerSpecific_b8SignalRelInhibition(&u8SignalReleaseInhibition);'.
+
+Action: ARCH_SW_MMG_0302
+
+	Step 5: Check if CPU stopped in function mmg_UpdateModeStatus_SignalReleaseInhibition at line '(void)Rte_Read_prrCustomerSpecific_b8SignalRelInhibition(&u8SignalReleaseInhibition);'. 
+		Expected result:  CPU is Stopped
+
+	Step 6: Set a breakpoint in function mmg_UpdateModeStatus_SignalReleaseInhibition at line 'M_SET_MODE_MASK_ON (MMG_KU32_MASK_SIGNAL_RELEASE_INHIBITION);'.
+
+Action: ARCH_SW_MMG_0301
+
+	Step 7: Check if CPU stopped in function mmg_UpdateModeStatus_SignalReleaseInhibition at line 'M_SET_MODE_MASK_ON (MMG_KU32_MASK_SIGNAL_RELEASE_INHIBITION);'. 
+		Expected result:  CPU is Stopped
+
+Postcondition
+
+	Step 8: Return ECU to default values

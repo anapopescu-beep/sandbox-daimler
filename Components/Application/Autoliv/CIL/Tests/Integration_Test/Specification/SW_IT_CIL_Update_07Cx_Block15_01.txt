@@ -1,0 +1,50 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0725, ARCH_SW_CIL_0771, ARCH_SW_CIL_0772
+ARCH_SW_CIL_0725: If selected, the content of the measurement frame - block #15 shall be encoded and provided to CAN..
+ARCH_SW_CIL_0771: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be read in order to determine the current cycle.
+ARCH_SW_CIL_0772: Rte_BFE_psrExecutedStep_u8StepNumber 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 15.
+
+	Step 3: Set a breakpoint in function cil_Update_07Cx_Block15_InfosToSend at line Rte_Read_prrCycleNumber_u8CycleNumber(&u8CurrentCycle);.
+
+	Step 4: Set a breakpoint in function cil_Update_07Cx_Block15_InfosToSend at line Rte_Read_prrStepNumber_u8StepNumber(&u8CurrentStep);.
+
+Action: ARCH_SW_CIL_0772
+
+	Step 5: Check if CPU stopped at line Rte_Read_prrStepNumber_u8StepNumber(&u8CurrentStep);. 
+		Expected result:  CPU stopped at BP
+
+Action: ARCH_SW_CIL_0771
+
+	Step 6: Check if CPU stopped at line Rte_Read_prrCycleNumber_u8CycleNumber(&u8CurrentCycle);. 
+		Expected result:  CPU stopped at BP
+
+	Step 7: Set a breakpoint at the last line of function cil_Update_07Cx_Block17_InfosToSend.
+
+Action: ARCH_SW_CIL_0725
+
+	Step 8: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_02 and signal Meas_RBTM_FL_02_ST3 are equal with KU8_MAX. 
+		Expected result:  0xff (decimal value: 255)
+
+Action: ARCH_SW_CIL_0725
+
+	Step 9: Check if variable cil_stMeasurementFrameContent.Meas_RBTM_FL_03 and signal Meas_RBTM_FL_03_ST3 are equal with KU8_MAX. 
+		Expected result:  0xff (decimal value: 255)
+
+Postcondition
+
+	Step 10: Return ECU to default values

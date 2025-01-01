@@ -1,0 +1,47 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0020, ARCH_SW_PAL_0025, ARCH_SW_PAL_0026, ARCH_SW_PAL_0027, ARCH_SW_PAL_0028, ARCH_SW_PAL_0029
+ARCH_SW_PAL_0020: The component shall control the power bridge based on the requested power order.
+ARCH_SW_PAL_0025: The component shall be able to activate/deactivate the half bridge connected to the Vp pin of the motor.
+ARCH_SW_PAL_0026: The component shall be able to activate/deactivate the half bridge connected to the Vn pin of the motor.
+ARCH_SW_PAL_0027: The component shall be able to control the MOSFETs of the half bridge connected to the Vp pin of the motor.
+ARCH_SW_PAL_0028: The component shall be able to control the MOSFETs of the half bridge connected to the Vp pin of the motor.
+ARCH_SW_PAL_0029: The component shall be able to control MOSFET of the high power.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0020
+
+	Step 3: Set a breakpoint in function PAL_runSetPowerOrder at the pal_DriveMotorInReleasing function call 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0025, ARCH_SW_PAL_0026, ARCH_SW_PAL_0029
+
+	Step 4: Set a breakpoint in function pal_DriveMotorInReleasing at the RTE Call of PwmIf_SetDutyCycle 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0027
+
+	Step 5: Set a breakpoint in function pal_DriveMotorInReleasing at Dio_WriteChannel for Vp function call 
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PAL_0028
+
+	Step 6: Set a breakpoint in function pal_DriveMotorInReleasing at Dio_WriteChannel for Vn function call 
+		Expected result:  BP reached.
+
+Postcondition
+
+	Step 7: Return ECU to default values

@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ODX MODEL-VERSION="2.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="odx.xsd">
+  <DIAG-LAYER-CONTAINER ID="DLC.UDS_CAN_INT">
+    <SHORT-NAME>UDS_CAN_INT</SHORT-NAME>
+    <LONG-NAME>UDS CAN internal</LONG-NAME>
+    <ADMIN-DATA>
+      <LANGUAGE>en-US</LANGUAGE>
+      <DOC-REVISIONS>
+        <DOC-REVISION>
+          <REVISION-LABEL>01.02.07</REVISION-LABEL>
+          <DATE>2017-02-16T15:58:11</DATE>
+          <MODIFICATIONS>
+            <MODIFICATION>
+              <CHANGE>automatically generated</CHANGE>
+              <REASON>automatically generated</REASON>
+            </MODIFICATION>
+          </MODIFICATIONS>
+        </DOC-REVISION>
+      </DOC-REVISIONS>
+    </ADMIN-DATA>
+    <PROTOCOLS>
+      <PROTOCOL ID="PT.UDS_CAN_INT">
+        <SHORT-NAME>UDS_CAN_INT</SHORT-NAME>
+        <LONG-NAME>UDS CAN internal</LONG-NAME>
+        <DESC>
+          <p>This interface may be used for testing CAN ECUs directly connected to the tester</p>
+        </DESC>
+        <COMPARAM-REFS>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanFuncReqFormat" DOCREF="ISO_15765_2" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>normal segmented 29-bit transmit w/o FC</SIMPLE-VALUE>
+            <DESC>
+              <p>CAN-ID Type used for physical requests and responses</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_CanFuncReqId" DOCREF="ISO_15765_2" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>418314633</SIMPLE-VALUE>
+            <DESC>
+              <p>CAN functional request ID</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_BlockSize" DOCREF="ISO_15765_2" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>8</SIMPLE-VALUE>
+            <DESC>
+              <p>This sets the block size that the interface should report to the vehicle for receiving segmented transfers in a Transmit Flow Control Message.
+Default: 0
+Range: [0; 0xFF]
+Resolution: 1 Block</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_P2Max" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>50000</SIMPLE-VALUE>
+            <DESC>
+              <p>Timeout in receiving an expected frame after a successful transmit complete. Also used for multiple ECU responses.
+
+Type: PDU_PT_UNUM32
+Range: [0; 125000000]
+Resolution: 1 μs
+
+Default : 150000
+[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_P2Star" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>2000000</SIMPLE-VALUE>
+            <DESC>
+              <p>Timeout for the Tester to expect the start of the response message after the reception of a negative response message (indicated via N_USData.ind) with response code 0x78 (enhanced response timing). See CP_RC78Handling for details describing 0x78  0x7F handling. This parameter is used for all protocols that support the negative response code 0x78. For some protocols it is used instead of the recommended P3Max parameter.
+
+Default: ISO_14229_3=5050000
+Type: PDU_PT_UNUM32
+Range: [0; 655350000]
+Resolution: 1 μs
+[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_P3Func" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>150000</SIMPLE-VALUE>
+            <DESC>
+              <p>Minimum time for the Tester to wait after the successful transmission of a functionally addressed request message (indicated via N_USData.con) before it can transmit the next functionally addressed request message in case no response is required or the requested data is only supported by a subset of the functionally addressed ECUs
+
+Type: PDU_PT_UNUM32
+Range: [0; 125000000]
+Resolution: 1 μs
+
+Default: ISO_14229_3 = 150000
+[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_P3Phys" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>150000</SIMPLE-VALUE>
+            <DESC>
+              <p>Minimum time for the Tester to wait after the successful transmission of a physically addressed request message (indicated via N_USData.con) with no response required before it can transmit the next physically addressed request message
+
+Type: PDU_PT_UNUM32
+Range: [0; 125000000]
+Resolution: 1 μs
+Default:  ISO_14229_3 = 150000
+[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_TesterPresentAddrMode" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>Physical</SIMPLE-VALUE>
+            <DESC>
+              <p>Addressing Mode to be used for periodic Tester Present messages. Uses the PhysReqxxx or FuncReqxxx ComParams. 
+
+Type: PDU_PT_UNUM32
+Value: [0; 1]
+0 = Use Physical Addressing for the Tester Present
+message.
+1 = Use Functional Addressing for the Tester Present
+message.</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_TesterPresentReqRsp" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>Response expected</SIMPLE-VALUE>
+            <DESC>
+              <p>Define settings for handling Tester Present ECU responses. 
+Type: PDU_PT_UNUM32
+Value: [0; 1]
+Default: 0
+0=No response returned by an ECU on a Tester Present
+message.
+1=An ECU response is expected from a Tester Present
+message. The response message will be discarded by
+the MVCI protocol module. See ComParams
+(CP_TesterPresentExpPosResp and
+CP_TesterPresentExpNegResp) for proper response
+handling.</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_TesterPresentSendType" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>On idle</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_TesterPresentMessage" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>3E00</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_TesterPresentExpPosResp" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>7E00</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_TesterPresentExpNegResp" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>7F3E</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_RepeatReqCountApp" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>3</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_Bs" DOCREF="ISO_15765_2" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>2000000</SIMPLE-VALUE>
+            <DESC>
+              <p>Maximum time for a flowcontrol from the ecu.
+[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_Br" DOCREF="ISO_15765_2" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>0</SIMPLE-VALUE>
+            <DESC>
+              <p>Time between firstframe from the ecu and the following flowcontrol of the tester.
+[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_CanTransmissionTime" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>0</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_RC21Handling" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>Continue until RC21 timeout</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_RC21CompletionTimeout" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>10000000</SIMPLE-VALUE>
+            <DESC>
+              <p>[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_RC23CompletionTimeout" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>10000000</SIMPLE-VALUE>
+            <DESC>
+              <p>[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_RC78Handling" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>Continue until RC78 timeout</SIMPLE-VALUE>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_3.CP_RC78CompletionTimeout" DOCREF="ISO_15765_3" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>60000000</SIMPLE-VALUE>
+            <DESC>
+              <p>[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+          <COMPARAM-REF ID-REF="ISO_15765_2.CP_StMinOverride" DOCREF="ISO_15765_2" DOCTYPE="COMPARAM-SUBSET">
+            <SIMPLE-VALUE>0</SIMPLE-VALUE>
+            <DESC>
+              <p>[Unit: milliseconds]</p>
+            </DESC>
+            <PROTOCOL-SNREF SHORT-NAME="UDS_CAN_INT" />
+          </COMPARAM-REF>
+        </COMPARAM-REFS>
+        <COMPARAM-SPEC-REF ID-REF="ISO_15765_3_on_ISO_15765_2" DOCREF="ISO_15765_3_on_ISO_15765_2" DOCTYPE="COMPARAM-SPEC" />
+        <PROT-STACK-SNREF SHORT-NAME="ISO_15765_3_on_ISO_15765_2_on_ISO_15765_2_ISO_22900_2_2" />
+      </PROTOCOL>
+    </PROTOCOLS>
+  </DIAG-LAYER-CONTAINER>
+</ODX>

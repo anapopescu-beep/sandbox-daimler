@@ -1,0 +1,162 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+  const sigRESPONSE_STATUS_SIZE = 1000; // do not change!
+  char cSigGenRequestStatus[sigRESPONSE_STATUS_SIZE];
+  
+  char cSigGenPositiveResponse[100] = "Operation completed successfully.";
+  
+  char SigGenPictureWidth[7];
+  char SigGenPictureHeight[6];
+  
+  int iSigGenConnectionStatus = 0;
+  int iFrequency = 0;
+  
+  //SigGen 1 info
+  char sSigGen1_Address[50];
+  
+  //SigGen 2 info
+  char sSigGen2_Address[50];
+  
+  char sSigGenAddress[50];
+}
+
+// Connect to Signal Generator.
+void ConnectSigGen()
+{
+  strncpy(sSigGenAddress, "", elcount(sSigGenAddress));
+  
+  sysGetVariableString(sysvar::SigGen::sysSigGen1_Address      , sSigGen1_Address      , elcount(sSigGen1_Address));
+  sysGetVariableString(sysvar::SigGen::sysSigGen2_Address      , sSigGen2_Address      , elcount(sSigGen2_Address));
+  iSigGenConnectionStatus = 0;
+  
+  // Try SigGen 1.
+  OpenSigGenSession(sSigGen1_Address, cSigGenRequestStatus);
+  if(strncmp(cSigGenPositiveResponse, cSigGenRequestStatus, strlen(cSigGenPositiveResponse)) == 0)
+  {
+    iSigGenConnectionStatus = 1;
+    strncpy(sSigGenAddress, sSigGen1_Address, elcount(sSigGenAddress));
+  }
+  else
+  {
+    // Try SigGen 2.
+    OpenSigGenSession(sSigGen2_Address, cSigGenRequestStatus);
+    if(strncmp(cSigGenPositiveResponse, cSigGenRequestStatus, strlen(cSigGenPositiveResponse)) == 0)
+    {
+      iSigGenConnectionStatus = 1;
+      strncpy(sSigGenAddress, sSigGen2_Address, elcount(sSigGenAddress));
+    }
+  }
+}
+
+// Disconnects the SigGen.
+void Disconnect_SigGen()
+{
+  // Close SigGen session.
+  CloseSigGenSession(cSigGenRequestStatus);
+  
+  if(strncmp("VI_SUCCESS: Operation completed successfully.", cSigGenRequestStatus, strlen("VI_SUCCESS: Operation completed successfully.")) == 0)
+  {
+   iSigGenConnectionStatus = 0;
+  }
+  else
+  {
+    EvalManStepEqual("Disconnect SigGen.", cSigGenRequestStatus, "VI_SUCCESS: Operation completed successfully.");
+  }
+}
+
+// Connects to the Signal generator then resets it to factory settings.
+// Wait for a minimum of 3 seconds for SigGen to be fully functional after reset.
+void DefaultSigGenSetup()
+{
+  if(iSigGenConnectionStatus == 0)
+  {
+    ConnectSigGen();
+  }
+  
+  if(iSigGenConnectionStatus == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "No SigGen is detected: %s", cSigGenRequestStatus);
+    return;
+  }
+  
+  WriteSignalGeneratorString("*RST", cSigGenRequestStatus);
+  if(strncmp(cSigGenRequestStatus, cSigGenPositiveResponse, elcount(cSigGenRequestStatus)) != 0)
+  {
+    EvalManStepEqual("Reset SigGen to factory settings.", cSigGenRequestStatus, cSigGenPositiveResponse);
+  }
+}
+
+void OutputOff()
+{
+  if(iSigGenConnectionStatus == 0)
+  {
+    ConnectSigGen();
+  }
+  WriteSignalGeneratorString("OUTPUT OFF", cSigGenRequestStatus);
+}
+
+void OutputOnAndTrigger()
+{
+  if(iSigGenConnectionStatus == 0)
+  {
+    ConnectSigGen();
+  }
+  WriteSignalGeneratorString("OUTPUT ON;*TRG", cSigGenRequestStatus);
+}
+
+void  ConfigureGeneratorForECPL()
+{
+  ConnectSigGen();
+  
+ // CH1
+	WriteSignalGeneratorString("OUTPUT1 OFF",cSigGenRequestStatus);
+	WriteSignalGeneratorString("OUTPUT1:IMPEDANCE Infinity",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE1:FUNCTION SQUARE",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE1:VOLTage:HIGH 5000mV",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE1:VOLTage:LOW 0mV",cSigGenRequestStatus);				
+											
+	// CH2			
+	WriteSignalGeneratorString("OUTPUT2 OFF",cSigGenRequestStatus);
+	WriteSignalGeneratorString("OUTPUT2:IMPEDANCE Infinity",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE2:FUNCTION SQUARE",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE2:VOLTage:HIGH 5000mV",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE2:VOLTage:LOW 0mV",cSigGenRequestStatus);
+	WriteSignalGeneratorString("SOURCE2:PHASe 90DEG",cSigGenRequestStatus);
+		
+	WriteSignalGeneratorString("SOURCE1:FREQuency:Fixed 100",cSigGenRequestStatus);	
+	WriteSignalGeneratorString("SOURCE2:FREQuency:Fixed 100",cSigGenRequestStatus);
+
+	WriteSignalGeneratorString("OUTPut1 ON",cSigGenRequestStatus);
+	WriteSignalGeneratorString("OUTPut2 ON",cSigGenRequestStatus); 
+}
+
+void SetOutputOff()
+{
+  WriteSignalGeneratorString("OUTPut1 OFF",cSigGenRequestStatus);
+	WriteSignalGeneratorString("OUTPut2 OFF",cSigGenRequestStatus); 
+}
+
+void SetFrequency (int iFrequency)
+{
+  char cFrequency1[100];
+  char cFrequency2[100];
+  char cFrequency[20];
+  
+  ltoa(iFrequency,cFrequency,10);
+  
+  strncpy(cFrequency1,"SOURCE1:FREQuency:Fixed ",elcount(cFrequency1));
+  strncat(cFrequency1,cFrequency,elcount(cFrequency1));
+  
+  strncpy(cFrequency2,"SOURCE2:FREQuency:Fixed ",elcount(cFrequency2));
+  strncat(cFrequency2,cFrequency,elcount(cFrequency2));
+ 
+  WriteSignalGeneratorString(cFrequency1, cSigGenRequestStatus);
+	WriteSignalGeneratorString(cFrequency2, cSigGenRequestStatus);
+	
+}

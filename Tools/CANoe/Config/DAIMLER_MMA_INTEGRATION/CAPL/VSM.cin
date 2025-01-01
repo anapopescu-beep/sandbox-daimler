@@ -1,0 +1,155 @@
+/*@!Encoding:1252*/
+
+
+/*
+VSM.cin
+Distributed with package 1.3.4
+Include Version 1.1.0
+
+This include must be assigned once and only in the Tx node of the Secured tick count sender.
+
+*/
+includes{
+ // #pragma library("..\Security\arxml-secure-pdu-data-ids.dll")
+}
+
+variables
+{
+  // local secTickClock
+  mstimer secLocalTickCountTimer; 
+  qword   secLocalTickCount; 
+  
+  // VSM Tx Timer for Sec Tic Count
+  mstimer secVSMTimer;
+  int   tickCountTransmits; // counter for startup behaviour
+}
+void VSM_OnInit ()
+{
+}
+
+void VSM_OnStart ()
+{
+}
+
+void VSM_OnStop ()
+{
+}
+
+void VSM_StartStop (int enable)
+{
+  
+}
+on start
+{
+  SetTimerCyclic( secLocalTickCountTimer, 10, 10); // internal secTickCount
+ // SetTimerCyclic( secLocalTickCountTimer, 7, 10); // internal secTickCount
+  SetTimerCyclic( secVSMTimer, 50, 100); // VSM Tx 
+}
+
+//void OnLocalSecurityPDUPreTx(char pduName[], dword dataId, byte payload[], dword payloadLength, qword& authInfo, dword authInfoBitLength, qword& freshness, dword freshnessBitLength)
+//{
+//  if(dataId == 65535 && @sysvar::RBTM_Simulation::Manipulate_SecTickCnt_CMAC) {
+//
+//        authInfo = 123456;
+//    }
+//}
+
+// internal secTickcount
+on timer secLocalTickCountTimer
+{
+  ++secLocalTickCount;
+}
+
+qword GetLocalTickCount()
+{
+  return secLocalTickCount;
+}
+
+void SetLocalTickCount(qword newSecTickCount)
+{
+  secLocalTickCount = newSecTickCount;
+}
+
+// VSM sec Tick Count transmission 
+on timer secVSMTimer
+{  
+  if(@sysvar::RBTM_Simulation::Secured_Tickcount_Timeout==0)
+  {
+  SendSECUREDTICKCOUNT();
+  }
+  
+  if ( tickCountTransmits < 10)
+  {
+    ++tickCountTransmits;
+    
+    if ( 10 == tickCountTransmits)
+    {
+      //SetTimerCyclic( secVSMTimer, 1000, 1000);
+      SetTimerCyclic( secVSMTimer, 100, 100);
+    }
+  }
+}
+
+void SendSECUREDTICKCOUNT() // Secured Tick Count Broadcast
+{
+  char apId[50] = "SECUREDTICKCOUNT";
+  byte payload[6];
+  dword returnValue = 0;
+  byte tempFreshness[5];
+  int ret;
+  
+  ret = ConvertFreshnessToArray(tempFreshness,GetLocalTickCount());
+  if( ret != 0 )
+  {
+    write("Error during Secured Tick Count Transmission in CAPL function ConvertFreshnessToArray.,  Return value=%i",ret);
+  }
+  payload[0] = /*reserved*/0x80;
+  payload[1]=/*data*/tempFreshness[0];
+  payload[2]=/*data*/tempFreshness[1];
+  payload[3]=/*data*/tempFreshness[2];
+  payload[4]=/*data*/tempFreshness[3];
+  payload[5]=/*data*/tempFreshness[4];
+  
+  
+//   if(@sysvar::RBTM_Simulation::Manipulate_SecTickCnt_value_cnt) {
+//
+//       payload[0] = /*reserved*/0x00;
+//       payload[1]=/*data*/0x00;
+//       payload[2]=/*data*/0x00;
+//       payload[3]=/*data*/0x00;
+//       payload[4]=/*data*/0x00;
+//       payload[5]=/*data*/0x00;
+//      @sysvar::RBTM_Simulation::Manipulate_SecTickCnt_value_cnt=@sysvar::RBTM_Simulation::Manipulate_SecTickCnt_value_cnt-1;
+//    }
+  //write("%7.5f %NODE_NAME%: %s Freshness: %x %x %x %x %x",TimeNowNS() / 1000000000.0, apId,tempFreshness[0],tempFreshness[1],tempFreshness[2],tempFreshness[3],tempFreshness[4]);
+  
+  returnValue = LocalSecurityTransmitApplicationProtocol(apId, payload, 6);
+}
+
+int ConvertFreshnessToArray(byte array[], qword freshness)
+{
+  if( elCount(array) < 5 )
+    return -1; 
+
+  array[0] = (freshness >> 32) & 0xFF;
+  array[1] = (freshness >> 24) & 0xFF;
+  array[2] = (freshness >> 16) & 0xFF;
+  array[3] = (freshness >> 8) & 0xFF;
+  array[4] = freshness & 0xFF;  
+  
+  return 0;
+}
+
+int ConvertFreshnessArrayToQword(byte array[], qword& freshness)
+{
+  if( elCount(array) < 5 )
+    return -1;
+  
+  freshness = array[4] + 
+              ((qword)array[3] << 8) + 
+              ((qword)array[2] << 16) + 
+              ((qword)array[1] << 24) + 
+              ((qword)array[0] << 32);
+  
+  return 0;
+}

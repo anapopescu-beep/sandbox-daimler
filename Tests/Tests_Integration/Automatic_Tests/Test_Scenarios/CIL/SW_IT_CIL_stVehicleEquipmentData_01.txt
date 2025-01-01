@@ -1,0 +1,59 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0364, ARCH_SW_CIL_0365, ARCH_SW_CIL_0301, ARCH_SW_CIL_0300
+ARCH_SW_CIL_0364: NVP_stVehicleEquipmentData shall be read to get the coding configuration.
+ARCH_SW_CIL_0365: NVP_stVehicleEquipmentData shall be read to get the coding configuration.
+ARCH_SW_CIL_0301: Coding enable or Vehicle Equipment are read from NVP: NVP_stVehicleEquipmentData.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in the function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 3: Check if CPU stopped in function CIL_runCANToAppli() at line 'cil_ManageInputSignals();'.
+
+	Step 4: Step in function cil_ManageInputSignals().
+
+	Step 5: Set a breakpoint in the function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 6: Check if CPU stopped in function cil_ManageInputSignals() at line 'cil_ManageInhibitConditions();'.
+
+	Step 7: Set a breakpoint in the function cil_ManageInhibitConditions at line 'KU8_ZERO != NVP_stVehicleEquipmentData.PreSafeFuncActivation'.
+
+Action: ARCH_SW_CIL_0364, ARCH_SW_CIL_0365
+
+	Step 8: Read variable (NVP_stVehicleEquipmentData).PreSafeCycleActivation 
+		Expected result:  0x0.
+
+Action: ARCH_SW_CIL_0364, ARCH_SW_CIL_0301
+
+	Step 9: Read variable (NVP_stVehicleEquipmentData).ORCPreSafe8Activation 
+		Expected result:  0x0.
+
+Action: ARCH_SW_CIL_0364, ARCH_SW_CIL_0300
+
+	Step 10: Read variable (NVP_stVehicleEquipmentData).BSRActivation 
+		Expected result:  0x0.
+
+Action: ARCH_SW_CIL_0364
+
+	Step 11: Read variable (NVP_stVehicleEquipmentData).BltHandOverAvailabiliy 
+		Expected result:  0x0.
+
+Action: ARCH_SW_CIL_0364
+
+	Step 12: Read variable (NVP_stVehicleEquipmentData).APIActivation 
+		Expected result:  0x0.
+
+Postcondition
+
+	Step 13: Return ECU to default values

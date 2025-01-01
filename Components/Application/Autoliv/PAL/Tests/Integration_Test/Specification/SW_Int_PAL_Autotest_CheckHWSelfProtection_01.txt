@@ -1,0 +1,50 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0140, ARCH_SW_PAL_0147
+ARCH_SW_PAL_0140: The component shall check for HW thermanl protection.
+ARCH_SW_PAL_0147: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0140
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckHWSelfProtection at the RTE Call for CheckHWSelfProtection autotest 
+		Expected result:  BP reached.
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection at the RTE call for GetTestResult 
+		Expected result:  BP reached..
+
+	Step 5: Run until return in function ATM_runGetTestResult.
+
+	Step 6: Write autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable overwritten with 0x1
+
+	Step 7: Set a breakpoint in function PAL_Autotest_CheckHWSelfProtection at the test result 
+		Expected result:  BP reached.
+
+	Step 8: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0147
+
+	Step 9: Set a breakpoint in function PAL_cbk_CheckHWSelfProtection after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 10: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 11: Return ECU to default values

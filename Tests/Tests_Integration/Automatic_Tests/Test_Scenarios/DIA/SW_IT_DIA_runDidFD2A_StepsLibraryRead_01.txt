@@ -1,0 +1,42 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0006; ARCH_SW_DIA_0068; ARCH_SW_DIA_0069; ARCH_SW_NVP_0020l; ARCH_SW_DIA_0083
+ARCH_SW_DIA_0006: Service 0x22 will be implemented for DID FD2A.
+ARCH_SW_DIA_0068: Service should be available in Development Session.
+ARCH_SW_DIA_0069: NVP_BLOCK_ID_STEPS0 - 144_RamBlockData will be read.
+ARCH_SW_NVP_0020: Steps parameters shall be configured like : Byte 4 = velocity control order type if 0x02 = Velocity control order type enabled 0x03 = Velocity control and PWM backup 0x05 = velocity control and current backup 0x06 = velocity control and Volatge backup â€¢ Byte 7 = velocity control order value [120 grades/s l 1200 grades/s] 
+ARCH_SW_DIA_0083: Data Length shall be 1160 bytes long.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_DIA_0006; ARCH_SW_DIA_0068; ARCH_SW_DIA_0069; ARCH_SW_NVP_0020l; ARCH_SW_DIA_0083
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DIA_runDidFD2A_StepsLibraryRead*.
+
+	Step 4: Send diag request for 22 FD2A and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 5: Check if breakpoint from function DIA_runDidFD2A_StepsLibraryRead was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Read first byte of NVP_BLOCK_ID_STEP_0_RamBlockData 
+		Expected result:  Byte was read.
+
+	Step 7: Read last byte (index = 1159) of NVP_BLOCK_ID_STEP_0_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 8: Return ECU to default values

@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0111
+ARCH_SW_CIL_0111: Bit 6 from signal RBTMxy_SP_FctPrecond_Stat_ST35 shall be set to 1 if profile requested is not implemented or if EOL high limit or EOL comfort limit or EOL MAX limit has been reched.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeMaxForce().
+
+	Step 3: Check if CPU stopped in function EOL_Autotest_CheckProductEndOfLifeMaxForce(). 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set variable NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData.NVP_au32ExecutedCycleCounters[KU8_EOL_MAX_FORCE_LEVEL] to NVP_u32MaxForceEOLThrs.
+
+	Step 5: Set RBTMFL_SP_Lvl_Rq_ST35 Presf_Lvl_ST3 to I_C06_RBTM_LVL_RQ_PROFILE10.
+
+	Step 6: Set a breakpoint in function CIL_runAppliToCAN().
+
+	Step 7: Check if CPU stopped in function CIL_runAppliToCAN(). 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Profile_not_available_BflMask);' and press run.
+
+	Step 9: Check if CPU stopped in function cil_ManageFctPrecondSignal() at line 'CIL_SET_FCT_COND_MASK_ON(c10_RBTM_Fct_Precond_Profile_not_available_BflMask);)'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0111
+
+	Step 10: Evaluate if bit 6 of signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to KU8_ONE (TRUE). 
+		Expected result:  bit 6 of signal RBTMFL_SP_FctPrecond_Stat_ST35 is equal to KU8_ONE
+
+Postcondition
+
+	Step 11: Return ECU to default values

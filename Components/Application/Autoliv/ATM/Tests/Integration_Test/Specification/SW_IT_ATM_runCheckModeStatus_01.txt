@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_ATM_0021
+ARCH_SW_ATM_0021: MMG_runCheckModeStatus shall be called to check if all conditions are fulfilled to execute the test.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+Action: ARCH_SW_ATM_0021
+
+	Step 2: Set a breakpoint in ATM_runMainFunction() at line atm_PlayCyclicTests(castRunningCyclicList);. 
+		Expected result:  BP set.
+
+	Step 3: Set a breakpoint in atm_PlayCyclicTests() at line if (B_TRUE == atm_isAutoTestEnabled(u8AutotestID)).
+
+	Step 4: Step in function atm_PlayCyclicTests().
+
+	Step 5: Step in function atm_executeAutoTest().
+
+	Step 6: Step over at line Rte_Call_pclModeManagement_CheckModeStatus(cau32InhibitingModes[u8InhibModesIndex], &u8InhibitingContextStatus);.
+
+Action: ARCH_SW_ATM_0021
+
+	Step 7: Step in function Rte_Call_pclModeManagement_CheckModeStatus(). 
+		Expected result:  Stepped in function MMG_runCheckModeStatus,,app.elf
+
+Postcondition
+
+	Step 8: Return ECU to default values

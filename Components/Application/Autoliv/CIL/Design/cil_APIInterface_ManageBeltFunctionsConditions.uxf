@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>6</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>42</x>
+      <y>180</y>
+      <w>1645</w>
+      <h>413</h>
+    </coordinates>
+    <panel_attributes>title:cil_APIInterface_ManageBeltFunctionsConditions
+Start
+
+Call Rte_Read_prrCycleNumber_u8CycleNumber function
+
+                 Check\ cil_u8PreSafeActivationRequest and cil_u8APIActivationRequest
+If
+	[cil_u8PreSafeActivationRequest == KU8_NO_CYCLE and cil_u8APIActivationRequest != KU8_NO_CYCLE]
+	If
+		[cil_u8BcklSwStatSignal == KU8_CIL_BCKL_SW_STAT_SIGNAL_OK and KU8_BELT_FUNCTION_26 != u8ExecutedCycle and cil_u8APIActivationRequest != KU8_CIL_RBTM_XY_SP_LVL_RQ_SNA]
+		Call cil_TriggerTensioningProfiles function
+		Call cil_TriggerHWAProfile function
+
+		[cil_u8BcklSwStatSignal == KU8_CIL_BCKL_SW_STAT_SIGNAL_NOT OR cil_u8APIActivationRequest == KU8_CIL_RBTM_XY_SP_LVL_RQ_SNA]
+		Call cil_AbortTensioningProfiles function
+		Call cil_AbortHWAProfile function
+	
+		[FALSE ]
+		QAC
+	EndIf
+
+	[FALSE]
+	QAC
+EndIf 
+
+Call cil_ManageHapticRepetition function
+
+End
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0275; ARCH_SW_DIA_0276; ARCH_SW_DIA_0277; ARCH_SW_DIA_0278; ARCH_SW_DIA_0279; ARCH_SW_DIA_0280;
+ARCH_SW_DIA_0275: Service 0x14 (Clear Diagnostic Information) will be implemented.
+ARCH_SW_DIA_0276: The ClearDiagnosticInformation service shall be available in the following sessions: Default Session (0x01), Extended Session (0x03) Supplier Session/Development Session (0x7E) Update Session (0x42)
+ARCH_SW_DIA_0277: This service shall be available with or without any form of Authentication.
+ARCH_SW_DIA_0278: The ECU shall send a Positive Response when the ClearDiagnosticInformation service is completely processed Explanation: ClearDiagnosticInformation service is considered completely processed when the data used by the ReadDiagnosticInformation (0x19) are cleared.
+ARCH_SW_DIA_0279: ResetType of the Reset service shall be: 0x03 � Software Reset.
+ARCH_SW_DIA_0279: The ECU shall send a Positive Response even if no DTCs are stored in the server�s memory.
+ARCH_SW_DIA_0280: Each bit mask corresponds to the following DTC Groups.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *Dcm_Svc14Handler*.
+
+Action: ARCH_SW_DIA_0275; ARCH_SW_DIA_0276; ARCH_SW_DIA_0277; ARCH_SW_DIA_0278; ARCH_SW_DIA_0279; ARCH_SW_DIA_0280;
+
+	Step 3: Send fault memory clear request.
+
+	Step 4: Check if  was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 5: Return ECU to default values

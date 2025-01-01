@@ -1,0 +1,33 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0013, ARCH_SW_CIL_0020
+ARCH_SW_CIL_0013: Signal RBTM_FL/FR_Disp_Rq_ST3 shall be written and send to CAN.
+ARCH_SW_CIL_0020: Value for signal RBTM_FL/FR_Tgl_ST3 will be 0(default) or 1.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function cil_ManageActiveLevelSignal.
+
+Action: ARCH_SW_CIL_0020
+
+	Step 3: Check if variable CIL_bRBTMTgl is KB_CIL_RBTM_TGL_SIGNAL_TGL_ONE. 
+		Expected result:  0x1
+
+Action: ARCH_SW_CIL_0013, ARCH_SW_CIL_0020
+
+	Step 4: Check if signal RBTM_FL_Tgl_ST3 value is KB_CIL_RBTM_TGL_SIGNAL_TGL_ONE. 
+		Expected result:  1
+
+Postcondition
+
+	Step 5: Return ECU to default values

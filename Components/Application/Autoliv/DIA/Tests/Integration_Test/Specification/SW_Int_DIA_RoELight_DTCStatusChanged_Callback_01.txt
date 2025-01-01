@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0210; ARCH_SW_DIA_0211; ARCH_SW_DIA_0212; ARCH_SW_DIA_0213; ARCH_SW_DIA_0260; ARCH_SW_DIA_0261; ARCH_SW_DIA_0262
+ARCH_SW_DIA_0210: ROE on Dtc Status change implemented.
+ARCH_SW_DIA_0211: This frame shall be identified with the address: Left side: 0x18E1A400 � ROE_RBTM_FL_ST3 Right side: 0x18E1A500 � ROE_RBTM_FR_ST3
+ARCH_SW_DIA_0212: ROE_0_RBTM_xy_ST3 (Byte 1) signal shall be transmitted with the value 0x01 - DTC_STATUS_CHANGE if DTC status has been changed. Byte 2 of the ROE_RBTM_xy_ST3 frame shall contain the availability mask of the DTC. Bytes 3-5 of the ROE_RBTM_xy_ST3 frame shall contain the DTC code. Byte 6 of the ROE_RBTM_xy_ST3 frame shall contain the status of the DTC. Bytes 7-8 of the ROE_RBTM_xy_ST3 frame shall be 0x0000. 
+ARCH_SW_DIA_0213: Default value: 0
+ARCH_SW_DIA_0260: Clear Diag Request Cycle Function
+ARCH_SW_DIA_0261: Get Diag Request Cycle Function
+ARCH_SW_DIA_0262: Cyclic processing task of the Tensioning Routines
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *RoELight_DTCStatusChanged_Callback*.
+
+Action: ARCH_SW_DIA_0210; ARCH_SW_DIA_0211; ARCH_SW_DIA_0212; ARCH_SW_DIA_0213
+
+	Step 4: Send diag request for 14 (Fault Memory Clear) and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function RoELight_DTCStatusChanged_Callback was reached. 
+		Expected result:  BP was reached.
+
+Postcondition
+
+	Step 6: Return ECU to default values

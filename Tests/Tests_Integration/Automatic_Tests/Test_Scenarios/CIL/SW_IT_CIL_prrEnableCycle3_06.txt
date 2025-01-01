@@ -1,0 +1,52 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0246, ARCH_SW_CIL_0251
+ARCH_SW_CIL_0246: If signal is received with value 8 and group KU32_AEC_GROUP_MASK_EOL_MAX is set then tensioning cycle 3 shall be requested for NVP_u16TimeoutPresafe5 time.
+ARCH_SW_CIL_0251: If signal is received with value 8 and group KU32_AEC_GROUP_MASK_EOL_MAX is set then tensioning cycle 3 shall be requested for NVP_u16TimeoutPresafe5 time.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set a breakpoint in function EOL_Autotest_CheckProductEndOfLifeMaxForce().
+
+	Step 3: Check if CPU stopped in function EOL_Autotest_CheckProductEndOfLifeMaxForce(). 
+		Expected result:  CPU is Stopped
+
+	Step 4: Set variable NVP_BLOCK_ID_EXECUTION_COUNTERS_RamBlockData.NVP_au32ExecutedCycleCounters[KU8_EOL_MAX_FORCE_LEVEL] to NVP_u32MaxForceEOLThrs.
+
+	Step 5: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C04_PRESF_LVL_V2_LVL8.
+
+	Step 6: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 7: Check if CPU stopped at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 8: Set a breakpoint in function cil_TriggerProfile() at line '(void)Rte_Read_prrEnableCycle3_b8CycleValidity(&u8CycleValidityStatus); under case I_C04_PRESF_LVL_V2_LVL8.' and press run.
+
+Action: ARCH_SW_CIL_0246, ARCH_SW_CIL_0251
+
+	Step 9: Check if CPU stopped at line '(void)Rte_Read_prrEnableCycle3_b8CycleValidity(&u8CycleValidityStatus);'. 
+		Expected result:  CPU is Stopped
+
+	Step 10: Set a breakpoint in function cil_RequestTensioning at line 'if (cil_u8Presafe5specialRequestSource != CIL_stManagedCycle.u8RequestSource)'.
+
+	Step 11: Check if CPU stopped at line 'if (cil_u8Presafe5specialRequestSource != CIL_stManagedCycle.u8RequestSource)'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0246, ARCH_SW_CIL_0251
+
+	Step 12: Evaluate if variable cil_u16Presafe5Timeout is equal to NVP_u16TimeoutPresafe5. 
+		Expected result:  cil_u16Presafe5Timeout is equal to NVP_u16TimeoutPresafe5
+
+Postcondition
+
+	Step 13: Return ECU to default values

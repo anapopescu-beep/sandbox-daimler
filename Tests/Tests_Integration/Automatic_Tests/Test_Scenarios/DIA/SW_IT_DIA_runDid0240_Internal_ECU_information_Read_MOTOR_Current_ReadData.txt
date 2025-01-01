@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0565; ARCH_SW_DIA_0574;
+ARCH_SW_DIA_0565: Service 0x22 (Read Data By Identifier) will be implemented for DID 0240 (Internal ECU Information)
+ARCH_SW_DIA_0574: Bytes #7-#8: ?bits 0-7: Motor Current Any value from 0x00 -> 0xFF Offset is 0 (i.e. 0x00 = 0A) Resolution is 0.01 (e.g. 0x100 = 16 A) Range is 0A -> 163.83A 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0240_Internal_ECU_information_Read_MOTOR_Current_ReadData*.
+
+Action: ARCH_SW_DIA_0565; ARCH_SW_DIA_0574
+
+	Step 3: Send diag request for 22 0220 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDid0240_Internal_ECU_information_Read_MOTOR_Current_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

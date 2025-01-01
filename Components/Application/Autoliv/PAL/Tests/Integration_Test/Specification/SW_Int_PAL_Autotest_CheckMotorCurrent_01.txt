@@ -1,0 +1,58 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PAL_0340, ARCH_SW_PAL_0343, ARCH_SW_PAL_0341, ARCH_SW_PAL_0342
+ARCH_SW_PAL_0340: The component shall check the current used by the motor.
+ARCH_SW_PAL_0343: The current executed cycle shall be read from BFE.
+ARCH_SW_PAL_0341: Rte_BFE_psrExecutedCycle_u8CycleNumber shall be called  to get the current executed cycle number.
+ARCH_SW_PAL_0342: ATM_runGetTestResult shall be called to get the status ot specific tests (inhibiting the execution of the present one if failed).
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Run the debugger.
+
+Action: ARCH_SW_PAL_0340, ARCH_SW_PAL_0343
+
+	Step 3: Set a breakpoint in function PAL_cbk_CheckMotorCurrent at the RTE Call for CheckMotorCurrent autotest 
+		Expected result:  BP reached.
+
+	Step 4: Set a breakpoint in function PAL_Autotest_CheckMotorCurrent at the RTE call for GetTestResult 
+		Expected result:  BP reached.
+
+	Step 5: Write autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable set to KU8_ATM_TEST_OK
+
+	Step 6: Set a breakpoint in function PAL_Autotest_CheckMotorCurrent at the return of autotest result 
+		Expected result:  BP reached.
+
+	Step 7: Overwrite autotest result with KU8_ATM_TEST_OK 
+		Expected result:  Variable is set to 0x1.
+
+Action: ARCH_SW_PAL_0341
+
+	Step 8: Evaluate pal_tMotorCurrentEventStatus 
+		Expected result:  Variable is equal to 0x1.
+
+Action: ARCH_SW_PAL_0342
+
+	Step 9: Evaluate ExecutedCycleNumber 
+		Expected result:  Variable read.
+
+	Step 10: Set a breakpoint in function PAL_cbk_CheckMotorCurrent after the return of the autotest result 
+		Expected result:  BP reached.
+
+	Step 11: Read autotest result transmited from ATM 
+		Expected result:  Variable is equal to 0x1.
+
+Postcondition
+
+	Step 12: Return ECU to default values

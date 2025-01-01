@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>2162</w>
+      <h>1347</h>
+    </coordinates>
+    <panel_attributes>title:PAL_Autotest_CheckMotorPowerOrder
+Start
+Get Motor Order AEC State
+Get ADC auto-test status
+Read the current executed cycle number
+Get the "no tensioning" system context status
+Check if all pre conditions are set
+If
+	[TRUE]
+	Check if a valid cycle context is present	
+	If
+		[TRUE]
+		Return value for PWMOrder	
+		Get absolute value of PWM order in percent: the raw value from belt functions
+		Call the local subfunction to manage the medium PWM detection	
+		Call the local subfunction to manage the high PWM detection
+		Check results for PWM deterctionare
+		If
+			[If Results are NOK]
+			Set test result as KU8_ATM_TEST_NOK
+
+			[Else IF Results are OK]
+			Set test result as KU8_ATM_TEST_OK
+
+			[Else]
+			Set test result as KU8_ATM_TEST_NOT_DECIDED
+		EndIF		
+			
+		[FALSE]
+		If
+			[MotorOrder AEC is qualified &amp; (deskill time &lt; treshold)]
+			Calculate Deskill time spend here
+			Set test result as KU8_ATM_TEST_NOK
+
+			[Deskill time expired]
+			Init Counters for MotorOrder
+			Set test result as KU8_ATM_TEST_OK
+		EndIf
+				
+	EndIf
+	
+	[FALSE]
+	Set test result as KU8_ATM_TEST_NOT_DECIDED
+
+EndIf
+Save the cycle number
+Return the computed test result
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

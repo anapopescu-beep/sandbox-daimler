@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>20</x>
+      <y>0</y>
+      <w>1224</w>
+      <h>1178</h>
+    </coordinates>
+    <panel_attributes>title:PAL_Autotest_CheckMotorConnection
+Start
+Get MOSFET short circuit auto-test status
+Get ADC auto-test status
+Get High Side switch auto-test status
+Check if all pre conditions are set
+If
+	[TRUE]
+	Get the filtered physical value measured on "Motor +"
+	Get the filtered physical value measured on "Motor -"
+	Compute the absolute difference voltage between "Motor +" Voltage and "Motor -" Voltage
+	Compare the absolute voltage difference to the motor disconnected threshold
+	If
+		[TRUE]
+		Get value fot BatterySurveyStatus
+		Check if BatterySurveyStatus is STABLE
+		If
+			[TRUE]
+			u8ResultOfAutoTest = KU8_ATM_TEST_OK
+			
+			[FALSE]
+			u8ResultOfAutoTest = KU8_ATM_TEST_NOT_DECIDED
+		EndIf
+			
+		[FALSE]
+		u8ResultOfAutoTest = KU8_ATM_TEST_NOK
+	EndIf
+
+	[FALSE]
+	/* Do nothing */
+
+EndIf
+Return the computed test result
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

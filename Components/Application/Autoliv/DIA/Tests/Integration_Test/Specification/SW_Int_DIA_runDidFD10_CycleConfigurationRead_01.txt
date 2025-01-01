@@ -1,0 +1,38 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0004; ARCH_SW_DIA_0064; ARCH_SW_DIA_0065; ARCH_SW_DIA_0065
+ARCH_SW_DIA_0004: Service 0x22 will be implemented for DID FD10.
+ARCH_SW_DIA_0064: Service should be available in Development Session.
+ARCH_SW_DIA_0065: NVP_BLOCK_ID_CYCLE0-34_RamBlockData will be read.
+ARCH_SW_NVP_0006: NVP_BLOCK_ID_CYCLE_0 � 34 blocks should be configured. Parameter NVP_au8BeltProfilesDefinitions should have 420 bytes.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDidFD10_CycleConfigurationRead*.
+
+Action: ARCH_SW_DIA_0004, ARCH_SW_DIA_0064
+
+	Step 3: Send diag request for 22 FD10 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDidFD10_CycleConfigurationRead was reached. 
+		Expected result:  BP was reached.
+
+Action: ARCH_SW_DIA_0065, ARCH_SW_NVP_0006
+
+	Step 5: Read first byte of NVP_BLOCK_ID_CYCLE_0_RamBlockData 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

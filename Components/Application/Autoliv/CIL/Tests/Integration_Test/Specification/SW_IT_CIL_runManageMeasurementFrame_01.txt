@@ -1,0 +1,37 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0701, ARCH_SW_CIL_0702
+ARCH_SW_CIL_0701: If selected, the content of the measurement frame - block #1 shall be encoded and provided to CAN.
+ARCH_SW_CIL_0702: If selected, the content of the measurement frame - block #1 shall be encoded and provided to CAN.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Activate Measurement Frame block 1.
+
+	Step 3: Set a breakpoint in function CIL_runManageMeasurementFrame at line if (KU8_ZERO != NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData.NVP_u8MeasFrameTiming).
+
+Action: ARCH_SW_CIL_0701
+
+	Step 4: Check if CPU stopped at line 'if (KU8_ZERO != NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData.NVP_u8MeasFrameTiming)'. 
+		Expected result:  CPU stopped at BP
+
+	Step 5: Set a breakpoint in function cil_Update_07Cx_InfosToSend at line '| ((uint32)(NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData.NVP_au8MeasFrameBlockConfig[KU8_INDEX_2_IN_SELECTED_BLOCKS_ARRAY]))'.
+
+Action: ARCH_SW_CIL_0702
+
+	Step 6: Check if CPU stopped at line '| ((uint32)(NVP_BLOCK_ID_MEASUREMENT_FRAME_CONFIG_RamBlockData.NVP_au8MeasFrameBlockConfig[KU8_INDEX_2_IN_SELECTED_BLOCKS_ARRAY]))'. 
+		Expected result:  CPU stopped at BP
+
+Postcondition
+
+	Step 7: Return ECU to default values

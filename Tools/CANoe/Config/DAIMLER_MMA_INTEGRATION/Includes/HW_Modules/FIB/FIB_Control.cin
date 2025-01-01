@@ -1,0 +1,891 @@
+/*@!Encoding:1252*/
+includes
+{  
+
+}
+
+variables
+{
+  // FIB mapping.
+  const _iCAN_LOW            = 1;
+  const _iCAN_HIGH           = 2;
+  const _iRESET              = 3;
+  const _iMOSI               = 4;
+  const _iMISO               = 5;
+  const _iMOTOR_FREE         = 6;
+  const _iMOTOR_TO_GND       = 7;
+  const _iMOTOR_TO_VBAT      = 8;
+  const _iMOTOR_DISCONNECTED = 9;
+  const _iMOTOR_IN_SHORT     = 10;
+  const _iHALL_A             = 11;
+  const _iHALL_B             = 12;
+  const _iHS1_LVL            = 13;
+  const _iKL30_LVL           = 14;
+  const _iKL30G_LVL          = 15;
+  const _iVIS_RELEASE        = 16;
+  const _iV_MOTOR_MINUS      = 17;
+  const _iVIS_TENSION        = 18;
+  const _iV_MOTOR_PLUS       = 19;
+  const _iMUX                = 20;
+  const _iPWM_HIGH           = 21;
+  const _iPWM_LOW            = 22;
+  const _iPWM_CP_BOOST       = 23;
+  const _iEN_HB_P            = 24;
+  const _iEN_HB_N            = 25;
+  const _iRD_EN_HB_P         = 26;
+  const _iRD_EN_HB_N         = 27;
+  const _iRES_HIGH           = 28;
+  const _iEN_HS_SW           = 29;
+  const _iWARM_RST           = 30;
+}
+
+
+// Wrapper for .dll function "FIB_SetDACVoltage".
+void Set_DAC_Voltage(int iChannelNumber, int mVolts, char cFIBResponse[])
+{  
+  stack byte bResult = 0x00;
+  
+  strncpy(cFIBResponse, "", elcount(cFIBResponse));
+  
+  // Check for correct FIB channel value.
+  if((iChannelNumber < 1) || (iChannelNumber > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannelNumber, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+  // Check for valid voltage value.
+  if((mVolts < 0) || (mVolts > 4990))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong voltage value: %i. It should be set between 0 and 4990mV!", mVolts);
+    return;
+  }
+  
+  bResult = FIB_SetDACVoltage(iChannelNumber, mVolts);
+  
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Set DAC voltage to %i mV performed OK on channel %i", mVolts, iChannelNumber);
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Set DAC voltage on channel %i error: %s", iChannelNumber, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_RemoveFault".
+void Remove_Fault(int iChannel, char cFIBResponse[])
+{
+  byte bResult = 0x00;
+  
+  strncpy(cFIBResponse, "", elcount(cFIBResponse));
+  
+  // Check for correct FIB channel value.
+  if((iChannel < 1) || (iChannel > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+  // Check for channel short.
+  if(FIB_GetChannelShortStatus(iChannel) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Channel short is applied on channel %i. --> Use RemoveChannelShort instead!", iChannel);
+    return;
+  }
+  
+  // Check for channel inversion.
+  if(FIB_GetChannelInversionStatus(iChannel) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Channel inversion is applied on channel %i. --> Use RemoveChannelInversion instead!", iChannel);
+    return; 
+  }
+  
+  bResult = FIB_RemoveFault(iChannel);
+  
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Remove fault performed OK on channel %i", iChannel);
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Remove fault on channel %i error: %s", iChannel, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_PerformLeakage".
+void Perform_Leakage(int iChannel, char iIsAmplified[], char cResource[], char cFIBResponse[])
+{
+  Perform_Leakage(iChannel, iIsAmplified, cResource, 0, cFIBResponse);
+}
+
+// Wrapper for .dll function "FIB_PerformLeakage".
+void Perform_Leakage(int iChannel, char cIsAmplified[], char cResource[], word iTimeMS, char cFIBResponse[])
+{
+  stack int iAmplification = 0;
+  stack int iResource = 0;
+  stack byte bResult = 0x00;
+  stack char cIsAmplifiedToUpper[100];
+  stack char cResourceToUpper[100];
+  
+  // Check for correct FIB channel value.
+  if((iChannel < 1) || (iChannel > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+  // Check for channel short.
+  if(FIB_GetChannelShortStatus(iChannel) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", iChannel);
+    return;
+  }
+  
+  // Check for channel inversion.
+  if(FIB_GetChannelInversionStatus(iChannel) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", iChannel);
+    return; 
+  }
+  
+  toUpper(cIsAmplifiedToUpper, cIsAmplified, elCount(cIsAmplified));
+  if(strncmp(cIsAmplifiedToUpper, "TRUE", elcount(cIsAmplifiedToUpper)) == 0)
+  {
+    iAmplification = 1;
+  }
+  else if(strncmp(cIsAmplifiedToUpper, "FALSE", elcount(cIsAmplifiedToUpper)) == 0)
+  {
+    iAmplification = 0;
+  }
+  else
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Invalid parameter 'iIsAmplified'. Valid values: true, false");
+    return;
+  }
+  
+  toUpper(cResourceToUpper, cResource, elCount(cResource));
+  if(strncmp(cResourceToUpper, "VBAT", elcount(cResourceToUpper)) == 0)
+  {
+    iResource = 0;
+  }
+  else if(strncmp(cResourceToUpper, "VCC", elcount(cResourceToUpper)) == 0)
+  {
+    iResource = 1;
+  }
+  else if(strncmp(cResourceToUpper, "GND", elcount(cResourceToUpper)) == 0)
+  {
+    iResource = 2;
+  }
+  else if(strncmp(cResourceToUpper, "DAC", elcount(cResourceToUpper)) == 0)
+  {
+    iResource = 3;
+  }
+  else if(strncmp(cResourceToUpper, "ARBITRARY", elcount(cResourceToUpper)) == 0)
+  {
+    iResource = 4;
+  }
+  else
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Invalid parameter 'cResource'. Valid values: VBAT, VCC, GND, DAC, ARBITRARY");
+    return;
+  }
+    
+  if(iTimeMS > 0)
+  {
+    bResult = FIB_PerformLeakage(iChannel, 0, iResource, iTimeMS); // Amplification set to 0 --> not used for extended platform.
+  }
+  else
+  {
+    bResult = FIB_PerformLeakage(iChannel, 0, iResource); // Amplification set to 0 --> not used for extended platform.
+  }
+   
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    if(iTimeMS > 0)
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short to %s performed OK on channel %i for %i ms", cResourceToUpper, iChannel, iTimeMS);
+      @sysvar::FIB::FIB_Fault_Duration = iTimeMS;
+      @sysvar::FIB::FIB_Trigger_Channel_Fault_Update = iChannel; // Triggers timer that updates fault status to false.
+    }
+    else
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short to %s performed OK on channel %i", cResourceToUpper, iChannel);
+    }  
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Short to %s on channel %i error: %s", cResourceToUpper, iChannel, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_OpenCircuit".
+void Open_Circuit(int iChannel, char cFIBResponse[])
+{
+  Open_Circuit(iChannel, 0, cFIBResponse);
+}
+
+// Wrapper for .dll function "FIB_OpenCircuit".
+void Open_Circuit(int iChannel, word iTimeMS, char cFIBResponse[])
+{
+  stack byte bResult = 0x00;
+  
+   // Check for correct FIB channel value.
+  if((iChannel < 1) || (iChannel > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+  // Check for channel short.
+  if(FIB_GetChannelShortStatus(iChannel) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", iChannel);
+    return;
+  }
+  
+  // Check for channel inversion.
+  if(FIB_GetChannelInversionStatus(iChannel) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", iChannel);
+    return; 
+  }
+  
+  if(iTimeMS > 0)
+  {
+    bResult = FIB_OpenCircuit(iChannel, iTimeMS);
+  }
+  else
+  {
+    bResult = FIB_OpenCircuit(iChannel);
+  }
+    
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+   if(iTimeMS > 0)
+   {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Open Circuit performed OK on channel %i for %i ms", iChannel, iTimeMS);
+    @sysvar::FIB::FIB_Fault_Duration = iTimeMS;
+    @sysvar::FIB::FIB_Trigger_Channel_Fault_Update = iChannel; // Triggers timer that updates fault status to false.
+   }
+   else
+   {
+     snprintf(cFIBResponse, elcount(cFIBResponse), "Open Circuit performed OK on channel %i", iChannel);
+   }    
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Open Circuit on channel %i error: %s", iChannel, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_ResetChannel".
+void Reset_Channel(int iChannel, char cFIBResponse[])
+{
+  stack byte bResult = 0x00;
+  
+  // Check for correct FIB channel value.
+  if((iChannel < 1) || (iChannel > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+  bResult = FIB_ResetChannel(iChannel);
+  
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Reset performed OK on channel %i", iChannel);
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Reset channel %i encountered an error: %s", iChannel, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_RestartBoard".
+void Restart_Board(int iBoard, char cFIBResponse[])
+{
+  stack byte bResult = 0x00;
+  int i;
+  
+  // Check for correct FIB channel value.
+  if((iBoard < 1) || (iBoard > (@sysvar::FIB::sysFIBChannelCount / 10)))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong board value. It should be set between 1 and %i", (@sysvar::FIB::sysFIBChannelCount / 10));
+    return;
+  }
+  
+  bResult = FIB_RestartBoard(iBoard);
+  
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Restart board %i performed OK", iBoard);
+   for(i = 0; i <= 9; i++)
+   {
+     FIB_SetChannelFaultStatus((iBoard * 10) - 9 + i, 0);
+     FIB_SetChannelInversionStatus((iBoard * 10) - 9 + i, 0);
+     FIB_SetChannelShortStatus((iBoard * 10) - 9 + i, 0);
+   }
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Restart board %i encountered an error: %s", iBoard, iBoard);
+  }
+}
+
+// Wrapper for .dll function "FIB_PerformChannelShort".
+// Allowed channel combinations: 1 and 2, 3 and 4, 5 and 6 (from each board).
+void Perform_Channel_Short(int iChannel_1, int iChannel_2, char cFIBResponse[])
+{
+  Perform_Channel_Short(iChannel_1, iChannel_2, 0, cFIBResponse);
+}
+  
+// Wrapper for .dll function "FIB_PerformChannelShort".
+// Allowed channel combinations: 1 and 2, 3 and 4, 5 and 6 (from each board).
+void Perform_Channel_Short(int iChannel_1, int iChannel_2, word iTimeMS, char cFIBResponse[])
+{
+  stack int i = 0;
+  stack byte bResult = 0x00;
+  stack int iLocalChannel_1;
+  stack int iLocalChannel_2;
+  stack int iChannel_1_converted = 0;
+  stack int iChannel_2_converted = 0;
+  
+  stack int iLowerIndex = -1;
+  stack int iUpperIndex = -1;
+  
+  int iAllowedChannel_1[3] = {1, 3, 5};
+  int iAllowedChannel_2[3] = {2, 4, 6};
+
+  // Check for correct FIB channel value.
+  if((iChannel_1 < 1) || (iChannel_1 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_1, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+   if((iChannel_2 < 1) || (iChannel_2 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_2, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+
+  // Check for channel fault.
+  if(FIB_GetChannelFaultStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> Use RemoveChannelFault instead!", iChannel_1);
+    return;
+  }
+  
+  if(FIB_GetChannelFaultStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> Use RemoveChannelFault instead!", iChannel_2);
+    return;
+  }
+  
+  // Check for channel inversion.
+  if(FIB_GetChannelInversionStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", iChannel_1);
+    return; 
+  }
+  
+  if(FIB_GetChannelInversionStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> Use RemoveChannelInversion instead!", iChannel_2);
+    return; 
+  }
+  
+  if(iChannel_1 < iChannel_2)
+  {
+    iLocalChannel_1 = iChannel_1;
+    iLocalChannel_2 = iChannel_2;
+  }
+  else
+  {
+    iLocalChannel_1 = iChannel_2;
+    iLocalChannel_2 = iChannel_1;
+  }
+  
+  if((iLocalChannel_2 - iLocalChannel_1) != 1)
+  {
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+   return;
+  }
+  
+  iChannel_1_converted = iLocalChannel_1 % 10;
+  iChannel_2_converted = iLocalChannel_2 % 10;
+  
+  for (i = 0; i < elcount(iAllowedChannel_1); i++)
+  {
+    if(iAllowedChannel_1[i] ==  iChannel_1_converted)
+    {
+      iLowerIndex = i;
+    }
+    if(iAllowedChannel_2[i] ==  iChannel_2_converted)
+    {
+      iUpperIndex = i;
+    }
+  }
+  
+  if((iLowerIndex == -1) | (iUpperIndex == -1))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+  
+  if(iLowerIndex != iUpperIndex)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+    
+  if(iTimeMS > 0)
+  {
+    bResult = FIB_PerformChannelShort(iLocalChannel_2, iTimeMS);
+  }
+  else
+  {
+    bResult = FIB_PerformChannelShort(iLocalChannel_2);
+  }
+   
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    if(iTimeMS > 0)
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i for %i ms performed OK.", iLocalChannel_1, iLocalChannel_2, iTimeMS);
+      @sysvar::FIB::FIB_Short_Duration = iTimeMS;
+      @sysvar::FIB::FIB_Trigger_Channel_Short_Update = iLocalChannel_2; // Triggers timer that updates short status for both channels to false.
+    }
+    else
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i performed OK.", iLocalChannel_1, iLocalChannel_2);
+    }  
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i error %s", iLocalChannel_1, iLocalChannel_2, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_RemoveChannelShort".
+// Allowed channel combinations: 1 and 2, 3 and 4, 5 and 6 (from each board).
+void Remove_Channel_Short(int iChannel_1, int iChannel_2, char cFIBResponse[])
+{
+  stack int i = 0;
+  stack byte bResult = 0x00;
+  stack int iLocalChannel_1;
+  stack int iLocalChannel_2;
+  stack int iChannel_1_converted = 0;
+  stack int iChannel_2_converted = 0;
+  
+  stack int iLowerIndex = -1;
+  stack int iUpperIndex = -1;
+  
+  int iAllowedChannel_1[3] = {1, 3, 5};
+  int iAllowedChannel_2[3] = {2, 4, 6};
+
+  // Check for correct FIB channel value.
+  if((iChannel_1 < 1) || (iChannel_1 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_1, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+   if((iChannel_2 < 1) || (iChannel_2 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_2, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+
+  // Check for channel fault.
+  if(FIB_GetChannelFaultStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> You can't remove it!", iChannel_1);
+    return;
+  }
+  
+  if(FIB_GetChannelFaultStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> You can't remove it!", iChannel_2);
+    return;
+  }
+  
+  // Check for channel inversion.
+  if(FIB_GetChannelInversionStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> You can't remove it!", iChannel_1);
+    return; 
+  }
+  
+  if(FIB_GetChannelInversionStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel inversion) is already applied on channel %i. --> You can't remove it!", iChannel_2);
+    return; 
+  }
+  
+  if(iChannel_1 < iChannel_2)
+  {
+    iLocalChannel_1 = iChannel_1;
+    iLocalChannel_2 = iChannel_2;
+  }
+  else
+  {
+    iLocalChannel_1 = iChannel_2;
+    iLocalChannel_2 = iChannel_1;
+  }
+  
+  if((iLocalChannel_2 - iLocalChannel_1) != 1)
+  {
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+   return;
+  }
+  
+  iChannel_1_converted = iLocalChannel_1 % 10;
+  iChannel_2_converted = iLocalChannel_2 % 10;
+  
+  for (i = 0; i < elcount(iAllowedChannel_1); i++)
+  {
+    if(iAllowedChannel_1[i] ==  iChannel_1_converted)
+    {
+      iLowerIndex = i;
+    }
+    if(iAllowedChannel_2[i] ==  iChannel_2_converted)
+    {
+      iUpperIndex = i;
+    }
+  }
+  
+  if((iLowerIndex == -1) | (iUpperIndex == -1))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+  
+  if(iLowerIndex != iUpperIndex)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+
+  bResult = FIB_RemoveChannelShort(iLocalChannel_2);
+   
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Removing short between channels %i and %i performed OK.", iLocalChannel_1, iLocalChannel_2);
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Removing short between channels %i and %i error %s", iLocalChannel_1, iLocalChannel_2, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_PerformChannelInversion".
+// Allowed channel combinations: 1 and 2, 3 and 4, 5 and 6 (from each board).
+void Perform_Channel_Inversion(int iChannel_1, int iChannel_2, char cFIBResponse[])
+{
+  Perform_Channel_Inversion(iChannel_1, iChannel_2, 0, cFIBResponse);
+}
+  
+// Wrapper for .dll function "FIB_PerformChannelInversion".
+// Allowed channel combinations: 1 and 2, 3 and 4, 5 and 6 (from each board).
+void Perform_Channel_Inversion(int iChannel_1, int iChannel_2, word iTimeMS, char cFIBResponse[])
+{
+  stack int i = 0;
+  stack byte bResult = 0x00;
+  stack int iLocalChannel_1;
+  stack int iLocalChannel_2;
+  stack int iChannel_1_converted = 0;
+  stack int iChannel_2_converted = 0;
+  
+  stack int iLowerIndex = -1;
+  stack int iUpperIndex = -1;
+  
+  int iAllowedChannel_1[3] = {1, 3, 5};
+  int iAllowedChannel_2[3] = {2, 4, 6};
+
+  // Check for correct FIB channel value.
+  if((iChannel_1 < 1) || (iChannel_1 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_1, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+   if((iChannel_2 < 1) || (iChannel_2 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_2, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+
+  // Check for channel fault.
+  if(FIB_GetChannelFaultStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> Use RemoveChannelFault instead!", iChannel_1);
+    return;
+  }
+  
+  if(FIB_GetChannelFaultStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> Use RemoveChannelFault instead!", iChannel_2);
+    return;
+  }
+  
+  // Check for channel short.
+  if(FIB_GetChannelShortStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", iChannel_1);
+    return; 
+  }
+  
+  if(FIB_GetChannelShortStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> Use RemoveChannelShort instead!", iChannel_2);
+    return; 
+  }
+  
+  if(iChannel_1 < iChannel_2)
+  {
+    iLocalChannel_1 = iChannel_1;
+    iLocalChannel_2 = iChannel_2;
+  }
+  else
+  {
+    iLocalChannel_1 = iChannel_2;
+    iLocalChannel_2 = iChannel_1;
+  }
+  
+  if((iLocalChannel_2 - iLocalChannel_1) != 1)
+  {
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+   return;
+  }
+  
+  iChannel_1_converted = iLocalChannel_1 % 10;
+  iChannel_2_converted = iLocalChannel_2 % 10;
+  
+  for (i = 0; i < elcount(iAllowedChannel_1); i++)
+  {
+    if(iAllowedChannel_1[i] ==  iChannel_1_converted)
+    {
+      iLowerIndex = i;
+    }
+    if(iAllowedChannel_2[i] ==  iChannel_2_converted)
+    {
+      iUpperIndex = i;
+    }
+  }
+  
+  if((iLowerIndex == -1) | (iUpperIndex == -1))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+  
+  if(iLowerIndex != iUpperIndex)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+    
+  if(iTimeMS > 0)
+  {
+    bResult = FIB_PerformChannelInversion(iLocalChannel_1, iTimeMS);
+  }
+  else
+  {
+    bResult = FIB_PerformChannelInversion(iLocalChannel_1);
+  }
+   
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    if(iTimeMS > 0)
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i for %i ms performed OK.", iLocalChannel_1, iLocalChannel_2, iTimeMS);
+      @sysvar::FIB::FIB_Short_Duration = iTimeMS;
+      @sysvar::FIB::FIB_Trigger_Channel_Inversion_Update = iLocalChannel_1; // Triggers timer that updates short status for both channels to false.
+    }
+    else
+    {
+      snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i performed OK.", iLocalChannel_1, iLocalChannel_2);
+    }  
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Short between channels %i and %i error %s", iLocalChannel_1, iLocalChannel_2, cFIBResponse);
+  }
+}
+
+// Wrapper for .dll function "FIB_RemoveChannelInversion".
+// Allowed channel combinations: 1 and 2, 3 and 4, 5 and 6 (from each board).
+void Remove_Channel_Inversion(int iChannel_1, int iChannel_2, char cFIBResponse[])
+{
+  stack int i = 0;
+  stack byte bResult = 0x00;
+  stack int iLocalChannel_1;
+  stack int iLocalChannel_2;
+  stack int iChannel_1_converted = 0;
+  stack int iChannel_2_converted = 0;
+  
+  stack int iLowerIndex = -1;
+  stack int iUpperIndex = -1;
+  
+  int iAllowedChannel_1[3] = {1, 3, 5};
+  int iAllowedChannel_2[3] = {2, 4, 6};
+
+  // Check for correct FIB channel value.
+  if((iChannel_1 < 1) || (iChannel_1 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_1, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+  
+   if((iChannel_2 < 1) || (iChannel_2 > @sysvar::FIB::sysFIBChannelCount))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong FIB channel value: %i. It should be set between 1 and %i", iChannel_2, @sysvar::FIB::sysFIBChannelCount);
+    return;
+  }
+
+  // Check for channel fault.
+  if(FIB_GetChannelFaultStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> You can't remove it!", iChannel_1);
+    return;
+  }
+  
+  if(FIB_GetChannelFaultStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (Perform leakage) is already applied on channel %i. --> You can't remove it!", iChannel_2);
+    return;
+  }
+  
+  // Check for channel short.
+  if(FIB_GetChannelShortStatus(iChannel_1) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> You can't remove it!", iChannel_1);
+    return; 
+  }
+  
+  if(FIB_GetChannelShortStatus(iChannel_2) != 0)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Another kind of fault (channel short) is already applied on channel %i. --> You can't remove it!", iChannel_2);
+    return; 
+  }
+  
+  if(iChannel_1 < iChannel_2)
+  {
+    iLocalChannel_1 = iChannel_1;
+    iLocalChannel_2 = iChannel_2;
+  }
+  else
+  {
+    iLocalChannel_1 = iChannel_2;
+    iLocalChannel_2 = iChannel_1;
+  }
+  
+  if((iLocalChannel_2 - iLocalChannel_1) != 1)
+  {
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+   return;
+  }
+  
+  iChannel_1_converted = iLocalChannel_1 % 10;
+  iChannel_2_converted = iLocalChannel_2 % 10;
+  
+  for (i = 0; i < elcount(iAllowedChannel_1); i++)
+  {
+    if(iAllowedChannel_1[i] ==  iChannel_1_converted)
+    {
+      iLowerIndex = i;
+    }
+    if(iAllowedChannel_2[i] ==  iChannel_2_converted)
+    {
+      iUpperIndex = i;
+    }
+  }
+  
+  if((iLowerIndex == -1) | (iUpperIndex == -1))
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+  
+  if(iLowerIndex != iUpperIndex)
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Wrong channels selected: %i and %i.", iChannel_1, iChannel_2);
+    return; 
+  }
+
+  bResult = FIB_RemoveChannelInversion(iLocalChannel_1);
+   
+  // Check for FIB positive response.
+  if(bResult == 0xE4) 
+  {
+    snprintf(cFIBResponse, elcount(cFIBResponse), "Removing inversion between channels %i and %i performed OK.", iLocalChannel_1, iLocalChannel_2);
+  }
+  else
+  {
+   InterpretFIBErrorCode(bResult, cFIBResponse);
+   snprintf(cFIBResponse, elcount(cFIBResponse), "Removing inversion between channels %i and %i error %s", iLocalChannel_1, iLocalChannel_2, cFIBResponse);
+  }
+}
+
+void InterpretFIBErrorCode(byte bResponse, char ErrorText[])
+{
+  snprintf(ErrorText, elcount(ErrorText), "0x%X: ", bResponse);
+  switch(bResponse)
+  {
+    case 0x00: strncat(ErrorText, "Unknown error.", elcount(ErrorText));
+      break;
+    case 0xE0: strncat(ErrorText, "Checksum error", elcount(ErrorText));
+      break;
+    case 0xE1: strncat(ErrorText, "Address error", elcount(ErrorText));
+      break;
+    case 0xE2: strncat(ErrorText, "Unknown command", elcount(ErrorText));
+      break;
+    case 0xE3: strncat(ErrorText, "Wrong parameter", elcount(ErrorText));
+      break;
+    case 0xE6: strncat(ErrorText, "Hardware error", elcount(ErrorText));
+      break;
+    case 0xE7: strncat(ErrorText, "Leak overcurrent", elcount(ErrorText));
+      break;
+    case 0xE8: strncat(ErrorText, "Hardware error", elcount(ErrorText));
+      break;
+    case 0xE9: strncat(ErrorText, "Trig en oc", elcount(ErrorText));
+      break;
+    case 0xEA: strncat(ErrorText, "Trig en oc", elcount(ErrorText));
+      break;
+    case 0xEB: strncat(ErrorText, "Wrong channel number", elcount(ErrorText));
+      break;
+    case 0xEC: strncat(ErrorText, "Unconfigured channel", elcount(ErrorText));
+      break;
+    case 0xED: strncat(ErrorText, "Command not implemented", elcount(ErrorText));
+      break;
+    case 0xEE: strncat(ErrorText, "Unknown state", elcount(ErrorText));
+      break;
+    case 0xEF: strncat(ErrorText, "Abdsa not armed", elcount(ErrorText));
+      break;
+    case 0xFF: strncat(ErrorText, "Card configuration error. Please restart system!", elcount(ErrorText));
+      break;
+    default: strncat(ErrorText, "No data to read!", elcount(ErrorText));
+      break;
+  }
+}

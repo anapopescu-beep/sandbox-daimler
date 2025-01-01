@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="15.0.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>1008</w>
+      <h>962</h>
+    </coordinates>
+    <panel_attributes>title:PAL_Autotest_CheckMosfetLowSC
+Start
+Read test result for: 
+ATM_KU8_ID_TEST_ADC,
+ATM_KU8_ID_TEST_HIGH_SIDE_SWITCH,
+ATM_KU8_ID_TEST_DRIVER_COMMAND
+Check if test results are OK
+If
+	[TRUE]
+	Get the filtered physical value measured on "Motor +"
+	Get the filtered physical value measured on "Motor -"
+	Calculate 'DeltaVbatVp' and 'DeltaVbatVm'
+	Check if the voltage drop between V+ and GND &amp;&amp; V- and GND is lower than a threshold
+	If
+		[TRUE]
+		Set test result as KU8_ATM_TEST_NOK
+			
+		[FALSE]
+		u8ResultOfAutoTest = KU8_ATM_TEST_OK
+	EndIf
+
+	[FALSE]
+	Set test result as KU8_ATM_TEST_NOT_DECIDED
+
+EndIf
+Return the computed test result
+
+End</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

@@ -1,0 +1,428 @@
+/*@!Encoding:1252*/
+includes
+{
+  
+}
+
+variables
+{
+
+  const NOLVL              = 0x00;
+  const PRE_SAFE_1         = 0x01; // Low Force  (LVL1).
+  const PRE_SAFE_3         = 0x03; // Low Force  (LVL3).
+  const PRE_SAFE_4         = 0x04; // Low Force  (LVL4).
+  const PRE_SAFE_5         = 0x05; // High Force (LVL5).
+  const PRE_SAFE_6         = 0x06; // High Force (LVL6). // 0x04
+  const PRE_SAFE_7         = 0x07; // High Force (LVL7). // 0x05
+  const PRE_SAFE_8         = 0x08; 
+  const PRE_SAFE_9         = 0x09; 
+  const PRE_SAFE_10        = 0x10; 
+  const PRE_SAFE_11        = 0x11;  
+  const PRE_SAFE_12        = 0x12; 
+  const PRE_SAFE_13        = 0x13;  
+  const PRE_SAFE_14        = 0x14;  
+  const PRE_SAFE_15        = 0x15; 
+  
+  const HAPTIC_WARNING1    = 0x02; // Low Force  (LVL2).
+  const HAPTIC_WARNING1_P1 = 0x55; // Phase 1 of Haptic Warning 0.
+  const HAPTIC_WARNING2    = 0x16;
+  const HAPTIC_WARNING2_P1 = 0x56; // Phase 1 of Haptic Warning 1.
+  const HAPTIC_WARNING3    = 0x17;
+  const HAPTIC_WARNING3_P1 = 0x57; // Phase 1 of Haptic Warning 2.
+  const HAPTIC_WARNING4    = 0x18;
+  const HAPTIC_WARNING4_P1 = 0x58; // Phase 1 of Haptic Warning 3.
+  
+  const BSR_1              = 0x19;
+  const BSR_2              = 0x20;
+  const BSR_3              = 0x21;
+  
+  const PRE_SAFE_CURVE_1   = 0x22;
+  const PRE_SAFE_CURVE_2   = 0x23;
+  const PRE_SAFE_CURVE_3   = 0x24;
+  const PRE_SAFE_CURVE_4   = 0x25;
+  
+  const RESERVED           = 0x44; // Reserved value. // 0x09
+  const ANG_PROCESS        = 0x45; // ANG // 0x13
+  const AEE_PROCESS        = 0x46; // AEE // 0x14
+  
+  const SOFT_RELEASE    = 0x1D;
+  const HARD_RELEASE    = 0x1E;
+  const BACKUP_RELEASE  = 0x1F;
+  const START_UP        = 0x26;
+  
+  const REJECTED        = 0x3E;
+  const INIT            = 0x3F;
+  
+  const Low     = 0x00;
+  const High    = 0x01;
+  const Comfort = 0x02;
+  const Max     = 0x03;
+  const RequestCounter = 0x04;
+  
+  struct Cycle_Characteristics {
+    byte SF_ID;
+    byte MF_ID;
+    byte Launch_ID;
+    byte DiagLaunch_ID;
+    char Launch_Name[50];
+    char DiagLaunch_Name[50];
+    char SF_Name[50];
+    char MF_Name[50];
+  } CYCLE[double,31];
+  
+//*********************************************************************************************
+}
+
+void InitCycleParameters()
+{
+  CYCLE[NOLVL]        .MF_ID            = 0xFF;
+  CYCLE[NOLVL]        .SF_ID            = 0x00;
+  CYCLE[NOLVL]        .Launch_ID        = 0x00;
+  CYCLE[NOLVL]        .DiagLaunch_ID    = 0xFF;
+  strncpy(CYCLE[NOLVL].Launch_Name        , "OFF"      , 50);
+  strncpy(CYCLE[NOLVL].DiagLaunch_Name    , "NoCycle"  , 50);
+  strncpy(CYCLE[NOLVL].SF_Name            , "OFF"      , 50);
+  strncpy(CYCLE[NOLVL].MF_Name            , "NOLVL"    , 50);
+  
+  CYCLE[PRE_SAFE_1]        .MF_ID            = 0x00;
+  CYCLE[PRE_SAFE_1]        .SF_ID            = 0x01;
+  CYCLE[PRE_SAFE_1]        .Launch_ID        = 0x01;
+  CYCLE[PRE_SAFE_1]        .DiagLaunch_ID    = 0x00;
+  strncpy(CYCLE[PRE_SAFE_1].Launch_Name        , "PRE_SAFE_1"   , 50);
+  strncpy(CYCLE[PRE_SAFE_1].DiagLaunch_Name    , "Pre-Safe Level 1"   , 50);
+  strncpy(CYCLE[PRE_SAFE_1].SF_Name            , "PRE_SAFE_1"       , 50);
+  strncpy(CYCLE[PRE_SAFE_1].MF_Name            , "PRE_SAFE_1"         , 50);
+  
+  CYCLE[PRE_SAFE_3]        .MF_ID            = 0x01;
+  CYCLE[PRE_SAFE_3]        .SF_ID            = 0x03;
+  CYCLE[PRE_SAFE_3]        .Launch_ID        = 0x03;
+  CYCLE[PRE_SAFE_3]        .DiagLaunch_ID    = 0x01;
+  strncpy(CYCLE[PRE_SAFE_3].Launch_Name        , "PRE_SAFE_3"  , 50);
+  strncpy(CYCLE[PRE_SAFE_3].DiagLaunch_Name    , "Pre-Safe Level 2"  , 50);
+  strncpy(CYCLE[PRE_SAFE_3].SF_Name            , "PRE_SAFE_3"      , 50);
+  strncpy(CYCLE[PRE_SAFE_3].MF_Name            , "PRE_SAFE_3"        , 50);
+  
+  CYCLE[PRE_SAFE_4]        .MF_ID            = 0x02;
+  CYCLE[PRE_SAFE_4]        .SF_ID            = 0x04;
+  CYCLE[PRE_SAFE_4]        .Launch_ID        = 0x04;
+  CYCLE[PRE_SAFE_4]        .DiagLaunch_ID    = 0x02;
+  strncpy(CYCLE[PRE_SAFE_4].Launch_Name        , "PRE_SAFE_4"  , 50);
+  strncpy(CYCLE[PRE_SAFE_4].DiagLaunch_Name    , "Pre-Safe Level 3"  , 50);
+  strncpy(CYCLE[PRE_SAFE_4].SF_Name            , "PRE_SAFE_4"      , 50);
+  strncpy(CYCLE[PRE_SAFE_4].MF_Name            , "PRE_SAFE_4"        , 50);
+  
+  CYCLE[PRE_SAFE_5]        .MF_ID            = 0x03;
+  CYCLE[PRE_SAFE_5]        .SF_ID            = 0x05;
+  CYCLE[PRE_SAFE_5]        .Launch_ID        = 0x05;
+  CYCLE[PRE_SAFE_5]        .DiagLaunch_ID    = 0x03;
+  strncpy(CYCLE[PRE_SAFE_5].Launch_Name        , "PRE_SAFE_5", 50);
+  strncpy(CYCLE[PRE_SAFE_5].DiagLaunch_Name    , "Pre-Safe Level 4"  , 50);
+  strncpy(CYCLE[PRE_SAFE_5].SF_Name            , "PRE_SAFE_5"    , 50);
+  strncpy(CYCLE[PRE_SAFE_5].MF_Name            , "PRE_SAFE_5"      , 50);
+  
+  CYCLE[PRE_SAFE_6]        .MF_ID            = 0x04;
+  CYCLE[PRE_SAFE_6]        .SF_ID            = 0x06;
+  CYCLE[PRE_SAFE_6]        .Launch_ID        = 0x06;
+  CYCLE[PRE_SAFE_6]        .DiagLaunch_ID    = 0x04;
+  strncpy(CYCLE[PRE_SAFE_6].Launch_Name        , "PRE_SAFE_6"  , 50);
+  strncpy(CYCLE[PRE_SAFE_6].DiagLaunch_Name    , "Pre-Safe Level 5"  , 50);
+  strncpy(CYCLE[PRE_SAFE_6].SF_Name            , "PRE_SAFE_6"      , 50);
+  strncpy(CYCLE[PRE_SAFE_6].MF_Name            , "PRE_SAFE_6"        , 50);
+  
+  CYCLE[PRE_SAFE_7]        .MF_ID            = 0x05;
+  CYCLE[PRE_SAFE_7]        .SF_ID            = 0x07;
+  CYCLE[PRE_SAFE_7]        .Launch_ID        = 0x07;
+  CYCLE[PRE_SAFE_7]        .DiagLaunch_ID    = 0x05;
+  strncpy(CYCLE[PRE_SAFE_7].Launch_Name        , "PRE_SAFE_7"  , 50);
+  strncpy(CYCLE[PRE_SAFE_7].DiagLaunch_Name    , "Pre-Safe Level 6"  , 50);
+  strncpy(CYCLE[PRE_SAFE_7].SF_Name            , "PRE_SAFE_7"      , 50);
+  strncpy(CYCLE[PRE_SAFE_7].MF_Name            , "PRE_SAFE_7"        , 50);
+  
+  CYCLE[PRE_SAFE_8]        .MF_ID            = 0x06;
+  CYCLE[PRE_SAFE_8]        .SF_ID            = 0x08;
+  CYCLE[PRE_SAFE_8]        .Launch_ID        = 0x08;
+  CYCLE[PRE_SAFE_8]        .DiagLaunch_ID    = 0x06;
+  strncpy(CYCLE[PRE_SAFE_8].Launch_Name        , "PRE_SAFE_8"  , 50);
+  strncpy(CYCLE[PRE_SAFE_8].DiagLaunch_Name    , "Pre-Safe Level 7"  , 50);
+  strncpy(CYCLE[PRE_SAFE_8].SF_Name            , "PRE_SAFE_8"      , 50);
+  strncpy(CYCLE[PRE_SAFE_8].MF_Name            , "PRE_SAFE_8"        , 50);
+  
+  CYCLE[PRE_SAFE_9]        .MF_ID            = 0x07;
+  CYCLE[PRE_SAFE_9]        .SF_ID            = 0x09;
+  CYCLE[PRE_SAFE_9]        .Launch_ID        = 0x09;
+  CYCLE[PRE_SAFE_9]        .DiagLaunch_ID    = 0x07;
+  strncpy(CYCLE[PRE_SAFE_9].Launch_Name        , "PRE_SAFE_9"  , 50);
+  strncpy(CYCLE[PRE_SAFE_9].DiagLaunch_Name    , "Pre-Safe Level 8"  , 50);
+  strncpy(CYCLE[PRE_SAFE_9].SF_Name            , "PRE_SAFE_9"      , 50);
+  strncpy(CYCLE[PRE_SAFE_9].MF_Name            , "PRE_SAFE_9"        , 50);
+  
+  CYCLE[PRE_SAFE_10]        .MF_ID            = 0x08;
+  CYCLE[PRE_SAFE_10]        .SF_ID            = 0x0A;
+  CYCLE[PRE_SAFE_10]        .Launch_ID        = 0x0A;
+  CYCLE[PRE_SAFE_10]        .DiagLaunch_ID    = 0x08;
+  strncpy(CYCLE[PRE_SAFE_10].Launch_Name        , "PRE_SAFE_10"  , 50);
+  strncpy(CYCLE[PRE_SAFE_10].DiagLaunch_Name    , "Pre-Safe Level 9"  , 50);
+  strncpy(CYCLE[PRE_SAFE_10].SF_Name            , "PRE_SAFE_10"      , 50);
+  strncpy(CYCLE[PRE_SAFE_10].MF_Name            , "PRE_SAFE_10"        , 50);
+  
+  CYCLE[PRE_SAFE_11]        .MF_ID            = 0x09;
+  CYCLE[PRE_SAFE_11]        .SF_ID            = 0x0B;
+  CYCLE[PRE_SAFE_11]        .Launch_ID        = 0x0B;
+  CYCLE[PRE_SAFE_11]        .DiagLaunch_ID    = 0x09;
+  strncpy(CYCLE[PRE_SAFE_11].Launch_Name        , "PRE_SAFE_11"  , 50);
+  strncpy(CYCLE[PRE_SAFE_11].DiagLaunch_Name    , "Pre-Safe Level 10"  , 50);
+  strncpy(CYCLE[PRE_SAFE_11].SF_Name            , "PRE_SAFE_11"      , 50);
+  strncpy(CYCLE[PRE_SAFE_11].MF_Name            , "PRE_SAFE_11"        , 50);
+  
+  CYCLE[PRE_SAFE_12]        .MF_ID            = 0x0A;
+  CYCLE[PRE_SAFE_12]        .SF_ID            = 0x0C;
+  CYCLE[PRE_SAFE_12]        .Launch_ID        = 0x0C;
+  CYCLE[PRE_SAFE_12]        .DiagLaunch_ID    = 0x0A;
+  strncpy(CYCLE[PRE_SAFE_12].Launch_Name        , "PRE_SAFE_12"  , 50);
+  strncpy(CYCLE[PRE_SAFE_12].DiagLaunch_Name    , "Pre-Safe Level 11"  , 50);
+  strncpy(CYCLE[PRE_SAFE_12].SF_Name            , "PRE_SAFE_12"      , 50);
+  strncpy(CYCLE[PRE_SAFE_12].MF_Name            , "PRE_SAFE_12"        , 50);
+  
+  CYCLE[PRE_SAFE_13]        .MF_ID            = 0x0B;
+  CYCLE[PRE_SAFE_13]        .SF_ID            = 0x0D;
+  CYCLE[PRE_SAFE_13]        .Launch_ID        = 0x0D;
+  CYCLE[PRE_SAFE_13]        .DiagLaunch_ID    = 0x0B;
+  strncpy(CYCLE[PRE_SAFE_13].Launch_Name        , "PRE_SAFE_13"  , 50);
+  strncpy(CYCLE[PRE_SAFE_13].DiagLaunch_Name    , "Pre-Safe Level 12"  , 50);
+  strncpy(CYCLE[PRE_SAFE_13].SF_Name            , "PRE_SAFE_13"      , 50);
+  strncpy(CYCLE[PRE_SAFE_13].MF_Name            , "PRE_SAFE_13"        , 50);
+  
+  CYCLE[PRE_SAFE_14]        .MF_ID            = 0x0C;
+  CYCLE[PRE_SAFE_14]        .SF_ID            = 0x0E;
+  CYCLE[PRE_SAFE_14]        .Launch_ID        = 0x0E;
+  CYCLE[PRE_SAFE_14]        .DiagLaunch_ID    = 0x0C;
+  strncpy(CYCLE[PRE_SAFE_14].Launch_Name        , "PRE_SAFE_14"  , 50);
+  strncpy(CYCLE[PRE_SAFE_14].DiagLaunch_Name    , "Pre-Safe Level 13"  , 50);
+  strncpy(CYCLE[PRE_SAFE_14].SF_Name            , "PRE_SAFE_14"      , 50);
+  strncpy(CYCLE[PRE_SAFE_14].MF_Name            , "PRE_SAFE_14"        , 50);
+
+  CYCLE[PRE_SAFE_15]        .MF_ID            = 0x0D;
+  CYCLE[PRE_SAFE_15]        .SF_ID            = 0x0F;
+  CYCLE[PRE_SAFE_15]        .Launch_ID        = 0x0F;
+  CYCLE[PRE_SAFE_15]        .DiagLaunch_ID    = 0x0D;
+  strncpy(CYCLE[PRE_SAFE_15].Launch_Name        , "PRE_SAFE_15"  , 50);
+  strncpy(CYCLE[PRE_SAFE_15].DiagLaunch_Name    , "Pre-Safe Level 14"  , 50);
+  strncpy(CYCLE[PRE_SAFE_15].SF_Name            , "PRE_SAFE_15"      , 50);
+  strncpy(CYCLE[PRE_SAFE_15].MF_Name            , "PRE_SAFE_15"        , 50);
+  
+  CYCLE[PRE_SAFE_CURVE_1]        .MF_ID            = 0x0E;
+  CYCLE[PRE_SAFE_CURVE_1]        .SF_ID            = 0x16;
+  CYCLE[PRE_SAFE_CURVE_1]        .Launch_ID        = 0x16;
+  CYCLE[PRE_SAFE_CURVE_1]        .DiagLaunch_ID    = 0x0E;
+  strncpy(CYCLE[PRE_SAFE_CURVE_1].Launch_Name        , "PRE_SAFE_Curve_1"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_1].DiagLaunch_Name    , "Pre-Safe Curve 1"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_1].SF_Name            , "PRE_SAFE_Curve_1"      , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_1].MF_Name            , "PRE_SAFE_Curve_1"        , 50);
+  
+  CYCLE[PRE_SAFE_CURVE_2]        .MF_ID            = 0x0F;
+  CYCLE[PRE_SAFE_CURVE_2]        .SF_ID            = 0x17;
+  CYCLE[PRE_SAFE_CURVE_2]        .Launch_ID        = 0x17;
+  CYCLE[PRE_SAFE_CURVE_2]        .DiagLaunch_ID    = 0x0F;
+  strncpy(CYCLE[PRE_SAFE_CURVE_2].Launch_Name        , "PRE_SAFE_Curve_2"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_2].DiagLaunch_Name    , "Pre-Safe Curve 2"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_2].SF_Name            , "PRE_SAFE_Curve_2"      , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_2].MF_Name            , "PRE_SAFE_Curve_2"        , 50);
+  
+  CYCLE[PRE_SAFE_CURVE_3]        .MF_ID            = 0x10;
+  CYCLE[PRE_SAFE_CURVE_3]        .SF_ID            = 0x18;
+  CYCLE[PRE_SAFE_CURVE_3]        .Launch_ID        = 0x18;
+  CYCLE[PRE_SAFE_CURVE_3]        .DiagLaunch_ID    = 0x10;
+  strncpy(CYCLE[PRE_SAFE_CURVE_3].Launch_Name        , "PRE_SAFE_Curve_3"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_3].DiagLaunch_Name    , "Pre-Safe Curve 3"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_3].SF_Name            , "PRE_SAFE_Curve_3"      , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_3].MF_Name            , "PRE_SAFE_Curve_3"        , 50);
+  
+  CYCLE[PRE_SAFE_CURVE_4]        .MF_ID            = 0x11;
+  CYCLE[PRE_SAFE_CURVE_4]        .SF_ID            = 0x19;
+  CYCLE[PRE_SAFE_CURVE_4]        .Launch_ID        = 0x19;
+  CYCLE[PRE_SAFE_CURVE_4]        .DiagLaunch_ID    = 0x11;
+  strncpy(CYCLE[PRE_SAFE_CURVE_4].Launch_Name        , "PRE_SAFE_Curve_4"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_4].DiagLaunch_Name    , "Pre-Safe Curve 4"  , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_4].SF_Name            , "PRE_SAFE_Curve_4"      , 50);
+  strncpy(CYCLE[PRE_SAFE_CURVE_4].MF_Name            , "PRE_SAFE_Curve_4"        , 50);
+  
+  CYCLE[HAPTIC_WARNING1]        .MF_ID            = 0x12;
+  CYCLE[HAPTIC_WARNING1]        .SF_ID            = 0x02;
+  CYCLE[HAPTIC_WARNING1]        .Launch_ID        = 0x02;
+  CYCLE[HAPTIC_WARNING1]        .DiagLaunch_ID    = 0x12;
+  strncpy(CYCLE[HAPTIC_WARNING1].Launch_Name        , "HAPTIC WARNING 0 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1].DiagLaunch_Name    , "Haptic Warning Phase 1"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING1].SF_Name            , "HAPTIC WARNING 0 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1].MF_Name            , "HWA1"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING1_P1]        .MF_ID            = 0x13;
+  CYCLE[HAPTIC_WARNING1_P1]        .SF_ID            = 0x02;
+  CYCLE[HAPTIC_WARNING1_P1]        .Launch_ID        = 0x02;
+  CYCLE[HAPTIC_WARNING1_P1]        .DiagLaunch_ID    = 0x13;
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].Launch_Name        , "HAPTIC WARNING 0 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].DiagLaunch_Name    , "Haptic Warning Phase 2"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].SF_Name            , "HAPTIC WARNING 0 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING1_P1].MF_Name            , "HWA1"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING2]        .MF_ID            = 0x14;
+  CYCLE[HAPTIC_WARNING2]        .SF_ID            = 0x10;
+  CYCLE[HAPTIC_WARNING2]        .Launch_ID        = 0x10;
+  CYCLE[HAPTIC_WARNING2]        .DiagLaunch_ID    = 0x14;
+  strncpy(CYCLE[HAPTIC_WARNING2].Launch_Name        , "HAPTIC WARNING 1 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING2].DiagLaunch_Name    , "Haptic Warning Phase 3"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING2].SF_Name            , "HAPTIC WARNING 1 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING2].MF_Name            , "HWA2"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING2_P1]        .MF_ID            = 0x15;
+  CYCLE[HAPTIC_WARNING2_P1]        .SF_ID            = 0x10;
+  CYCLE[HAPTIC_WARNING2_P1]        .Launch_ID        = 0x10;
+  CYCLE[HAPTIC_WARNING2_P1]        .DiagLaunch_ID    = 0x15;
+  strncpy(CYCLE[HAPTIC_WARNING2_P1].Launch_Name        , "HAPTIC WARNING 1 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING2_P1].DiagLaunch_Name    , "Haptic Warning Phase 4"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING2_P1].SF_Name            , "HAPTIC WARNING 1 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING2_P1].MF_Name            , "HWA2"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING3]        .MF_ID            = 0x16;
+  CYCLE[HAPTIC_WARNING3]        .SF_ID            = 0x11;
+  CYCLE[HAPTIC_WARNING3]        .Launch_ID        = 0x11;
+  CYCLE[HAPTIC_WARNING3]        .DiagLaunch_ID    = 0x16;
+  strncpy(CYCLE[HAPTIC_WARNING3].Launch_Name        , "HAPTIC WARNING 2 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING3].DiagLaunch_Name    , "Haptic Warning Phase 5"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING3].SF_Name            , "HAPTIC WARNING 2 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING3].MF_Name            , "HWA3"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING3_P1]        .MF_ID            = 0x17;
+  CYCLE[HAPTIC_WARNING3_P1]        .SF_ID            = 0x11;
+  CYCLE[HAPTIC_WARNING3_P1]        .Launch_ID        = 0x11;
+  CYCLE[HAPTIC_WARNING3_P1]        .DiagLaunch_ID    = 0x17;
+  strncpy(CYCLE[HAPTIC_WARNING3_P1].Launch_Name        , "HAPTIC WARNING 2 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING3_P1].DiagLaunch_Name    , "Haptic Warning Phase 6"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING3_P1].SF_Name            , "HAPTIC WARNING 2 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING3_P1].MF_Name            , "HWA3"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING4]        .MF_ID            = 0x18;
+  CYCLE[HAPTIC_WARNING4]        .SF_ID            = 0x12;
+  CYCLE[HAPTIC_WARNING4]        .Launch_ID        = 0x12;
+  CYCLE[HAPTIC_WARNING4]        .DiagLaunch_ID    = 0x18;
+  strncpy(CYCLE[HAPTIC_WARNING4].Launch_Name        , "HAPTIC WARNING 3 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING4].DiagLaunch_Name    , "Haptic Warning Phase 7"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING4].SF_Name            , "HAPTIC WARNING 3 PHASE 0", 50);
+  strncpy(CYCLE[HAPTIC_WARNING4].MF_Name            , "HWA4"                    , 50);
+  
+  CYCLE[HAPTIC_WARNING4_P1]        .MF_ID            = 0x19;
+  CYCLE[HAPTIC_WARNING4_P1]        .SF_ID            = 0x12;
+  CYCLE[HAPTIC_WARNING4_P1]        .Launch_ID        = 0x12;
+  CYCLE[HAPTIC_WARNING4_P1]        .DiagLaunch_ID    = 0x19;
+  strncpy(CYCLE[HAPTIC_WARNING4_P1].Launch_Name        , "HAPTIC WARNING 3 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING4_P1].DiagLaunch_Name    , "Haptic Warning Phase 8"  , 50);
+  strncpy(CYCLE[HAPTIC_WARNING4_P1].SF_Name            , "HAPTIC WARNING 3 PHASE 1", 50);
+  strncpy(CYCLE[HAPTIC_WARNING4_P1].MF_Name            , "HWA4"                    , 50);
+  
+  CYCLE[BSR_1]             .MF_ID            = 0x1A;
+  CYCLE[BSR_1]             .SF_ID            = 0x13;
+  CYCLE[BSR_1]             .Launch_ID        = 0x13;
+  CYCLE[BSR_1]             .DiagLaunch_ID    = 0x1A;
+  strncpy(CYCLE[BSR_1].Launch_Name        , "BSR 1" , 50);
+  strncpy(CYCLE[BSR_1].DiagLaunch_Name    , "BSR1"  , 50);
+  strncpy(CYCLE[BSR_1].SF_Name            , "BSR 1" , 50);
+  strncpy(CYCLE[BSR_1].MF_Name            , "BSR 1" , 50);
+  
+  CYCLE[BSR_2]             .MF_ID            = 0x1B;
+  CYCLE[BSR_2]             .SF_ID            = 0x14;
+  CYCLE[BSR_2]             .Launch_ID        = 0x14;
+  CYCLE[BSR_2]             .DiagLaunch_ID    = 0x1B;
+  strncpy(CYCLE[BSR_2].Launch_Name        , "BSR 2" , 50);
+  strncpy(CYCLE[BSR_2].DiagLaunch_Name    , "BSR2"  , 50);
+  strncpy(CYCLE[BSR_2].SF_Name            , "BSR 2" , 50);
+  strncpy(CYCLE[BSR_2].MF_Name            , "BSR 2" , 50);
+  
+  CYCLE[BSR_3]             .MF_ID            = 0x1C;
+  CYCLE[BSR_3]             .SF_ID            = 0x15;
+  CYCLE[BSR_3]             .Launch_ID        = 0x15;
+  CYCLE[BSR_3]             .DiagLaunch_ID    = 0x1C;
+  strncpy(CYCLE[BSR_3].Launch_Name        , "BSR 3" , 50);
+  strncpy(CYCLE[BSR_3].DiagLaunch_Name    , "BSR3"  , 50);
+  strncpy(CYCLE[BSR_3].SF_Name            , "BSR 3" , 50);
+  strncpy(CYCLE[BSR_3].MF_Name            , "BSR 3" , 50);
+  
+  CYCLE[RESERVED]        .MF_ID            = 0x09;
+//CYCLE[RESERVED]        .SF_ID            = ;
+//CYCLE[RESERVED]        .Launch_ID        = ;
+  CYCLE[RESERVED]        .DiagLaunch_ID    = 0x09;
+  strncpy(CYCLE[RESERVED].Launch_Name        , "RESERVED" , 50);
+  strncpy(CYCLE[RESERVED].DiagLaunch_Name    , "Reserved" , 50);
+  strncpy(CYCLE[RESERVED].SF_Name            , "RESERVED" , 50);
+  strncpy(CYCLE[RESERVED].MF_Name            , "RESERVED" , 50);
+  
+  CYCLE[START_UP]        .MF_ID            = 0x20;
+  CYCLE[START_UP]        .SF_ID            = 0x3F;
+//CYCLE[START_UP]        .Launch_ID        = 0x20;
+  CYCLE[START_UP]        .DiagLaunch_ID    = 0x20;
+  strncpy(CYCLE[START_UP].Launch_Name        , "START-UP", 50);
+  strncpy(CYCLE[START_UP].DiagLaunch_Name    , "Start-up" , 50);
+  strncpy(CYCLE[START_UP].SF_Name            , "START-UP", 50);
+  strncpy(CYCLE[START_UP].MF_Name            , "START-UP", 50);
+  
+  CYCLE[SOFT_RELEASE]        .MF_ID            = 0x1D;
+//CYCLE[SOFT_RELEASE]        .SF_ID            = 0x1D;
+//CYCLE[SOFT_RELEASE]        .Launch_ID        = 0x1D;
+  CYCLE[SOFT_RELEASE]        .DiagLaunch_ID    = 0x1D;
+  strncpy(CYCLE[SOFT_RELEASE].Launch_Name     , "SMOOTH-RELEASE" , 50);
+  strncpy(CYCLE[SOFT_RELEASE].DiagLaunch_Name , "Smooth Release ", 50);
+  strncpy(CYCLE[SOFT_RELEASE].SF_Name         , "SMOOTH-RELEASE" , 50);
+  strncpy(CYCLE[SOFT_RELEASE].MF_Name         , "SMOOTH-RELEASE" , 50);
+  
+  CYCLE[HARD_RELEASE]        .MF_ID            = 0x1E;
+//CYCLE[HARD_RELEASE]        .SF_ID            = 0x1E;
+//CYCLE[HARD_RELEASE]        .Launch_ID        = 0x1E;
+  CYCLE[HARD_RELEASE]        .DiagLaunch_ID    = 0x1E;
+  strncpy(CYCLE[HARD_RELEASE].Launch_Name     , "HARD_RELEASE", 50);
+  strncpy(CYCLE[HARD_RELEASE].DiagLaunch_Name , "Hard Release", 50);
+  strncpy(CYCLE[HARD_RELEASE].SF_Name         , "HARD_RELEASE", 50);
+  strncpy(CYCLE[HARD_RELEASE].MF_Name         , "HARD_RELEASE", 50);
+  
+  CYCLE[BACKUP_RELEASE]        .MF_ID            = 0x1F;
+//CYCLE[BACKUP_RELEASE]        .SF_ID            = 0x1F;
+//CYCLE[BACKUP_RELEASE]        .Launch_ID        = 0x1F;
+  CYCLE[BACKUP_RELEASE]        .DiagLaunch_ID    = 0x1F;
+  strncpy(CYCLE[BACKUP_RELEASE].Launch_Name     , "BACKUP_RELEASE", 50);
+  strncpy(CYCLE[BACKUP_RELEASE].DiagLaunch_Name , "Backup Release", 50);
+  strncpy(CYCLE[BACKUP_RELEASE].SF_Name         , "BACKUP_RELEASE", 50);
+  strncpy(CYCLE[BACKUP_RELEASE].MF_Name         , "BACKUP_RELEASE", 50);
+  
+  CYCLE[ANG_PROCESS]        .MF_ID            = 0x21;
+//CYCLE[ANG_PROCESS]        .SF_ID            = 0x1F;
+//CYCLE[ANG_PROCESS]        .Launch_ID        = 0x1F;
+  CYCLE[ANG_PROCESS]        .DiagLaunch_ID    = 0x21;
+  strncpy(CYCLE[ANG_PROCESS].Launch_Name     , "ANG_PROCESS", 50);
+  strncpy(CYCLE[ANG_PROCESS].DiagLaunch_Name , "ANG Process", 50);
+  strncpy(CYCLE[ANG_PROCESS].SF_Name         , "ANG_PROCESS", 50);
+  strncpy(CYCLE[ANG_PROCESS].MF_Name         , "ANG_PROCESS", 50);
+  
+  CYCLE[AEE_PROCESS]        .MF_ID            = 0x22;
+//CYCLE[AEE_PROCESS]        .SF_ID            = 0x1F;
+//CYCLE[AEE_PROCESS]        .Launch_ID        = 0x1F;
+  CYCLE[AEE_PROCESS]        .DiagLaunch_ID    = 0x22;
+  strncpy(CYCLE[AEE_PROCESS].Launch_Name     , "AEE_PROCESS", 50);
+  strncpy(CYCLE[AEE_PROCESS].DiagLaunch_Name , "AEE Process", 50);
+  strncpy(CYCLE[AEE_PROCESS].SF_Name         , "AEE_PROCESS", 50);
+  strncpy(CYCLE[AEE_PROCESS].MF_Name         , "AEE_PROCESS", 50);
+  
+//CYCLE[REJECTED]        .MF_ID            = 0x3E;
+  CYCLE[REJECTED]        .SF_ID            = 0x3E;
+//CYCLE[REJECTED]        .Launch_ID        = 0x3E;
+//CYCLE[REJECTED]        .DiagLaunch_ID    = ;
+  strncpy(CYCLE[REJECTED].Launch_Name    , "REJECTED", 50);
+  strncpy(CYCLE[REJECTED].DiagLaunch_Name, "Rejected", 50);
+  strncpy(CYCLE[REJECTED].SF_Name        , "REJECTED", 50);
+  strncpy(CYCLE[REJECTED].MF_Name        , "REJECTED", 50);
+  
+//CYCLE[INIT]        .MF_ID            = 0x3F;
+  CYCLE[INIT]        .SF_ID            = 0x3F;
+//CYCLE[INIT]        .Launch_ID        = 0x3F;
+//CYCLE[INIT]        .DiagLaunch_ID    = ;
+  strncpy(CYCLE[INIT].Launch_Name    , "INIT", 50);
+  strncpy(CYCLE[INIT].DiagLaunch_Name, "Init", 50);
+  strncpy(CYCLE[INIT].SF_Name        , "INIT", 50);
+  strncpy(CYCLE[INIT].MF_Name        , "INIT", 50);
+}

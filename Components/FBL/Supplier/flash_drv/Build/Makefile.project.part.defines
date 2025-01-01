@@ -1,0 +1,570 @@
+###############################################################################
+#  Makefile.project.part.defines
+###############################################################################
+# MakeSupport type: Vector
+# Derived product: FlashBootLoader
+# Folder structure: Legacy
+
+
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Root of the project (dir where the additionally used components reside) from the
+# scope of the makefile location.
+# E.g. makefile is located under
+#    d:\usr\develop\can\PAG\HC08\COSMIC\testsuit\appl
+# and the components like drv, il reside under
+#    d:\usr\develop\can\PAG\HC08\COSMIC
+# The root is given (relative to the Makefile)
+#    ROOT = ..\..
+#------------------------------------------------------------------------------
+ROOT = ..\..\..\..\mb_base_layer_classic_aurix\fbl_aurix
+
+#------------------------------------------------------------------------------
+#------------------------- OPTIONAL -------------------------------------------
+# $(PRJROOT) specifies the path to the root directory of your project
+# Set the variable if source or header files outside of $(ROOT)/.. are used
+#------------------------------------------------------------------------------
+PRJROOT = ..\..\..\..
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# $(GENTOOL_DIR) contains the path to your version.info file
+# E.g.:    GENTOOL_DIR = $(ROOT)\Generators\Components
+#------------------------------------------------------------------------------
+GENTOOL_DIR = $(ROOT)\Generators\Components
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Version of Makefile.project.part.defines
+#------------------------------------------------------------------------------
+MPPD_VERSION = 32
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Path to which *.obj, *.err, *.lst will be moved/generated
+#------------------------------------------------------------------------------
+OBJ_PATH = obj
+ERR_PATH = err
+LST_PATH = lst
+LOG_PATH = log
+LIB_PATH = lib
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Redirect error output to stdout (and not only to *.err files)
+#------------------------------------------------------------------------------
+ERR_TO_STDOUT = 1
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# $(GENDATA_DIR) contains the directory into which the ecu specific data is
+# generated
+# E.g.: GENDATA_DIR = GenData
+#------------------------------------------------------------------------------
+GENDATA_DIR = GenData
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# $(GENDATA_OS_DIR) contains the directory into which the ecu osspecific data is
+# generated
+# E.g.: GENDATA_OS_DIR = GenDataOs
+#------------------------------------------------------------------------------
+GENDATA_OS_DIR = $(GENDATA_DIR)
+
+#------------------------------------------------------------------------------
+# Subfolder of BSW components (mandatory BSW with konStruct 1.7.xx or newer)
+#------------------------------------------------------------------------------
+GLOBAL_COMP_DIR = BSW
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Define MCAL modules that shall be excluded from build
+#------------------------------------------------------------------------------
+MCAL_EXCLUDE_ADC    = 1
+MCAL_EXCLUDE_CRC    = 1
+MCAL_EXCLUDE_DIO    = 1
+MCAL_EXCLUDE_DMA    = 1
+MCAL_EXCLUDE_EEP    = 1
+MCAL_EXCLUDE_FLS    = 1
+MCAL_EXCLUDE_GPT    = 1
+MCAL_EXCLUDE_ICU    = 1
+MCAL_EXCLUDE_IRQ    = 1
+MCAL_EXCLUDE_MCU    = 1
+MCAL_EXCLUDE_OCU    = 1
+MCAL_EXCLUDE_PORT   = 1
+MCAL_EXCLUDE_PWM    = 1
+MCAL_EXCLUDE_SPI    = 1
+MCAL_EXCLUDE_WDG    = 1
+MCAL_EXCLUDE_FEE    = 1
+MCAL_EXCLUDE_CRY    = 1
+MCAL_EXCLUDE_MCL    = 1
+MCAL_EXCLUDE_FLSTST = 1
+MCAL_EXCLUDE_RAMTST = 1
+MCAL_EXCLUDE_CORTST = 1
+
+#------------------------------------------------------------------------------
+#------------------------- MUST be filled out ---------------------------------
+# Define if the LinTp functionality shall be supported by the LinIf
+#------------------------------------------------------------------------------
+LINIF_USE_LINTP    = 0
+
+
+###############################################################################
+#  Modules
+###############################################################################
+MODULE_LIST_PROJECT                                              += DRVEEP_DUMMY
+MODULE_LIST_PROJECT                                              += DRVLIN_TRICOREASR
+MODULE_LIST_PROJECT                                              += FBLASRSTUBS
+MODULE_LIST_PROJECT                                              += FBLBM_HDR
+MODULE_LIST_PROJECT                                              += FBLBM_MAIN
+MODULE_LIST_PROJECT                                              += FBLDIAG_14229_CORE
+MODULE_LIST_PROJECT                                              += FBLDIAG_14229_DAIMLER
+MODULE_LIST_PROJECT                                              += FBLDRVCAN_MPC5700MCANCRX
+MODULE_LIST_PROJECT                                              += FBLDRVFLASH_TRICOREAURIXHIS_IMPL_MAIN
+MODULE_LIST_PROJECT                                              += FBLLIB_FSM
+MODULE_LIST_PROJECT                                              += FBLLIB_LBT
+MODULE_LIST_PROJECT                                              += FBLLIB_MEM
+MODULE_LIST_PROJECT                                              += FBLLIB_NVPATTERN
+MODULE_LIST_PROJECT                                              += FBLLIB_SECBOOT_VHSM
+MODULE_LIST_PROJECT                                              += FBLMAIN
+MODULE_LIST_PROJECT                                              += FBLMIO
+MODULE_LIST_PROJECT                                              += FBLUPD_MAIN
+MODULE_LIST_PROJECT                                              += FBLVTABAPPL_TRICORE
+MODULE_LIST_PROJECT                                              += FBLWD
+MODULE_LIST_PROJECT                                              += FBLWRAPPERCOM_PDUR
+MODULE_LIST_PROJECT                                              += FBLWRAPPERFLASH_TRICOREAURIXHIS_IMPL_MAIN
+MODULE_LIST_PROJECT                                              += SECACCESS_HIS_DAIMLER
+MODULE_LIST_PROJECT                                              += SYSSERVICE_CMPR1_VECTOR
+MODULE_LIST_PROJECT                                              += SYSSERVICE_CMPRLZMA
+MODULE_LIST_PROJECT                                              += SYSSERVICE_SECMODHIS
+MODULE_LIST_PROJECT                                              += SYSSERVICE_WRAPPERNV
+MODULE_LIST_PROJECT                                              += LIBRARY
+MODULE_LIST_PROJECT                                              += MSR_COMPONENTS
+
+
+DRVEEP_DUMMY_USED                                                = 0
+DRVLIN_TRICOREASR_USED                                           = 0
+FBLASRSTUBS_USED                                                 = 0
+FBLBM_HDR_USED                                                   = 0
+FBLBM_MAIN_USED                                                  = 0
+FBLDIAG_14229_CORE_USED                                          = 0
+FBLDIAG_14229_DAIMLER_USED                                       = 0
+FBLDRVCAN_MPC5700MCANCRX_USED                                    = 0
+FBLDRVFLASH_TRICOREAURIXHIS_IMPL_MAIN_USED                       = 1
+FBLLIB_FSM_USED                                                  = 0
+FBLLIB_LBT_USED                                                  = 0
+FBLLIB_MEM_USED                                                  = 0
+FBLLIB_NVPATTERN_USED                                            = 0
+FBLLIB_SECBOOT_VHSM_USED                                         = 0
+FBLMAIN_USED                                                     = 0
+FBLMIO_USED                                                      = 0
+FBLUPD_MAIN_USED                                                 = 0
+FBLVTABAPPL_TRICORE_USED                                         = 0
+FBLWD_USED                                                       = 0
+FBLWRAPPERCOM_PDUR_USED                                          = 0
+FBLWRAPPERFLASH_TRICOREAURIXHIS_IMPL_MAIN_USED                   = 0
+SECACCESS_HIS_DAIMLER_USED                                       = 0
+SYSSERVICE_CMPR1_VECTOR_USED                                     = 0
+SYSSERVICE_CMPRLZMA_USED                                         = 0
+SYSSERVICE_SECMODHIS_USED                                        = 0
+SYSSERVICE_WRAPPERNV_USED                                        = 0
+# LIBRARY files: 1=compile files / 0=use library
+LIBRARY_USED                                                     = 0
+
+# Support for MSR components with makefile
+# Setting MSR_COMPONENTS_USED = 0 will exclude ALL MSR components at once
+MSR_COMPONENTS_USED                                              = 0
+
+CCL_ASR4COMMCFG5_USED                                            = 0
+CCL_ASR4SMCAN_USED                                               = 0
+CCL_ASR4SMFR_USED                                                = 0
+CCL_ASR4SMLIN_USED                                               = 0
+CCL_ASRSMETH_USED                                                = 0
+DRVCAN__COREASR_USED                                             = 0
+DRVCRYPTO_LIBCV_USED                                             = 0
+DRVCRYPTO_VHSM_USED                                              = 0
+DRVETH_TC3XXETHASR_USED                                          = 0
+DRVFR_XERAYASR_USED                                              = 0
+DRVLIN__CORE2ASR_USED                                            = 0
+DRVTRANS_88Q2112ETHASR_USED                                      = 0
+DRVTRANS_ETHMIIASR_USED                                          = 0
+DRVTRANS_TJA1043CANDIOASR_USED                                   = 0
+DRVTRANS_TJA1085FRSPIASR_USED                                    = 0
+DRVTRANS_TLE7259LINDIOASR_USED                                   = 0
+GW_ASRPDURCFG5_USED                                              = 0
+IF_ASR4IFLIN_USED                                                = 0
+IF_ASRIFCAN_USED                                                 = 0
+IF_ASRIFCRY_USED                                                 = 0
+IF_ASRIFETH_USED                                                 = 0
+IF_ASRIFFR_USED                                                  = 0
+IF_ASRIFSOAD_USED                                                = 0
+MCAL_TC3XXINF01ASR4SUB_USED                                      = 0
+NM_ASR4NMCAN_USED                                                = 0
+NM_ASR4NMFR_USED                                                 = 0
+NM_ASR4NMIF_USED                                                 = 0
+NM_ASRNMUDP_USED                                                 = 0
+SECURITY_ASRCSM_USED                                             = 0
+SECURITY_VSECPRIM_USED                                           = 0
+SYSSERVICE_ASRDET_USED                                           = 0
+SYSSERVICE_IPBASE_USED                                           = 0
+TP_ASR4TPCAN_USED                                                = 0
+TP_ASRTPDOIP_USED                                                = 0
+TP_ASRTPTCPIP_USED                                               = 0
+TP_ISO10681_USED                                                 = 0
+VLINKGEN_USED                                                    = 0
+VSTDLIB_GENERICASR_USED                                          = 0
+
+
+# DrvEep_Dummy@Implementation
+DRVEEP_DUMMY_SOURCES                                             += BSW\Eep\EepIO.c
+
+# FblAsrStubs@Impl_BswStub
+FBLASRSTUBS_SOURCES                                              += BSW\FblAsrStubs\BswM_CanSM.c
+FBLASRSTUBS_SOURCES                                              += BSW\FblAsrStubs\BswM_EthSM.c
+FBLASRSTUBS_SOURCES                                              += BSW\FblAsrStubs\Dem.c
+FBLASRSTUBS_SOURCES                                              += BSW\FblAsrStubs\Mcal_WdgLib.c
+
+# FblBm_Hdr@Implementation
+FBLBM_HDR_SOURCES                                                += BSW\FblBmHdr\bm_hdr.c
+FBLBM_HDR_DATA                                                   += $(GENDATA_DIR)\FblBmHdr_Lcfg.c
+
+# FblBm_Main@Implementation
+FBLBM_MAIN_SOURCES                                               += BSW\FblBm\bm_main.c
+FBLBM_MAIN_SOURCES                                               += BSW\FblBm\bm_shared.c
+FBLBM_MAIN_DATA                                                  += $(GENDATA_DIR)\FblBm_Lcfg.c
+
+# FblDiag_14229_Core@Implementation
+FBLDIAG_14229_CORE_SOURCES                                       += BSW\Fbl\fbl_diag_core.c
+
+# FblDiag_14229_Daimler@Implementation
+FBLDIAG_14229_DAIMLER_SOURCES                                    += BSW\Fbl\fbl_diag_oem.c
+FBLDIAG_14229_DAIMLER_DATA                                       += $(GENDATA_DIR)\Fbl_Lbt.c
+FBLDIAG_14229_DAIMLER_DATA                                       += $(GENDATA_DIR)\Fbl_Rst.c
+
+# FblDrvCan_Mpc5700McanCrx@Implementation
+FBLDRVCAN_MPC5700MCANCRX_SOURCES                                 += BSW\Fbl\fbl_hw.c
+
+# FblDrvFlash_TricoreAurixHis@Impl_Main
+FBLDRVFLASH_TRICOREAURIXHIS_IMPL_MAIN_SOURCES                    += BSW\Flash\flashdrv.c
+
+# FblLib_Fsm@Implementation
+FBLLIB_FSM_SOURCES                                               += BSW\Fbl\fbl_fsm.c
+
+# FblLib_Lbt@Implementation
+FBLLIB_LBT_SOURCES                                               += BSW\Fbl\fbl_lbt_access.c
+
+# FblLib_Mem@Implementation
+FBLLIB_MEM_SOURCES                                               += BSW\Fbl\fbl_mem.c
+
+# FblLib_NvPattern@Implementation
+FBLLIB_NVPATTERN_SOURCES                                         += BSW\Fbl\fbl_nvpattern.c
+
+# FblLib_SecBoot_vHsm@Implementation
+FBLLIB_SECBOOT_VHSM_SOURCES                                      += BSW\FblSecBoot\fbl_secboot.c
+FBLLIB_SECBOOT_VHSM_DATA                                         += $(GENDATA_DIR)\FblSb_Lcfg.c
+
+# FblMain@Implementation
+FBLMAIN_SOURCES                                                  += BSW\Fbl\fbl_main.c
+
+# FblMio@Implementation
+FBLMIO_SOURCES                                                   += BSW\Fbl\fbl_mio.c
+FBLMIO_DATA                                                      += $(GENDATA_DIR)\Fbl_Fbt.c
+
+# FblUpd_Main@Implementation
+FBLUPD_MAIN_SOURCES                                              += BSW\FblUpd\upd_main.c
+
+# FblVtabAppl_Tricore@Implementation
+FBLVTABAPPL_TRICORE_SOURCES                                      += BSW\Fbl\fbl_applvect.c
+
+# FblWd@Implementation
+FBLWD_SOURCES                                                    += BSW\Fbl\fbl_wd.c
+
+# FblWrapperCom_PduR@Implementation
+FBLWRAPPERCOM_PDUR_SOURCES                                       += BSW\FblCw\fbl_cw.c
+FBLWRAPPERCOM_PDUR_DATA                                          += $(GENDATA_DIR)\FblCw_Lcfg.c
+FBLWRAPPERCOM_PDUR_DATA                                          += $(GENDATA_DIR)\FblCw_PBcfg.c
+
+# FblWrapperFlash_TricoreAurixHis@Impl_Main
+FBLWRAPPERFLASH_TRICOREAURIXHIS_IMPL_MAIN_SOURCES                += BSW\Fbl\fbl_flio.c
+
+# SecAccess_His_Daimler@Implementation
+SECACCESS_HIS_DAIMLER_SOURCES                                    += BSW\SecMod\Sec_SeedKeyVendor.c
+
+# SysService_Cmpr1_Vector@Implementation
+SYSSERVICE_CMPR1_VECTOR_SOURCES                                  += BSW\Cmpr\cmpr.c
+
+# SysService_CmprLzma@Impl_Wrapper
+SYSSERVICE_CMPRLZMA_SOURCES                                      += BSW\Cmpr_Lzma\cmpr_lzma.c
+
+# SysService_CmprLzma@Implementation
+SYSSERVICE_CMPRLZMA_SOURCES                                      += BSW\Cmpr_Lzma\COMPRESS_LZMA_Decode.c
+
+# SysService_SecModHis@Implementation
+SYSSERVICE_SECMODHIS_SOURCES                                     += BSW\SecMod\Sec.c
+SYSSERVICE_SECMODHIS_SOURCES                                     += BSW\SecMod\Sec_Crc.c
+SYSSERVICE_SECMODHIS_SOURCES                                     += BSW\SecMod\Sec_Decryption.c
+SYSSERVICE_SECMODHIS_SOURCES                                     += BSW\SecMod\Sec_Job.c
+SYSSERVICE_SECMODHIS_SOURCES                                     += BSW\SecMod\Sec_SeedKey.c
+SYSSERVICE_SECMODHIS_SOURCES                                     += BSW\SecMod\Sec_Verification.c
+SYSSERVICE_SECMODHIS_DATA                                        += $(GENDATA_DIR)\SecMPar.c
+
+# SysService_WrapperNv@Implementation
+SYSSERVICE_WRAPPERNV_SOURCES                                     += BSW\WrapNv\WrapNv.c
+
+# LIBRARY: all sources that shall/can be delivered as part of a library
+LIBRARY_SOURCES                                                  += 
+
+
+
+# Support for MSR components with makefile
+ifeq ($(CCL_ASR4COMMCFG5_USED),1)
+  include $(ROOT)\BSW\ComM\mak\ComM_rules.mak
+  include $(ROOT)\BSW\ComM\mak\ComM_defs.mak
+  include $(ROOT)\BSW\ComM\mak\ComM_check.mak
+endif
+
+ifeq ($(CCL_ASR4SMCAN_USED),1)
+  include $(ROOT)\BSW\CanSM\mak\CanSM_rules.mak
+  include $(ROOT)\BSW\CanSM\mak\CanSM_defs.mak
+  include $(ROOT)\BSW\CanSM\mak\CanSM_check.mak
+endif
+
+ifeq ($(CCL_ASR4SMFR_USED),1)
+  include $(ROOT)\BSW\FrSM\mak\FrSM_rules.mak
+  include $(ROOT)\BSW\FrSM\mak\FrSM_defs.mak
+  include $(ROOT)\BSW\FrSM\mak\FrSM_check.mak
+endif
+
+ifeq ($(CCL_ASR4SMLIN_USED),1)
+  include $(ROOT)\BSW\LinSM\mak\LinSM_rules.mak
+  include $(ROOT)\BSW\LinSM\mak\LinSM_defs.mak
+  include $(ROOT)\BSW\LinSM\mak\LinSM_check.mak
+endif
+
+ifeq ($(CCL_ASRSMETH_USED),1)
+  include $(ROOT)\BSW\EthSM\mak\EthSM_rules.mak
+  include $(ROOT)\BSW\EthSM\mak\EthSM_defs.mak
+  include $(ROOT)\BSW\EthSM\mak\EthSM_check.mak
+endif
+
+ifeq ($(DRVCAN__COREASR_USED),1)
+  include $(ROOT)\BSW\Can\mak\Can_rules.mak
+  include $(ROOT)\BSW\Can\mak\Can_defs.mak
+  include $(ROOT)\BSW\Can\mak\Can_check.mak
+endif
+
+ifeq ($(DRVCRYPTO_LIBCV_USED),1)
+  include $(ROOT)\BSW\Crypto_30_LibCv\mak\Crypto_30_LibCv_rules.mak
+  include $(ROOT)\BSW\Crypto_30_LibCv\mak\Crypto_30_LibCv_defs.mak
+  include $(ROOT)\BSW\Crypto_30_LibCv\mak\Crypto_30_LibCv_check.mak
+endif
+
+ifeq ($(DRVCRYPTO_VHSM_USED),1)
+  include $(ROOT)\BSW\Crypto_30_vHsm\mak\Crypto_30_vHsm_rules.mak
+  include $(ROOT)\BSW\Crypto_30_vHsm\mak\Crypto_30_vHsm_defs.mak
+  include $(ROOT)\BSW\Crypto_30_vHsm\mak\Crypto_30_vHsm_check.mak
+endif
+
+ifeq ($(DRVETH_TC3XXETHASR_USED),1)
+  include $(ROOT)\BSW\Eth_30_Tc3xx\mak\Eth_30_Tc3xx_rules.mak
+  include $(ROOT)\BSW\Eth_30_Tc3xx\mak\Eth_30_Tc3xx_defs.mak
+  include $(ROOT)\BSW\Eth_30_Tc3xx\mak\Eth_30_Tc3xx_check.mak
+endif
+
+ifeq ($(DRVFR_XERAYASR_USED),1)
+  include $(ROOT)\BSW\Fr\mak\Fr_rules.mak
+  include $(ROOT)\BSW\Fr\mak\Fr_defs.mak
+  include $(ROOT)\BSW\Fr\mak\Fr_check.mak
+endif
+
+ifeq ($(DRVLIN__CORE2ASR_USED),1)
+  include $(ROOT)\BSW\Lin\mak\Lin_rules.mak
+  include $(ROOT)\BSW\Lin\mak\Lin_defs.mak
+  include $(ROOT)\BSW\Lin\mak\Lin_check.mak
+endif
+
+ifeq ($(DRVTRANS_88Q2112ETHASR_USED),1)
+  include $(ROOT)\BSW\EthTrcv_30_88Q2112\mak\EthTrcv_30_88Q2112_rules.mak
+  include $(ROOT)\BSW\EthTrcv_30_88Q2112\mak\EthTrcv_30_88Q2112_defs.mak
+  include $(ROOT)\BSW\EthTrcv_30_88Q2112\mak\EthTrcv_30_88Q2112_check.mak
+endif
+
+ifeq ($(DRVTRANS_ETHMIIASR_USED),1)
+  include $(ROOT)\BSW\EthTrcv_30_Ethmii\mak\EthTrcv_30_Ethmii_rules.mak
+  include $(ROOT)\BSW\EthTrcv_30_Ethmii\mak\EthTrcv_30_Ethmii_defs.mak
+  include $(ROOT)\BSW\EthTrcv_30_Ethmii\mak\EthTrcv_30_Ethmii_check.mak
+endif
+
+ifeq ($(DRVTRANS_TJA1043CANDIOASR_USED),1)
+  include $(ROOT)\BSW\CanTrcv_30_Tja1043\mak\CanTrcv_30_Tja1043_rules.mak
+  include $(ROOT)\BSW\CanTrcv_30_Tja1043\mak\CanTrcv_30_Tja1043_defs.mak
+  include $(ROOT)\BSW\CanTrcv_30_Tja1043\mak\CanTrcv_30_Tja1043_check.mak
+endif
+
+ifeq ($(DRVTRANS_TJA1085FRSPIASR_USED),1)
+  include $(ROOT)\BSW\FrTrcv_30_Tja1085\mak\FrTrcv_30_Tja1085_rules.mak
+  include $(ROOT)\BSW\FrTrcv_30_Tja1085\mak\FrTrcv_30_Tja1085_defs.mak
+  include $(ROOT)\BSW\FrTrcv_30_Tja1085\mak\FrTrcv_30_Tja1085_check.mak
+endif
+
+ifeq ($(DRVTRANS_TLE7259LINDIOASR_USED),1)
+  include $(ROOT)\BSW\LinTrcv_30_Tle7259\mak\LinTrcv_30_Tle7259_rules.mak
+  include $(ROOT)\BSW\LinTrcv_30_Tle7259\mak\LinTrcv_30_Tle7259_defs.mak
+  include $(ROOT)\BSW\LinTrcv_30_Tle7259\mak\LinTrcv_30_Tle7259_check.mak
+endif
+
+ifeq ($(GW_ASRPDURCFG5_USED),1)
+  include $(ROOT)\BSW\PduR\mak\PduR_rules.mak
+  include $(ROOT)\BSW\PduR\mak\PduR_defs.mak
+  include $(ROOT)\BSW\PduR\mak\PduR_check.mak
+endif
+
+ifeq ($(IF_ASR4IFLIN_USED),1)
+  include $(ROOT)\BSW\LinIf\mak\LinIf_rules.mak
+  include $(ROOT)\BSW\LinIf\mak\LinIf_defs.mak
+  include $(ROOT)\BSW\LinIf\mak\LinIf_check.mak
+endif
+
+ifeq ($(IF_ASRIFCAN_USED),1)
+  include $(ROOT)\BSW\CanIf\mak\CanIf_rules.mak
+  include $(ROOT)\BSW\CanIf\mak\CanIf_defs.mak
+  include $(ROOT)\BSW\CanIf\mak\CanIf_check.mak
+endif
+
+ifeq ($(IF_ASRIFCRY_USED),1)
+  include $(ROOT)\BSW\CryIf\mak\CryIf_rules.mak
+  include $(ROOT)\BSW\CryIf\mak\CryIf_defs.mak
+  include $(ROOT)\BSW\CryIf\mak\CryIf_check.mak
+endif
+
+ifeq ($(IF_ASRIFETH_USED),1)
+  include $(ROOT)\BSW\EthIf\mak\EthIf_rules.mak
+  include $(ROOT)\BSW\EthIf\mak\EthIf_defs.mak
+  include $(ROOT)\BSW\EthIf\mak\EthIf_check.mak
+endif
+
+ifeq ($(IF_ASRIFFR_USED),1)
+  include $(ROOT)\BSW\FrIf\mak\FrIf_rules.mak
+  include $(ROOT)\BSW\FrIf\mak\FrIf_defs.mak
+  include $(ROOT)\BSW\FrIf\mak\FrIf_check.mak
+endif
+
+ifeq ($(IF_ASRIFSOAD_USED),1)
+  include $(ROOT)\BSW\SoAd\mak\SoAd_rules.mak
+  include $(ROOT)\BSW\SoAd\mak\SoAd_defs.mak
+  include $(ROOT)\BSW\SoAd\mak\SoAd_check.mak
+endif
+
+ifeq ($(MCAL_TC3XXINF01ASR4SUB_USED),1)
+  include $(ROOT)\BSW\Mcal_Tc3xx\mak\Mcal_Tc3xx_rules.mak
+  include $(ROOT)\BSW\Mcal_Tc3xx\mak\Mcal_Tc3xx_defs.mak
+  include $(ROOT)\BSW\Mcal_Tc3xx\mak\Mcal_Tc3xx_check.mak
+endif
+
+ifeq ($(NM_ASR4NMCAN_USED),1)
+  include $(ROOT)\BSW\CanNm\mak\CanNm_rules.mak
+  include $(ROOT)\BSW\CanNm\mak\CanNm_defs.mak
+  include $(ROOT)\BSW\CanNm\mak\CanNm_check.mak
+endif
+
+ifeq ($(NM_ASR4NMFR_USED),1)
+  include $(ROOT)\BSW\FrNm\mak\FrNm_rules.mak
+  include $(ROOT)\BSW\FrNm\mak\FrNm_defs.mak
+  include $(ROOT)\BSW\FrNm\mak\FrNm_check.mak
+endif
+
+ifeq ($(NM_ASR4NMIF_USED),1)
+  include $(ROOT)\BSW\Nm\mak\Nm_rules.mak
+  include $(ROOT)\BSW\Nm\mak\Nm_defs.mak
+  include $(ROOT)\BSW\Nm\mak\Nm_check.mak
+endif
+
+ifeq ($(NM_ASRNMUDP_USED),1)
+  include $(ROOT)\BSW\UdpNm\mak\UdpNm_rules.mak
+  include $(ROOT)\BSW\UdpNm\mak\UdpNm_defs.mak
+  include $(ROOT)\BSW\UdpNm\mak\UdpNm_check.mak
+endif
+
+ifeq ($(SECURITY_ASRCSM_USED),1)
+  include $(ROOT)\BSW\Csm\mak\Csm_rules.mak
+  include $(ROOT)\BSW\Csm\mak\Csm_defs.mak
+  include $(ROOT)\BSW\Csm\mak\Csm_check.mak
+endif
+
+ifeq ($(SECURITY_VSECPRIM_USED),1)
+  include $(ROOT)\BSW\vSecPrim\mak\vSecPrim_rules.mak
+  include $(ROOT)\BSW\vSecPrim\mak\vSecPrim_defs.mak
+  include $(ROOT)\BSW\vSecPrim\mak\vSecPrim_check.mak
+endif
+
+ifeq ($(SYSSERVICE_ASRDET_USED),1)
+  include $(ROOT)\BSW\Det\mak\Det_rules.mak
+  include $(ROOT)\BSW\Det\mak\Det_defs.mak
+  include $(ROOT)\BSW\Det\mak\Det_check.mak
+endif
+
+ifeq ($(SYSSERVICE_IPBASE_USED),1)
+  include $(ROOT)\BSW\IpBase\mak\IpBase_rules.mak
+  include $(ROOT)\BSW\IpBase\mak\IpBase_defs.mak
+  include $(ROOT)\BSW\IpBase\mak\IpBase_check.mak
+endif
+
+ifeq ($(TP_ASR4TPCAN_USED),1)
+  include $(ROOT)\BSW\CanTp\mak\CanTp_rules.mak
+  include $(ROOT)\BSW\CanTp\mak\CanTp_defs.mak
+  include $(ROOT)\BSW\CanTp\mak\CanTp_check.mak
+endif
+
+ifeq ($(TP_ASRTPDOIP_USED),1)
+  include $(ROOT)\BSW\DoIP\mak\DoIP_rules.mak
+  include $(ROOT)\BSW\DoIP\mak\DoIP_defs.mak
+  include $(ROOT)\BSW\DoIP\mak\DoIP_check.mak
+endif
+
+ifeq ($(TP_ASRTPTCPIP_USED),1)
+  include $(ROOT)\BSW\TcpIp\mak\TcpIp_rules.mak
+  include $(ROOT)\BSW\TcpIp\mak\TcpIp_defs.mak
+  include $(ROOT)\BSW\TcpIp\mak\TcpIp_check.mak
+endif
+
+ifeq ($(TP_ISO10681_USED),1)
+  include $(ROOT)\BSW\Tp_Iso10681\mak\Tp_Iso10681_rules.mak
+  include $(ROOT)\BSW\Tp_Iso10681\mak\Tp_Iso10681_defs.mak
+  include $(ROOT)\BSW\Tp_Iso10681\mak\Tp_Iso10681_check.mak
+endif
+
+ifeq ($(VLINKGEN_USED),1)
+  include $(ROOT)\BSW\vLinkGen\mak\vLinkGen_rules.mak
+  include $(ROOT)\BSW\vLinkGen\mak\vLinkGen_defs.mak
+  include $(ROOT)\BSW\vLinkGen\mak\vLinkGen_check.mak
+endif
+
+ifeq ($(VSTDLIB_GENERICASR_USED),1)
+  include $(ROOT)\BSW\VStdLib\mak\VStdLib_rules.mak
+  include $(ROOT)\BSW\VStdLib\mak\VStdLib_defs.mak
+  include $(ROOT)\BSW\VStdLib\mak\VStdLib_check.mak
+endif
+
+MSR_COMPONENTS_SOURCES                                           += $(addprefix $(GLOBAL_COMP_DIR)\,$(CC_FILES_TO_BUILD))
+MSR_COMPONENTS_ASM_SOURCES                                       += $(addprefix $(GLOBAL_COMP_DIR)\,$(ASM_FILES_TO_BUILD))
+MSR_COMPONENTS_DATA                                              += $(GENERATED_SOURCE_FILES)
+ADDITIONAL_INCLUDES                                              += $(addprefix $(ROOT)\$(GLOBAL_COMP_DIR)\,$(CC_INCLUDE_PATH))
+
+# BSW components in internal folder 
+MSR_COMPONENTS_SOURCES                                           += $(addprefix ..\internal\external\$(GLOBAL_COMP_DIR)\,$(CC_FILES_TO_BUILD))
+MSR_COMPONENTS_ASM_SOURCES                                       += $(addprefix ..\internal\external\$(GLOBAL_COMP_DIR)\,$(ASM_FILES_TO_BUILD))
+ADDITIONAL_INCLUDES                                              += $(addprefix ..\internal\external\$(GLOBAL_COMP_DIR)\,$(CC_INCLUDE_PATH))
+
+
+# Additional BSW include directories
+ADDITIONAL_INCLUDES                                              += $(ROOT)\BSW\_Common
+
+###############################################################################
+#  Application (DemoFblBrs)
+###############################################################################
+
+ADDITIONAL_INCLUDES += ..\..\..\_common\code\fbl\core
+

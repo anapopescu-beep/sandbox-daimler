@@ -1,0 +1,147 @@
+/*@!Encoding:1252*/
+
+/*
+VSM.cin
+Distributed with package 1.2.0
+Include Version 1.0.0
+
+This include must be assigned only once and only in the Tx node of the Secured tick count sender.
+*/
+
+variables
+{
+  // local secTickClock
+  mstimer tVSM_secLocalTickCountTimer; 
+  qword   gVSM_secLocalTickCount; 
+  
+  // VSM Tx Timer for Sec Tic Count
+  mstimer tVSM_secVSMTimer;
+  int     gVSM_tickCountTransmits; // counter for startup behaviour
+}
+
+void VSM_OnInit ()
+{
+}
+
+void VSM_OnStart ()
+{
+}
+
+void VSM_OnStop ()
+{
+}
+
+void VSM_StartStop (int enable)
+{
+  if (enable != 0)
+  {
+    if ( !isTimerActive( tVSM_secLocalTickCountTimer ))
+    {
+      SetTimerCyclic( tVSM_secLocalTickCountTimer, 10, 10); // internal secTickCount
+    }      
+    if ( !isTimerActive( tVSM_secVSMTimer ))
+    {
+      gVSM_tickCountTransmits = 0;
+      SetTimerCyclic( tVSM_secVSMTimer, 50, 100); // VSM Tx 
+    }
+  }
+  else
+  {
+    if ( isTimerActive( tVSM_secVSMTimer ))
+    {
+      cancelTimer( tVSM_secVSMTimer ); // VSM Tx 
+    }
+    if ( isTimerActive( tVSM_secLocalTickCountTimer ))
+    {
+      cancelTimer( tVSM_secLocalTickCountTimer ); // internal secTickCount
+    }      
+  }
+}
+
+// internal secTickcount
+on timer tVSM_secLocalTickCountTimer
+{
+  ++gVSM_secLocalTickCount;
+}
+
+qword VSM_GetLocalTickCount()
+{
+  return gVSM_secLocalTickCount;
+}
+
+void VSM_SetLocalTickCount(qword newSecTickCount)
+{
+  gVSM_secLocalTickCount = newSecTickCount;
+}
+
+// VSM sec Tick Count transmission 
+on timer tVSM_secVSMTimer
+{  
+  VSM_SendSECUREDTICKCOUNT();
+  
+  if ( gVSM_tickCountTransmits < 10)
+  {
+    ++gVSM_tickCountTransmits;
+    
+    if ( 10 == gVSM_tickCountTransmits)
+    {
+      SetTimerCyclic( tVSM_secVSMTimer, 1000, 1000);
+    }
+  }
+}
+
+void VSM_SendSECUREDTICKCOUNT() // Secured Tick Count Broadcast
+{
+  char apId[50] = "SECUREDTICKCOUNT";
+  byte payload[6];
+  dword returnValue = 0;
+  byte tempFreshness[5];
+  int ret;
+  
+  ret = VSM_ConvertFreshnessToArray(tempFreshness, VSM_GetLocalTickCount());
+  if( ret != 0 )
+  {
+    write("Error during Secured Tick Count Transmission in CAPL function ConvertFreshnessToArray, Return value=%i", ret);
+  }
+  payload[0] = /*reserved*/0x00;
+  payload[1] = /*data*/tempFreshness[0];
+  payload[2] = /*data*/tempFreshness[1];
+  payload[3] = /*data*/tempFreshness[2];
+  payload[4] = /*data*/tempFreshness[3];
+  payload[5] = /*data*/tempFreshness[4];
+   
+  //write("[%.6f %NODE_NAME%] %s Freshness: %x %x %x %x %x", TimeNowNS()/1e9, apId, tempFreshness[0], tempFreshness[1], tempFreshness[2], tempFreshness[3], tempFreshness[4]);
+  
+  SetBusContext(gILCAN1_BusContext);
+  returnValue = LocalSecurityTransmitApplicationProtocol(apId, payload, 6);
+}
+
+int VSM_ConvertFreshnessToArray(byte array[], qword freshness)
+{
+  if( elCount(array) < 5 )
+    return -1; 
+
+  array[0] = (freshness >> 32) & 0xFF;
+  array[1] = (freshness >> 24) & 0xFF;
+  array[2] = (freshness >> 16) & 0xFF;
+  array[3] = (freshness >> 8) & 0xFF;
+  array[4] = freshness & 0xFF;  
+  
+  return 0;
+}
+
+int VSM_ConvertFreshnessArrayToQword(byte array[], qword& freshness)
+{
+  if( elCount(array) < 5 )
+    return -1;
+  
+  freshness = array[4] + 
+              ((qword)array[3] << 8) + 
+              ((qword)array[2] << 16) + 
+              ((qword)array[1] << 24) + 
+              ((qword)array[0] << 32);
+  
+  return 0;
+}
+
+// EOF

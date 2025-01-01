@@ -1,0 +1,35 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Test type: automatic
+Requirement under test: ARCH_SW_DIA_0565; ARCH_SW_DIA_0573;
+ARCH_SW_DIA_0565: Service 0x22 (Read Data By Identifier) will be implemented for DID 0240 (Internal ECU Information)
+ARCH_SW_DIA_0573: Bytes #5-#6: ?bits 0-7: ECU Temperature Any value from 0x0A -> 0x043F Offset is -52.7875 (i.e. 0x0A = -50 V) Resolution is 0.2325 (e.g. 0x10 = -49.0675 V) Range is -50 deg C -> 200 deg C Range 0x00 -> 0x09 is Undefined Range 0x0440 -> 0xFFFF is Undefined 
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0240_Internal_ECU_information_Read_ECU_Temperature_ReadData*.
+
+Action: ARCH_SW_DIA_0565; ARCH_SW_DIA_0573
+
+	Step 3: Send diag request for 22 0220 and wait for timeout error 
+		Expected result:  Timeout received.
+
+	Step 4: Check if breakpoint from function DIA_runDid0240_Internal_ECU_information_Read_ECU_Temperature_ReadData was reached. 
+		Expected result:  BP was reached.
+
+	Step 5: Evaluate *Data pointer 
+		Expected result:  Byte was read.
+
+Postcondition
+
+	Step 6: Return ECU to default values

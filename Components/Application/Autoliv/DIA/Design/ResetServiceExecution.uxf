@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <type>com.baselet.element.old.allinone.ActivityDiagramText</type>
+    <coordinates>
+      <x>0</x>
+      <y>72</y>
+      <w>2554</w>
+      <h>864</h>
+    </coordinates>
+    <panel_attributes>title:ResetServiceExecution
+Start
+Get locCurrentMode from DCMEcuReset
+SBC_REFRESH_WDG_REQUEST
+	[RTE_MODE_DcmEcuReset_SOFT]
+	Rte_Call_Pp_MBBL_ApplicationShutdown_ShutdownAppl_SoftReset
+		
+	[RTE_MODE_DcmEcuReset_JUMPTOBOOTLOADER]
+	[RTE_MODE_DcmEcuReset_JUMPTOSYSSUPPLIERBOOTLOADER]
+	[RTE_MODE_DcmEcuReset_HARD]
+	Rte_Call_Pp_MBBL_ApplicationShutdown_ShutdownAppl_HardReset
+
+	[RTE_MODE_DcmEcuReset_EXECUTE]
+	If
+		[locPreviousMode = RTE_MODE_DcmEcuReset_SOFT]
+		RCM_runNotifyResetCause(SoftReset)
+		Rte_Call_Pp_ResetExecution_SoftReset
+			
+		If
+		[locPreviousMode = RTE_MODE_DcmEcuReset_HARD]
+		[locPreviousMode = RTE_MODE_DcmEcuReset_JUMPTOBOOTLOADER]
+		[locPreviousMode = RTE_MODE_DcmEcuReset_JUMPTOSYSSUPPLIERBOOTLOADER]
+
+			If 
+			[[locPreviousMode != RTE_MODE_DcmEcuReset_HARD]
+			RCM_runNotifyResetCause(BTLReset)
+			
+			RCM_runNotifyResetCause(HardReset)
+			
+			Rte_Call_Pp_ResetExecution_HardReset
+End
+
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

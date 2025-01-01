@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0025, ARCH_SW_CIL_0003
+ARCH_SW_CIL_0025: If value for Signal Presf_Enbl_ST3 is not 1 (is 0 or 3) then cycle request coming from PRE-SAFE or ORC should be inhibitted/aborted 
+ARCH_SW_CIL_0003: Signal Presf_Enbl_ST3 shall be send though application when it�s needed.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Enbl_ST3 to KU8_ZERO.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli at line 'cil_ManageInputSignals();'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_PresfEnableInhibition);'.
+
+Action: ARCH_SW_CIL_0025
+
+	Step 6: Check if CPU stopped in function cil_ManageInhibitConditions() at line 'CIL_SET_INHIB_MASK_OFF (KU8_CIL_PresfEnableInhibition);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0003
+
+	Step 7: Evaluate if variable cil_stPresfActAdjFrame.Presf_Enbl_ST3 is equal to KU8_ZERO 
+		Expected result:  KU8_ZERO.
+
+Postcondition
+
+	Step 8: Return ECU to default values

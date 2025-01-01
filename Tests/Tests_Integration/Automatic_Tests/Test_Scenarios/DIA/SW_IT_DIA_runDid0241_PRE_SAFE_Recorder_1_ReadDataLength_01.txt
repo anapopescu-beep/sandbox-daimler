@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0240; ARCH_SW_DIA_0246; ARCH_SW_DIA_0247
+ARCH_SW_DIA_0240: Service 0x22 (Read Data By Identifier) & 0x2E (Write Data By Identifier) for DID 0x0241 will be implemented
+ARCH_SW_DIA_0241: Service shall be available in Default session, Extended session Update session and Development session
+ARCH_SW_DIA_0242: Service shall be available in the following forms of Authentication: Development ENHANCED, Production After-Sales ENHANCED, After-Sales After-Sales BASIC, Internal Diagnostic Test Tool, ePTI Test Tool
+ARCH_SW_DIA_0243: Response data shall be 22 bytes long
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set breakpoint in function *DIA_runDid0241_PRE_SAFE_Recorder_1_ReadDataLength*.
+
+	Step 3: Send diag request for 22 02 41, and wait for timeout error. 
+		Expected result:  Timeout error.
+
+	Step 4: Evaluate response data lenght. 
+		Expected result:  response data lenght is 22.
+
+Postcondition
+
+	Step 5: Return ECU to default values

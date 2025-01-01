@@ -1,0 +1,44 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: Yes
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_PMP_0381, ARCH_SW_PMP_0382
+ARCH_SW_PMP_0381: This function shall return the NVP Parameter that indicates the ECU resistance.
+ARCH_SW_PMP_0382: The NVP_u16EcuResistance parameter shall be read.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Reset the debugger.
+
+	Step 3: Run the debugger.
+
+Action: ARCH_SW_PMP_0381
+
+	Step 4: Set a breakpoint in function BFE_runScheduleStep at the call for M_ManageStepEvents function 
+		Expected result:  BP reached.
+
+	Step 5: Set a breakpoint in function M_ManageStepEvents at the RTE Call for PMP_runGetBoardResistance function 
+		Expected result:  BP reached.
+
+	Step 6: Overwrite variable NVP_u16EcuResistance with value 0x0030 
+		Expected result:  Overwritten global variable with 0x0030
+
+	Step 7: Set a breakpoint in function after RTE Call for PMP_runGetBoardResistance function
+		Expected result:  BP reached.
+
+Action: ARCH_SW_PMP_0382
+
+	Step 8: Evaluate local variable pu16Resistance_mOhm 
+		Expected result:  Variable read equal to 0x0030
+
+Postcondition
+
+	Step 9: Return ECU to default values

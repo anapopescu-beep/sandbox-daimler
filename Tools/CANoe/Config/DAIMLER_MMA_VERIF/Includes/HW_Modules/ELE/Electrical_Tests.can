@@ -1,0 +1,2981 @@
+/*@!Encoding:1252*/
+/***********************************AUTOLIV ELECTRONICS document********************************
+Module Notes: Test module for Electrical_Tests.
+************************************************************************************************
+Mks Information:
+$Author: Agapi Grigore (agapi.grigore) $
+$Date: 2024/03/06 09:01:55CET $
+$ProjectName: e:/MKSProjects/SBE/PP/DAIMLER_MMA/Phase_02/View_Development/Tools/CANoe/Config/DAIMLER_MMA_VERIF/Includes/HW_Modules/ELE/project.pj $
+***********************************************************************************************/
+
+includes
+{
+  #include "..\..\SW_Modules\SW_Modules_Project\Project_Includes_Configuration.cin"
+}
+
+variables
+{
+  // Input project **************************************************************************************************
+  enum project {DAI_MMA, AUDI_TR6, eCS};
+  int Project = DAI_MMA;
+  int iDoesProjectHaveDTCs = 1; // 0 for no DTC readout.
+  
+  message 0x698 StatusFrame_LH;
+  message 0x699 StatusFrame_RH;
+  
+  byte bReadLastResetParameters[3]     = {0x22, 0xFD, 0x08};
+  byte bReadLastWarmResetParameters[3] = {0x22, 0xFD, 0x09};
+  
+  const float fAmplification = 4;
+  const int DischargeDuration = 500;
+  
+  // Test will be stopped and a messagebox will appear if the AEC/DTC status is != TestedNotPresent or NotExecuted.
+  // '0xFF' for no special considerations.
+  byte bTestInterruptAECs[1] = {0xFF};
+  dword bTestInterruptDTCs[3] = {DTC_PROGRAM_MEMORY_ERROR, DTC_RUNTIME_ERROR, DTC_INCORRECT_SW_MODULES};
+ 
+  // To modify before start:
+  // 1. ECUStatusPreconditions(): preconditions for ECU read status: e.g. authentication for DAI MMA
+  // 2. ECUPreconditions(): any needed steps to be done BEFORE any sequence starts; e.g. DAI MMA needs setSecOCTickCount and clear all so that first iteration does not fail.
+  // Optional:
+  // 3. MainTest(): add new sequence definitions here (some sysvars will need to be modified aswell).
+  //*****************************************************************************************************************
+  
+  char cLogsPath_CSV[5000];
+  char cFileName_CSV[2000];
+  char cLogPathAndName_CSV[7000];
+  long lFileHandle_CSV;
+  char cXLSXTemplatePathandName[5000];
+  char cXLSXTargetSheetName[3000];
+  char cExcelRow[10000];
+  char cTestReportPathandName_Main[5000];
+  char cZipFile[1000];
+  
+  int iIteration;
+  int iActiveTestSequence;
+  float fStartTime;
+  int iScenario;
+  
+  char cRobustnessPanel[300] = "Robustness Tests";
+  char cSequence_Input_Control[30];
+  char[50] cStatus_Name[double, 20];
+  msTimer timerSequenceRunningLED;
+  char cTestErrors[2000];
+  enum side {LH, RH};
+  int ActiveSide;
+  
+  long _PASS_Color    = 0x00FF00; // Lime.
+  long _WARNING_Color = 0xFFFF00; // Yellow.
+  long _FAIL_Color    = 0xFF0000; // Red.
+  long _WHITE_Color   = 0xFFFFFF; // White.
+}
+
+on timer timerSequenceRunningLED
+{
+  if( @sysvar::ElectricalTestsConfig::sysStatusLed[iActiveTestSequence] != 1)
+  {
+    @sysvar::ElectricalTestsConfig::sysStatusLed[iActiveTestSequence] = 1;
+  }
+  else
+  {
+    @sysvar::ElectricalTestsConfig::sysStatusLed[iActiveTestSequence] = 2;
+  }
+}
+
+on sysvar sysvar::ElectricalTestsConfig::sysTestControl
+{
+  switch(@this)
+  {
+    case sysvar::ElectricalTestsConfig::sysTestControl::PauseTestSequence:
+    {
+      sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Pausing...");
+      setControlBackColor(cRobustnessPanel, "test_control_status", _WARNING_Color);
+      break;
+    }
+    case sysvar::ElectricalTestsConfig::sysTestControl::GenerateIntermediateXLSX:
+    {
+      sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Completing iteration...");
+      setControlBackColor(cRobustnessPanel, "test_control_status", _WARNING_Color);
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+on sysvar_update sysvar::ElectricalTestsConfig::sysBLFToggle_All
+{
+  int i;
+  
+  for(i = 0; i < sysGetVariableArraySize(sysvar::ElectricalTestsConfig::sysTestSelect); i++)
+  {
+    @sysvar::ElectricalTestsConfig::sysBLFEnable[i] = @sysvar::ElectricalTestsConfig::sysBLFToggle_All;
+  }
+}
+
+/// <Preconditions>
+void ECUStatusPreconditions()
+{
+  switch(Project)
+  {
+    case DAI_MMA:
+    { 
+      WaitDebounceTimer();
+      break;
+    }
+    case AUDI_TR6:
+      break;
+    case eCS:
+      break;
+    default:
+      break;
+  }
+}
+
+/// <Preconditions>
+void ELE_Test_PreConditions()
+{
+  stack char cTestCaseTitle_PreTS[500];
+  stack char cLogPath_Electrical_Tests[5000];
+  stack char cTimeBuffer_PreTS[64];
+  
+  lFileHandle_CSV = 0;
+  
+  DisplayRequirementsInfo();
+  AddTestSetupInformation();
+  
+  getLocalTimeString(cTimeBuffer_PreTS);
+  str_replace(cTimeBuffer_PreTS, " ", "_");
+  str_replace(cTimeBuffer_PreTS, ":", "_");
+  str_replace(cTimeBuffer_PreTS, "__", "_");
+  
+  sysSetVariableString("ElectricalTestsConfig", "sysActiveSequencePanel", cXLSXTargetSheetName);
+  
+  // Set .CSV log path and name.
+  sysGetVariableString("ElectricalTestsConfig", "sysLogsPath_CSV", cLogsPath_CSV, elCount(cLogsPath_CSV));
+  
+  testGetCurrentTestCaseTitle(cTestCaseTitle_PreTS, elcount(cTestCaseTitle_PreTS));
+  strncpy(cFileName_CSV, cTestCaseTitle_PreTS, iOriginalTestCaseTitleLength + 1);
+  strncat(cFileName_CSV, "_", elcount(cFileName_CSV));
+  strncat(cFileName_CSV, cTimeBuffer_PreTS, elcount(cFileName_CSV));
+  strncat(cFileName_CSV, ".csv", elcount(cFileName_CSV));
+  
+  snprintf(cLogPathAndName_CSV, elcount(cLogPathAndName_CSV), "%s\\%s.", cLogsPath_CSV, cFileName_CSV);
+  
+  // Set .ASC & .BLF logs path and names.
+  sysGetVariableString("ElectricalTestsConfig", "sysLogsPath", cLogPath_Electrical_Tests, elCount(cLogPath_Electrical_Tests));
+  snprintf(cLogPath,  elcount(cLogPath), "%s", cLogPath_Electrical_Tests);
+  
+  fStartTime = timeNowInt64()/1000000000;
+  
+  enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 1);
+}
+
+/// <Micro_Cuts>
+testcase _1_MicroCutA_10us_EMCTP()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 4000;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / (iMaxDelay / iDelayStep);
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to 10 us microcuts");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+//  Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+  
+  for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+  {
+    // Iteration info table.
+    snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+    snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms.;", iScenario, cXLSXTargetSheetName, iDelay);  // First column.
+    lIterationTable = TestInfoTable(cTable);
+    
+    TestInfoHeadingBegin(lIterationTable, 0);
+    TestInfoCell(lIterationTable, " Additional conditions:");
+    TestInfoHeadingEnd(lIterationTable);
+    
+    snprintf(cTable, elcount(cTable), "Delay %i ms.", iDelay);
+    TestInfoRow(lIterationTable, 0);
+    TestInfoCell(lIterationTable, cTable);
+    testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+    // ***************
+    
+    fPulseLength = iMicroCutDuration + iAfterMicroOnDuration + iDelay;
+    
+    // Iteration start.
+    _1_MicroCutA_10us_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, iMicroCutDuration);
+    
+    iIteration = iIteration + 1;
+    iScenario = iScenario + 1;
+    
+    // Increment progress bar.
+    IncrementProgress(fIncrementProgressBar);
+    
+    // Check for skip panel input.
+    if(CheckforPanelInput() == 0)
+    {
+      iDelay = iMaxDelay + 1;
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _1_MicroCutA_10us_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, int iMicroCutDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 1;
+//  //(Ua = 13.5, t1 = 1ms, t2 = 4000ms, td = 0.1ms, ti = 10 to 8000)
+   TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, 1, iMicroCutDuration, 0.01, iDelay);
+   
+    // Start .ASC and .BLF logging.
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, 1);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+    
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase _2_MicroCutB_100us_EMCTP()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 4000;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / (iMaxDelay / iDelayStep);
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to 100 us microcuts");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+//  Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+  
+  for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+  {
+    // Iteration info table.
+    snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+    snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms.;", iScenario, cXLSXTargetSheetName, iDelay);  // First column.
+    lIterationTable = TestInfoTable(cTable);
+    
+    TestInfoHeadingBegin(lIterationTable, 0);
+    TestInfoCell(lIterationTable, " Additional conditions:");
+    TestInfoHeadingEnd(lIterationTable);
+    
+    snprintf(cTable, elcount(cTable), "Delay %i ms.", iDelay);
+    TestInfoRow(lIterationTable, 0);
+    TestInfoCell(lIterationTable, cTable);
+    testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+    // ***************
+    
+    fPulseLength = iMicroCutDuration + iAfterMicroOnDuration + iDelay;
+    
+    // Iteration.
+    _1_MicroCutA_100us_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, iMicroCutDuration);
+    
+    iIteration = iIteration + 1;
+    iScenario = iScenario + 1;
+    
+    // Increment progress bar.
+    IncrementProgress(fIncrementProgressBar);
+    
+    // Check for skip panel input.
+    if(CheckforPanelInput() == 0)
+    {
+      iDelay = iMaxDelay + 1;
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _1_MicroCutA_100us_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, int iMicroCutDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 15;
+//  //(Ua = 13.5, t1 = 1ms, t2 = 4000ms, td = 0.01ms, ti = 10 to 8000)
+   TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, 1, iMicroCutDuration, 0.1, iDelay);
+   
+    // Start .ASC and .BLF logging.
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, 1);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+    
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase _3_MicroCutC_5ms_EMCTP()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 100;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / (iMaxDelay / iDelayStep);
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to 5 ms microcuts");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+  
+  for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+  {
+    // Iteration info table.
+    snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+    snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms.;", iScenario, cXLSXTargetSheetName, iDelay);  // First column.
+    lIterationTable = TestInfoTable(cTable);
+    
+    TestInfoHeadingBegin(lIterationTable, 0);
+    TestInfoCell(lIterationTable, " Additional conditions:");
+    TestInfoHeadingEnd(lIterationTable);
+    
+    snprintf(cTable, elcount(cTable), "Delay %i ms.", iDelay);
+    TestInfoRow(lIterationTable, 0);
+    TestInfoCell(lIterationTable, cTable);
+    testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+    // ***************
+    
+    fPulseLength = iMicroCutDuration + iAfterMicroOnDuration + iDelay;
+    
+    // Iteration.
+    _3_MicroCutC_5ms_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, iMicroCutDuration);
+    
+    iIteration = iIteration + 1;
+    iScenario = iScenario + 1;
+    
+    // Increment progress bar.
+    IncrementProgress(fIncrementProgressBar);
+    
+    // Check for skip panel input.
+    if(CheckforPanelInput() == 0)
+    {
+      iDelay = iMaxDelay + 1;
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _3_MicroCutC_5ms_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, int iMicroCutDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 1;
+//  (Ua = 13.5, t1 = 10ms, t2 = 100ms, td = 5ms, ti = 10 to 8000)
+    TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, 10, iMicroCutDuration, 5, iDelay);
+    
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, 1);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+  
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase _4_MicroCutD_50ms_EMCTP()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 1000;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / (iMaxDelay / iDelayStep);
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to 50 ms microcuts");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+  
+  for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+  {
+    // Iteration info table.
+    snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+    snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms.;", iScenario, cXLSXTargetSheetName, iDelay);  // First column.
+    lIterationTable = TestInfoTable(cTable);
+    
+    TestInfoHeadingBegin(lIterationTable, 0);
+    TestInfoCell(lIterationTable, " Additional conditions:");
+    TestInfoHeadingEnd(lIterationTable);
+    
+    snprintf(cTable, elcount(cTable), "Delay %i ms.", iDelay);
+    TestInfoRow(lIterationTable, 0);
+    TestInfoCell(lIterationTable, cTable);
+    testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+    // ***************
+    
+    fPulseLength = iMicroCutDuration + iAfterMicroOnDuration + iDelay;
+    
+    // Iteration.
+    _4_MicroCutD_50ms_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, iMicroCutDuration);
+    
+    iIteration = iIteration + 1;
+    iScenario = iScenario + 1;
+    
+    // Increment progress bar.
+    IncrementProgress(fIncrementProgressBar);
+    
+    // Check for skip panel input.
+    if(CheckforPanelInput() == 0)
+    {
+      iDelay = iMaxDelay + 1;
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _4_MicroCutD_50ms_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, int iMicroCutDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 1;
+//  (Ua = 13.5, t1 = 100ms, t2 = 1000ms, td = 50ms, ti = 10 to 8000)
+    TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, 100, iMicroCutDuration, 50, iDelay);
+    
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, 1);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+  
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase _5_MicroCutE_300ms_EMCTP()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 6000;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / (iMaxDelay / iDelayStep);
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to 300 ms microcuts");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+  
+  for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+  {
+    // Iteration info table.
+    snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+    snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms.;", iScenario, cXLSXTargetSheetName, iDelay);  // First column.
+    lIterationTable = TestInfoTable(cTable);
+    
+    TestInfoHeadingBegin(lIterationTable, 0);
+    TestInfoCell(lIterationTable, " Additional conditions:");
+    TestInfoHeadingEnd(lIterationTable);
+    
+    snprintf(cTable, elcount(cTable), "Delay %i ms.", iDelay);
+    TestInfoRow(lIterationTable, 0);
+    TestInfoCell(lIterationTable, cTable);
+    testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+    // ***************
+    
+    fPulseLength = iMicroCutDuration + iAfterMicroOnDuration + iDelay;
+    
+    // Iteration.
+    _5_MicroCutE_300ms_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, iMicroCutDuration);
+    
+    iIteration = iIteration + 1;
+    iScenario = iScenario + 1;
+    
+    // Increment progress bar.
+    IncrementProgress(fIncrementProgressBar);
+    
+    // Check for skip panel input.
+    if(CheckforPanelInput() == 0)
+    {
+      iDelay = iMaxDelay + 1;
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _5_MicroCutE_300ms_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, int iMicroCutDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 1;
+//  (Ua = 13.5, t1 = 600ms, t2 = 6000ms, td = 300ms, ti = 10 to 8000)
+    TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, 600, iMicroCutDuration, 300, iDelay);
+    
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, 1);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+  
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_1()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[5] = {0.1, 0.5, 1, 2, 3};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_2()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[5] = {4, 5, 6, 7, 8};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_3()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[5] = {9, 10, 20, 30, 40};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_4()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[5] = {50, 60, 70, 80, 90};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_5()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[5] = {100, 200, 300, 400, 500};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_6()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[5] = {100, 200, 300, 400, 500};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testcase _6_MicroCutF_EMCTP_Part_7()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  
+  float fMicroCutDuration[2] = {1100, 1200};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iMicroCutDuration = 0;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroCutDuration) - elcount(fMicroCutDuration));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroCutDuration); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s", iDelay, fMicroCutDuration[i], cOperatingConditions);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      fPulseLength = fMicroCutDuration[i] + iAfterMicroOnDuration + iDelay;
+      
+      // Iteration.
+      _6_MicroCutF_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroCutDuration[i]);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroCutDuration);
+      }
+    }
+  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _6_MicroCutF_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, float fMicroCutDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 1;
+//  (Ua = 13.5, t1 = t2 = td = to have only one cycle, ti = 10 to 8000)
+    TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, (fMicroCutDuration + 1), 0, fMicroCutDuration, iDelay);
+    
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, iDelay);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+    
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase _7_MicroCutG_EMCTP()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  stack int iGravityLevel = 2;
+  
+  float fMicroPulseWidth[5] = {400, 500, 700, 1000, 1500};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroPulseWidth) - elcount(fMicroPulseWidth));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  // Power off generator.
+  OutputOff();
+  Wait(DischargeDuration);
+
+  for(i = 0; i < elcount(fMicroPulseWidth); i++)
+  {
+    iScenario = i + 1;
+    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+    {
+      // Iteration info table.
+      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s <p>Gravity level: %i;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions, iGravityLevel); // First column.
+      lIterationTable = TestInfoTable(cTable);
+      
+      TestInfoHeadingBegin(lIterationTable, 0);
+      TestInfoCell(lIterationTable, " Additional conditions:");
+      TestInfoHeadingEnd(lIterationTable);
+      
+      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s; Gravity level: %s", iDelay, fMicroPulseWidth[i], cOperatingConditions, iGravityLevel);
+      TestInfoRow(lIterationTable, 0);
+      TestInfoCell(lIterationTable, cTable);
+      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+      // ***************
+      
+      // Iteration.
+      fPulseLength = fMicroPulseWidth[i] * 2;
+      _7_MicroCutG_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroPulseWidth[i], iAfterMicroOnDuration);
+      
+      iIteration = iIteration + 1;
+      
+      // Increment progress bar.
+      IncrementProgress(fIncrementProgressBar);
+      
+      // Check for skip panel input.
+      if(CheckforPanelInput() == 0)
+      {
+        iDelay = iMaxDelay + 1;
+        i = elcount(fMicroPulseWidth);
+      }
+    }
+  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction _7_MicroCutG_EMCTP_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, float fMicroPulseWidth, int iAfterMicroOnDuration)
+{
+    testStep("STEP", "Load Pulse.");
+//  Resolution = 1;
+//  (Ua = 13.5, t1 = 10ms, t2 = 100ms, td = 5ms, ti = 10 to 8000)
+    TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, fPulseLength, fPulseLength * 10, fMicroPulseWidth, iDelay);
+    
+    testStep("STEP", "Start logging.");
+    ELE_StartLogging(iScenario, iDelay);
+    
+    testStep("STEP", "Power on.");
+    TekSigGen_OutputAndTrigger(sSigGenAddress);
+    
+    fPulseLength = (fPulseLength * 10) + iAfterMicroOnDuration + iDelay;
+    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+    Wait(fPulseLength + 2000);
+    testStepPass("", "Pulse completed.");
+    
+    CheckECUStatus();
+    
+    testStep("STEP", "Power off.");
+    OutputOff();
+    
+    PostTS_StopLogging();
+    
+    testStep("STEP", "Wait discharge time.");
+    Wait(DischargeDuration);
+}
+
+/// <Micro_Cuts>
+testcase Custom_Profile()
+{
+  stack long lIterationTable = 0;
+  stack char cTable[1500];
+  stack char cOperatingConditions[2] = "C";
+  stack int iGravityLevel = 2;
+  
+  float fMicroPulseWidth[5] = {400, 500, 700, 1000, 1500};
+  
+  // Specific Crank Variables
+  float fPulseLength   = 1;
+  int iDelay           = 10;
+  const int iMinDelay  = 10;
+  const int iMaxDelay  = 8000;
+  const int iDelayStep = 5;
+  const int iAfterMicroOnDuration = 7000;
+  float fInitialVoltage = 13.5;
+  int logIteration = 0;
+  stack float fIncrementProgressBar = 100.0 / ((iMaxDelay / iDelayStep) * elcount(fMicroPulseWidth));
+  int i;
+  
+  iScenario = 1;
+  iIteration = 1;
+ 
+  //***********************************Test report header*********************************
+  testReportAddMiscInfoBlock("AUTOLIV ELECTRONICS document");
+  TestReportAddMiscInfo("Nightly test", "No");
+  TestReportAddMiscInfo("Test type", "automatic");
+  TestReportAddMiscInfo("Regression", "No");
+  TestReportAddMiscInfo("Target release", "-");
+  TestReportAddMiscInfo("Test notes", "The objective of these tests is to verify the behaviour of the ECUs when submitted to various microcuts.");
+  
+  AddRequirementInfo("Requirement under test", "-");
+  AddRequirementInfo("-", "-");
+  //**************************************************************************************
+  
+  ELE_Test_PreConditions();
+  //====================================================
+  
+  testStepFail();
+  // Power off generator.
+//  OutputOff();
+//  Wait(DischargeDuration);
+//
+//  for(i = 0; i < elcount(fMicroPulseWidth); i++)
+//  {
+//    iScenario = i + 1;
+//    for(iDelay = iMinDelay; iDelay <= iMaxDelay; iDelay = iDelay + iDelayStep)
+//    {
+//      // Iteration info table.
+//      snprintf(cTable, elcount(cTable), "[Iteration %i] [Pulse type: %s]", iIteration, cXLSXTargetSheetName);
+//      snprintf(cExcelRow, elcount(cExcelRow), "Scenario Number: %i<p>Pulse type: %s <p>Additional conditions: Delay %i ms. <p>Operationg conditions: %s <p>Gravity level: %s;", iScenario, cXLSXTargetSheetName, iDelay, cOperatingConditions, iGravityLevel); // First column.
+//      lIterationTable = TestInfoTable(cTable);
+//      
+//      TestInfoHeadingBegin(lIterationTable, 0);
+//      TestInfoCell(lIterationTable, " Additional conditions:");
+//      TestInfoHeadingEnd(lIterationTable);
+//      
+//      snprintf(cTable, elcount(cTable), "Delay %i ms; Micro Length %0.1fms; Operationg conditions: %s; Gravity level: %s", iDelay, fMicroPulseWidth[i], cOperatingConditions, iGravityLevel);
+//      TestInfoRow(lIterationTable, 0);
+//      TestInfoCell(lIterationTable, cTable);
+//      testStep(@sysvar::CORE::sysLevelOfDetailStep, "", lIterationTable);
+//      // ***************
+//      
+//      // Iteration.
+//      fPulseLength = fMicroPulseWidth[i] * 2;
+//      _7_MicroCutG_EMCTP_TestFunction(iDelay, fPulseLength, DischargeDuration, fInitialVoltage, fMicroPulseWidth[i], iAfterMicroOnDuration);
+//      
+//      iIteration = iIteration + 1;
+//      
+//      // Increment progress bar.
+//      IncrementProgress(fIncrementProgressBar);
+//      
+//      // Check for skip panel input.
+//      if(CheckforPanelInput() == 0)
+//      {
+//        iDelay = iMaxDelay + 1;
+//        i = elcount(fMicroPulseWidth);
+//      }
+//    }
+//  }
+  ZipLogs();
+}
+
+/// <Micro_Cuts>
+testfunction Custom_Profile_TestFunction(int iDelay, float fPulseLength, int DischargeDuration, float fInitialVoltage, float fMicroPulseWidth, int iAfterMicroOnDuration)
+{
+//    testStep("STEP", "Load Pulse.");
+////  Resolution = 1;
+////  (Ua = 13.5, t1 = 10ms, t2 = 100ms, td = 5ms, ti = 10 to 8000)
+//    TekSigGen_DoMicroCutCh1(sSigGenAddress, fAmplification, fInitialVoltage, fPulseLength, fPulseLength * 10, fMicroPulseWidth, iDelay);
+//    
+//    testStep("STEP", "Start logging.");
+//    ELE_StartLogging(iScenario, iDelay);
+//    
+//    testStep("STEP", "Power on.");
+//    TekSigGen_OutputAndTrigger(sSigGenAddress);
+//    
+//    fPulseLength = (fPulseLength * 10) + iAfterMicroOnDuration + iDelay;
+//    testStep("STEP", "Wait %.0f ms to complete pulse.", (fPulseLength + 2000));
+//    Wait(fPulseLength + 2000);
+//    testStepPass("", "Pulse completed.");
+//    
+//    CheckECUStatus();
+//    
+//    testStep("STEP", "Power off.");
+//    OutputOff();
+//    
+//    PostTS_StopLogging();
+//    
+//    testStep("STEP", "Wait discharge time.");
+//    Wait(DischargeDuration);
+}
+
+/// <Panel_Helpers>
+// Checks that no duplicate sequences are selected.
+void CheckUniqueSequence()
+{
+  int x,y = 0;
+  int duplicate;
+  char cSequence[100];
+  do
+  {
+    duplicate = 1;
+    for(x = 0; x < sysGetVariableArraySize(sysvar::ElectricalTestsConfig::sysTestSelect); x++)
+    {
+      for(y = x + 1; y < sysGetVariableArraySize(sysvar::ElectricalTestsConfig::sysTestSelect); y++)
+      {
+        if((@sysvar::ElectricalTestsConfig::sysTestSelect[y] == @sysvar::ElectricalTestsConfig::sysTestSelect[x]) && (@sysvar::ElectricalTestsConfig::sysTestSelect[x] != @sysvar::ElectricalTestsConfig::sysTestSelect::_Select_))
+        {
+          snprintf(cSequence, elcount(cSequence), "Sequence %i = Sequence %i", (x + 1), (y+ 1));
+          TestWaitForMessageBox(cSequence, 600000, "Duplicate test sequences are not allowed:", 0);
+          duplicate = 0;
+          break;
+        }
+      }
+      if(duplicate == 0)
+      {
+        break;
+      }
+    }
+  }while(duplicate == 0);
+}
+
+/// <Panel_Helpers>
+int CheckforPanelInput()
+{
+  if(@sysvar::ElectricalTestsConfig::sysTestControl == sysvar::ElectricalTestsConfig::sysTestControl::PauseTestSequence)
+  {
+    testWaitForTimeoutSilent(20);
+    enableControl(cRobustnessPanel, "pause_button"        , 0);
+    enableControl(cRobustnessPanel, "resume_button"       , 1);
+    enableControl(cRobustnessPanel, "skip_sequence_button", 1);
+    
+    teststep("", "Sequence was paused.");
+    
+    sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Paused");
+    setControlBackColor(cRobustnessPanel, "test_control_status", _WARNING_Color);
+    
+    do
+    {
+      testWaitForSysVar(sysvar::ElectricalTestsConfig::sysTestControl, 0);
+      
+      switch(@sysvar::ElectricalTestsConfig::sysTestControl)
+      {
+        case sysvar::ElectricalTestsConfig::sysTestControl::ResumeTestSequence:
+        {
+          teststep("", "Sequence was resumed.");
+          
+          enableControl(cRobustnessPanel, "pause_button"        , 1);
+          enableControl(cRobustnessPanel, "resume_button"       , 0);
+          enableControl(cRobustnessPanel, "skip_sequence_button", 0);
+          
+          sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Running");
+          setControlBackColor(cRobustnessPanel, "test_control_status", _PASS_Color);
+          
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestControl::SkipTestSequence:
+        {
+          testStepWarning("Test skipped due to user input.");
+          
+          enableControl(cRobustnessPanel, "pause_button"        , 1);
+          enableControl(cRobustnessPanel, "resume_button"       , 0);
+          enableControl(cRobustnessPanel, "skip_sequence_button", 0);
+          
+          sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Running");
+          setControlBackColor(cRobustnessPanel, "test_control_status", _PASS_Color);
+          
+          @sysvar::ElectricalTestsConfig::sysTestControl = sysvar::ElectricalTestsConfig::sysTestControl::MouseUp;
+          
+          return 0;
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestControl::GenerateIntermediateXLSX:
+        {
+          enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 0);
+          
+          GenerateXLSX();
+          
+          testWaitForTimeoutSilent(50);
+          enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 1);
+          sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Paused");
+          setControlBackColor(cRobustnessPanel, "test_control_status", _WARNING_Color);
+          
+          @sysvar::ElectricalTestsConfig::sysTestControl = sysvar::ElectricalTestsConfig::sysTestControl::MouseUp;
+          
+          break;
+        }
+        default:
+          break;
+      }
+    }
+    while(@sysvar::ElectricalTestsConfig::sysTestControl != sysvar::ElectricalTestsConfig::sysTestControl::ResumeTestSequence);
+  }
+  
+  if(@sysvar::ElectricalTestsConfig::sysTestControl == sysvar::ElectricalTestsConfig::sysTestControl::GenerateIntermediateXLSX)
+  {
+    enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 0);
+    
+    GenerateXLSX();
+    
+    testWaitForTimeoutSilent(50);
+    enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 1);
+    sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Running");
+    setControlBackColor(cRobustnessPanel, "test_control_status", _PASS_Color);
+    
+    @sysvar::ElectricalTestsConfig::sysTestControl = sysvar::ElectricalTestsConfig::sysTestControl::MouseUp;
+  }
+  
+  return 1;
+}
+
+/// <Panel_Helpers>
+void IncrementProgress(float fIncrement)
+{
+  int64 iTimeNow;
+//****************************************************************
+  
+  // increment progress bar.
+   @sysvar::ElectricalTestsConfig::sysProgressBar[iActiveTestSequence] += fIncrement;
+   
+  // increment timer.
+   iTimeNow = ((timeNowInt64() / 1000000000) - fStartTime);
+   @sysvar::ElectricalTestsConfig::sysSequenceTimer[iActiveTestSequence] = iTimeNow < 3600 ? (iTimeNow / 6000.0) : ((iTimeNow / 3600) + (iTimeNow % 3600) / 6000.0);
+}
+
+/// <Output_Files_Management>
+void ZipLogs()
+{
+  stack char cExecCommand[10000];
+  char cAbsPath[2000];
+  char cStartCommand[2100];
+  
+  // Workaround for bug where CANoe keeps last log open.
+  stack char cTimeBuffer_PreTS[64];
+  stack char cLogName_ASC[1000];
+  stack char cLogName_BLF[1000];
+  stack char cFullLogPath_PreTS_ASC[1000];
+  stack char cFullLogPath_PreTS_BLF[1000];
+  
+  stack char cTestCaseTitle_PreTS[500];
+  
+  testGetCurrentTestCaseTitle(cTestCaseTitle_PreTS, elcount(cTestCaseTitle_PreTS));
+  strncpy(cLogName_ASC, "\\tmp", elcount(cLogName_ASC));
+  strncpy(cLogName_BLF, cLogName_ASC, elcount(cLogName_BLF));
+  
+  strncat(cLogName_ASC, ".asc", elcount(cLogName_ASC));
+  strncat(cLogName_BLF, ".blf", elcount(cLogName_BLF));
+  
+  strncat(cFullLogPath_PreTS_ASC, cLogsPath_CSV, elcount(cFullLogPath_PreTS_ASC));
+  strncat(cFullLogPath_PreTS_ASC, cLogName_ASC, elcount(cFullLogPath_PreTS_ASC));
+  
+  strncat(cFullLogPath_PreTS_BLF, cLogsPath_CSV, elcount(cFullLogPath_PreTS_BLF));
+  strncat(cFullLogPath_PreTS_BLF, cLogName_BLF, elcount(cFullLogPath_PreTS_BLF));
+  
+  setLogFileName(TestCaseLogASC, cFullLogPath_PreTS_ASC);
+  startLogging(TestCaseLogASC);
+  
+  setLogFileName(TestCaseLogBLF, cFullLogPath_PreTS_BLF);
+  startLogging(TestCaseLogBLF);
+  testWaitForTimeoutSilent(1000);
+  PostTS_StopLogging();
+  // **********************
+  
+  sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Archiving logs...");
+  setControlBackColor(cRobustnessPanel, "test_control_status", _WARNING_Color);
+  
+  GetUserFilePath("CSVtoXLSX.exe", cAbsPath, 2000);
+  snprintf(cStartCommand, elcount(cStartCommand), "start %s", cAbsPath);
+  
+  snprintf(cExecCommand, elcount(cExecCommand), "zip %s %s%s.zip & exit", cLogPath, cLogPath, cZipFile);
+  
+  sysExecCmd(cStartCommand, cExecCommand);
+  testWaitForTimeoutSilent(200000);
+  
+  sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Running");
+  setControlBackColor(cRobustnessPanel, "test_control_status", _PASS_Color);
+}
+
+/// <Output_Files_Management>
+void GenerateXLSX()
+{
+  stack char cExecCommand[10000];
+  stack char cIntermediate[100];
+  char cAbsPath[2000];
+  char cStartCommand[2100];
+  int iExists = 0;
+  
+  sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Generating...");
+  setControlBackColor(cRobustnessPanel, "test_control_status", _WARNING_Color);
+  
+  GetUserFilePath("CSVtoXLSX.exe", cAbsPath, 2000);
+  snprintf(cStartCommand, elcount(cStartCommand), "start %s", cAbsPath);
+  
+  if(@sysvar::ElectricalTestsConfig::sysTestControl == sysvar::ElectricalTestsConfig::sysTestControl::GenerateIntermediateXLSX)
+  {
+    strncpy(cIntermediate, "_Intermediate", elcount(cIntermediate));
+  }
+
+  if(iExists)
+  {
+    snprintf(cExecCommand, elcount(cExecCommand), "%s.xlsx %s %s %s%s.xlsx & exit", cTestReportPathandName_Main, cLogPathAndName_CSV, cXLSXTargetSheetName, cTestReportPathandName_Main, cIntermediate);
+  }
+  else
+  {
+    if(@sysvar::ElectricalTestsConfig::sysTestControl == sysvar::ElectricalTestsConfig::sysTestControl::GenerateIntermediateXLSX)
+    {
+      snprintf(cExecCommand, elcount(cExecCommand), "%s %s %s %s.xlsx & exit", cXLSXTemplatePathandName, cLogPathAndName_CSV, cXLSXTargetSheetName, cTestReportPathandName_Main);
+      
+      sysExecCmd(cStartCommand, cExecCommand);
+      testWaitForTimeoutSilent(10000);
+    }
+    
+    snprintf(cExecCommand, elcount(cExecCommand), "%s %s %s %s%s.xlsx & exit", cXLSXTemplatePathandName, cLogPathAndName_CSV, cXLSXTargetSheetName, cTestReportPathandName_Main, cIntermediate);
+    iExists = 1;
+  }
+  
+  sysExecCmd(cStartCommand, cExecCommand);
+  testWaitForTimeoutSilent(5000);
+  
+  sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Running");
+  setControlBackColor(cRobustnessPanel, "test_control_status", _PASS_Color);
+}
+
+/// <Output_Files_Management>
+void WriteToCSV(char iInput[])
+{
+  setWritePath(cLogsPath_CSV);
+  lFileHandle_CSV = openFileWrite(cFileName_CSV, 2);
+
+  if(lFileHandle_CSV == 0)
+  {
+    testStepFail("", "Error when opening .csv file.");
+  }
+  
+  if(filePutString(iInput, elcount(iInput), lFileHandle_CSV) == 0)
+  {
+    testStepFail("", "Error when writing in .csv file.");
+  }
+  
+  fileClose(lFileHandle_CSV);
+}
+
+/// <Output_Files_Management>
+void ELE_StartLogging(int iActiveScenario, int iActiveIteration)
+{
+  stack char cTimeBuffer_PreTS[64];
+  stack char cLogName_ASC[1000];
+  stack char cLogName_BLF[1000];
+  stack char cFullLogPath_PreTS_ASC[1000];
+  stack char cFullLogPath_PreTS_BLF[1000];
+  
+  stack char cTestCaseTitle_PreTS[500];
+  getLocalTimeString(cTimeBuffer_PreTS);
+  str_replace(cTimeBuffer_PreTS, " ", "_");
+  str_replace(cTimeBuffer_PreTS, ":", "_");
+  str_replace(cTimeBuffer_PreTS, "__", "_");
+  
+  testGetCurrentTestCaseTitle(cTestCaseTitle_PreTS, elcount(cTestCaseTitle_PreTS));
+  strncpy(cLogName_ASC, cTestCaseTitle_PreTS, iOriginalTestCaseTitleLength + 1);
+  
+  strncat(cLogName_ASC, "_", elcount(cLogName_ASC));
+  strncat(cLogName_ASC, cTimeBuffer_PreTS, elcount(cLogName_ASC));
+  strncpy(cZipFile, cLogName_ASC, elcount(cZipFile));
+  
+  snprintf(cLogName_ASC, elcount(cLogName_ASC), "%s_Scenario_%i_Rep_%i", cLogName_ASC, iActiveScenario, iActiveIteration);
+
+  strncpy(cLogName_BLF, cLogName_ASC, elcount(cLogName_BLF));
+  
+  strncat(cLogName_ASC, ".asc", elcount(cLogName_ASC));
+  strncat(cLogName_BLF, ".blf", elcount(cLogName_BLF));
+  
+  strncat(cFullLogPath_PreTS_ASC, cLogPath, elcount(cFullLogPath_PreTS_ASC));
+  strncat(cFullLogPath_PreTS_ASC, cLogName_ASC, elcount(cFullLogPath_PreTS_ASC));
+  
+  strncat(cFullLogPath_PreTS_BLF, cLogPath, elcount(cFullLogPath_PreTS_BLF));
+  strncat(cFullLogPath_PreTS_BLF, cLogName_BLF, elcount(cFullLogPath_PreTS_BLF));
+  
+  setLogFileName(TestCaseLogASC, cFullLogPath_PreTS_ASC);
+  startLogging(TestCaseLogASC);
+  
+  setLogFileName(TestCaseLogBLF, cFullLogPath_PreTS_BLF);
+  if( @sysvar::ElectricalTestsConfig::sysBLFEnable[iActiveTestSequence] ==  @sysvar::ElectricalTestsConfig::sysBLFEnable::Enabled)
+  {
+    startLogging(TestCaseLogBLF);
+  }
+}
+
+/// <ECU_Status>
+void CheckECUStatus()
+{
+  stack char cMessage[400];
+  stack char cByte[6];
+  int i;
+  
+  strncpy(cTestErrors, "", elcount(cTestErrors));
+  
+  ActiveSide = LH;
+  
+  SetDiagTarget(cDiagnosticTarget);
+  
+  ECUStatusPreconditions();
+  
+  testCaseComment("Check Left side ECU Status after the profile is completed.");
+  
+  strncpy(cMessage, "", elcount(cMessage));
+  if(testWaitForMessage(StatusFrame_LH.id, 5000) == 1)
+  {
+    TestGetWaitEventMsgData(StatusFrame_LH);
+    for(i = 0; i < StatusFrame_LH.DataLength; i++)
+    {
+      snprintf(cByte, elcount(cByte), "0x%X ", StatusFrame_LH.byte(i));
+      strncat(cMessage, cByte, elcount(cMessage));
+    }
+  }
+  else
+  {
+    strncpy(cMessage, "Status frame not received in 5000ms.", elcount(cMessage));
+  }
+  
+  testStep("STEP", "Get status frame after the profile is completed: %s", cMessage);
+  snprintf(cExcelRow, elcount(cExcelRow), "%s %s;", cExcelRow, cMessage); // 2nd excel column.
+  
+  testStep("STEP", "Check AECs status after the profile is completed.");
+  ELE_CheckAECPresence();
+  snprintf(cExcelRow, elcount(cExcelRow), "%s;", cExcelRow); // End 3rd excel column.
+  
+  if(iDoesProjectHaveDTCs == 1)
+  {
+    testStep("STEP", "Check DTCs status after the profile is completed.");
+    ELE_CheckDTCPresence();
+  }
+  snprintf(cExcelRow, elcount(cExcelRow), "%s;", cExcelRow); // End 4th excel column.
+  
+  testStep("STEP", "Check last reset cause after the profile is completed.");
+  ReadLastResetCause();
+  
+  testStep("STEP", "Check last warm reset cause after the profile is completed.");
+  ReadLastWarmResetCause();
+  snprintf(cExcelRow, elcount(cExcelRow), "%s;", cExcelRow); // End 5th excel column.
+  
+  testStep("STEP", "Clear all errors.");
+  ELE_ClearAll();
+  
+  snprintf(cExcelRow, elcount(cExcelRow), "%s%s;", cExcelRow, cTestErrors); // End 6th excel column.
+  strncpy(cTestErrors, "", elcount(cTestErrors));
+  
+  if(@sysvar::ElectricalTestsConfig::sysEnableRH == sysvar::ElectricalTestsConfig::sysEnableRH::Enabled)
+  {
+    ActiveSide = RH;
+    SetDiagTarget(cDiagnosticTarget_RH);
+    
+    testCaseComment("Check Right side ECU Status after the profile is completed .");
+    
+    ECUStatusPreconditions();
+    
+    strncpy(cMessage, "", elcount(cMessage));
+    if(testWaitForMessage(StatusFrame_RH.id, 5000) == 1)
+    {
+      TestGetWaitEventMsgData(StatusFrame_RH);
+      for(i = 0; i < StatusFrame_RH.DataLength; i++)
+      {
+        snprintf(cByte, elcount(cByte), "0x%X ", StatusFrame_RH.byte(i));
+        strncat(cMessage, cByte, elcount(cMessage));
+      }
+    }
+    else
+    {
+      strncpy(cMessage, "Status frame not received in 5000ms.", elcount(cMessage));
+    }
+    
+    testStep("STEP", "Get status frame after the profile is completed: %s", cMessage);
+    snprintf(cExcelRow, elcount(cExcelRow), "%s %s;", cExcelRow, cMessage); // End 7th excel column.
+    
+    testStep("STEP", "Check AECs status after the profile is completed.");
+    ELE_CheckAECPresence();
+    snprintf(cExcelRow, elcount(cExcelRow), "%s;", cExcelRow); // End 8th excel column.
+    
+    if(iDoesProjectHaveDTCs == 1)
+    {
+      testStep("STEP", "Check DTCs status after the profile is completed.");
+      ELE_CheckDTCPresence();
+    }
+    snprintf(cExcelRow, elcount(cExcelRow), "%s;", cExcelRow); // End 9th excel column.
+    
+    testStep("STEP", "Check last reset cause after the profile is completed.");
+    ReadLastResetCause();
+    
+    testStep("STEP", "Check last warm reset cause after the profile is completed.");
+    ReadLastWarmResetCause();
+    snprintf(cExcelRow, elcount(cExcelRow), "%s;", cExcelRow); // End 10th excel column.
+    
+    testStep("STEP", "Clear all errors.");
+    ELE_ClearAll();
+    Wait(2000);
+    
+    snprintf(cExcelRow, elcount(cExcelRow), "%s%s;", cExcelRow, cTestErrors); // End 11th excel column.
+    strncpy(cTestErrors, "", elcount(cTestErrors));
+    
+    SetDiagTarget(cDiagnosticTarget);
+  }
+  else
+  {
+    Wait(2000); // wait time after clear all; saves time if a RH ECU is not present.
+  }
+  
+  snprintf(cExcelRow, elcount(cExcelRow), "%s\n", cExcelRow);
+  WriteToCSV(cExcelRow);
+}
+
+/// <ECU_Status>
+// Check all AEC status and report all that do not have the expected status.
+void ELE_CheckAECPresence()
+{
+  diagRequest        * dReadAllAECsStatusReq;
+  stack diagResponse * dReadAllAECsStatusResp;
+  
+  stack int iErrorFlag = 0;
+  stack int iIndex = 1;
+  stack int iAECIndex = 0;
+  stack int iFound_SpecificStatus  = 0; 
+  stack int iAutotestErrorFlag= 0;
+  stack byte bAllAec[iReadAECsResponseSize];
+  stack int iIgnoredAECFound      = 0;
+  int x;
+  
+  stack char cExpectedStatuses[300];
+  stack char cExpectedStatus[100];
+  stack long EvalManStepTable = 0;
+  stack char cAEC[200];
+  stack char cStatusByte[200];
+  stack char cResponse[10000];
+  
+  // DV panel.
+  int iAECBytePosition = 0;
+  stack char cOutput_AECName[52];
+  stack char cBlank[50] = "                                                 ";
+  stack char cOutput_Row[100];
+  stack char cOuput_Status[100];
+  stack char cOUTPUT_BOX[500];
+  stack char cOUTPUT_CONSOLE[500];
+  stack char cERROR_PRESENCE_OUTPUT[500];
+    
+  if(ActiveSide == LH)
+  {
+    strncpy(cOUTPUT_BOX, "AEC_OUTPUT_BOX_LH", elcount(cOUTPUT_BOX));
+    strncpy(cERROR_PRESENCE_OUTPUT, "ERROR_PRESENCE_OUTPUT_LH", elcount(cERROR_PRESENCE_OUTPUT));
+  }
+  else
+  {
+    strncpy(cOUTPUT_BOX, "AEC_OUTPUT_BOX_RH", elcount(cOUTPUT_BOX));
+    strncpy(cERROR_PRESENCE_OUTPUT, "ERROR_PRESENCE_OUTPUT_RH", elcount(cERROR_PRESENCE_OUTPUT));
+  }
+  DeleteControlContent(cRobustnessPanel, cOUTPUT_BOX);
+  
+  // Format expected AEC status byte(s).
+  for (iIndex = 0; iIndex < elcount(bAcceptedAECStatus_AfterClear); iIndex++)
+  {
+    if (iIndex == (elcount(bAcceptedAECStatus_AfterClear) - 1))
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    else
+    {
+      snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X or ", bAcceptedAECStatus_AfterClear[iIndex]);
+    }
+    strncat(cExpectedStatuses, cExpectedStatus, elcount(cExpectedStatuses));
+  }
+  
+  // Begin table
+  EvalManStepTable = TestInfoTable("Check AEC Presence After Clear.");
+
+  // Header
+  TestInfoHeadingBegin(EvalManStepTable, 0);
+  TestInfoCell(EvalManStepTable, "AEC ID");
+  TestInfoCell(EvalManStepTable, "AEC name");
+  TestInfoCell(EvalManStepTable, "AEC status");
+  TestInfoCell(EvalManStepTable, "AEC expected status");
+  TestInfoHeadingEnd(EvalManStepTable);
+  
+  // Configure diagnostic object.
+  if(diagResize(dReadAllAECsStatusReq, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+  }
+  
+  if(diagSetPrimitiveData(dReadAllAECsStatusReq, bReadAllAECsStatusRequest, elcount(bReadAllAECsStatusRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Error when creating diagnostic object.");
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReadAllAECsStatusReq, dReadAllAECsStatusResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Diagnostic request send or receive error.");
+  }
+  
+  // Diag Error Handling.
+  if (diagIsPositiveResponse(dReadAllAECsStatusResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckAECPresence: Negative response received for Read All AEC Status request: 0x%X.", dReadAllAECsStatusResp.GetResponseCode());
+   testReportWriteDiagResponse(dReadAllAECsStatusReq);
+   snprintf(cTestErrors, elcount(cTestErrors), "%sCheckAECPresence: Negative response received for Read All AEC Status request: [0x%X].<p>", cTestErrors, dReadAllAECsStatusResp.GetResponseCode());
+   
+   SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX, _FAIL_Color);
+   snprintf(cOUTPUT_CONSOLE, elcount(cOUTPUT_CONSOLE), "[%.3f] Read errors not performed: Negative response received: [0x%X].\n", (timeNowFloat() / 100000), dReadAllAECsStatusResp.GetResponseCode());
+   putValueToControl(cRobustnessPanel, cOUTPUT_BOX, cOUTPUT_CONSOLE);
+   SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX,  makeRGB(255,255,255));
+   return;
+  }
+  
+  diagGetPrimitiveData(dReadAllAECsStatusResp, bAllAec, elcount(bAllAec));
+  
+  snprintf(cResponse, elcount(cResponse), "[0x%02X 0x%02X 0x%02X]", diagGetPrimitiveByte(dReadAllAECsStatusResp, 0), diagGetPrimitiveByte(dReadAllAECsStatusResp, 1), diagGetPrimitiveByte(dReadAllAECsStatusResp, 2));
+  for(iIndex = 1; iIndex <= (iReadAECsResponseSize - dReadAllAECsStatusReq.GetPrimitiveSize())/3; iIndex++) // Loop through all read AECs.
+  {
+    snprintf(cResponse, elcount(cResponse), "%s [0x%02X 0x%02X][0x%02X]", cResponse, bAllAec[iIndex*3], bAllAec[iIndex*3 + 1], bAllAec[iIndex*3 + 2]);
+    
+    for(iAECIndex = 0; iAECIndex <= (elcount(bIgnoredAECS) - 1); iAECIndex++)
+    {
+      if(bAllAec[iIndex*3 + iAECBytePosition] == bIgnoredAECS[iAECIndex])
+      {
+        iIgnoredAECFound = 1;
+        break;
+      }
+    }
+    if(iIgnoredAECFound == 1)
+    {
+      iIgnoredAECFound = 0;
+      continue;
+    }
+    
+    if((strncmp(cAEC_NotExecutedAfterReset[bAllAec[iIndex*3 + iAECBytePosition]], cAECName[bAllAec[iIndex*3 + iAECBytePosition]], elcount(cAECName[bAllAec[iIndex*3 + iAECBytePosition]])) == 0) && 
+      (bAllAec[iIndex*3+2] == bAEC_NotCompletedSincePowerOffOn) && 
+      (strncmp(cAEC_NotExecutedAfterReset[bAllAec[iIndex*3 + iAECBytePosition]], "", elcount(cAECName[bAllAec[iIndex*3 + iAECBytePosition]]) != 0)))
+    {
+      // If AEC should not and is not executed after reset, do nothing.
+    }
+    else
+    {  
+      iAutotestErrorFlag = 0;
+      for(iAECIndex = 0; iAECIndex <= (elcount(bAcceptedAECStatus_AfterClear) - 1); iAECIndex++)
+      {
+        if(bAllAec[iIndex*3+2] != bAcceptedAECStatus_AfterClear[iAECIndex]) // Check if AEC status is accepted during bench initialization.
+        {
+           iAutotestErrorFlag+= 1;
+        }
+      }
+      
+      if(iAutotestErrorFlag == elcount(bAcceptedAECStatus_AfterClear)) // If no accepted status is found.
+      {
+        iFound_SpecificStatus = 0;
+        // Check if the AEC has a specific expected status value.
+        for(iAECIndex = 0; iAECIndex <= (elcount(bSpecificAECExpectedStatus_AfterClear) - 1); iAECIndex++)
+        {
+          if(bAllAec[iIndex*3 + iAECBytePosition] == bSpecificAECExpectedStatus_AfterClear[iAECIndex][0])
+          {
+            iFound_SpecificStatus = 1;
+            if(bAllAec[iIndex*3+2] != bSpecificAECExpectedStatus_AfterClear[iAECIndex][1])
+            {
+              TestInfoRow(EvalManStepTable, 0);
+              snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+              TestInfoCell(EvalManStepTable, cAEC);
+              TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+              snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+              TestInfoCell(EvalManStepTable, cStatusByte);
+              snprintf(cExpectedStatus, elcount(cExpectedStatus), "0x%02X", bSpecificAECExpectedStatus_AfterClear[iAECIndex][1]);
+              TestInfoCell(EvalManStepTable, cExpectedStatus);
+              
+              if(bAllAec[iIndex*3+2] % 2 == 1)
+              {
+                SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX, _FAIL_Color);
+              }
+              else
+              {
+                SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX, _WARNING_Color);
+              }
+              
+              SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX, _FAIL_Color);
+              snprintf(cOutput_AECName, elcount(cOutput_AECName), "[0x%02X] - %s%s", bAllAec[iIndex*3 + iAECBytePosition], cAECName[bAllAec[iIndex*3 + iAECBytePosition]], cBlank);
+              snprintf(cOuput_Status, elcount(cOuput_Status), "%s%s", cStatus_Name[bAllAec[iIndex*3+2]], cBlank);
+              snprintf(cOutput_Row, elcount(cOutput_Row), "%s|    0x%02X    | %s\n", cOutput_AECName, bAllAec[iIndex*3+2], cOuput_Status);
+              
+              putValueToControl(cRobustnessPanel, cOUTPUT_BOX, cOutput_Row);
+              putValueToControl(cRobustnessPanel, cOUTPUT_BOX, "---------------------------------------------------------------------------------------------- \n");
+              
+              iErrorFlag = 1;
+              snprintf(cExcelRow, elcount(cExcelRow), "%s[%s] %s %s<p>", cExcelRow, cAEC, cAECName[bAllAec[iIndex*3 + iAECBytePosition]], cStatusByte);
+            }
+            break;
+          }
+         }
+        
+          // If the AEC does not have a specific expected status value.
+          if(iFound_SpecificStatus == 0)
+          {
+            TestInfoRow(EvalManStepTable, 0);
+            snprintf(cAEC, elcount(cAEC), "0x%02X", bAllAec[iIndex*3 + iAECBytePosition]);
+            TestInfoCell(EvalManStepTable, cAEC);
+            TestInfoCell(EvalManStepTable, cAECName[bAllAec[iIndex*3 + iAECBytePosition]]);
+            snprintf(cStatusByte, elcount(cStatusByte), "0x%02X", bAllAec[iIndex*3+2]);
+            TestInfoCell(EvalManStepTable, cStatusByte);
+            TestInfoCell(EvalManStepTable, cExpectedStatuses);
+            
+            if(bAllAec[iIndex*3+2] % 2 == 1)
+            {
+              SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX, _FAIL_Color);
+            }
+            else
+            {
+              SetControlBackColor(cRobustnessPanel, cOUTPUT_BOX, _WARNING_Color);
+            }
+            snprintf(cOutput_AECName, elcount(cOutput_AECName), "[0x%02X] - %s%s", bAllAec[iIndex*3 + iAECBytePosition], cAECName[bAllAec[iIndex*3 + iAECBytePosition]], cBlank);
+            snprintf(cOuput_Status, elcount(cOuput_Status), "%s%s", cStatus_Name[bAllAec[iIndex*3+2]], cBlank);
+            snprintf(cOutput_Row, elcount(cOutput_Row), "%s|    0x%02X    | %s\n", cOutput_AECName, bAllAec[iIndex*3+2], cOuput_Status);
+            
+            putValueToControl(cRobustnessPanel, cOUTPUT_BOX, cOutput_Row);
+            putValueToControl(cRobustnessPanel, cOUTPUT_BOX, "---------------------------------------------------------------------------------------------- \n");
+            
+            iErrorFlag = 1;
+            snprintf(cExcelRow, elcount(cExcelRow), "%s[%s] %s %s<p>", cExcelRow, cAEC, cAECName[bAllAec[iIndex*3 + iAECBytePosition]], cStatusByte);
+            
+            for(x = 0; x < elcount(bTestInterruptAECs); x++)
+            {
+              if(bTestInterruptAECs[x] == bAllAec[iIndex*3 + iAECBytePosition])
+              {
+                do{}
+                while(TestWaitForMessageBox(cOutput_Row, 600000, "Test stop error:", 0) != 1);
+              }
+            }
+          }
+      }
+    }
+  }
+  
+  if (iErrorFlag != 1)
+  {
+   testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "AEC", "CheckAECPresence: All autotests are passed or have the expected status.");
+    
+   SetControlColors(cRobustnessPanel, cERROR_PRESENCE_OUTPUT, makeRGB(255,255,255), makeRGB(0,0,0)); 
+   if(ActiveSide == LH)
+   {
+     @sysvar::ElectricalTestsConfig::sysErrorsArePresent_LH = sysvar::ElectricalTestsConfig::sysErrorsArePresent_LH::No_errors_are_present;
+   }
+   else
+   {
+     @sysvar::ElectricalTestsConfig::sysErrorsArePresent_RH = sysvar::ElectricalTestsConfig::sysErrorsArePresent_RH::No_errors_are_present;
+   }
+  }
+  else
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+    
+   SetControlColors(cRobustnessPanel, cERROR_PRESENCE_OUTPUT, makeRGB(255,255,255), _FAIL_Color);
+   if(ActiveSide == LH)
+   {
+     @sysvar::ElectricalTestsConfig::sysErrorsArePresent_LH = sysvar::ElectricalTestsConfig::sysErrorsArePresent_LH::Errors_are_present;
+   }
+   else
+   {
+     @sysvar::ElectricalTestsConfig::sysErrorsArePresent_RH = sysvar::ElectricalTestsConfig::sysErrorsArePresent_RH::Errors_are_present;
+   }
+  }
+  
+  testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "[CheckAECPresence] %s", cResponse);
+}
+
+/// <ECU_Status>
+//Check all DTC status and report all that are qualified.
+void ELE_CheckDTCPresence()
+{
+  diagRequest        * dReportDTCByStatusMaskReq;
+  stack diagResponse * dReportDTCByStatusMaskResp;
+  
+  stack int iLength;
+  stack int i;
+  stack byte bStatusByte;
+  stack byte bBit;
+  stack dword DTC;
+  stack long EvalManStepTable = 0;
+  stack char cDTC[200];
+  stack char cStatusByte[200];
+  stack char cTmp[200];
+  stack int iIgnoredDTCFound;
+  stack int iIgnoredDTCIndex;
+  stack int iAcceptedDTCFound;
+  stack int iAcceptedDTCIndex;
+  stack int iAllDTCsFoundAreIgnored = 1;
+  stack char cIgnoredDTC[500];
+  stack char cResponse[10000];
+  char cTestStopErrorText[1000];
+  int x;
+  
+  // Configure diagnostic object.
+  if(diagResize(dReportDTCByStatusMaskReq, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Error when creating diagnostic object.");
+  }
+  
+  if(diagSetPrimitiveData(dReportDTCByStatusMaskReq, bCheckDTCPresenceRequest, elcount(bCheckDTCPresenceRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Error when creating diagnostic object.");
+  }
+  
+  // Set read mask.
+  if(diagSetParameter(dReportDTCByStatusMaskReq, REQ_DTCStatusMask, bRDTCBST_StatusMask_AfterClear) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Error when creating diagnostic object.");
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == DIAG_SEND_OR_RECEIVE_ERROR)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"CheckDTCPresence: Diagnostic request send or receive error.");
+  }
+  
+  // Diag Error Handling.
+  if(CheckPositiveResponse(dReportDTCByStatusMaskReq, dReportDTCByStatusMaskResp) == 0)
+  {
+   testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresence: Negative response received for RDTCBST Status request: [0x%X].", dReportDTCByStatusMaskResp.GetResponseCode());
+   snprintf(cTestErrors, elcount(cTestErrors), "%sCheckDTCPresence: Negative response received for RDTCBST Status request: [0x%X].<p>", cTestErrors, dReportDTCByStatusMaskResp.GetResponseCode());
+   return;
+  }
+  
+  iLength = diagGetIterationCount(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord);
+  if (iLength < 0)
+  {
+     testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "CheckDTCPresence: Error code obtained for diagGetIterationCount: [%i]", iLength);
+  }
+  
+  if (iLength == 0)
+  {
+     testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "DTC", "All autotests are passed.");
+     snprintf(cResponse, elcount(cResponse), "[0x%02X 0x%02X 0x%02X]", diagGetPrimitiveByte(dReportDTCByStatusMaskResp, 0), diagGetPrimitiveByte(dReportDTCByStatusMaskResp, 1), diagGetPrimitiveByte(dReportDTCByStatusMaskResp, 2));
+  }
+  else
+  {
+    // begin table
+    EvalManStepTable = TestInfoTable("CheckDTCPresence");
+    
+    // header
+    TestInfoHeadingBegin(EvalManStepTable, 0);
+    TestInfoCell(EvalManStepTable, "DTC");
+    TestInfoCell(EvalManStepTable, "DTC name");
+    TestInfoCell(EvalManStepTable, "DTC status");
+    TestInfoCell(EvalManStepTable, "WarningIndicatorRequested");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedThisOperationCycle");
+    TestInfoCell(EvalManStepTable, "TestFailedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "TestNotCompletedSinceLastClear");
+    TestInfoCell(EvalManStepTable, "ConfirmedDTC");
+    TestInfoCell(EvalManStepTable, "PendingDTC");
+    TestInfoCell(EvalManStepTable, "TestFailedThisOperationgCycle");
+    TestInfoCell(EvalManStepTable, "TestFailed");
+    TestInfoHeadingEnd(EvalManStepTable);
+    
+    snprintf(cResponse, elcount(cResponse), "[0x%02X 0x%02X 0x%02X]", diagGetPrimitiveByte(dReportDTCByStatusMaskResp, 0), diagGetPrimitiveByte(dReportDTCByStatusMaskResp, 1), diagGetPrimitiveByte(dReportDTCByStatusMaskResp, 2));
+    for(i = 0; i < iLength; i++)
+    {
+      DTC = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_DTCRecord);
+      bStatusByte = diagGetComplexParameter(dReportDTCByStatusMaskResp, PR_DTCAndStatusRecord, i, PR_StatusOfDTC);
+      
+      snprintf(cResponse, elcount(cResponse), "%s [0x%06X][0x%02X]", cResponse, DTC, bStatusByte);
+      
+      iIgnoredDTCFound = 0;
+      for(iIgnoredDTCIndex = 0; iIgnoredDTCIndex < elcount(bIgnoredDTCS); iIgnoredDTCIndex++)
+      {
+        if(DTC == bDTCID[bIgnoredDTCS[iIgnoredDTCIndex]])
+        {
+          iIgnoredDTCFound = 1;
+          break;
+        }
+      }
+      
+      iAcceptedDTCFound = 0;
+      for(iAcceptedDTCIndex = 0; iAcceptedDTCIndex < elcount(bAcceptedDTCStatus); iAcceptedDTCIndex++)
+      {
+        if(DTC == bDTCID[bAcceptedDTCStatus[iAcceptedDTCIndex][0]])
+        {
+          if(bStatusByte == bAcceptedDTCStatus[iAcceptedDTCIndex][1])
+          {
+            iAcceptedDTCFound = 1;
+          }
+          break;
+        }
+      }
+      
+      // row 1
+      TestInfoRow(EvalManStepTable, 0);
+      snprintf(cDTC, elcount(cDTC), "0x%lX", DTC);
+      TestInfoCell(EvalManStepTable, cDTC);
+      TestInfoCell(EvalManStepTable, cDTCName[DTC]);
+      snprintf(cStatusByte, elcount(cStatusByte), "0x%X", bStatusByte);
+      TestInfoCell(EvalManStepTable, cStatusByte);
+      
+      if(iIgnoredDTCFound == 1)
+      {
+       snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] but you chose to ignore it.", DTC, cDTCName[DTC], bStatusByte);
+       TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+      }
+  	  else if(iAcceptedDTCFound == 1)
+      {
+       snprintf(cIgnoredDTC, elcount(cIgnoredDTC), "DTC [0x%lX] - [%s] is present in fault memory with status [0x%02X] (accepted status).", DTC, cDTCName[DTC], bStatusByte);
+       TestInfoCell(EvalManStepTable, cIgnoredDTC, 8);
+      }
+      else
+      {
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_WarningIndicatorRequested, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedThisOperationCycle, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedSinceLastClear, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestNotCompletedSinceLastClear, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_ConfirmedDTC, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_PendingDTC, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailedThisOperationCycle, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);  
+        diagGetParameter(dReportDTCByStatusMaskResp, PR_StatusOfDTC_TestFailed, cTmp, elcount(cTmp));
+        TestInfoCell(EvalManStepTable, cTmp);
+        
+        iAllDTCsFoundAreIgnored = 0;
+        snprintf(cExcelRow, elcount(cExcelRow), "%s[0x%lX] - [%s] [0x%02X]<p>", cExcelRow, DTC, cDTCName[DTC], bStatusByte);
+        
+        for(x = 0; x < elcount(bTestInterruptDTCs); x++)
+        {
+          if(bTestInterruptDTCs[x] == DTC)
+          {
+            snprintf(cTestStopErrorText, elcount(cTestStopErrorText), "[0x%lX] - [%s] [0x%02X]", DTC, cDTCName[DTC], bStatusByte);
+            
+            do{}
+            while(TestWaitForMessageBox(cTestStopErrorText, 600000, "Test stop error:", 0) != 1);
+          }
+        }
+      }
+     }
+     if (iAllDTCsFoundAreIgnored == 0)
+     {
+       testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", EvalManStepTable);
+     }
+     else
+     {
+       testStepPass(@sysvar::CORE::sysLevelOfDetailPass, "", EvalManStepTable);
+     }
+  }
+  testStep(@sysvar::CORE::sysLevelOfDetailStep, "", "[CheckDTCPresence] %s", cResponse);
+}
+
+/// <ECU_Status>
+void ReadLastResetCause()
+{
+  diagrequest * dRequest;
+  stack diagResponse * dResponse;
+  stack char cResponse[100];
+  stack byte bResponse[4];
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dRequest, dResponse, bReadLastResetParameters) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReadLastResetParameters: Diagnostic request send or receive error.");
+  }
+  
+    // Diag Error Handling.
+  if (diagIsPositiveResponse(dResponse) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "ReadLastResetParameters: Negative response received for ReadLastResetParameters request: [0x%X].", dResponse.GetResponseCode());
+    testReportWriteDiagResponse(dRequest);
+    snprintf(cTestErrors, elcount(cTestErrors), "%sReadLastResetParameters: Negative response received for ReadLastResetParameters request: [0x%X].<p>", cTestErrors, dResponse.GetResponseCode());
+    if(ActiveSide == LH)
+    {
+      putValueToControl(cRobustnessPanel, "reset_cause_LH", "Negative response received for ReadLastResetParameters request.");
+    }
+    else
+    {
+      putValueToControl(cRobustnessPanel, "reset_cause_RH", "Negative response received for ReadLastResetParameters request.");
+    }
+    return;
+  }
+  
+  diagGetPrimitiveData(dResponse, bResponse, elcount(bResponse));
+  snprintf(cResponse, elcount(cResponse), "0x%02X 0x%02X 0x%02X 0x%02X", bResponse[0], bResponse[1], bResponse[2], bResponse[3]);
+  snprintf(cExcelRow, elcount(cExcelRow), "%s %s<p>", cExcelRow, cResponse);
+  
+  if(ActiveSide == LH)
+  {
+    putValueToControl(cRobustnessPanel, "reset_cause_LH", cResponse);
+  }
+  else
+  {
+    putValueToControl(cRobustnessPanel, "reset_cause_RH", cResponse);
+  }
+  
+  testStep("", "Last reset cause: %s" , cResponse);
+}
+
+/// <ECU_Status>
+void ReadLastWarmResetCause()
+{
+  diagrequest * dRequest;
+  stack diagResponse * dResponse;
+  stack char cResponse[200];
+  stack byte bResponse[11];
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dRequest, dResponse, bReadLastWarmResetParameters) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ReadLastResetParameters: Diagnostic request send or receive error.");
+  }
+  
+    // Diag Error Handling.
+  if (diagIsPositiveResponse(dResponse) == 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "", "ReadLastWarmResetParameters: Negative response received for ReadLastWarmResetParameters request: [0x%X].", dResponse.GetResponseCode());
+    testReportWriteDiagResponse(dRequest);
+    snprintf(cTestErrors, elcount(cTestErrors), "%s ReadLastWarmResetParameters: Negative response received for ReadLastWarmResetParameters request: [0x%X].<p>", cTestErrors, dResponse.GetResponseCode());
+    
+    if(ActiveSide == LH)
+    {
+      putValueToControl(cRobustnessPanel, "warm_reset_cause_LH", "Negative response received for ReadLastWarmResetParameters request.");
+    }
+    else
+    {
+      putValueToControl(cRobustnessPanel, "warm_reset_cause_RH", "Negative response received for ReadLastWarmResetParameters request.");
+    }
+    return;
+  }
+  
+  diagGetPrimitiveData(dResponse, bResponse, elcount(bResponse));
+  snprintf(cResponse, elcount(cResponse), "0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X 0x%02X", bResponse[0], bResponse[1], bResponse[2], bResponse[3], bResponse[4], bResponse[5], bResponse[6], bResponse[7], bResponse[8], bResponse[9], bResponse[10]);
+  snprintf(cExcelRow, elcount(cExcelRow), "%s %s", cExcelRow, cResponse);
+  
+  if(ActiveSide == LH)
+  {
+    putValueToControl(cRobustnessPanel, "warm_reset_cause_LH", cResponse);
+  }
+  else
+  {
+    putValueToControl(cRobustnessPanel, "warm_reset_cause_RH", cResponse);
+  }
+  
+  testStep("", "Last warm reset cause: %s" , cResponse);
+}
+
+/// <ECU_Status>
+void ELE_ClearAll()
+{
+  diagRequest        * dClearAllDTCsRequest;
+  stack diagResponse * dClearAllDTCsResponse;
+  
+  char cSwVersion[200];
+  int already_read_lh = 1;
+  int already_read_rh = 1;
+  
+  // Configure diagnostic object.
+  if(diagResize(dClearAllDTCsRequest, elcount(bClearAllRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ClearAll: Error when creating diagnostic object.");
+  }
+  
+  if(diagSetPrimitiveData(dClearAllDTCsRequest, bClearAllRequest, elcount(bClearAllRequest)) < 0)
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ClearAll: Error when creating diagnostic object.");
+  }
+  
+  // Diag Error Handling.
+  if(SendDiagnosticRequest(dClearAllDTCsRequest, dClearAllDTCsResponse) == DIAG_SEND_OR_RECEIVE_ERROR) 
+  {
+    testStepFail(@sysvar::CORE::sysLevelOfDetailFail, "" ,"ClearAll: Diagnostic request send or receive error.");
+    snprintf(cTestErrors, elcount(cTestErrors), "%s ClearAll: Negative response received for ClearAll request: [0x%X].<p>", cTestErrors, dClearAllDTCsResponse.GetResponseCode());
+    return;
+  }
+  
+  CheckPositiveResponse("Clear all errors.", dClearAllDTCsRequest, dClearAllDTCsResponse);
+  
+  // Only read SW version once.
+  if(ActiveSide == LH)
+  {
+   if(already_read_lh)
+   {
+    GetSWVersion(cSwVersion);
+    sysSetVariableString("ElectricalTestsConfig", "sysECUSWVersion_LH", cSwVersion);
+    already_read_lh = 0;
+   }
+  }
+  else
+  {
+   if(already_read_rh)
+   {
+    GetSWVersion(cSwVersion);
+    sysSetVariableString("ElectricalTestsConfig", "sysECUSWVersion_RH", cSwVersion);
+    already_read_rh = 0;
+   }
+  }
+}
+
+/// <Init>
+testcase ECUPreconditions()
+{
+  float curve_voltage[2] = {13.5, 10};
+  byte veEquip_DAI_MMA[19] = {0x2E, 0x03, 0x10, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0xFB, 0x07, 0x2D, 0x0C, 0xC2, 0x0E, 0x5A}; // profles from EEPROM.
+  
+  OutputOff();
+  Wait(1000);
+  
+  switch(Project)
+  {
+    case DAI_MMA:
+    {
+      ActiveSide = LH;
+      
+      SetDiagTarget(cDiagnosticTarget);
+      
+      testStep("STEP", "Set Signal Generator output ON.");
+      ConnectSigGen();
+      Wait(1000);
+      TekSigGen_DoCustomCurve(sSigGenAddress, fAmplification, 12800, 13.5, curve_voltage, 1);
+      TekSigGen_OutputCh1On(sSigGenAddress);
+      
+      Wait(3000);
+      
+      testStep("STEP", "SetSecTickCount.");
+      SetSecTickCount();
+      Wait(500);
+      AuthenticateECU(2);
+      
+	  // All DTC-specific storage conditions fulfilled
+      SetStorageConditions(_fBAT_NOMINAL_VALUE, _fBAT_NOMINAL_VALUE);
+      EnterDiagnosticSession("development");
+      // variant coding
+//      testStep("STEP", "Write Variant coding.");
+//      WriteTensioningProfileConfiguration();
+//      Wait(1000);
+     
+//      WriteReleaseProfileConfiguration();
+//      Wait(1000);
+     
+//      WriteBSRProfileConfiguration();
+//      Wait(1000);
+     
+//      testStep("STEP", "Write Vehicle equipment.");
+//      memcpy(bVehicleEquipmentData, veEquip_DAI_MMA, elcount(bVehicleEquipmentData));
+//      WriteVehicleEquipmentConfiguration();
+     
+      testStep("STEP", "Clear all errors.");
+      ClearAll();
+      Wait(3000);
+      
+      testStep("STEP", "Soft reset ECU.");
+      AuthenticateECU(2);
+      
+      EnterDiagnosticSession("development");
+      ResetECU("soft");
+      Wait(2000);
+      
+      if(@sysvar::ElectricalTestsConfig::sysEnableRH == sysvar::ElectricalTestsConfig::sysEnableRH::Enabled)
+      {
+        ActiveSide = RH;
+        SetDiagTarget(cDiagnosticTarget_RH);
+        Wait(1000);
+        
+        testStep("STEP", "SetSecTickCount.");
+        SetSecTickCount();
+//        Wait(500);
+//        AuthenticateECU(2);
+      
+//        EnterDiagnosticSession("development");
+       
+//  	    // variant coding
+//  	    testStep("STEP", "Write Variant coding.");
+//  	    WriteTensioningProfileConfiguration();
+//  	    Wait(1000);
+  	   
+//  	    WriteReleaseProfileConfiguration();
+//  	    Wait(1000);
+  	   
+//  	    WriteBSRProfileConfiguration();
+//  	    Wait(1000);
+       
+//        testStep("STEP", "Write Vehicle equipment.");
+//        memcpy(bVehicleEquipmentData, veEquip_DAI_MMA, elcount(bVehicleEquipmentData));
+//        WriteVehicleEquipmentConfiguration();
+        
+        testStep("STEP", "Clear all errors.");
+        ClearAll();
+        Wait(3000);
+        
+        testStep("STEP", "Soft reset ECU.");
+        AuthenticateECU(2);
+      
+        EnterDiagnosticSession("development");
+        ResetECU("soft");
+        Wait(2000);
+        
+        ActiveSide = LH;
+        SetDiagTarget(cDiagnosticTarget);
+      }
+      
+      testStep("STEP", "Set Signal Generator output OFF.");
+      OutputOff();
+      break;
+    }
+    case AUDI_TR6: // add for both LH/RH
+      break;
+    case eCS:
+      break;
+    default:
+      break;
+  }
+  
+  setTimerCyclic(timerSequenceRunningLED, 2000);
+}
+
+/// <Preconditions>
+void MainTest_Init()
+{
+  stack char cTestReporName_Main[3000];
+  stack char cTimeBuffer[64];
+  
+  ConfigureTestModuleInformation(0);
+  
+  @sysvar::CORE::sysLevelOfDetailPass = 0; // Set to < 3 to display passed test steps.
+  @sysvar::CORE::sysLevelOfDetailStep = 0; // Set to < 3 to display test steps.
+  @sysvar::CORE::sysLevelOfDetailFail = 0; // Set to < 3 to display test steps.
+  
+  sysSetVariableString("ElectricalTestsConfig", "sysECUSWVersion_LH", "-");
+  sysSetVariableString("ElectricalTestsConfig", "sysECUSWVersion_RH", "-");
+  
+  // Disable controls.
+  enableControl(cRobustnessPanel, "start_button"                     , 0);
+  enableControl(cRobustnessPanel, "resume_button"                    , 0);
+  enableControl(cRobustnessPanel, "skip_sequence_button"             , 0);
+  enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 0);
+  enableControl(cRobustnessPanel, "SysVar:sysMainReportName"         , 0);
+  enableControl(cRobustnessPanel, "SysVar:sysExcelTemplate"          , 0);
+  enableControl(cRobustnessPanel, "SysVar:sysLogsPath"               , 0);
+  enableControl(cRobustnessPanel, "SysVar:sysLogsPath_CSV"           , 0);
+  enableControl(cRobustnessPanel, "SysVar:sysReportsPath"            , 0);
+  
+  // Show test as running.
+  sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Running");
+  setControlBackColor(cRobustnessPanel, "test_control_status", _PASS_Color);
+  
+  // Set panel Diag target.
+  sysSetVariableString("ElectricalTestsConfig", "sysECUTarget_LH", cDiagnosticTarget);
+  if(@sysvar::ElectricalTestsConfig::sysEnableRH == sysvar::ElectricalTestsConfig::sysEnableRH::Disabled)
+  {
+    enableControl(cRobustnessPanel, "rh_group_box", 0);
+  }
+  else
+  {
+    enableControl(cRobustnessPanel, "rh_group_box", 1);
+    sysSetVariableString("ElectricalTestsConfig", "sysECUTarget_RH", cDiagnosticTarget_RH);
+  }
+  
+  // Init AEC status.
+  strncpy(cStatus_Name[bAEC_Qualified]                   , "Qualified"                   , 50);
+  strncpy(cStatus_Name[bAEC_ReQualifingInProgress]       , "ReQualifingInProgress"       , 50);
+  strncpy(cStatus_Name[bAEC_QualifingInProgress]         , "QualifingInProgress"         , 50);
+  strncpy(cStatus_Name[bAEC_DeskillingInProgress]        , "DeskillingInProgress"        , 50);
+  strncpy(cStatus_Name[bAEC_DeskilledFailed]             , "DeskilledFailed"             , 50);
+  strncpy(cStatus_Name[bAEC_AbsentFailed]                , "AbsentFailed"                , 50);
+  strncpy(cStatus_Name[bAEC_DeskilledNotFailed]          , "DeskilledNotFailed"          , 50);
+  strncpy(cStatus_Name[bAEC_EverQualified]               , "EverQualified"               , 50);
+  strncpy(cStatus_Name[bAEC_EverQualifiedStartup]        , "EverQualifiedStartup]"       , 50);
+  strncpy(cStatus_Name[bAEC_NotEverDeskilled]            , "NotEverDeskilled"            , 50);
+  strncpy(cStatus_Name[bAEC_TestedNotPresent]            , "TestedNotPresent"            , 50);
+  strncpy(cStatus_Name[bAEC_NotEverQualified]            , "NotEverQualified"            , 50);
+  strncpy(cStatus_Name[bAEC_NotCompletedSincePowerOffOn] , "NotCompletedSincePowerOffOn" , 50);
+  strncpy(cStatus_Name[bAEC_NotFailedDeskilledInProgress], "NotFailedDeskilledInProgress", 50);
+  
+  // Reset sequence outputs.
+  for(iActiveTestSequence = 0; iActiveTestSequence < sysGetVariableArraySize(sysvar::ElectricalTestsConfig::sysTestSelect); iActiveTestSequence++)
+  {
+    @sysvar::ElectricalTestsConfig::sysProgressBar[iActiveTestSequence]   = 0;
+    @sysvar::ElectricalTestsConfig::sysSequenceTimer[iActiveTestSequence] = 0;
+    @sysvar::ElectricalTestsConfig::sysStatusLed[iActiveTestSequence]     = 0;
+  }
+  
+  // Trigger disable/enable all .BLF log generation.
+  @sysvar::ElectricalTestsConfig::sysBLFToggle_All = @sysvar::ElectricalTestsConfig::sysBLFToggle_All;
+  
+  CheckUniqueSequence();
+  
+  // Set main .html report path and name.
+  getLocalTimeString(cTimeBuffer);
+  str_replace(cTimeBuffer, " ", "_");
+  str_replace(cTimeBuffer, ":", "_");
+  str_replace(cTimeBuffer, "__", "_");
+  
+  if (strstr_regex(cTimeBuffer, "[a-z]_[0-9]_") != -1)
+  {
+    str_replace(cTimeBuffer, (strstr_regex(cTimeBuffer, "[a-z]_[0-9]_") + 1), "_0", 1); // Sets day number on two characters.
+  }
+  
+  // Get .xlsx and .html reports path and names.
+  sysGetVariableString("ElectricalTestsConfig", "sysReportsPath", cTestReportPathandName_Main, elCount(cTestReportPathandName_Main));
+  sysGetVariableString("ElectricalTestsConfig", "sysMainReportName", cTestReporName_Main, elCount(cTestReporName_Main));
+  snprintf(cTestReportPathandName_Main, elcount(cTestReportPathandName_Main), "%s\\%s_%s",cTestReportPathandName_Main, cTestReporName_Main, cTimeBuffer);
+  TestReportFileName(cTestReportPathandName_Main);
+  
+  // Get .xlsc template path and name.
+  sysGetVariableString("ElectricalTestsConfig", "sysExcelTemplate", cXLSXTemplatePathandName, elCount(cXLSXTemplatePathandName));
+}
+
+void MainTest()
+{
+  MainTest_Init();
+  
+  ECUPreconditions();
+  
+  if(TestGetVerdictLastTestCase() == 1)
+  {
+    TestWaitForMessageBox("Sequence is aborted. Please check the test report for failure cause then restart sequence.", 600000, "Start of sequences ECU pre-conditions failed!", 0);
+    
+    // Enable controls.
+    enableControl(cRobustnessPanel, "start_button"                     , 1);
+    enableControl(cRobustnessPanel, "resume_button"                    , 1);
+    enableControl(cRobustnessPanel, "skip_sequence_button"             , 1);
+    enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 1);
+    enableControl(cRobustnessPanel, "SysVar:sysMainReportName"         , 1);
+    enableControl(cRobustnessPanel, "SysVar:sysExcelTemplate"          , 1);
+    enableControl(cRobustnessPanel, "SysVar:sysLogsPath"               , 1);
+    enableControl(cRobustnessPanel, "SysVar:sysLogsPath_CSV"           , 1);
+    enableControl(cRobustnessPanel, "SysVar:sysReportsPath"            , 1);
+  }
+  else
+  {
+    for(iActiveTestSequence = 0; iActiveTestSequence < sysGetVariableArraySize(sysvar::ElectricalTestsConfig::sysTestSelect); iActiveTestSequence++)
+    {
+      CheckUniqueSequence();
+      
+      strncpy(cXLSXTargetSheetName, "Default", elcount(cXLSXTargetSheetName));
+      
+      SetControlVisibility(cRobustnessPanel, "sequence_picture", 1);
+      
+      // Disable active input sequence combo box.
+      snprintf(cSequence_Input_Control, elcount(cSequence_Input_Control), "sequence_%i", (iActiveTestSequence + 1));
+      enableControl("Robustness Tests", cSequence_Input_Control , 0);
+      
+      switch(@sysvar::ElectricalTestsConfig::sysTestSelect[iActiveTestSequence])
+      {
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_Select_:
+        {
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_1_MicroCutA_10us_EMCTP:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_10us", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_10_us.png");
+          
+          _1_MicroCutA_10us_EMCTP();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_2_MicroCutB_100us_EMCTP:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_100us", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_100_us.png");
+          
+          _2_MicroCutB_100us_EMCTP();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_3_MicroCutC_5ms_EMCTP:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_5ms", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_5_ms.png");
+          
+          _3_MicroCutC_5ms_EMCTP();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_4_MicroCutD_50ms_EMCTP:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_50ms", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_50_ms.png");
+          
+          _4_MicroCutD_50ms_EMCTP();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_5_MicroCutE_300ms_EMCTP:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_E", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_E.png");
+          
+          _5_MicroCutE_300ms_EMCTP();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_1:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F1", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F1.png");
+          
+          _6_MicroCutF_EMCTP_Part_1();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_2:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F2", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F2.png");
+          
+          _6_MicroCutF_EMCTP_Part_2();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_3:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F3", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F3.png");
+          
+          _6_MicroCutF_EMCTP_Part_3();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_4:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F4", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F4.png");
+          
+          _6_MicroCutF_EMCTP_Part_4();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_5:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F5", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F5.png");
+          
+          _6_MicroCutF_EMCTP_Part_2();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_6:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F6", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F6.png");
+          
+          _6_MicroCutF_EMCTP_Part_6();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_6_MicroCutF_EMCTP_Part_7:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_F7", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_F7.png");
+          
+          _6_MicroCutF_EMCTP_Part_7();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::_7_MicroCutG_EMCTP:
+        {
+          strncpy(cXLSXTargetSheetName, "Microcut_Profile_G", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Microcut_Profile_G.png");
+          
+          _7_MicroCutG_EMCTP();
+          
+          GenerateXLSX();
+          break;
+        }
+        case sysvar::ElectricalTestsConfig::sysTestSelect::Custom:
+        {
+          strncpy(cXLSXTargetSheetName, "Custom_Profile", elcount(cXLSXTargetSheetName));
+          setPictureBoxImage(cRobustnessPanel, "sequence_picture", ".\\Pictures\\Custom.png");
+          
+          Custom_Profile();
+          
+          GenerateXLSX();
+          break;
+        }
+        default:
+          break;
+      }
+      
+      SetControlVisibility(cRobustnessPanel, "sequence_picture", 0);
+      @sysvar::ElectricalTestsConfig::sysStatusLed[iActiveTestSequence] = 1;
+    }
+    
+    // Set buttons
+    testWaitForTimeoutSilent(50);
+    sysSetVariableString("ElectricalTestsConfig", "sysActiveSequencePanel", "-");
+    enableControl(cRobustnessPanel, "pause_button", 0);
+    enableControl(cRobustnessPanel, "resume_button", 0);
+    enableControl(cRobustnessPanel, "skip_sequence_button", 0);
+    enableControl(cRobustnessPanel, "generate_intermediate_xlsx_button", 0);
+    sysSetVariableString("ElectricalTestsConfig", "sysTestControlStatus", "Completed");
+    enableControl("Robustness Tests", "input_sequence_group" , 1);
+    cancelTimer(timerSequenceRunningLED);
+  }
+}
+

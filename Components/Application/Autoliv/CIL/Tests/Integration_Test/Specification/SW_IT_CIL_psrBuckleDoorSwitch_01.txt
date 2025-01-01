@@ -1,0 +1,31 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0357
+ARCH_SW_CIL_0357: Write Rte_Write_psrBuckleDoorSwitch_u8BuckleSwitch to transmit to application status of buckle switch.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Start Development Session.
+
+	Step 3: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL1 (0x1).
+
+	Step 4: Set a breakpoint in the function CIL_runCANToAppli at line cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);.
+
+Action: ARCH_SW_CIL_0357
+
+	Step 5: Read variable Rte_CIL_psrBuckleDoorSwitch_u8BuckleSwitch 
+		Expected result:  KU8_BUCKLE_SWITCH_NOT_DEFINED.
+
+Postcondition
+
+	Step 6: Return ECU to default values

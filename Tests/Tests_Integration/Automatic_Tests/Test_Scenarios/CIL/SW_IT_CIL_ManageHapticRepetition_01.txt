@@ -1,0 +1,82 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_CIL_0261, ARCH_SW_CIL_0262
+ARCH_SW_CIL_0261: CIL component will handle HWAx configured with fixed duration with execute the Vibration phase according to NVP_u16DurationHapticX.
+ARCH_SW_CIL_0262: CIL component will handle HWAx configured with non-fixed duration with execution of the Vibration phase until the HWAx request is removed from the request source PRE-SAFE or API or the Vibration Phase is completely executed according to NVP_u16DurationHapticX.
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Set signal Presf_Lvl_ST3 to I_C04_PRESF_LVL_V2_LVL2.
+
+	Step 3: Set a breakpoint in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'.
+
+	Step 4: Check if CPU stopped in function CIL_runCANToAppli at line 'cil_TriggerProfiles(CIL_stManagedCycle.u8CurrentRequestedCycle);'. 
+		Expected result:  CPU is Stopped
+
+	Step 5: Set a breakpoint in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic1)/KU16_TEN);
+
+Action: ARCH_SW_CIL_0261
+
+	Step 6: Check if CPU stopped in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic1)/KU16_TEN);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0261
+
+	Step 7: Evaluate if variable CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic1 / KU16_TEN. 
+		Expected result:  CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic1 / KU16_TEN
+
+	Step 8: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE16.
+
+	Step 9: Set a breakpoint in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic2)/KU16_TEN);
+
+Action: ARCH_SW_CIL_0261
+
+	Step 10: Check if CPU stopped in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic2)/KU16_TEN);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0261
+
+	Step 11: Evaluate if variable CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic2 / KU16_TEN. 
+		Expected result:  CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic2 / KU16_TEN
+
+	Step 12: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE17.
+
+	Step 13: Set a breakpoint in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic3)/KU16_TEN);
+
+Action: ARCH_SW_CIL_0261
+
+	Step 14: Check if CPU stopped in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic3)/KU16_TEN);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0261
+
+	Step 15: Evaluate if variable CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic3 / KU16_TEN. 
+		Expected result:  CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic3 / KU16_TEN
+
+	Step 16: Set signal RBTMFL_SP_Lvl_Rq_ST35 to I_C06_RBTM_LVL_RQ_PROFILE18.
+
+	Step 17: Set a breakpoint in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic4)/KU16_TEN);
+
+Action: ARCH_SW_CIL_0261, ARCH_SW_CIL_0262
+
+	Step 18: Check if CPU stopped in function cil_ManageHapticRepetition() at line 'CIL_u16HWARepetitionTime = ((uint16)(NVP_BLOCK_ID_HAPTIC_CONFIG_MB_RamBlockData.NVP_u16DurationHaptic4)/KU16_TEN);'. 
+		Expected result:  CPU is Stopped
+
+Action: ARCH_SW_CIL_0261, ARCH_SW_CIL_0262
+
+	Step 19: Evaluate if variable CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic4 / KU16_TEN. 
+		Expected result:  CIL_u16HWARepetitionTime is equal to NVP_u16DurationHaptic4 / KU16_TEN
+
+Postcondition
+
+	Step 20: Return ECU to default values

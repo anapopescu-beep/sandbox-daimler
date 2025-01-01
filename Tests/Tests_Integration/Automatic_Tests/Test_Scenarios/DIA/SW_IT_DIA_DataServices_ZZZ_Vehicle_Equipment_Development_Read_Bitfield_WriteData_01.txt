@@ -1,0 +1,40 @@
+					Autoliv Electronics Document
+--------------------------------------------------------------------------
+Nightly test: No
+Test type: Requirement-Based test
+Regression Test: No
+Fault injection method used: No
+Resource usage evaluation: No
+Priority: No
+Safety relevant: No
+Requirement under test: ARCH_SW_DIA_0030; ARCH_SW_DIA_0147; ARCH_SW_DIA_0148; ARCH_SW_DIA_0149
+ARCH_SW_DIA_0030: Service 0x2E will be implemented for DID 0311
+ARCH_SW_DIA_0147: Service shall be available in Default, Extended and Development session
+ARCH_SW_DIA_0148: Request data shall be 3 byte long
+ARCH_SW_DIA_0149: Runnable shall write Bitfield stored in Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development.Bitfield
+--------------------------------------------------------------------------
+
+Preconditions
+
+	Step 1: Bench Initialization
+
+	Step 2: Enter development session.
+
+	Step 3: Set breakpoint in function *DataServices_ZZZ_Vehicle_Equipment_Development_Read_Bitfield_WriteData*.
+
+Action: ARCH_SW_DIA_0030; ARCH_SW_DIA_0147; ARCH_SW_DIA_0148; ARCH_SW_DIA_0149
+
+	Step 4: Send diag request for 2E 0311 and wait for timeout error 
+		Expected result:  Timeout reached.
+
+	Step 5: Check if breakpoint from function DataServices_ZZZ_Vehicle_Equipment_Development_Read_Bitfield_WriteData was reached. 
+		Expected result:  BP was reached.
+
+	Step 6: Overwrite Rte_Ct_MBBL_SsaAppl_Coding_ZZZ_VehicleEquipment_Development with 0x1
+
+	Step 7: Send diag request for 2E 0311 
+		Expected result:  Response received.
+
+Postcondition
+
+	Step 8: Return ECU to default values
